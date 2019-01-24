@@ -1,0 +1,12 @@
+#! /bin/bash
+
+# Run optical flow process (of) on airs1.ppm airs2.ppm
+  ./of airs1 airs2 0.9 80 5
+
+# output will be in airs1
+  cp airs1.flo in.flo
+
+#  read_flo_0.5km_1min computes u- and v- wind components for i- and j- displacements
+#  ./read_flo_0.5km_1min
+
+# output will be in u.out and v.out
