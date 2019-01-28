@@ -52,6 +52,21 @@ import math
 # Error for 40 north (math is no longer negligible)?
 
 
+def get_area(lon_0, lat_0, projection, units, shape, pixel_size, center):
+    proj_dict = {'lat_0': lat_0, 'lon_0': lon_0, 'proj': projection, 'units': units}
+    p = Proj(proj_dict, preserve_units=True)
+    center = p(*center)
+    area_extent = [center[0] - shape[1] * pixel_size / 2, center[1] - shape[0] * pixel_size / 2,
+                   center[0] + shape[1] * pixel_size / 2, center[1] + shape[0] * pixel_size / 2]
+    return AreaDefinition('3DWinds', '3DWinds', '3DWinds', proj_dict, shape[0], shape[1], area_extent)
+
+
+def get_displacements(filename, shape):
+    x_displacements = np.fromfile(filename, dtype=np.float32)[3:][0::2].reshape(shape)
+    y_displacements = np.fromfile(filename, dtype=np.float32)[3:][1::2].reshape(shape)
+    return x_displacements, y_displacements
+
+
 def _pixel_to_pos(i, j, area_definition):
     u_l_pixel = area_definition.pixel_upper_left
     return u_l_pixel[0] + area_definition.pixel_size_x * i, u_l_pixel[1] - area_definition.pixel_size_y * j
