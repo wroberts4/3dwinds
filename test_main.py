@@ -1,5 +1,6 @@
 import unittest
 import numpy as np
+from pyproj import Geod
 
 
 class TestCase():
@@ -75,15 +76,54 @@ class Test3DWinds(unittest.TestCase):
             self.assertEqual(round(u, 10), case.u)
             self.assertEqual(round(v, 10), case.v)
 
-    def test_compute_lat_lon(self):
-        from main import compute_lat_lon
+    def test_compute_lon_lat(self):
+        from main import compute_lon_lat
+        import math
+        import numpy as np
         for case in self.test_cases:
-            old_lon_lat = compute_lat_lon(case.i_old, case.j_old, case.area_definition)
+            old_lon_lat = compute_lon_lat(case.i_old, case.j_old, case.area_definition)
             # print('old_lon_lat:', old_lon_lat)
             self.assertEqual(old_lon_lat, case.old_lon_lat)
-            new_lon_lat = compute_lat_lon(case.x_new, case.y_new, case.area_definition)
+            new_lon_lat = compute_lon_lat(case.x_new, case.y_new, case.area_definition)
             # print('new_lon_lat:', new_lon_lat)
             self.assertEqual(new_lon_lat, case.new_lon_lat)
+            # Uses a sphere as an ellipsoid
+            Z = math.pi / 180
+            R = 6370.997
+            RLAT = 40 * Z
+            RLON = -40 * Z
+            PLAT = 40 * Z
+            PLON = 40 * Z
+            CRLAT = math.cos(RLAT)
+            CRLON = math.cos(RLON)
+            SRLAT = math.sin(RLAT)
+            SRLON = math.sin(RLON)
+            CPLAT = math.cos(PLAT)
+            CPLON = math.cos(PLON)
+            SPLAT = math.sin(PLAT)
+            SPLON = math.sin(PLON)
+            XX = CPLAT * CPLON - CRLAT * CRLON
+            YY = CPLAT * SPLON - CRLAT * SRLON
+            ZZ = SPLAT - SRLAT
+            DIST = math.sqrt(XX * XX + YY * YY + ZZ * ZZ)
+            ARCL = 2. * math.asin(DIST / 2.) * R
+
+            if abs(DIST) > 0.0001:
+                ANG = math.sin(RLON - PLON) * math.sin(math.pi / 2. - PLAT) / math.sin(DIST)
+            else:
+                ANG = 0
+            if abs(ANG) > 1.0:
+                ANG = np.sign(ANG)
+            ANG = math.asin(ANG) / Z
+            if PLAT < RLAT:
+                ANG = 180. - ANG
+            if ANG < 0.0:
+                ANG = 360. + ANG
+            IANG = (ANG + 180) % 360
+            print('IANG, ARCL: ', IANG, ARCL)
+            g = Geod(ellps='WGS84')
+            my_angle = g.inv(*(-40, 40), *(40, 40))[1] + 180
+            print(my_angle - IANG)
 
     def test_pixel_to_pos(self):
         from main import _pixel_to_pos
@@ -102,7 +142,7 @@ class Test3DWinds(unittest.TestCase):
                                                              case.x_displacements[case.i_old][case.j_old],
                                                              case.y_displacements[case.i_old][case.j_old],
                                                              case.area_definition)
-            # print('displacement_vector:', '({0}, {1})'.format(angle, distance))
+            print('displacement_vector:', '({0}, {1})'.format(angle, distance))
             self.assertEqual(round(angle, 10), case.angle)
             self.assertEqual(round(distance, 10), case.distance)
 

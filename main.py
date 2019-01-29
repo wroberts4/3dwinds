@@ -73,13 +73,13 @@ def _pixel_to_pos(i, j, area_definition):
 
 
 def _calculate_displacement_vector(i, j, delta_i, delta_j, area_definition):
-    old_lat_lon = compute_lat_lon(i, j, area_definition)
-    new_lat_lon = compute_lat_lon(i + delta_i, j + delta_j, area_definition)
+    old_lon_lat = compute_lon_lat(i, j, area_definition)
+    new_lon_lat = compute_lon_lat(i + delta_i, j + delta_j, area_definition)
     # TODO: WHAT SPHERE PROJECTION?
     g = Geod(ellps='WGS84')
     # TODO: IS FORWARD AZIMUTH THE CORRECT ANGLE?
     # 0 is forward azimuth, 1 is backwards azimuth, 2 is distance. Returns forward azimuth and distance.
-    return g.inv(*old_lat_lon, *new_lat_lon)[::2]
+    return g.inv(*old_lon_lat, *new_lon_lat)[::2]
 
 
 def calculate_velocity(i, j, delta_i, delta_j, area_definition, delta_time=100):
@@ -94,6 +94,7 @@ def u_v_component(i, j, delta_i, delta_j, area_definition, delta_time=100):
     return u, v
 
 
-def compute_lat_lon(i, j, area_definition):
+# TODO: RETURN LAT/LONG FOR ALL DATA INSTEAD OF LONG/LAT
+def compute_lon_lat(i, j, area_definition):
     p = Proj(area_definition.proj_dict, preserve_units=True)
     return p(*_pixel_to_pos(i, j, area_definition), errcheck=True, inverse=True)
