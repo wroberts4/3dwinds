@@ -52,6 +52,10 @@ import math
 # Error for 40 north (math is no longer negligible)?
 
 
+def _reverse(list_like):
+    return tuple(reversed(list_like))
+
+
 def get_area(lon_0, lat_0, projection, units, shape, pixel_size, center):
     proj_dict = {'lat_0': lat_0, 'lon_0': lon_0, 'proj': projection, 'units': units}
     p = Proj(proj_dict, preserve_units=True)
@@ -61,7 +65,7 @@ def get_area(lon_0, lat_0, projection, units, shape, pixel_size, center):
     return AreaDefinition('3DWinds', '3DWinds', '3DWinds', proj_dict, shape[0], shape[1], area_extent)
 
 
-def get_displacements(filename, shape):
+def get_displacements(filename, shape=None):
     x_displacements = np.fromfile(filename, dtype=np.float32)[3:][0::2].reshape(shape)
     y_displacements = np.fromfile(filename, dtype=np.float32)[3:][1::2].reshape(shape)
     return x_displacements, y_displacements
@@ -73,13 +77,13 @@ def _pixel_to_pos(i, j, area_definition):
 
 
 def _calculate_displacement_vector(i, j, delta_i, delta_j, area_definition):
-    old_lon_lat = compute_lon_lat(i, j, area_definition)
-    new_lon_lat = compute_lon_lat(i + delta_i, j + delta_j, area_definition)
+    old_long_lat = _reverse(compute_lat_long(i, j, area_definition))
+    new_long_lat = _reverse(compute_lat_long(i + delta_i, j + delta_j, area_definition))
     # TODO: WHAT SPHERE PROJECTION?
     g = Geod(ellps='WGS84')
     # TODO: IS FORWARD AZIMUTH THE CORRECT ANGLE?
     # 0 is forward azimuth, 1 is backwards azimuth, 2 is distance. Returns forward azimuth and distance.
-    return g.inv(*old_lon_lat, *new_lon_lat)[::2]
+    return g.inv(*old_long_lat, *new_long_lat)[::2]
 
 
 def calculate_velocity(i, j, delta_i, delta_j, area_definition, delta_time=100):
@@ -95,6 +99,6 @@ def u_v_component(i, j, delta_i, delta_j, area_definition, delta_time=100):
 
 
 # TODO: RETURN LAT/LONG FOR ALL DATA INSTEAD OF LONG/LAT
-def compute_lon_lat(i, j, area_definition):
+def compute_lat_long(i, j, area_definition):
     p = Proj(area_definition.proj_dict, preserve_units=True)
-    return p(*_pixel_to_pos(i, j, area_definition), errcheck=True, inverse=True)
+    return _reverse(p(*_pixel_to_pos(i, j, area_definition), errcheck=True, inverse=True))
