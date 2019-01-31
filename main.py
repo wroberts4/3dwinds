@@ -53,6 +53,7 @@ import math
 
 
 def _reverse(list_like):
+    # Reverses the order of an array. Aka the last element becomes the first, the first becomes the last, etc.
     return tuple(reversed(list_like))
 
 
@@ -66,9 +67,10 @@ def get_area(lon_0, lat_0, projection, units, shape, pixel_size, center):
 
 
 def get_displacements(filename, shape=None):
-    x_displacements = np.fromfile(filename, dtype=np.float32)[3:][0::2].reshape(shape)
-    y_displacements = np.fromfile(filename, dtype=np.float32)[3:][1::2].reshape(shape)
-    return x_displacements, y_displacements
+    i_displacements = np.fromfile(filename, dtype=np.float32)[3:][0::2].reshape(shape)
+    j_displacements = np.fromfile(filename, dtype=np.float32)[3:][1::2].reshape(shape)
+    # Displacements are in pixels.
+    return i_displacements, j_displacements
 
 
 def _pixel_to_pos(i, j, area_definition):
@@ -79,26 +81,27 @@ def _pixel_to_pos(i, j, area_definition):
 def _calculate_displacement_vector(i, j, delta_i, delta_j, area_definition):
     old_long_lat = _reverse(compute_lat_long(i, j, area_definition))
     new_long_lat = _reverse(compute_lat_long(i + delta_i, j + delta_j, area_definition))
-    # TODO: WHAT SPHERE PROJECTION?
     g = Geod(ellps='WGS84')
     # TODO: IS FORWARD AZIMUTH THE CORRECT ANGLE?
-    # 0 is forward azimuth, 1 is backwards azimuth, 2 is distance. Returns forward azimuth and distance.
+    # 0 is forward azimuth, 1 is backwards azimuth, 2 is distance.
+    # Returns wind vector forward azimuth angle in degrees and distance in meters.
     return g.inv(*old_long_lat, *new_long_lat)[::2]
 
 
 def calculate_velocity(i, j, delta_i, delta_j, area_definition, delta_time=100):
     angle, distance = _calculate_displacement_vector(i, j, delta_i, delta_j, area_definition)
-    return distance / delta_time * 60 / 1000, angle
+    # meters/second. distance is in meters delta_time is in minutes.
+    return distance / (delta_time * 60), angle
 
 
 def u_v_component(i, j, delta_i, delta_j, area_definition, delta_time=100):
     angle, distance = _calculate_displacement_vector(i, j, delta_i, delta_j, area_definition)
-    u = distance * math.cos(angle * math.pi / 180) / delta_time * 60 / 1000
-    v = distance * math.sin(angle * math.pi / 180) / delta_time * 60 / 1000
+    # meters/second. distance is in meters delta_time is in minutes.
+    u = distance / (delta_time * 60) * math.cos(angle * (math.pi / 180))
+    v = distance / (delta_time * 60) * math.sin(angle * (math.pi / 180))
     return u, v
 
 
-# TODO: RETURN LAT/LONG FOR ALL DATA INSTEAD OF LONG/LAT
 def compute_lat_long(i, j, area_definition):
     p = Proj(area_definition.proj_dict, preserve_units=True)
     return _reverse(p(*_pixel_to_pos(i, j, area_definition), errcheck=True, inverse=True))
