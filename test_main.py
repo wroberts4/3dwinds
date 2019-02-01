@@ -34,7 +34,7 @@ class Test3DWinds(unittest.TestCase):
         from pyresample.geometry import AreaDefinition
         self.test_cases = []
         # TODO: VERIFY WHAT THE AREA IS.
-        area_def = get_area(0, 60, 'stere', 'm', (1000, 1000), 4000, (0, 90))
+        area_def = get_area(0, 60, 'stere', 'km', (1000, 1000), 4, (0, 90))
         # i, j displacement: even index, odd index
         i_displacements, j_displacements = get_displacements('/Users/wroberts/Documents/3dwinds/airs1.flo',
                                                              shape=(1000, 1000))
@@ -56,14 +56,14 @@ class Test3DWinds(unittest.TestCase):
                                   {'lat_0': '0.0', 'lon_0': '0.0', 'proj': 'stere', 'units': 'km'},
                                   5, 5, [-10, -10, 10, 10])
         # i displacement: odd index
-        i_displacements = np.ones((5, 5))
+        i_displacements = np.ones((5, 5)) * .01
         # j displacement: even index
-        j_displacements = np.ones((5, 5))
-        self.test_cases.append(TestCase(area_def, 0, 0, i_displacements, j_displacements, distance=5656.851636,
-                                        speed=0.942809, angle=134.999989, u=0.666666, v=-0.666666,
-                                        old_lat_long=(0.07235, -0.071865),
-                                        new_lat_long=(0.036175, -0.035933),
-                                        old_pos=(-8.0, 8.0), new_pos=(-4.0, 4.0)))
+        j_displacements = np.ones((5, 5)) * .01
+        self.test_cases.append(TestCase(area_def, 0, 0, i_displacements, j_displacements, distance=31679.720231,
+                                        speed=5.279953, angle=97.090134, u=5.239579, v=-0.651708,
+                                        old_lat_long=(44.783637, -80.345008),
+                                        new_lat_long=(44.74914, -79.947783),
+                                        old_pos=(-8.0, 8.0), new_pos=(-7.96, 7.96)))
 
     def test_calculate_velocity(self):
         from main import calculate_velocity
@@ -94,38 +94,38 @@ class Test3DWinds(unittest.TestCase):
             new_lat_long = compute_lat_long(case.i_new, case.j_new, case.area_definition)
             # print('new_lat_long:', new_lat_long)
             self.assertEqual(case.new_lat_long, tuple(np.round(new_lat_long, 6)))
-            # Uses a sphere as an ellipsoid
-            Z = math.pi / 180
-            R = 6370.997
-            RLAT = 67.62332747020073 * Z
-            RLON = -137.1736645856486 * Z
-            PLAT = 69.17597131140518 * Z
-            PLON = -141.7426590658713 * Z
-            CRLAT = math.cos(RLAT)
-            CRLON = math.cos(RLON)
-            SRLAT = math.sin(RLAT)
-            SRLON = math.sin(RLON)
-            CPLAT = math.cos(PLAT)
-            CPLON = math.cos(PLON)
-            SPLAT = math.sin(PLAT)
-            SPLON = math.sin(PLON)
-            XX = CPLAT * CPLON - CRLAT * CRLON
-            YY = CPLAT * SPLON - CRLAT * SRLON
-            ZZ = SPLAT - SRLAT
-            DIST = math.sqrt(XX * XX + YY * YY + ZZ * ZZ)
-            ARCL = 2. * math.asin(DIST / 2.) * R
-
-            if abs(DIST) > 0.0001:
-                ANG = math.sin(RLON - PLON) * math.sin(math.pi / 2. - PLAT) / math.sin(DIST)
-            else:
-                ANG = 0
-            if abs(ANG) > 1.0:
-                ANG = np.sign(ANG)
-            ANG = math.asin(ANG) / Z
-            if PLAT < RLAT:
-                ANG = 180. - ANG
-            if ANG < 0.0:
-                ANG = 360. + ANG
+            # # Uses a sphere as an ellipsoid
+            # Z = math.pi / 180
+            # R = 6370.997
+            # RLAT = 67.62332747020073 * Z
+            # RLON = -137.1736645856486 * Z
+            # PLAT = 69.17597131140518 * Z
+            # PLON = -141.7426590658713 * Z
+            # CRLAT = math.cos(RLAT)
+            # CRLON = math.cos(RLON)
+            # SRLAT = math.sin(RLAT)
+            # SRLON = math.sin(RLON)
+            # CPLAT = math.cos(PLAT)
+            # CPLON = math.cos(PLON)
+            # SPLAT = math.sin(PLAT)
+            # SPLON = math.sin(PLON)
+            # XX = CPLAT * CPLON - CRLAT * CRLON
+            # YY = CPLAT * SPLON - CRLAT * SRLON
+            # ZZ = SPLAT - SRLAT
+            # DIST = math.sqrt(XX * XX + YY * YY + ZZ * ZZ)
+            # ARCL = 2. * math.asin(DIST / 2.) * R
+            #
+            # if abs(DIST) > 0.0001:
+            #     ANG = math.sin(RLON - PLON) * math.sin(math.pi / 2. - PLAT) / math.sin(DIST)
+            # else:
+            #     ANG = 0
+            # if abs(ANG) > 1.0:
+            #     ANG = np.sign(ANG)
+            # ANG = math.asin(ANG) / Z
+            # if PLAT < RLAT:
+            #     ANG = 180. - ANG
+            # if ANG < 0.0:
+            #     ANG = 360. + ANG
             # IANG = (ANG + 180) % 360
             # print('IANG, ARCL: ', IANG, ARCL)
             # g = Geod(ellps='WGS84')
