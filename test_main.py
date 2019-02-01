@@ -34,36 +34,36 @@ class Test3DWinds(unittest.TestCase):
         from pyresample.geometry import AreaDefinition
         self.test_cases = []
         # TODO: VERIFY WHAT THE AREA IS.
-        area_def = get_area(0, 60, 'stere', 'km', (1000, 1000), 4, (0, 90))
+        area_def = get_area(0, 60, 'stere', 'm', (1000, 1000), 4000, (0, 90))
         # i, j displacement: even index, odd index
-        i_displacements, j_displacements = get_displacements('/Users/wroberts/Documents/3dwinds/airs1.flo',
+        i_displacements, j_displacements = get_displacements('C:/Users/William/Documents/3dwinds/airs1.flo',
                                                              shape=(1000, 1000))
-        u_out = np.fromfile('/Users/wroberts/Documents/3dwinds/u.out', dtype=np.float32).reshape((1000, 1000))
-        v_out = np.fromfile('/Users/wroberts/Documents/3dwinds/v.out', dtype=np.float32).reshape((1000, 1000))
+        u_out = np.fromfile('C:/Users/William/Documents/3dwinds/u.out', dtype=np.float32).reshape((1000, 1000))
+        v_out = np.fromfile('C:/Users/William/Documents/3dwinds/v.out', dtype=np.float32).reshape((1000, 1000))
         self.test_cases.append(TestCase(area_def, 0, 0, i_displacements, j_displacements, distance=255333.02691,
-                                        speed=42.555504, angle=310.543705, u=-32.338368, v=27.662265,
-                                        old_lat_long=(67.623327, -137.173665),
-                                        new_lat_long=(69.175971, -141.742659),
-                                        old_pos=(-1998000.0, 5427327.917178),
-                                        new_pos=(-1690795.532227, 5437447.696765)))
-        self.test_cases.append(TestCase(area_def, 500, 500, i_displacements, j_displacements, distance=9825.440209,
-                                        speed=1.637573, angle=187.991358, u=-0.227662, v=-1.621671,
-                                        old_lat_long=(89.976411, 45.002263),
-                                        new_lat_long=(89.933058, -103.770204),
-                                        old_pos=(2000.0, 3427327.917178),
-                                        new_pos=(-7796.726227, 3431237.405856)))
+                                        speed=42.5555, angle=310.54371, u=-32.33837, v=27.66227,
+                                        old_lat_long=(67.62333, -137.17366),
+                                        new_lat_long=(69.17597, -141.74266),
+                                        old_pos=(-1998000.0, 5427327.91718),
+                                        new_pos=(-1690795.53223, 5437447.69676)))
+        self.test_cases.append(TestCase(area_def, 500, 500, i_displacements, j_displacements, distance=9825.44021,
+                                        speed=1.63757, angle=187.99136, u=-0.22766, v=-1.62167,
+                                        old_lat_long=(89.97641, 45.00226),
+                                        new_lat_long=(89.93306, -103.7702),
+                                        old_pos=(2000.0, 3427327.91718),
+                                        new_pos=(-7796.72623, 3431237.40586)))
         area_def = AreaDefinition('3DWinds', '3DWinds', '3DWinds',
-                                  {'lat_0': '0.0', 'lon_0': '0.0', 'proj': 'stere', 'units': 'km'},
+                                  {'lat_0': '0.0', 'lon_0': '0.0', 'proj': 'stere', 'units': 'm'},
                                   5, 5, [-10, -10, 10, 10])
         # i displacement: odd index
-        i_displacements = np.ones((5, 5)) * .01
+        i_displacements = np.ones((5, 5))
         # j displacement: even index
-        j_displacements = np.ones((5, 5)) * .01
-        self.test_cases.append(TestCase(area_def, 0, 0, i_displacements, j_displacements, distance=31679.720231,
-                                        speed=5.279953, angle=97.090134, u=5.239579, v=-0.651708,
-                                        old_lat_long=(44.783637, -80.345008),
-                                        new_lat_long=(44.74914, -79.947783),
-                                        old_pos=(-8.0, 8.0), new_pos=(-7.96, 7.96)))
+        j_displacements = np.ones((5, 5))
+        self.test_cases.append(TestCase(area_def, 0, 0, i_displacements, j_displacements, distance=5.65685,
+                                        speed=0.00094, angle=134.99999, u=0.00067, v=-0.00067,
+                                        old_lat_long=(7e-05, -7e-05),
+                                        new_lat_long=(4e-05, -4e-05),
+                                        old_pos=(-8.0, 8.0), new_pos=(-4.0, 4.0)))
 
     def test_calculate_velocity(self):
         from main import calculate_velocity
@@ -71,8 +71,8 @@ class Test3DWinds(unittest.TestCase):
             speed, angle = calculate_velocity(case.i_old, case.j_old, case.i_displacements[case.i_old][case.j_old],
                                               case.j_displacements[case.i_old][case.j_old], case.area_definition)
             # print('velocity:', '{0} m/sec, {1}°'.format(speed, angle))
-            self.assertEqual(case.speed, round(speed, 6))
-            self.assertEqual(case.angle, round(angle, 6))
+            self.assertEqual(case.speed, round(speed, 5))
+            self.assertEqual(case.angle, round(angle, 5))
 
     def test_u_v_component(self):
         from main import u_v_component
@@ -80,8 +80,8 @@ class Test3DWinds(unittest.TestCase):
             u, v = u_v_component(case.i_old, case.j_old, case.i_displacements[case.i_old][case.j_old],
                                  case.j_displacements[case.i_old][case.j_old], case.area_definition)
             # print('(u, v):', '({0} m/sec, {1} m/sec)'.format(u, v))
-            self.assertEqual(case.u, round(u, 6))
-            self.assertEqual(case.v, round(v, 6))
+            self.assertEqual(case.u, round(u, 5))
+            self.assertEqual(case.v, round(v, 5))
 
     def test_compute_lat_long(self):
         from main import compute_lat_long
@@ -90,10 +90,10 @@ class Test3DWinds(unittest.TestCase):
         for case in self.test_cases:
             old_lat_long = compute_lat_long(case.i_old, case.j_old, case.area_definition)
             # print('old_lat_long:', old_lat_long)
-            self.assertEqual(case.old_lat_long, tuple(np.round(old_lat_long, 6)))
+            self.assertEqual(case.old_lat_long, tuple(np.round(old_lat_long, 5)))
             new_lat_long = compute_lat_long(case.i_new, case.j_new, case.area_definition)
             # print('new_lat_long:', new_lat_long)
-            self.assertEqual(case.new_lat_long, tuple(np.round(new_lat_long, 6)))
+            self.assertEqual(case.new_lat_long, tuple(np.round(new_lat_long, 5)))
             # # Uses a sphere as an ellipsoid
             # Z = math.pi / 180
             # R = 6370.997
@@ -138,9 +138,9 @@ class Test3DWinds(unittest.TestCase):
             old_pos = _pixel_to_pos(case.i_old, case.j_old, case.area_definition)
             new_pos = _pixel_to_pos(case.i_new, case.j_new, case.area_definition)
             # print('old_pos:', old_pos)
-            self.assertEqual(case.old_pos, tuple(np.round(old_pos, 6)))
+            self.assertEqual(case.old_pos, tuple(np.round(old_pos, 5)))
             # print('new_pos:', new_pos)
-            self.assertEqual(case.new_pos, tuple(np.round(new_pos, 6)))
+            self.assertEqual(case.new_pos, tuple(np.round(new_pos, 5)))
 
     def test_calculate_displacement_vector(self):
         from main import _calculate_displacement_vector
@@ -150,8 +150,8 @@ class Test3DWinds(unittest.TestCase):
                                                              case.j_displacements[case.i_old][case.j_old],
                                                              case.area_definition)
             # print('displacement_vector:', '({0}, {1})'.format(angle, distance))
-            self.assertEqual(case.angle, round(angle, 6))
-            self.assertEqual(case.distance, round(distance, 6))
+            self.assertEqual(case.angle, round(angle, 5))
+            self.assertEqual(case.distance, round(distance, 5))
 
 
 def suite():
