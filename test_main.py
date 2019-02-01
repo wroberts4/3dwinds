@@ -53,17 +53,17 @@ class Test3DWinds(unittest.TestCase):
                                         old_pos=(2000.0, 3427327.91718),
                                         new_pos=(-7796.72623, 3431237.40586)))
         area_def = AreaDefinition('3DWinds', '3DWinds', '3DWinds',
-                                  {'lat_0': '0.0', 'lon_0': '0.0', 'proj': 'stere', 'units': 'm'},
+                                  {'lat_0': 10, 'lon_0': 10, 'proj': 'stere', 'units': 'km'},
                                   5, 5, [-10, -10, 10, 10])
         # i displacement: odd index
-        i_displacements = np.ones((5, 5))
+        i_displacements = np.ones((5, 5)) * .01
         # j displacement: even index
-        j_displacements = np.ones((5, 5))
-        self.test_cases.append(TestCase(area_def, 0, 0, i_displacements, j_displacements, distance=5.65685,
-                                        speed=0.00094, angle=134.99999, u=0.00067, v=-0.00067,
-                                        old_lat_long=(7e-05, -7e-05),
-                                        new_lat_long=(4e-05, -4e-05),
-                                        old_pos=(-8.0, 8.0), new_pos=(-4.0, 4.0)))
+        j_displacements = np.ones((5, 5)) * .01
+        self.test_cases.append(TestCase(area_def, 0, 0, i_displacements, j_displacements, distance=56.56842,
+                                        speed=0.00943, angle=134.98743, u=0.00667, v=-0.00667,
+                                        old_lat_long=(10.07232, 9.92702),
+                                        new_lat_long=(10.07196, 9.92738),
+                                        old_pos=(-8000.0, 8000.0), new_pos=(-7960.0, 7960.0)))
 
     def test_calculate_velocity(self):
         from main import calculate_velocity

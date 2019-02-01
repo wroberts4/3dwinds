@@ -59,7 +59,14 @@ def _reverse(list_like):
 
 def _pixel_to_pos(i, j, area_definition):
     u_l_pixel = area_definition.pixel_upper_left
-    return u_l_pixel[0] + area_definition.pixel_size_x * i, u_l_pixel[1] - area_definition.pixel_size_y * j
+    position = u_l_pixel[0] + area_definition.pixel_size_x * i, u_l_pixel[1] - area_definition.pixel_size_y * j
+    p = Proj(area_definition.proj_dict, errcheck=True, preserve_units=True)
+    tmp_proj_dict = area_definition.proj_dict.copy()
+    # Gets position (x, y) in projection space in meters.
+    if tmp_proj_dict['units'] != 'm':
+        tmp_proj_dict['units'] = 'm'
+        position = transform(p, Proj(tmp_proj_dict, errcheck=True, preserve_units=True), *position)
+    return position
 
 
 def get_area(lon_0, lat_0, projection, units, shape, pixel_size, center):
@@ -106,6 +113,8 @@ def u_v_component(i, j, delta_i, delta_j, area_definition, delta_time=100):
 
 # TODO: FIX DIFFERENT UNITS
 def compute_lat_long(i, j, area_definition):
-    p = Proj(area_definition.proj_dict, errcheck=True, preserve_units=True)
+    proj_dict = area_definition.proj_dict.copy()
+    proj_dict['units'] = 'm'
+    p = Proj(proj_dict, errcheck=True, preserve_units=True)
     # Returns (lat, long) in degrees.
     return _reverse(p(*_pixel_to_pos(i, j, area_definition), errcheck=True, inverse=True))
