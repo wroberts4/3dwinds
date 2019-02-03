@@ -34,7 +34,6 @@ class Test3DWinds(unittest.TestCase):
         self.test_cases = []
         area_def = get_area('stere', (60, 0), (1000, 1000), 4000)
 
-        # i, j displacement: even index, odd index
         i_displacements, j_displacements = get_displacements('C:/Users/William/Documents/3dwinds/airs1.flo',
                                                              shape=(1000, 1000))
 

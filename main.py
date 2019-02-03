@@ -52,6 +52,7 @@ def get_area(projection, lat_lon_0, shape, pixel_size, center=(0, 90), units='m'
 
 
 def get_displacements(filename, shape=None):
+    # Displacement: even index, odd index. Note: (0, 0) is in the top left, i=horizontal and j=vertical.
     i_displacements = np.fromfile(filename, dtype=np.float32)[3:][0::2].reshape(shape)
     j_displacements = np.fromfile(filename, dtype=np.float32)[3:][1::2].reshape(shape)
     # Displacements are in pixels.
