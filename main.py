@@ -6,10 +6,11 @@ import math
 
 def _pixel_to_pos(i, j, area_definition):
     u_l_pixel = area_definition.pixel_upper_left
+    # (x, y) in projection space.
     position = u_l_pixel[0] + area_definition.pixel_size_x * i, u_l_pixel[1] - area_definition.pixel_size_y * j
     p = Proj(area_definition.proj_dict, errcheck=True, preserve_units=True)
     tmp_proj_dict = area_definition.proj_dict.copy()
-    # Gets position (x, y) in projection space in meters.
+    # Get position in meters.
     if tmp_proj_dict['units'] != 'm':
         tmp_proj_dict['units'] = 'm'
         position = transform(p, Proj(tmp_proj_dict, errcheck=True, preserve_units=True), *position)

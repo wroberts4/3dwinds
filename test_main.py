@@ -2,7 +2,7 @@ import unittest
 import numpy as np
 
 
-class TestCase():
+class TestCase:
     def __init__(self, area_definition, i_old, j_old, i_displacements, j_displacements, distance=None, speed=None,
                  angle=None, u=None, v=None, old_lat_long=None, new_lat_long=None, old_pos=None, new_pos=None):
         #  Input data
