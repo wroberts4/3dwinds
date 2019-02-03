@@ -5,13 +5,11 @@ import numpy as np
 class TestCase:
     def __init__(self, area_definition, i_old, j_old, i_displacements, j_displacements, distance=None, speed=None,
                  angle=None, u=None, v=None, old_lat_long=None, new_lat_long=None, old_pos=None, new_pos=None):
-        #  Input data
+        # Input data
         self.i_old = i_old
         self.j_old = j_old
         self.area_definition = area_definition
-        # Pixel_x displacement
         self.i_displacements = i_displacements
-        # Pixel_y displacement
         self.j_displacements = j_displacements
         self.i_new = i_old + i_displacements[i_old][j_old]
         self.j_new = j_old + j_displacements[i_old][j_old]
@@ -83,10 +81,10 @@ class Test3DWinds(unittest.TestCase):
         import numpy as np
         for case in self.test_cases:
             old_lat_long = compute_lat_long(case.i_old, case.j_old, case.area_definition)
-            # print('old_lat_long:', old_lat_long)
-            self.assertEqual(case.old_lat_long, tuple(np.round(old_lat_long, 5)))
             new_lat_long = compute_lat_long(case.i_new, case.j_new, case.area_definition)
+            # print('old_lat_long:', old_lat_long)
             # print('new_lat_long:', new_lat_long)
+            self.assertEqual(case.old_lat_long, tuple(np.round(old_lat_long, 5)))
             self.assertEqual(case.new_lat_long, tuple(np.round(new_lat_long, 5)))
 
     def test_pixel_to_pos(self):
@@ -95,8 +93,8 @@ class Test3DWinds(unittest.TestCase):
             old_pos = _pixel_to_pos(case.i_old, case.j_old, case.area_definition)
             new_pos = _pixel_to_pos(case.i_new, case.j_new, case.area_definition)
             # print('old_pos:', old_pos)
-            self.assertEqual(case.old_pos, tuple(np.round(old_pos, 5)))
             # print('new_pos:', new_pos)
+            self.assertEqual(case.old_pos, tuple(np.round(old_pos, 5)))
             self.assertEqual(case.new_pos, tuple(np.round(new_pos, 5)))
 
 
