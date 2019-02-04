@@ -30,7 +30,7 @@ class Test3DWinds(unittest.TestCase):
         from main import get_displacements, get_area
         from pyresample.geometry import AreaDefinition
         self.test_cases = []
-        area_def = get_area('stere', (60, 0), (1000, 1000), 4000)
+        area_def = get_area('stere', (60, 0), (1000, 1000), 4000, ellps='WGS84')
 
         i_displacements, j_displacements = get_displacements('C:/Users/William/Documents/3dwinds/airs1.flo',
                                                              shape=(1000, 1000))

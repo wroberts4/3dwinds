@@ -1,5 +1,6 @@
 from pyproj import transform, Proj, Geod
 from pyresample.geometry import AreaDefinition
+from pyresample.utils import proj4_str_to_dict
 import numpy as np
 import math
 
@@ -17,8 +18,8 @@ def _pixel_to_pos(i, j, area_definition):
     return position
 
 
-def _delta_longitude(long1, long2):
-    delta_long = long1 - long2
+def _delta_longitude(new_long, old_long):
+    delta_long = new_long - old_long
     if abs(delta_long) > 180.0:
         if delta_long > 0.0:
             return delta_long - 360.0
@@ -27,25 +28,38 @@ def _delta_longitude(long1, long2):
     return delta_long
 
 
-def _lat_long_dist(lat, **kwargs):
-    # Credit: https://gis.stackexchange.com/questions/75528/understanding-terms-in-length-of-degree-formula/75535#75535
-    g = Geod(ellps='WGS84')
+def _make_geod(default, **kwargs):
     # Only allow values that are not None in kwargs:
     for key, val in kwargs.items():
         if val is not None:
-            g = Geod(**{key: val for key, val in kwargs.items() if val is not None})
-            break
+            return Geod(**{key: val for key, val in kwargs.items() if val is not None})
+    try:
+        return Geod(**default)
+    except KeyError:
+        return Geod(ellps='WGS84')
+
+
+def _lat_long_dist(lat, g):
+    # Credit: https://gis.stackexchange.com/questions/75528/understanding-terms-in-length-of-degree-formula/75535#75535
     lat = math.pi / 180 * lat
-    e2 = (2 - 1 * g.f) * g.f
-    lat_dist = 2 * math.pi * g.a * (1 - e2) / (1 - e2 * math.sin(lat) ** 2) ** 1.5 / 360
-    long_dist = 2 * math.pi * g.a / (1 - e2 * math.sin(lat) ** 2) ** .5 * math.cos(lat) / 360
+    lat_dist = 2 * math.pi * g.a * (1 - g.es) / (1 - g.es * math.sin(lat)**2)**1.5 / 360
+    long_dist = 2 * math.pi * g.a / (1 - g.es * math.sin(lat)**2)**.5 * math.cos(lat) / 360
     return lat_dist, long_dist
 
 
-def get_area(projection, lat_lon_0, shape, pixel_size, center=(0, 90), units='m'):
-    proj_dict = {'lat_0': lat_lon_0[0], 'lon_0': lat_lon_0[1], 'proj': projection, 'units': units}
+def make_geod(default, ellps=None, a=None, b=None, rf=None, f=None, **kwargs):
+    return _make_geod(default, ellps=ellps, a=a, b=b, rf=rf, f=f, **kwargs)
+
+
+def get_area(projection, lat_long_0, shape, pixel_size, center=(90, 0), units='m',
+             ellps=None, a=None, b=None, rf=None, f=None, **kwargs):
+    # proj_dict = {'ellps': 'WGS84', 'lat_0': lat_long_0[0], 'lon_0': lat_long_0[1], 'proj': projection, 'units': units}
+    g = make_geod({'ellps': 'WGS84'}, ellps=ellps, a=a, b=b, rf=rf, f=f, **kwargs)
+    proj_string = '+lat_0=' + str(lat_long_0[0]) + ' +lon_0=' + str(lat_long_0[1]) +\
+                  ' +proj=' + projection + ' +units=' + units + ' ' + g.initstring
+    proj_dict = proj4_str_to_dict(proj_string)
     p = Proj(proj_dict, errcheck=True, preserve_units=True)
-    center = p(*center)
+    center = p(*tuple(reversed(center)))
     area_extent = [center[0] - shape[1] * pixel_size / 2, center[1] - shape[0] * pixel_size / 2,
                    center[0] + shape[1] * pixel_size / 2, center[1] + shape[0] * pixel_size / 2]
     return AreaDefinition('3DWinds', '3DWinds', '3DWinds', proj_dict, shape[0], shape[1], area_extent)
@@ -59,8 +73,10 @@ def get_displacements(filename, shape=None):
     return i_displacements, j_displacements
 
 
-def calculate_velocity(i, j, delta_i, delta_j, area_definition, delta_time=100):
-    u, v = u_v_component(i, j, delta_i, delta_j, area_definition, delta_time=delta_time)
+def calculate_velocity(i, j, delta_i, delta_j, area_definition, delta_time=100,
+                       ellps=None, a=None, b=None, rf=None, f=None, **kwargs):
+    u, v = u_v_component(i, j, delta_i, delta_j, area_definition, delta_time=delta_time,
+                         ellps=ellps, a=a, b=b, rf=rf, f=f, **kwargs)
     # When wind vector azimuth is 0 degrees it points North (mathematically 90 degrees) and moves clockwise.
     return (u**2 + v**2)**.5, ((90 - math.atan2(v, u) * 180 / math.pi) + 360) % 360
 
@@ -69,7 +85,8 @@ def u_v_component(i, j, delta_i, delta_j, area_definition, delta_time=100,
                   ellps=None, a=None, b=None, rf=None, f=None, **kwargs):
     old_lat, old_long = compute_lat_long(i, j, area_definition)
     new_lat, new_long = compute_lat_long(i + delta_i, j + delta_j, area_definition)
-    lat_long_distance = _lat_long_dist((new_lat + old_lat) / 2, ellps=ellps, a=a, b=b, rf=rf, f=f, **kwargs)
+    g = make_geod(area_definition.proj_dict, ellps=ellps, a=a, b=b, rf=rf, f=f, **kwargs)
+    lat_long_distance = _lat_long_dist((new_lat + old_lat) / 2, g)
     # u = (_delta_longitude(new_long, old_long) *
     #      _lat_long_dist(old_lat, ellps=ellps, a=a, b=b, rf=rf, f=f, **kwargs)[1] / (delta_time * 60) +
     #      _delta_longitude(new_long, old_long) *
