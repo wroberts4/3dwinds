@@ -3,14 +3,16 @@ import numpy as np
 
 
 class TestCase:
-    def __init__(self, area_definition, i_old, j_old, i_displacements, j_displacements, distance=None, speed=None,
+    def __init__(self, area_definition, displacement_data, i_old, j_old, distance=None, speed=None, shape=None,
                  angle=None, u=None, v=None, old_lat_long=None, new_lat_long=None, old_pos=None, new_pos=None):
+        from main import get_displacements
         # Input data
         self.i_old = i_old
         self.j_old = j_old
         self.area_definition = area_definition
-        self.i_displacements = i_displacements
-        self.j_displacements = j_displacements
+        self.displacement_data = displacement_data
+        self.shape = shape
+        i_displacements, j_displacements = get_displacements(displacement_data, shape=shape)
         self.i_new = i_old + i_displacements[i_old][j_old]
         self.j_new = j_old + j_displacements[i_old][j_old]
         # Output data
@@ -32,17 +34,19 @@ class Test3DWinds(unittest.TestCase):
         self.test_cases = []
         area_def = get_area('stere', (60, 0), (1000, 1000), 4000, ellps='WGS84')
 
-        i_displacements, j_displacements = get_displacements('C:/Users/William/Documents/3dwinds/airs1.flo',
+        i_displacements, j_displacements = get_displacements('/Users/wroberts/Documents/3dwinds/airs1.flo',
                                                              shape=(1000, 1000))
 
-        self.test_cases.append(TestCase(area_def, 0, 0, i_displacements, j_displacements, distance=255333.02691,
+        self.test_cases.append(TestCase(area_def, '/Users/wroberts/Documents/3dwinds/airs1.flo', 0, 0,
+                                        distance=255333.02691, shape=(1000,1000),
                                         speed=42.57497, angle=312.6841, u=-31.29698, v=28.86394,
                                         old_lat_long=(67.62333, -137.17366),
                                         new_lat_long=(69.17597, -141.74266),
                                         old_pos=(-1998000.0, 5427327.91718),
                                         new_pos=(-1690795.53223, 5437447.69676)))
 
-        self.test_cases.append(TestCase(area_def, 500, 500, i_displacements, j_displacements, distance=9825.44021,
+        self.test_cases.append(TestCase(area_def, '/Users/wroberts/Documents/3dwinds/airs1.flo', 500, 500,
+                                        distance=9825.44021, shape=(1000,1000),
                                         speed=2.33208, angle=249.75364, u=-2.18799, v=-0.80703,
                                         old_lat_long=(89.97641, 45.00226),
                                         new_lat_long=(89.93306, -103.7702),
@@ -52,9 +56,9 @@ class Test3DWinds(unittest.TestCase):
         area_def = AreaDefinition('3DWinds', '3DWinds', '3DWinds',
                                   {'lat_0': 10, 'lon_0': 10, 'proj': 'stere', 'units': 'km'},
                                   5, 5, [-10, -10, 10, 10])
-        i_displacements = np.ones((5, 5)) * .01
-        j_displacements = np.ones((5, 5)) * .01
-        self.test_cases.append(TestCase(area_def, 0, 0, i_displacements, j_displacements, distance=56.56842,
+        displacement_data = np.array((np.ones((5, 5)) * .01, np.ones((5, 5)) * .01))
+        self.test_cases.append(TestCase(area_def, displacement_data, 0, 0,
+                                        distance=56.56842, shape=(5, 5),
                                         speed=0.00943, angle=134.9874, u=0.00667, v=-0.00667,
                                         old_lat_long=(10.07232, 9.92702),
                                         new_lat_long=(10.07196, 9.92738),
@@ -63,16 +67,15 @@ class Test3DWinds(unittest.TestCase):
     def test_calculate_velocity(self):
         from main import calculate_velocity
         for case in self.test_cases:
-            speed, angle = calculate_velocity(case.i_old, case.j_old, case.i_displacements[case.i_old][case.j_old],
-                                              case.j_displacements[case.i_old][case.j_old], case.area_definition)
+            speed, angle = calculate_velocity(case.displacement_data, case.i_old, case.j_old, case.area_definition,
+                                              shape=case.shape)
             # print('velocity:', '{0} m/sec, {1}°'.format(speed, angle))
             self.assertEqual((case.speed, case.angle), (round(speed, 5), round(angle, 5)))
 
     def test_u_v_component(self):
         from main import u_v_component
         for case in self.test_cases:
-            u, v = u_v_component(case.i_old, case.j_old, case.i_displacements[case.i_old][case.j_old],
-                                 case.j_displacements[case.i_old][case.j_old], case.area_definition)
+            u, v = u_v_component(case.displacement_data, case.i_old, case.j_old, case.area_definition, shape=case.shape)
             # print('(u, v):', '({0} m/sec, {1} m/sec)'.format(u, v))
             self.assertEqual((case.u, case.v), (round(u, 5), round(v, 5)))
 
