@@ -4,9 +4,24 @@ from pyresample.utils import proj4_str_to_dict
 import numpy as np
 
 
-def _pixel_to_pos(i, j, area_definition):
-    i = np.array(i)
-    j = np.array(j)
+def _get_delta(displacements, i, j):
+    return displacements[0][i][j], displacements[1][i][j]
+
+
+def _to_int(num):
+    if num is None:
+        return None
+    if int(num) != num:
+        raise ValueError('')
+    return int(num)
+
+
+def _pixel_to_pos(area_definition, i=None, j=None, delta_i=0, delta_j=0):
+    if i is None:
+        i = [range(0, area_definition.shape[1]) for y in range(0, area_definition.shape[0])]
+        j = [[y for x in range(0, area_definition.shape[1])] for y in range(0, area_definition.shape[0])]
+    i = np.array(i) + delta_i
+    j = np.array(j) + delta_j
     u_l_pixel = area_definition.pixel_upper_left
     # (x, y) in projection space.
     position = u_l_pixel[0] + area_definition.pixel_size_x * i, u_l_pixel[1] - area_definition.pixel_size_y * j
@@ -118,37 +133,42 @@ def get_area(projection, lat_long_0, shape, pixel_size, center=(90, 0), units='m
     return AreaDefinition('3DWinds', '3DWinds', '3DWinds', proj_dict, shape[0], shape[1], area_extent)
 
 
-def get_displacements(displacment_data, shape=None):
-    if isinstance(displacment_data, str):
+def get_displacements(displacement_data, shape=None):
+    if isinstance(displacement_data, str):
         # Displacement: even index, odd index. Note: (0, 0) is in the top left, i=horizontal and j=vertical.
-        i_displacements = np.fromfile(displacment_data, dtype=np.float32)[3:][0::2].reshape(shape)
-        j_displacements = np.fromfile(displacment_data, dtype=np.float32)[3:][1::2].reshape(shape)
+        i_displacements = np.fromfile(displacement_data, dtype=np.float32)[3:][0::2].reshape(shape)
+        j_displacements = np.fromfile(displacement_data, dtype=np.float32)[3:][1::2].reshape(shape)
         # Displacements are in pixels.
         return i_displacements, j_displacements
-    return displacment_data
+    return displacement_data
 
 
-def calculate_velocity(projection, displacment_data, i=None, j=None, delta_time=100, shape=None, pixel_size=None,
+def calculate_velocity(projection, displacement_data, i=None, j=None, delta_time=100, shape=None, pixel_size=None,
                        lat_0=None,
                        lon_0=None, image_geod=Geod(ellps='WGS84'), earth_geod=Geod(ellps='WGS84'), units='m',
                        center=(90, 0)):
-    u, v = u_v_component(projection, displacment_data, i, j, delta_time=delta_time, shape=shape, image_geod=image_geod,
+    u, v = u_v_component(projection, displacement_data, i, j, delta_time=delta_time, shape=shape, image_geod=image_geod,
                          earth_geod=earth_geod, pixel_size=pixel_size, lat_0=lat_0, lon_0=lon_0, units=units,
                          center=center)
     # When wind vector azimuth is 0 degrees it points North (npematically 90 degrees) and moves clockwise.
     return (u**2 + v**2)**.5, ((90 - np.arctan2(v, u) * 180 / np.pi) + 360) % 360
 
 
-def u_v_component(projection, displacment_data, i=None, j=None, delta_time=100, shape=None, pixel_size=None, lat_0=None,
+def u_v_component(projection, displacement_data, i=None, j=None, delta_time=100, shape=None, pixel_size=None, lat_0=None,
                   lon_0=None, image_geod=Geod(ellps='WGS84'), earth_geod=Geod(ellps='WGS84'), units='m',
                   center=(90, 0)):
-    delta_i, delta_j = get_displacements(displacment_data, shape=shape)
-    old_lat, old_long = _compute_lat_long(projection, i, j, shape=shape, pixel_size=pixel_size, lat_0=lat_0,
-                                          lon_0=lon_0,
-                                         image_geod=image_geod, units=units, center=center)
-    new_lat, new_long = _compute_lat_long(projection, i, j, shape=shape,
-                                         pixel_size=pixel_size, lat_0=lat_0, lon_0=lon_0, image_geod=image_geod,
-                                         units=units, center=center, delta_i=delta_i, delta_j=delta_j)
+    to_int = np.vectorize(_to_int)
+    i, j = to_int(i), to_int(j)
+    if np.size(i) == 1:
+        i = np.ravel(i)[0]
+    if np.size(j) == 1:
+        j = np.ravel(j)[0]
+    delta_i, delta_j = np.vectorize(_get_delta, excluded=[0])(get_displacements(displacement_data, shape=shape), i, j)
+    old_lat, old_long = compute_lat_long(projection, i, j, shape=shape, pixel_size=pixel_size, lat_0=lat_0,
+                                         lon_0=lon_0, image_geod=image_geod, units=units, center=center)
+    new_lat, new_long = compute_lat_long(projection, i, j, shape=shape, pixel_size=pixel_size, lat_0=lat_0,
+                                         lon_0=lon_0, image_geod=image_geod, units=units, center=center,
+                                         delta_i=delta_i, delta_j=delta_j)
     lat_long_distance = _lat_long_dist((new_lat + old_lat) / 2, earth_geod)
     # u = (_delta_longitude(new_long, old_long) *
     #      _lat_long_dist(old_lat, ellps=ellps, a=a, b=b, rf=rf, f=f, **kwargs)[1] / (delta_time * 60) +
@@ -161,50 +181,19 @@ def u_v_component(projection, displacment_data, i=None, j=None, delta_time=100, 
 
 
 def compute_lat_long(projection, i=None, j=None, shape=None, pixel_size=None, lat_0=None, lon_0=None,
-                     image_geod=Geod(ellps='WGS84'), units='m', center=(90, 0)):
-    return _compute_lat_long(projection, i=i, j=j, shape=shape, pixel_size=pixel_size, lat_0=lat_0, lon_0=lon_0,
-                     image_geod=image_geod, units=units, center=center)
-
-
-def _compute_lat_long(projection, i=None, j=None, shape=None, pixel_size=None, lat_0=None, lon_0=None,
-                     image_geod=Geod(ellps='WGS84'), units='m', center=(90, 0), delta_i=None, delta_j=None):
-    if i is None:
-        i = [0, shape[1]]
-    else:
-        try:
-            i = [i, i + 1]
-        except TypeError:
-            i = list(i)
-            i[1] = i[1] + 1
-    if j is None:
-        j = [0, shape[0]]
-    else:
-        try:
-            j = [j, j + 1]
-        except TypeError:
-            j = list(j)
-            j[1] = j[1] + 1
-    if delta_i is None:
-        delta_i = 0
-        delta_j = 0
-    else:
-        delta_i = delta_i[i[0]:i[1], j[0]:j[1]]
-        delta_j = delta_j[i[0]:i[1], j[0]:j[1]]
-    i = np.array(range(i[0], i[1]))
-    j = np.array([[y] for y in range(j[0], j[1])])
+                     image_geod=Geod(ellps='WGS84'), units='m', center=(90, 0), delta_i=0, delta_j=0):
+    if np.size(i) != np.size(j):
+        raise ValueError('i-pixels and j-pixels must be the same size but were ' +
+                         '{0} and {1} respectively'.format(np.size(i), np.size(j)))
+    if np.size(i) == 1:
+        i = np.ravel(i)[0]
+    if np.size(j) == 1:
+        j = np.ravel(j)[0]
     area_definition = get_area(projection, (lat_0, lon_0), shape, pixel_size, center=center, units=units,
                                geod=image_geod)
     proj_dict = area_definition.proj_dict.copy()
     proj_dict['units'] = 'm'
     p = Proj(proj_dict, errcheck=True, preserve_units=True)
     # Returns (lat, long) in degrees.
-    lat, long = reversed(p(*_pixel_to_pos(i + delta_i, j + delta_j, area_definition), errcheck=True, inverse=True))
-    if np.shape(lat) != () and np.shape(lat)[0] == 1:
-        lat = lat[0]
-    if np.shape(lat) != () and np.shape(lat)[0] == 1:
-        lat = lat[0]
-    if np.shape(long) != () and np.shape(long)[0] == 1:
-        long = long[0]
-    if np.shape(long) != () and np.shape(long)[0] == 1:
-        long = long[0]
-    return lat, long
+    return tuple(reversed(p(*_pixel_to_pos(area_definition, i=i, j=j, delta_i=delta_i, delta_j=delta_j), errcheck=True,
+                            inverse=True)))
