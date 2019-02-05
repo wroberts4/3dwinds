@@ -5,7 +5,12 @@ import numpy as np
 
 
 def _get_delta(displacements, i, j):
-    return displacements[0][i][j], displacements[1][i][j]
+    delta_i, delta_j = displacements[0][i][j], displacements[1][i][j]
+    if i is None:
+        delta_i = displacements[0]
+    if j is None:
+        delta_j = displacements[1]
+    return delta_i, delta_j
 
 
 def _to_int(num):
@@ -19,9 +24,16 @@ def _to_int(num):
 def _pixel_to_pos(area_definition, i=None, j=None, delta_i=0, delta_j=0):
     if i is None:
         i = [range(0, area_definition.shape[1]) for y in range(0, area_definition.shape[0])]
+    if j is None:
         j = [[y for x in range(0, area_definition.shape[1])] for y in range(0, area_definition.shape[0])]
-    i = np.array(i) + delta_i
-    j = np.array(j) + delta_j
+    i = np.array(i)
+    j = np.array(j)
+    if np.size(j) == 1 and np.size(i) != 1:
+        i = np.array(i[j])
+    if np.size(i) == 1 and np.size(j) != 1:
+        j = np.array([[k] for k in j[:, i]])
+    i = i + delta_i
+    j = j + delta_j
     u_l_pixel = area_definition.pixel_upper_left
     # (x, y) in projection space.
     position = u_l_pixel[0] + area_definition.pixel_size_x * i, u_l_pixel[1] - area_definition.pixel_size_y * j
@@ -30,7 +42,7 @@ def _pixel_to_pos(area_definition, i=None, j=None, delta_i=0, delta_j=0):
     # Get position in meters.
     if tmp_proj_dict['units'] != 'm':
         tmp_proj_dict['units'] = 'm'
-        position = transform(p, Proj(tmp_proj_dict, errcheck=True, preserve_units=True), *position)
+        position = np.vectorize(transform)(p, Proj(tmp_proj_dict, errcheck=True, preserve_units=True), *position)
     return position
 
 
@@ -182,9 +194,6 @@ def u_v_component(projection, displacement_data, i=None, j=None, delta_time=100,
 
 def compute_lat_long(projection, i=None, j=None, shape=None, pixel_size=None, lat_0=None, lon_0=None,
                      image_geod=Geod(ellps='WGS84'), units='m', center=(90, 0), delta_i=0, delta_j=0):
-    if np.size(i) != np.size(j):
-        raise ValueError('i-pixels and j-pixels must be the same size but were ' +
-                         '{0} and {1} respectively'.format(np.size(i), np.size(j)))
     if np.size(i) == 1:
         i = np.ravel(i)[0]
     if np.size(j) == 1:
