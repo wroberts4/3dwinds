@@ -8,7 +8,7 @@
 <td valign=bottom>&nbsp;<br>
 <font color="#ffffff" face="helvetica, arial">&nbsp;<br><big><big><strong>main</strong></big></big></font></td
 ><td align=right valign=bottom
-><font color="#ffffff" face="helvetica, arial"><a href=".">index</a><br><a href="file:/Users/wroberts/Documents/3dwinds/main.py">/Users/wroberts/Documents/3dwinds/main.py</a></font></td></tr></table>
+><font color="#ffffff" face="helvetica, arial"><a href=".">index</a><br><a href="file:c%3A%5Cusers%5Cwilliam%5Cdocuments%5C3dwinds%5Cmain.py">c:\users\william\documents\3dwinds\main.py</a></font></td></tr></table>
     <p></p>
 <p>
 <table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
@@ -18,19 +18,55 @@
     
 <tr><td bgcolor="#aa55cc"><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt></td><td>&nbsp;</td>
 <td width="100%"><table width="100%" summary="list"><tr><td width="25%" valign=top><a href="numpy.html">numpy</a><br>
-</td><td width="25%" valign=top><a href="pyproj.html">pyproj</a><br>
-</td><td width="25%" valign=top><a href="pyresample.html">pyresample</a><br>
-</td><td width="25%" valign=top></td></tr></table></td></tr></table><p>
+</td><td width="25%" valign=top></td><td width="25%" valign=top></td><td width="25%" valign=top></td></tr></table></td></tr></table><p>
 <table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
 <tr bgcolor="#eeaa77">
 <td colspan=3 valign=bottom>&nbsp;<br>
 <font color="#ffffff" face="helvetica, arial"><big><strong>Functions</strong></big></font></td></tr>
     
 <tr><td bgcolor="#eeaa77"><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt></td><td>&nbsp;</td>
-<td width="100%"><dl><dt><a name="-calculate_velocity"><strong>calculate_velocity</strong></a>(displacement_data, projection='stere', i=None, j=None, delta_time=100, shape=None, pixel_size=None, lat_0=None, lon_0=None, image_geod=pyproj.Geod(ellps='WGS84'), earth_geod=pyproj.Geod(ellps='WGS84'), units='m', center=None)</dt></dl>
- <dl><dt><a name="-compute_lat_long"><strong>compute_lat_long</strong></a>(projection='stere', i=None, j=None, shape=None, pixel_size=None, lat_0=None, lon_0=None, image_geod=pyproj.Geod(ellps='WGS84'), units='m', center=None)</dt></dl>
- <dl><dt><a name="-get_area"><strong>get_area</strong></a>(projection, lat_long_0, shape, pixel_size, center=None, units='m', geod=None)</dt></dl>
+<td width="100%"><dl><dt><a name="-calculate_velocity"><strong>calculate_velocity</strong></a>(lat_0, lon_0, displacement_data, projection='stere', i=None, j=None, delta_time=100, shape=None, pixel_size=None, image_geod=&lt;pyproj.Geod object at 0x000001F8937243F8&gt;, earth_geod=&lt;pyproj.Geod object at 0x000001F8937245D0&gt;, units='m', center=None)</dt></dl>
+ <dl><dt><a name="-compute_lat_long"><strong>compute_lat_long</strong></a>(lat_0, lon_0, projection='stere', i=None, j=None, area_extent=None, shape=None, upper_left_extent=None, center=None, pixel_size=None, radius=None, units='m', width=None, height=None, image_geod=&lt;pyproj.Geod object at 0x000001F893724B58&gt;)</dt><dd><tt>Computes&nbsp;latitude&nbsp;and&nbsp;longitude&nbsp;given&nbsp;an&nbsp;area&nbsp;and&nbsp;pixel-displacement.<br>
+&nbsp;<br>
+Args:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;lat_0&nbsp;(float):<br>
+&nbsp;&nbsp;&nbsp;&nbsp;lon_0&nbsp;(float):<br>
+&nbsp;&nbsp;&nbsp;&nbsp;projection&nbsp;(str):&nbsp;Name&nbsp;of&nbsp;projection&nbsp;that&nbsp;pixels&nbsp;are&nbsp;describing&nbsp;(stere,&nbsp;laea,&nbsp;merc,&nbsp;etc).<br>
+&nbsp;&nbsp;&nbsp;&nbsp;i&nbsp;(float&nbsp;or&nbsp;None,&nbsp;optional):&nbsp;Horizontal&nbsp;value&nbsp;of&nbsp;pixel&nbsp;to&nbsp;find&nbsp;lat/long&nbsp;of.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;j&nbsp;(float&nbsp;or&nbsp;None,&nbsp;optional):&nbsp;Vertical&nbsp;value&nbsp;of&nbsp;pixel&nbsp;to&nbsp;find&nbsp;lat/long&nbsp;of.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;units&nbsp;(str,&nbsp;optional)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Units&nbsp;that&nbsp;provided&nbsp;arguments&nbsp;should&nbsp;be&nbsp;interpreted&nbsp;as.&nbsp;This&nbsp;can&nbsp;be<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;one&nbsp;of&nbsp;'deg',&nbsp;'degrees',&nbsp;'rad',&nbsp;'radians',&nbsp;'meters',&nbsp;'metres',&nbsp;and&nbsp;any<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;parameter&nbsp;supported&nbsp;by&nbsp;the<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;`cs2cs&nbsp;-lu&nbsp;&lt;https://proj4.org/apps/cs2cs.html#cmdoption-cs2cs-lu&gt;`_<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;command.&nbsp;Units&nbsp;are&nbsp;determined&nbsp;in&nbsp;the&nbsp;following&nbsp;priority:<br>
+&nbsp;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;1.&nbsp;units&nbsp;expressed&nbsp;with&nbsp;each&nbsp;variable&nbsp;through&nbsp;a&nbsp;DataArray's&nbsp;attrs&nbsp;attribute.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;2.&nbsp;units&nbsp;passed&nbsp;to&nbsp;``units``<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;4.&nbsp;meters<br>
+&nbsp;&nbsp;&nbsp;&nbsp;area_extent&nbsp;(list,&nbsp;optional)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Area&nbsp;extent&nbsp;as&nbsp;a&nbsp;list&nbsp;(lower_left_x,&nbsp;lower_left_y,&nbsp;upper_right_x,&nbsp;upper_right_y)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;shape&nbsp;(list,&nbsp;optional)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Number&nbsp;of&nbsp;pixels&nbsp;in&nbsp;the&nbsp;y&nbsp;and&nbsp;x&nbsp;direction&nbsp;(height,&nbsp;width)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;upper_left_extent&nbsp;(list,&nbsp;optional)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Upper&nbsp;left&nbsp;corner&nbsp;of&nbsp;upper&nbsp;left&nbsp;pixel&nbsp;(x,&nbsp;y)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;center&nbsp;(list,&nbsp;optional)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Center&nbsp;of&nbsp;projection&nbsp;(lat,&nbsp;long)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;resolution&nbsp;(list&nbsp;or&nbsp;float,&nbsp;optional)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Size&nbsp;of&nbsp;pixels:&nbsp;(dx,&nbsp;dy)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;radius&nbsp;(list&nbsp;or&nbsp;float,&nbsp;optional)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Length&nbsp;from&nbsp;the&nbsp;center&nbsp;to&nbsp;the&nbsp;edges&nbsp;of&nbsp;the&nbsp;projection&nbsp;(dx,&nbsp;dy)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;width&nbsp;(int,&nbsp;optional)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Number&nbsp;of&nbsp;pixels&nbsp;in&nbsp;the&nbsp;x&nbsp;direction<br>
+&nbsp;&nbsp;&nbsp;&nbsp;height&nbsp;(int,&nbsp;optional)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Number&nbsp;of&nbsp;pixels&nbsp;in&nbsp;the&nbsp;y&nbsp;direction<br>
+&nbsp;&nbsp;&nbsp;&nbsp;image_geod&nbsp;(Geod):<br>
+&nbsp;<br>
+&nbsp;<br>
+Returns:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;latitude,&nbsp;longitude:&nbsp;latitude&nbsp;and&nbsp;longitude&nbsp;calculated&nbsp;from&nbsp;area&nbsp;and&nbsp;pixel-displacement</tt></dd></dl>
+ <dl><dt><a name="-get_area"><strong>get_area</strong></a>(lat_0, lon_0, projection='stere', area_extent=None, shape=None, upper_left_extent=None, center=None, pixel_size=None, radius=None, units='m', width=None, height=None, image_geod=&lt;pyproj.Geod object at 0x000001F893724220&gt;)</dt></dl>
  <dl><dt><a name="-get_displacements"><strong>get_displacements</strong></a>(displacement_data, shape=None)</dt></dl>
- <dl><dt><a name="-u_v_component"><strong>u_v_component</strong></a>(displacement_data, projection='stere', i=None, j=None, delta_time=100, shape=None, pixel_size=None, lat_0=None, lon_0=None, center=None, image_geod=pyproj.Geod(ellps='WGS84'), earth_geod=pyproj.Geod(ellps='WGS84'), units='m')</dt></dl>
+ <dl><dt><a name="-u_v_component"><strong>u_v_component</strong></a>(lat_0, lon_0, displacement_data, projection='stere', i=None, j=None, delta_time=100, shape=None, pixel_size=None, center=None, image_geod=&lt;pyproj.Geod object at 0x000001F8937247A8&gt;, earth_geod=&lt;pyproj.Geod object at 0x000001F893724980&gt;, units='m')</dt></dl>
 </td></tr></table>
 </body></html>

@@ -1,7 +1,7 @@
-from pyproj import transform, Proj, Geod
-from pyresample.geometry import AreaDefinition
-from pyresample.utils import proj4_str_to_dict
+from pyproj import Proj, Geod
+from pyresample.utils import create_area_def
 import numpy as np
+from xarray import DataArray
 
 
 def _extrapolate_i_j(i, j, shape, delta_i=0, delta_j=0):
@@ -37,12 +37,6 @@ def _pixel_to_pos(area_definition, i=None, j=None):
     u_l_pixel = area_definition.pixel_upper_left
     # (x, y) in projection space.
     position = u_l_pixel[0] + area_definition.pixel_size_x * i, u_l_pixel[1] - area_definition.pixel_size_y * j
-    p = Proj(area_definition.proj_dict, errcheck=True, preserve_units=True)
-    tmp_proj_dict = area_definition.proj_dict.copy()
-    # Get position in meters.
-    if tmp_proj_dict['units'] != 'm':
-        tmp_proj_dict['units'] = 'm'
-        position = transform(p, Proj(tmp_proj_dict, errcheck=True, preserve_units=True), *position)
     return position
 
 
@@ -64,28 +58,27 @@ def _lat_long_dist(lat, g):
     return lat_dist, long_dist
 
 
-def _compute_lat_long(projection='stere', i=None, j=None, shape=None, pixel_size=None, lat_0=None, lon_0=None,
-                      image_geod=Geod(ellps='WGS84'), units='m', center=None, delta_i=0, delta_j=0):
+def _compute_lat_long(lat_0, lon_0, projection='stere', i=None, j=None, area_extent=None, shape=None,
+                     upper_left_extent=None, center=None, pixel_size=None, radius=None, units='m', width=None,
+                     height=None, image_geod=Geod(ellps='WGS84'), delta_i=0, delta_j=0):
     i, j = _extrapolate_i_j(i, j, shape, delta_i, delta_j)
-    area_definition = get_area(projection, (lat_0, lon_0), shape, pixel_size, center=center, units=units,
-                               geod=image_geod)
+    area_definition = get_area(lat_0, lon_0, projection=projection, area_extent=area_extent, shape=shape,
+                               upper_left_extent=upper_left_extent, center=center, pixel_size=pixel_size, radius=radius,
+                               units=units, width=width, height=height, image_geod=image_geod)
     proj_dict = area_definition.proj_dict.copy()
-    proj_dict['units'] = 'm'
     p = Proj(proj_dict, errcheck=True, preserve_units=True)
     # Returns (lat, long) in degrees.
-    return tuple(reversed(p(*_pixel_to_pos(area_definition, i=i, j=j), errcheck=True,
-                            inverse=True)))
+    return tuple(reversed(p(*_pixel_to_pos(area_definition, i=i, j=j), errcheck=True, inverse=True)))
 
 
-def get_area(projection, lat_long_0, shape, pixel_size, center=None, units='m', geod=None):
-    proj_string = '+lat_0=' + str(lat_long_0[0]) + ' +lon_0=' + str(lat_long_0[1]) +\
-                  ' +proj=' + projection + ' +units=' + units + ' ' + geod.initstring
-    proj_dict = proj4_str_to_dict(proj_string)
-    p = Proj(proj_dict, errcheck=True, preserve_units=True)
-    center = p(*tuple(reversed(center)))
-    area_extent = [center[0] - shape[1] * pixel_size / 2, center[1] - shape[0] * pixel_size / 2,
-                   center[0] + shape[1] * pixel_size / 2, center[1] + shape[0] * pixel_size / 2]
-    return AreaDefinition('3DWinds', '3DWinds', '3DWinds', proj_dict, shape[0], shape[1], area_extent)
+def get_area(lat_0, lon_0, projection='stere', area_extent=None, shape=None,
+             upper_left_extent=None, center=None, pixel_size=None, radius=None,
+             units='m', width=None, height=None, image_geod=Geod(ellps='WGS84')):
+    proj_string = '+lat_0={0} +lon_0={1} +proj={2} {3}'.format(lat_0, lon_0, projection, image_geod.initstring)
+    return create_area_def('3DWinds', proj_string, area_extent=area_extent, shape=shape,
+                           upper_left_extent=upper_left_extent, resolution=pixel_size,
+                           center=DataArray(reversed(center), attrs={'units': 'degrees'}),
+                           radius=radius, units=units, width=width, height=height)
 
 
 def get_displacements(displacement_data, shape=None):
@@ -104,28 +97,27 @@ def get_displacements(displacement_data, shape=None):
     return displacement_data, shape
 
 
-def calculate_velocity(displacement_data, projection='stere', i=None, j=None, delta_time=100, shape=None,
-                       pixel_size=None,
-                       lat_0=None, lon_0=None, image_geod=Geod(ellps='WGS84'), earth_geod=Geod(ellps='WGS84'),
-                       units='m', center=None):
-    u, v = u_v_component(displacement_data, projection=projection, i=i, j=j, delta_time=delta_time, shape=shape,
-                         image_geod=image_geod, earth_geod=earth_geod, pixel_size=pixel_size, lat_0=lat_0,
-                         lon_0=lon_0, units=units, center=center)
+def calculate_velocity(lat_0, lon_0, displacement_data, projection='stere', i=None, j=None, delta_time=100, shape=None,
+                       pixel_size=None, image_geod=Geod(ellps='WGS84'),
+                       earth_geod=Geod(ellps='WGS84'), units='m', center=None):
+    u, v = u_v_component(lat_0, lon_0, displacement_data, projection=projection, i=i, j=j,
+                         delta_time=delta_time, shape=shape, image_geod=image_geod, earth_geod=earth_geod,
+                         pixel_size=pixel_size, units=units, center=center)
     # When wind vector azimuth is 0 degrees it points North (npematically 90 degrees) and moves clockwise.
     return (u**2 + v**2)**.5, ((90 - np.arctan2(v, u) * 180 / np.pi) + 360) % 360
 
 
-def u_v_component(displacement_data, projection='stere', i=None, j=None, delta_time=100, shape=None,
-                  pixel_size=None, lat_0=None, lon_0=None, center=None, image_geod=Geod(ellps='WGS84'),
+def u_v_component(lat_0, lon_0, displacement_data, projection='stere', i=None, j=None, delta_time=100, shape=None,
+                  pixel_size=None, center=None, image_geod=Geod(ellps='WGS84'),
                   earth_geod=Geod(ellps='WGS84'), units='m'):
     i_error = ValueError('i must be None or an integer but was provided {0} as type {1}'.format(i, type(i)))
     j_error = ValueError('j must be None or an integer but was provided {0} as type {1}'.format(j, type(j)))
     i, j = _to_int(i, i_error), _to_int(j, j_error)
     delta_i, delta_j, shape = _get_delta(i, j, *get_displacements(displacement_data, shape=shape))
-    old_lat, old_long = _compute_lat_long(projection=projection, i=i, j=j, shape=shape, pixel_size=pixel_size,
-                                          lat_0=lat_0, lon_0=lon_0, image_geod=image_geod, units=units, center=center)
-    new_lat, new_long = _compute_lat_long(projection=projection, i=i, j=j, shape=shape, pixel_size=pixel_size,
-                                          lat_0=lat_0, lon_0=lon_0, image_geod=image_geod, units=units, center=center,
+    old_lat, old_long = _compute_lat_long(lat_0, lon_0, projection=projection, i=i, j=j, shape=shape, pixel_size=pixel_size,
+                                          image_geod=image_geod, units=units, center=center)
+    new_lat, new_long = _compute_lat_long(lat_0, lon_0, projection=projection, i=i, j=j, shape=shape, pixel_size=pixel_size,
+                                          image_geod=image_geod, units=units, center=center,
                                           delta_i=delta_i, delta_j=delta_j)
     lat_long_distance = _lat_long_dist((new_lat + old_lat) / 2, earth_geod)
     # u = (_delta_longitude(new_long, old_long) *
@@ -138,7 +130,50 @@ def u_v_component(displacement_data, projection='stere', i=None, j=None, delta_t
     return u, v
 
 
-def compute_lat_long(projection='stere', i=None, j=None, shape=None, pixel_size=None, lat_0=None,
-                     lon_0=None, image_geod=Geod(ellps='WGS84'), units='m', center=None):
-    return _compute_lat_long(projection=projection, i=i, j=j, shape=shape, pixel_size=pixel_size, lat_0=lat_0,
-                             lon_0=lon_0, image_geod=image_geod, units=units, center=center)
+def compute_lat_long(lat_0, lon_0, projection='stere', i=None, j=None, area_extent=None, shape=None,
+                     upper_left_extent=None, center=None, pixel_size=None, radius=None, units='m',
+                     width=None, height=None, image_geod=Geod(ellps='WGS84')):
+    """Computes latitude and longitude given an area and pixel-displacement.
+
+    Args:
+        lat_0 (float):
+        lon_0 (float):
+        projection (str): Name of projection that pixels are describing (stere, laea, merc, etc).
+        i (float or None, optional): Horizontal value of pixel to find lat/long of.
+        j (float or None, optional): Vertical value of pixel to find lat/long of.
+        units (str, optional)
+            Units that provided arguments should be interpreted as. This can be
+            one of 'deg', 'degrees', 'rad', 'radians', 'meters', 'metres', and any
+            parameter supported by the
+            `cs2cs -lu <https://proj4.org/apps/cs2cs.html#cmdoption-cs2cs-lu>`_
+            command. Units are determined in the following priority:
+
+            1. units expressed with each variable through a DataArray's attrs attribute.
+            2. units passed to ``units``
+            4. meters
+        area_extent (list, optional)
+            Area extent as a list (lower_left_x, lower_left_y, upper_right_x, upper_right_y)
+        shape (list, optional)
+            Number of pixels in the y and x direction (height, width)
+        upper_left_extent (list, optional)
+            Upper left corner of upper left pixel (x, y)
+        center (list, optional)
+            Center of projection (lat, long)
+        resolution (list or float, optional)
+            Size of pixels: (dx, dy)
+        radius (list or float, optional)
+            Length from the center to the edges of the projection (dx, dy)
+        width (int, optional)
+            Number of pixels in the x direction
+        height (int, optional)
+            Number of pixels in the y direction
+        image_geod (Geod):
+
+
+    Returns:
+        latitude, longitude: latitude and longitude calculated from area and pixel-displacement
+
+    """
+    return _compute_lat_long(lat_0, lon_0, projection=projection, i=i, j=j, area_extent=area_extent, shape=shape,
+                     upper_left_extent=upper_left_extent, center=center, pixel_size=pixel_size, radius=radius, units=units, width=width,
+                     height=height, image_geod=image_geod)

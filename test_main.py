@@ -39,7 +39,7 @@ class TestCase:
 class Test3DWinds(unittest.TestCase):
     def setUp(self):
         self.test_cases = []
-        self.test_cases.append(TestCase('/Users/wroberts/Documents/3dwinds/airs1.flo', i=0, j=0, pixel_size=4000,
+        self.test_cases.append(TestCase('C:/Users/William/Documents/3dwinds/airs1.flo', i=0, j=0, pixel_size=4000,
                                         lat_0=60, lon_0=0, distance=255333.02691, shape=(1000,1000), center=(90, 0),
                                         speed=42.57497, angle=312.6841, u=-31.29698, v=28.86394,
                                         old_lat_long=(67.62333, -137.17366),
@@ -64,9 +64,10 @@ class Test3DWinds(unittest.TestCase):
     def test_calculate_velocity(self):
         from main import calculate_velocity
         for case in self.test_cases:
-            speed, angle = calculate_velocity(case.displacement_data, projection=case.projection, i=case.i, j=case.j,
-                                              shape=case.shape, pixel_size=case.pixel_size, lat_0=case.lat_0,
-                                              lon_0=case.lon_0, center=case.center, units=case.units)
+            speed, angle = calculate_velocity(case.lat_0, case.lon_0, case.displacement_data,
+                                              projection=case.projection, i=case.i, j=case.j,
+                                              shape=case.shape, pixel_size=case.pixel_size,
+                                              center=case.center, units=case.units)
             if np.size(speed) == 1:
                 self.assertEqual(case.speed, round(speed, 5))
                 self.assertEqual(case.angle, round(angle, 5))
@@ -77,8 +78,8 @@ class Test3DWinds(unittest.TestCase):
     def test_u_v_component(self):
         from main import u_v_component
         for case in self.test_cases:
-            u, v = u_v_component(case.displacement_data, projection=case.projection, i=case.i, j=case.j,
-                                 shape=case.shape, pixel_size=case.pixel_size, lat_0=case.lat_0, lon_0=case.lon_0,
+            u, v = u_v_component(case.lat_0, case.lon_0, case.displacement_data, projection=case.projection,
+                                 i=case.i, j=case.j, shape=case.shape, pixel_size=case.pixel_size,
                                  center=case.center, units=case.units)
             if np.size(u) == 1:
                 self.assertEqual(case.u, round(u, 5))
@@ -90,11 +91,11 @@ class Test3DWinds(unittest.TestCase):
     def test_compute_lat_long(self):
         from main import compute_lat_long, _compute_lat_long
         for case in self.test_cases:
-            old_lat_long = compute_lat_long(projection=case.projection, i=case.i, j=case.j,
-                                            shape=case.shape, pixel_size=case.pixel_size,
-                                            lat_0=case.lat_0, lon_0=case.lon_0, center=case.center, units=case.units)
-            new_lat_long = _compute_lat_long(projection=case.projection, i=case.i, j=case.j, shape=case.shape,
-                                            pixel_size=case.pixel_size, lat_0=case.lat_0, lon_0=case.lon_0,
+            old_lat_long = compute_lat_long(case.lat_0, case.lon_0, projection=case.projection, i=case.i,
+                                            j=case.j, shape=case.shape, pixel_size=case.pixel_size,
+                                            center=case.center, units=case.units)
+            new_lat_long = _compute_lat_long(case.lat_0, case.lon_0, projection=case.projection, i=case.i,
+                                             j=case.j, shape=case.shape, pixel_size=case.pixel_size,
                                             center=case.center, units=case.units,
                                             delta_i=case.i_displacements,
                                             delta_j=case.j_displacements)
@@ -104,8 +105,9 @@ class Test3DWinds(unittest.TestCase):
     def test_pixel_to_pos(self):
         from main import _pixel_to_pos, get_area, _extrapolate_i_j
         for case in self.test_cases:
-            area_definition = get_area(case.projection, (case.lat_0, case.lon_0), case.shape, case.pixel_size,
-                                       geod=case.image_geod, units=case.units, center=case.center)
+            area_definition = get_area(case.lat_0, case.lon_0, projection=case.projection, shape=case.shape,
+                                       pixel_size=case.pixel_size, image_geod=case.image_geod,
+                                       units=case.units, center=case.center)
             i_old, j_old = _extrapolate_i_j(case.i, case.j, case.shape)
             i_new, j_new = _extrapolate_i_j(case.i, case.j, case.shape, case.i_displacements, case.j_displacements)
             old_pos = _pixel_to_pos(area_definition, i=i_old, j=j_old)
