@@ -39,7 +39,7 @@ class TestCase:
 class Test3DWinds(unittest.TestCase):
     def setUp(self):
         self.test_cases = []
-        self.test_cases.append(TestCase('C:/Users/William/Documents/3dwinds/airs1.flo', i=0, j=0, pixel_size=4000,
+        self.test_cases.append(TestCase('/Users/wroberts/Documents/3dwinds/airs1.flo', i=0, j=0, pixel_size=4000,
                                         lat_0=60, lon_0=0, distance=255333.02691, shape=(1000,1000), center=(90, 0),
                                         speed=42.57497, angle=312.6841, u=-31.29698, v=28.86394,
                                         old_lat_long=(67.62333, -137.17366),
@@ -64,7 +64,7 @@ class Test3DWinds(unittest.TestCase):
     def test_calculate_velocity(self):
         from main import calculate_velocity
         for case in self.test_cases:
-            speed, angle = calculate_velocity(case.lat_0, case.lon_0, case.displacement_data,
+            speed, angle = calculate_velocity(case.displacement_data, case.lat_0, case.lon_0,
                                               projection=case.projection, i=case.i, j=case.j,
                                               shape=case.shape, pixel_size=case.pixel_size,
                                               center=case.center, units=case.units)
@@ -78,7 +78,7 @@ class Test3DWinds(unittest.TestCase):
     def test_u_v_component(self):
         from main import u_v_component
         for case in self.test_cases:
-            u, v = u_v_component(case.lat_0, case.lon_0, case.displacement_data, projection=case.projection,
+            u, v = u_v_component(case.displacement_data, case.lat_0, case.lon_0, projection=case.projection,
                                  i=case.i, j=case.j, shape=case.shape, pixel_size=case.pixel_size,
                                  center=case.center, units=case.units)
             if np.size(u) == 1:
@@ -89,14 +89,15 @@ class Test3DWinds(unittest.TestCase):
                 self.assertEqual(case.v, tuple(np.round(v, 5).tolist()))
 
     def test_compute_lat_long(self):
-        from main import compute_lat_long, _compute_lat_long
+        from main import compute_lat_long, _compute_lat_long, get_area
         for case in self.test_cases:
+            area_definition = get_area(case.lat_0, case.lon_0, projection=case.projection, shape=case.shape,
+                                       pixel_size=case.pixel_size, image_geod=case.image_geod, units=case.units,
+                                       center=case.center)
             old_lat_long = compute_lat_long(case.lat_0, case.lon_0, projection=case.projection, i=case.i,
                                             j=case.j, shape=case.shape, pixel_size=case.pixel_size,
                                             center=case.center, units=case.units)
-            new_lat_long = _compute_lat_long(case.lat_0, case.lon_0, projection=case.projection, i=case.i,
-                                             j=case.j, shape=case.shape, pixel_size=case.pixel_size,
-                                            center=case.center, units=case.units,
+            new_lat_long = _compute_lat_long(area_definition, i=case.i, j=case.j,
                                             delta_i=case.i_displacements,
                                             delta_j=case.j_displacements)
             self.assertEqual(case.old_lat_long, tuple(np.round(old_lat_long, 5).tolist()))
