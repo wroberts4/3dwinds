@@ -16,6 +16,41 @@ def _extrapolate_i_j(i, j, shape, delta_i=0, delta_j=0):
     return np.array(i) + delta_i, np.array(j) + delta_j
 
 
+def _reverse_param(param):
+    if np.size(param) == 1:
+        return param
+    if hasattr(param, 'units'):
+        param = DataArray(reversed(param.data.tolist()), attrs={'units': param.units})
+    elif isinstance(param, DataArray):
+        param = reversed(param.data.tolist())
+    else:
+        param = reversed(param)
+    return list(param)
+
+
+def _get_area_and_displacements(displacement_data, lat_0, lon_0, projection='stere', i=None, j=None,
+                                area_extent=None, shape=None, upper_left_extent=None, center=None, pixel_size=None,
+                                radius=None, units=None, width=None, height=None, image_geod=Geod(ellps='WGS84')):
+    # Try to get a shape.
+    try:
+        area_definition = get_area(lat_0, lon_0, projection=projection, area_extent=area_extent, shape=shape,
+                                   upper_left_extent=upper_left_extent, center=center, pixel_size=pixel_size,
+                                   radius=radius,
+                                   units=units, width=width, height=height, image_geod=image_geod)
+        if hasattr(area_definition, 'shape'):
+            shape = area_definition.shape
+    except ValueError:
+        area_definition = None
+    delta_i, delta_j, shape = _get_delta(i, j, *get_displacements(displacement_data, shape=shape))
+    if not isinstance(area_definition, AreaDefinition):
+        area_definition = get_area(lat_0, lon_0, projection=projection, area_extent=area_extent, shape=shape,
+                                   upper_left_extent=upper_left_extent, center=center, pixel_size=pixel_size,
+                                   radius=radius, units=units, width=width, height=height, image_geod=image_geod)
+    if not isinstance(area_definition, AreaDefinition):
+        raise ValueError('Not enough information provided to create an area definition')
+    return delta_i, delta_j, area_definition
+
+
 def _to_int(num, error):
     if num is None:
         return None
@@ -68,13 +103,18 @@ def _compute_lat_long(area_definition, i=None, j=None, delta_i=0, delta_j=0):
 
 def get_area(lat_0, lon_0, projection='stere', area_extent=None, shape=None,
              upper_left_extent=None, center=None, pixel_size=None, radius=None,
-             units='m', width=None, height=None, image_geod=Geod(ellps='WGS84')):
+             units=None, width=None, height=None, image_geod=Geod(ellps='WGS84')):
     # Center is given in (lat, long) order, but create_area_def needs it in (long, lat) order.
-    if center is not None:
-        if hasattr(center, 'units'):
-            center = DataArray(reversed(center.data.tolist()), attrs={'units': center.units})
-        else:
-            center = DataArray(reversed(center), attrs={'units': 'degrees'})
+    if area_extent is not None:
+        area_extent_ll, area_extent_ur = area_extent[0:2], area_extent[2:4]
+    else:
+        area_extent_ll, area_extent_ur = None, None
+    upper_left_extent, center, pixel_size, radius, area_extent_ll, area_extent_ur =\
+        np.vectorize(_reverse_param)([upper_left_extent, center, pixel_size, radius, area_extent_ll, area_extent_ur])
+    if area_extent is not None:
+        area_extent = area_extent_ll + area_extent_ur
+    if center is not None and not isinstance(center, DataArray):
+        center = DataArray(center, attrs={'units': 'degrees'})
     proj_string = '+lat_0={0} +lon_0={1} +proj={2} {3}'.format(lat_0, lon_0, projection, image_geod.initstring)
     return create_area_def('3DWinds', proj_string, area_extent=area_extent, shape=shape,
                            upper_left_extent=upper_left_extent, resolution=pixel_size,
@@ -87,19 +127,22 @@ def get_displacements(displacement_data, shape=None):
         i_displacements = np.fromfile(displacement_data, dtype=np.float32)[3:][0::2]
         j_displacements = np.fromfile(displacement_data, dtype=np.float32)[3:][1::2]
         if shape is not None:
-            displacement_data = (i_displacements.reshape(shape), j_displacements.reshape(shape))
+            displacements = (i_displacements.reshape(shape), j_displacements.reshape(shape))
         else:
-            shape = (np.size(i_displacements)**.5, np.size(j_displacements)**.5)
-            error = ValueError('shape was not provided, and an integer shape could not be found from '
-                               '{0}: '.format(displacement_data, shape))
-            shape = (_to_int(shape[0], error), _to_int(shape[1], error))
-            displacement_data = (i_displacements.reshape(shape), j_displacements.reshape(shape))
+            try:
+                shape = (np.size(i_displacements)**.5, np.size(j_displacements)**.5)
+                shape = (_to_int(shape[0], ValueError('')), _to_int(shape[1], ValueError('')))
+                displacements = (i_displacements.reshape(shape), j_displacements.reshape(shape))
+            except ValueError:
+                displacements = (i_displacements, j_displacements)
+                shape = np.size(displacements)
+        return displacements, shape
     return displacement_data, shape
 
 
 def calculate_velocity(displacement_data, lat_0, lon_0, projection='stere', i=None, j=None, delta_time=100,
                        area_extent=None, shape=None, upper_left_extent=None, center=None, pixel_size=None,
-                       radius=None, units='m', width=None, height=None, image_geod=Geod(ellps='WGS84'),
+                       radius=None, units=None, width=None, height=None, image_geod=Geod(ellps='WGS84'),
                        earth_geod=Geod(ellps='WGS84')):
     u, v = u_v_component(displacement_data, lat_0, lon_0, projection=projection, i=i, j=j,
                          delta_time=delta_time, area_extent=area_extent, shape=shape,
@@ -112,25 +155,18 @@ def calculate_velocity(displacement_data, lat_0, lon_0, projection='stere', i=No
 
 def u_v_component(displacement_data, lat_0, lon_0, projection='stere', i=None, j=None, delta_time=100,
                   area_extent=None, shape=None, upper_left_extent=None, center=None, pixel_size=None,
-                  radius=None, units='m', width=None, height=None, image_geod=Geod(ellps='WGS84'),
+                  radius=None, units=None, width=None, height=None, image_geod=Geod(ellps='WGS84'),
                   earth_geod=Geod(ellps='WGS84')):
     i_error = ValueError('i must be None or an integer but was provided {0} as type {1}'.format(i, type(i)))
     j_error = ValueError('j must be None or an integer but was provided {0} as type {1}'.format(j, type(j)))
     i, j = _to_int(i, i_error), _to_int(j, j_error)
-    # Try to get a shape.
-    try:
-        area_definition = get_area(lat_0, lon_0, projection=projection, area_extent=area_extent, shape=shape,
-                                   upper_left_extent=upper_left_extent, center=center, pixel_size=pixel_size, radius=radius,
-                                   units=units, width=width, height=height, image_geod=image_geod)
-        if hasattr(area_definition, 'shape'):
-            shape = area_definition.shape
-    except ValueError:
-        area_definition = None
-    delta_i, delta_j, shape = _get_delta(i, j, *get_displacements(displacement_data, shape=shape))
-    if not isinstance(area_definition, AreaDefinition):
-        area_definition = get_area(lat_0, lon_0, projection=projection, area_extent=area_extent, shape=shape,
-                                   upper_left_extent=upper_left_extent, center=center, pixel_size=pixel_size,
-                                   radius=radius, units=units, width=width, height=height, image_geod=image_geod)
+    delta_i, delta_j, area_definition = _get_area_and_displacements(displacement_data, lat_0, lon_0,
+                                                                    projection=projection, i=i, j=j,
+                                                                    area_extent=area_extent, shape=shape,
+                                                                    upper_left_extent=upper_left_extent,
+                                                                    center=center, pixel_size=pixel_size, radius=radius,
+                                                                    units=units, width=width,  height=height,
+                                                                    image_geod=image_geod)
     old_lat, old_long = _compute_lat_long(area_definition, i=i, j=j)
     new_lat, new_long = _compute_lat_long(area_definition, i=i, j=j, delta_i=delta_i, delta_j=delta_j)
     lat_long_distance = _lat_long_dist((new_lat + old_lat) / 2, earth_geod)
@@ -145,7 +181,7 @@ def u_v_component(displacement_data, lat_0, lon_0, projection='stere', i=None, j
 
 
 def compute_lat_long(lat_0, lon_0, projection='stere', i=None, j=None, area_extent=None, shape=None,
-                     upper_left_extent=None, center=None, pixel_size=None, radius=None, units='m',
+                     upper_left_extent=None, center=None, pixel_size=None, radius=None, units=None,
                      width=None, height=None, image_geod=Geod(ellps='WGS84')):
     """Computes latitude and longitude given an area and pixel-displacement.
 

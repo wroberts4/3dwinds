@@ -5,7 +5,7 @@ import numpy as np
 
 class TestCase:
     def __init__(self, displacement_data, projection='stere', i=None, j=None, shape=None, pixel_size=None, lat_0=None,
-                 lon_0=None, image_geod=Geod(ellps='WGS84'), earth_geod=Geod(ellps='WGS84'), units='m', center=None,
+                 lon_0=None, image_geod=Geod(ellps='WGS84'), earth_geod=Geod(ellps='WGS84'), units=None, center=None,
                  distance=None, speed=None, angle=None, u=None, v=None, old_lat_long=None, new_lat_long=None,
                  old_pos=None, new_pos=None):
         from main import get_displacements, _get_delta
@@ -39,7 +39,7 @@ class TestCase:
 class Test3DWinds(unittest.TestCase):
     def setUp(self):
         self.test_cases = []
-        self.test_cases.append(TestCase('/Users/wroberts/Documents/3dwinds/airs1.flo', i=0, j=0, pixel_size=4000,
+        self.test_cases.append(TestCase('C:/Users/William/Documents/3dwinds/airs1.flo', i=0, j=0, pixel_size=4000,
                                         lat_0=60, lon_0=0, distance=255333.02691, shape=(1000,1000), center=(90, 0),
                                         speed=42.57497, angle=312.6841, u=-31.29698, v=28.86394,
                                         old_lat_long=(67.62333, -137.17366),

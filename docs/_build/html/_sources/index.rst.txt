@@ -7,7 +7,6 @@ Welcome to 3dwinds's documentation!
 ===================================
 
 .. toctree::
-   :numbered:
    :maxdepth: 2
    :caption: Table of Contents
 
