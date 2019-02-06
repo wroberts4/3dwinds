@@ -46,13 +46,13 @@ class Test3DWinds(unittest.TestCase):
                                         new_lat_long=(69.17597, -141.74266),
                                         old_pos=(-1998000.0, 5427327.91718),
                                         new_pos=(-1690795.53223, 5437447.69676)))
-        displacement_data = np.array((np.ones((2, 2)), np.ones((2, 2))))
+        displacement_data = np.array((np.ones(4), np.ones(4)))
         old_lat_long = ([[10.01808, 10.01808], [9.98192, 9.98192]], [[9.98176, 10.01824], [9.98176, 10.01824]])
         new_lat_long = ([[9.98192, 9.98191], [9.94575, 9.94575]], [[10.01824, 10.05472], [10.01824, 10.05472]])
         old_pos = ([[-2000.0, 2000.0], [-2000.0, 2000.0]], [[2000.0, 2000.0], [-2000.0, -2000.0]])
         new_pos = ([[2000.0, 6000.0], [2000.0, 6000.0]], [[-2000.0, -2000.0], [-6000.0, -6000.0]])
         self.test_cases.append(TestCase(displacement_data, pixel_size=4, lat_0=10, lon_0=10,
-                                        distance=56.56842, shape=(2, 2), units='km', center=(10, 10),
+                                        distance=56.56842, units='km', center=(10, 10),
                                         speed=([0.94281, 0.94281], [0.94281, 0.94281]),
                                         angle=([135.0, 135.00629], [135.0, 135.00628]),
                                         u=([0.66667, 0.66659], [0.66667, 0.66659]),
@@ -89,17 +89,15 @@ class Test3DWinds(unittest.TestCase):
                 self.assertEqual(case.v, tuple(np.round(v, 5).tolist()))
 
     def test_compute_lat_long(self):
-        from main import compute_lat_long, _compute_lat_long, get_area
+        from main import compute_lat_long, get_area
         for case in self.test_cases:
-            area_definition = get_area(case.lat_0, case.lon_0, projection=case.projection, shape=case.shape,
-                                       pixel_size=case.pixel_size, image_geod=case.image_geod, units=case.units,
-                                       center=case.center)
             old_lat_long = compute_lat_long(case.lat_0, case.lon_0, projection=case.projection, i=case.i,
                                             j=case.j, shape=case.shape, pixel_size=case.pixel_size,
                                             center=case.center, units=case.units)
-            new_lat_long = _compute_lat_long(area_definition, i=case.i, j=case.j,
-                                            delta_i=case.i_displacements,
-                                            delta_j=case.j_displacements)
+            new_lat_long = compute_lat_long(case.lat_0, case.lon_0, displacement_data=case.displacement_data,
+                                            projection=case.projection, i=case.i,
+                                            j=case.j, shape=case.shape, pixel_size=case.pixel_size,
+                                            center=case.center, units=case.units)
             self.assertEqual(case.old_lat_long, tuple(np.round(old_lat_long, 5).tolist()))
             self.assertEqual(case.new_lat_long, tuple(np.round(new_lat_long, 5).tolist()))
 

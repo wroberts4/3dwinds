@@ -63,6 +63,8 @@ def _to_int(num, error):
 
 
 def _get_delta(i, j, displacements, shape):
+    if displacements is None:
+        return 0, 0, shape
     if i is None and j is None:
         return displacements[0], displacements[1], shape
     else:
@@ -94,13 +96,6 @@ def _lat_long_dist(lat, g):
     return lat_dist, long_dist
 
 
-def _compute_lat_long(area_definition, i=None, j=None, delta_i=0, delta_j=0):
-    i, j = _extrapolate_i_j(i, j, area_definition.shape, delta_i, delta_j)
-    p = Proj(area_definition.proj_dict, errcheck=True, preserve_units=True)
-    # Returns (lat, long) in degrees.
-    return tuple(reversed(p(*_pixel_to_pos(area_definition, i=i, j=j), errcheck=True, inverse=True)))
-
-
 def get_area(lat_0, lon_0, projection='stere', area_extent=None, shape=None,
              upper_left_extent=None, center=None, pixel_size=None, radius=None,
              units=None, width=None, height=None, image_geod=Geod(ellps='WGS84')):
@@ -121,22 +116,27 @@ def get_area(lat_0, lon_0, projection='stere', area_extent=None, shape=None,
                            center=center, radius=radius, units=units, width=width, height=height)
 
 
+# TODO: ONLY READ IF STRING IS FILE.
 def get_displacements(displacement_data, shape=None):
     if isinstance(displacement_data, str):
         # Displacement: even index, odd index. Note: (0, 0) is in the top left, i=horizontal and j=vertical.
         i_displacements = np.fromfile(displacement_data, dtype=np.float32)[3:][0::2]
         j_displacements = np.fromfile(displacement_data, dtype=np.float32)[3:][1::2]
-        if shape is not None:
-            displacements = (i_displacements.reshape(shape), j_displacements.reshape(shape))
-        else:
-            try:
-                shape = (np.size(i_displacements)**.5, np.size(j_displacements)**.5)
-                shape = (_to_int(shape[0], ValueError('')), _to_int(shape[1], ValueError('')))
-                displacements = (i_displacements.reshape(shape), j_displacements.reshape(shape))
-            except ValueError:
-                displacements = (i_displacements, j_displacements)
-                shape = np.size(displacements)
-        return displacements, shape
+    elif displacement_data is not None:
+        i_displacements = displacement_data[0]
+        j_displacements = displacement_data[1]
+    else:
+        return None, shape
+    if shape is not None:
+        displacement_data = (i_displacements.reshape(shape), j_displacements.reshape(shape))
+    else:
+        try:
+            shape = (np.size(i_displacements)**.5, np.size(j_displacements)**.5)
+            shape = (_to_int(shape[0], ValueError('')), _to_int(shape[1], ValueError('')))
+            displacement_data = (i_displacements.reshape(shape), j_displacements.reshape(shape))
+        except ValueError:
+            displacement_data = (i_displacements, j_displacements)
+            shape = np.size(displacement_data)
     return displacement_data, shape
 
 
@@ -167,8 +167,14 @@ def u_v_component(displacement_data, lat_0, lon_0, projection='stere', i=None, j
                                                                     center=center, pixel_size=pixel_size, radius=radius,
                                                                     units=units, width=width,  height=height,
                                                                     image_geod=image_geod)
-    old_lat, old_long = _compute_lat_long(area_definition, i=i, j=j)
-    new_lat, new_long = _compute_lat_long(area_definition, i=i, j=j, delta_i=delta_i, delta_j=delta_j)
+    old_lat, old_long = compute_lat_long(lat_0, lon_0, projection=projection, i=i, j=j, area_extent=area_extent,
+                                         shape=area_definition.shape, upper_left_extent=upper_left_extent, center=center,
+                                         pixel_size=pixel_size, radius=radius, units=units, width=width, height=height,
+                                         image_geod=image_geod)
+    new_lat, new_long = compute_lat_long(lat_0, lon_0, projection=projection, i=i, j=j, area_extent=area_extent,
+                                         shape=shape, upper_left_extent=upper_left_extent, center=center,
+                                         pixel_size=pixel_size, radius=radius, units=units, width=width, height=height,
+                                         image_geod=image_geod, displacement_data=displacement_data)
     lat_long_distance = _lat_long_dist((new_lat + old_lat) / 2, earth_geod)
     # u = (_delta_longitude(new_long, old_long) *
     #      _lat_long_dist(old_lat, ellps=ellps, a=a, b=b, rf=rf, f=f, **kwargs)[1] / (delta_time * 60) +
@@ -180,8 +186,8 @@ def u_v_component(displacement_data, lat_0, lon_0, projection='stere', i=None, j
     return u, v
 
 
-def compute_lat_long(lat_0, lon_0, projection='stere', i=None, j=None, area_extent=None, shape=None,
-                     upper_left_extent=None, center=None, pixel_size=None, radius=None, units=None,
+def compute_lat_long(lat_0, lon_0, displacement_data=None, projection='stere', i=None, j=None, area_extent=None,
+                     shape=None, upper_left_extent=None, center=None, pixel_size=None, radius=None, units=None,
                      width=None, height=None, image_geod=Geod(ellps='WGS84')):
     """Computes latitude and longitude given an area and pixel-displacement.
 
@@ -224,7 +230,14 @@ def compute_lat_long(lat_0, lon_0, projection='stere', i=None, j=None, area_exte
         latitude, longitude: latitude and longitude calculated from area and pixel-displacement
 
     """
-    area_definition = get_area(lat_0, lon_0, projection=projection, area_extent=area_extent, shape=shape,
-                               upper_left_extent=upper_left_extent, center=center, pixel_size=pixel_size,
-                               radius=radius, units=units, width=width, height=height, image_geod=image_geod)
-    return _compute_lat_long(area_definition, i=i, j=j)
+    delta_i, delta_j, area_definition = _get_area_and_displacements(displacement_data, lat_0, lon_0,
+                                                                    projection=projection, i=i, j=j,
+                                                                    area_extent=area_extent, shape=shape,
+                                                                    upper_left_extent=upper_left_extent,
+                                                                    center=center, pixel_size=pixel_size, radius=radius,
+                                                                    units=units, width=width, height=height,
+                                                                    image_geod=image_geod)
+    i, j = _extrapolate_i_j(i, j, area_definition.shape, delta_i, delta_j)
+    p = Proj(area_definition.proj_dict, errcheck=True, preserve_units=True)
+    # Returns (lat, long) in degrees.
+    return tuple(reversed(p(*_pixel_to_pos(area_definition, i=i, j=j), errcheck=True, inverse=True)))
