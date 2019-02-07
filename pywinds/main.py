@@ -1,5 +1,5 @@
 from pyproj import Proj, Geod
-from pyresample.utils import create_area_def
+from pyresample.utils import create_area_def, proj4_str_to_dict
 from pyresample.geometry import AreaDefinition
 import numpy as np
 from xarray import DataArray
@@ -95,9 +95,12 @@ def _lat_long_dist(lat, g):
     # Credit: https://gis.stackexchange.com/questions/75528/understanding-terms-in-length-of-degree-formula/75535#75535
     if g is None:
         g = Geod(ellps='WGS84')
+    geod_info = proj4_str_to_dict(g.initstring)
+    a, f = geod_info['a'], geod_info['f']
+    e2 = (2 - 1 * f) * f
     lat = np.pi / 180 * lat
-    lat_dist = 2 * np.pi * g.a * (1 - g.es) / (1 - g.es * np.sin(lat)**2)**1.5 / 360
-    long_dist = 2 * np.pi * g.a / (1 - g.es * np.sin(lat)**2)**.5 * np.cos(lat) / 360
+    lat_dist = 2 * np.pi * a * (1 - e2) / (1 - e2 * np.sin(lat)**2)**1.5 / 360
+    long_dist = 2 * np.pi * a / (1 - e2 * np.sin(lat)**2)**.5 * np.cos(lat) / 360
     return lat_dist, long_dist
 
 
@@ -166,13 +169,11 @@ def u_v_component(lat_0, lon_0, displacement_data, projection='stere', i=None, j
     i_error = ValueError('i must be None or an integer but was provided {0} as type {1}'.format(i, type(i)))
     j_error = ValueError('j must be None or an integer but was provided {0} as type {1}'.format(j, type(j)))
     i, j = _to_int(i, i_error), _to_int(j, j_error)
-    area_definition = _get_area_and_displacements(lat_0, lon_0, displacement_data,
-                                                                    projection=projection, i=i, j=j,
-                                                                    area_extent=area_extent, shape=shape,
-                                                                    upper_left_extent=upper_left_extent,
-                                                                    center=center, pixel_size=pixel_size, radius=radius,
-                                                                    units=units, width=width,  height=height,
-                                                                    image_geod=image_geod)[2]
+    area_definition = _get_area_and_displacements(lat_0, lon_0, displacement_data, projection=projection, i=i, j=j,
+                                                  area_extent=area_extent, shape=shape,
+                                                  upper_left_extent=upper_left_extent, center=center,
+                                                  pixel_size=pixel_size, radius=radius, units=units, width=width,
+                                                  height=height, image_geod=image_geod)[2]
     old_lat, old_long = compute_lat_long(lat_0, lon_0, projection=projection, i=i, j=j, area_extent=area_extent,
                                          shape=area_definition.shape, upper_left_extent=upper_left_extent, center=center,
                                          pixel_size=pixel_size, radius=radius, units=units, width=width, height=height,

@@ -38,7 +38,7 @@ class TestCase:
 class Test3DWinds(unittest.TestCase):
     def setUp(self):
         self.test_cases = []
-        self.test_cases.append(TestCase('C:/Users/William/Documents/pywinds/airs1.flo', i=0, j=0, pixel_size=4000,
+        self.test_cases.append(TestCase('/Users/wroberts/Documents/pywinds/airs1.flo', i=0, j=0, pixel_size=4000,
                                         lat_0=60, lon_0=0, distance=255333.02691, shape=(1000,1000), center=(90, 0),
                                         speed=42.57497, angle=312.6841, u=-31.29698, v=28.86394,
                                         old_lat_long=(67.62333, -137.17366),
