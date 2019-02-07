@@ -3,17 +3,15 @@
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
 
-Welcome to 3dwinds's documentation!
-===================================
+3dwinds
+======================================
+3dwinds calculates stuff about winds
 
+Documentation
+-------------
 .. toctree::
    :maxdepth: 2
-   :caption: Table of Contents
 
-
-Indices and tables
-==================
-
-* :ref:`genindex`
-* :ref:`modindex`
-* :ref:`search`
+   installation
+   main
+   API
