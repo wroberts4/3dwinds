@@ -197,44 +197,50 @@ def compute_lat_long(lat_0, lon_0, displacement_data=None, projection='stere', i
                      width=None, height=None, image_geod=None):
     """Computes latitude and longitude given an area and pixel-displacement.
 
-    Args:
-        lat_0 (float):
-        lon_0 (float):
-        displacement_data (str or list):
-        projection (str): Name of projection that pixels are describing (stere, laea, merc, etc).
-        i (float or None, optional): Horizontal value of pixel to find lat/long of.
-        j (float or None, optional): Vertical value of pixel to find lat/long of.
-        units (str, optional)
-            Units that provided arguments should be interpreted as. This can be
-            one of 'deg', 'degrees', 'rad', 'radians', 'meters', 'metres', and any
-            parameter supported by the
-            `cs2cs -lu <https://proj4.org/apps/cs2cs.html#cmdoption-cs2cs-lu>`_
-            command. Units are determined in the following priority:
+    Parameters
+    ----------
+    lat_0 : float
+    lon_0 : float
+    displacement_data : str or list
+    projection : str
+        Name of projection that pixels are describing (stere, laea, merc, etc).
+    i : float or None, optional
+        Horizontal value of pixel to find lat/long of.
+    j : float or None, optional
+        Vertical value of pixel to find lat/long of.
+    units : str, optional
+        Units that provided arguments should be interpreted as. This can be
+        one of 'deg', 'degrees', 'rad', 'radians', 'meters', 'metres', and any
+        parameter supported by the
+        `cs2cs -lu <https://proj4.org/apps/cs2cs.html#cmdoption-cs2cs-lu>`_
+        command. Units are determined in the following priority:
 
-            1. units expressed with each variable through a DataArray's attrs attribute.
-            2. units passed to ``units``
-            3. meters
-        area_extent (list, optional)
-            Area extent as a list (lower_left_x, lower_left_y, upper_right_x, upper_right_y)
-        shape (list, optional)
-            Number of pixels in the y and x direction (height, width)
-        upper_left_extent (list, optional)
-            Upper left corner of upper left pixel (x, y)
-        center (list, optional)
-            Center of projection (lat, long)
-        pixel_size (list or float, optional)
-            Size of pixels: (dx, dy)
-        radius (list or float, optional)
-            Length from the center to the edges of the projection (dx, dy)
-        width (int, optional)
-            Number of pixels in the x direction
-        height (int, optional)
-            Number of pixels in the y direction
-        image_geod (Geod):
+        1. units expressed with each variable through a DataArray's attrs attribute.
+        2. units passed to ``units``
+        3. meters
+    area_extent : list, optional
+        Area extent as a list (lower_left_x, lower_left_y, upper_right_x, upper_right_y)
+    shape : list, optional
+        Number of pixels in the y and x direction (height, width)
+    upper_left_extent : list, optional
+        Upper left corner of upper left pixel (x, y)
+    center : list, optional
+        Center of projection (lat, long)
+    pixel_size : list or float, optional
+        Size of pixels: (dx, dy)
+    radius : list or float, optional
+        Length from the center to the edges of the projection (dx, dy)
+    width : int, optional
+        Number of pixels in the x direction
+    height : int, optional
+        Number of pixels in the y direction
+    image_geod : Geod
+        Spheroid of projection
 
-
-    Returns:
-        latitude, longitude: latitude and longitude calculated from area and pixel-displacement
+    Returns
+    -------
+        (latitude, longitude) : numpy.array
+            latitude and longitude calculated from area and pixel-displacement
 
     """
     delta_i, delta_j, area_definition = _get_area_and_displacements(lat_0, lon_0, displacement_data,

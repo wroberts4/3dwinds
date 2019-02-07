@@ -21,7 +21,7 @@ sys.modules['pywinds'] = pywinds
 
 # -- Project information -----------------------------------------------------
 
-project = '3dwinds'
+project = 'pywinds'
 copyright = '2019, Will Roberts'
 author = 'Will Roberts'
 

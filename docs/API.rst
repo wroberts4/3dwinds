@@ -1,7 +1,5 @@
-3dwinds API
-==============
+pywinds API
+===========
 
-winds
--------------------
 .. automodule:: pywinds.main
     :members:
