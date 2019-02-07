@@ -38,7 +38,7 @@ class TestCase:
 class Test3DWinds(unittest.TestCase):
     def setUp(self):
         self.test_cases = []
-        self.test_cases.append(TestCase('C:/Users/William/Documents/3dwinds/airs1.flo', i=0, j=0, pixel_size=4000,
+        self.test_cases.append(TestCase('C:/Users/William/Documents/pywinds/airs1.flo', i=0, j=0, pixel_size=4000,
                                         lat_0=60, lon_0=0, distance=255333.02691, shape=(1000,1000), center=(90, 0),
                                         speed=42.57497, angle=312.6841, u=-31.29698, v=28.86394,
                                         old_lat_long=(67.62333, -137.17366),
@@ -65,7 +65,8 @@ class Test3DWinds(unittest.TestCase):
             speed, angle = calculate_velocity(case.lat_0, case.lon_0, case.displacement_data,
                                               projection=case.projection, i=case.i, j=case.j,
                                               shape=case.shape, pixel_size=case.pixel_size,
-                                              center=case.center, units=case.units)
+                                              center=case.center, units=case.units, image_geod=case.image_geod,
+                                              earth_geod=case.earth_geod)
             if np.size(speed) == 1:
                 self.assertEqual(case.speed, round(speed, 5))
                 self.assertEqual(case.angle, round(angle, 5))
@@ -77,7 +78,8 @@ class Test3DWinds(unittest.TestCase):
         for case in self.test_cases:
             u, v = u_v_component(case.lat_0, case.lon_0, case.displacement_data, projection=case.projection,
                                  i=case.i, j=case.j, shape=case.shape, pixel_size=case.pixel_size,
-                                 center=case.center, units=case.units)
+                                 center=case.center, units=case.units, image_geod=case.image_geod,
+                                 earth_geod=case.earth_geod)
             if np.size(u) == 1:
                 self.assertEqual(case.u, round(u, 5))
                 self.assertEqual(case.v, round(v, 5))
@@ -89,11 +91,11 @@ class Test3DWinds(unittest.TestCase):
         for case in self.test_cases:
             old_lat_long = compute_lat_long(case.lat_0, case.lon_0, projection=case.projection, i=case.i,
                                             j=case.j, shape=case.shape, pixel_size=case.pixel_size,
-                                            center=case.center, units=case.units)
+                                            center=case.center, units=case.units, image_geod=case.image_geod)
             new_lat_long = compute_lat_long(case.lat_0, case.lon_0, case.displacement_data,
                                             projection=case.projection, i=case.i,
                                             j=case.j, shape=case.shape, pixel_size=case.pixel_size,
-                                            center=case.center, units=case.units)
+                                            center=case.center, units=case.units, image_geod=case.image_geod)
             self.assertEqual(case.old_lat_long, tuple(np.round(old_lat_long, 5).tolist()))
             self.assertEqual(case.new_lat_long, tuple(np.round(new_lat_long, 5).tolist()))
 

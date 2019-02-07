@@ -3,7 +3,7 @@ from xarray import DataArray
 import numpy as np
 
 
-file_name = 'C:/Users/William/Documents/3dwinds/airs1.flo'
+file_name = 'C:/Users/William/Documents/pywinds/airs1.flo'
 lat_0 = 60
 lon_0 = 0
 i_in = None
