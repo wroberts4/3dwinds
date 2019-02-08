@@ -1,7 +1,7 @@
 import numpy as np
 
 
-filename = 'test_data_two'
+filename = 'test_data_three'
 test_data = None
 test_data_shape = (10, 10)
 

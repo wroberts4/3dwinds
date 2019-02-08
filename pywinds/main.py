@@ -1,8 +1,9 @@
 from pyproj import Proj, Geod
 from pyresample.utils import create_area_def, proj4_str_to_dict
 from pyresample.geometry import AreaDefinition
-import numpy as np
 from xarray import DataArray
+import numpy as np
+import dask
 
 
 """Find wind info"""
@@ -75,6 +76,8 @@ def _get_delta(i, j, displacements, shape):
 
 
 def _pixel_to_pos(area_definition, i=None, j=None):
+    if i is None or j is None:
+        i, j = _extrapolate_i_j(i, j, area_definition.shape)
     u_l_pixel = area_definition.pixel_upper_left
     # (x, y) in projection space.
     position = u_l_pixel[0] + area_definition.pixel_size_x * i, u_l_pixel[1] - area_definition.pixel_size_y * j
@@ -251,7 +254,7 @@ def compute_lat_long(lat_0, lon_0, displacement_data=None, projection='stere', i
                                                                     center=center, pixel_size=pixel_size, radius=radius,
                                                                     units=units, width=width, height=height,
                                                                     image_geod=image_geod)
-    i, j = _extrapolate_i_j(i, j, area_definition.shape, delta_i, delta_j)
+    i, j = _extrapolate_i_j(i, j, area_definition.shape, delta_i=delta_i, delta_j=delta_j)
     p = Proj(area_definition.proj_dict, errcheck=True, preserve_units=True)
     # Returns (lat, long) in degrees.
     return np.array(_reverse_param(p(*_pixel_to_pos(area_definition, i=i, j=j), errcheck=True, inverse=True)))

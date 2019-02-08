@@ -6,9 +6,9 @@ from pywinds.main import calculate_velocity, u_v_component, compute_lat_long, ge
 
 class TestCase:
     def __init__(self, displacement_data, projection='stere', i=None, j=None, shape=None, pixel_size=None, lat_0=None,
-                 lon_0=None, image_geod=None, earth_geod=None, units=None, center=None,
-                 distance=None, speed=None, angle=None, u=None, v=None, old_lat_long=None, new_lat_long=None,
-                 old_pos=None, new_pos=None):
+                 lon_0=None, image_geod=None, earth_geod=None, units=None, center=None, distance=None, speed=None,
+                 angle=None, u=None, v=None, old_lat=None, old_long=None, new_lat=None, new_long=None,
+                 old_x=None, old_y=None, new_x=None, new_y=None):
         # Input data
         self.i = i
         self.j = j
@@ -30,96 +30,107 @@ class TestCase:
         self.angle = angle
         self.u = u
         self.v = v
-        self.old_lat_long = old_lat_long
-        self.new_lat_long = new_lat_long
-        self.old_pos = old_pos
-        self.new_pos = new_pos
+        self.old_lat = old_lat
+        self.old_long = old_long
+        self.new_lat = new_lat
+        self.new_long = new_long
+        self.old_x = old_x
+        self.old_y = old_y
+        self.new_x = new_x
+        self.new_y = new_y
 
 
 class Test3DWinds(unittest.TestCase):
     def setUp(self):
         self.test_cases = []
-        self.test_cases.append(TestCase('C:/Users/William/Documents/pywinds/pywinds/test/test_files/test_data_one.flo',
-                                        i=500, j=100, pixel_size=4000,
-                                        lat_0=60, lon_0=0, distance=255333.02691, shape=(1000,1000), center=(90, 0),
-                                        speed=1495.04187, angle=269.95167, u=-1495.04134, v=-1.26108,
-                                        old_lat_long=(77.13293, 179.93048),
-                                        new_lat_long=(77.06515, -179.83879),
-                                        old_pos=(2000.0, 5027327.91718),
-                                        new_pos=(-4664.21032, 5036077.81418)))
-        displacement_data = np.array((np.ones(4), np.ones(4)))
-        old_lat_long = ([[10.01808, 10.01808], [9.98192, 9.98192]], [[9.98176, 10.01824], [9.98176, 10.01824]])
-        new_lat_long = ([[9.98192, 9.98191], [9.94575, 9.94575]], [[10.01824, 10.05472], [10.01824, 10.05472]])
-        old_pos = ([[-2000.0, 2000.0], [-2000.0, 2000.0]], [[2000.0, 2000.0], [-2000.0, -2000.0]])
-        new_pos = ([[2000.0, 6000.0], [2000.0, 6000.0]], [[-2000.0, -2000.0], [-6000.0, -6000.0]])
-        self.test_cases.append(TestCase(displacement_data, pixel_size=4, lat_0=10, lon_0=10,
-                                        distance=56.56842, units='km', center=(10, 10),
-                                        speed=([0.94281, 0.94281], [0.94281, 0.94281]),
-                                        angle=([135.0, 135.00629], [135.0, 135.00628]),
-                                        u=([0.66667, 0.66659], [0.66667, 0.66659]),
-                                        v=([-0.66667, -0.66674], [-0.66667, -0.66674]),
-                                        old_lat_long=old_lat_long,
-                                        new_lat_long=new_lat_long,
-                                        old_pos=old_pos, new_pos=new_pos))
+        self.test_cases.append(TestCase('C:/Users/William/Documents/pywinds/pywinds/test/test_files/test_data_two.flo',
+                                        i=1, j=8, pixel_size=10000, lat_0=60, lon_0=0, center=(90, 0),
+                                        distance=255333.02691, speed=2101.88674, angle=141.3029, u=1314.1062,
+                                        v=-1640.44285, old_lat=89.58692, old_long=-45.03963, new_lat=1.02424,
+                                        new_long=55.49562, old_x=-35000.0, old_y=3394327.91718, new_x=8065000.0,
+                                        new_y=-4705672.08282))
+        displacement_data = np.array(([x for x in range(100)], [x for x in range(100)])) * 10
+        self.test_cases.append(TestCase(displacement_data, pixel_size=5, lat_0=90, lon_0=20, i=1, j=8,
+                                        distance=56.56842, units='km', center=(40, 10), speed=688.49049,
+                                        angle=139.13855, u=450.43258, v=-520.7011, old_lat=39.84993, old_long=9.86386,
+                                        new_lat=11.64909, new_long=36.80117, old_x=-1051407.88566, old_y=-5881082.99511,
+                                        new_x=2998592.11434, new_y=-9931082.99511))
 
     def test_calculate_velocity(self):
         for case in self.test_cases:
             speed, angle = calculate_velocity(case.lat_0, case.lon_0, case.displacement_data,
-                                              projection=case.projection, i=case.i, j=case.j,
-                                              shape=case.shape, pixel_size=case.pixel_size,
+                                              projection=case.projection, shape=case.shape, pixel_size=case.pixel_size,
                                               center=case.center, units=case.units, image_geod=case.image_geod,
                                               earth_geod=case.earth_geod)
-            if np.size(speed) == 1:
-                self.assertEqual(case.speed, round(speed, 5))
-                self.assertEqual(case.angle, round(angle, 5))
-            else:
-                self.assertEqual(case.speed, tuple(np.round(speed, 5).tolist()))
-                self.assertEqual(case.angle, tuple(np.round(angle, 5).tolist()))
-                i, j = case.shape
-                speed_i, angle_j = calculate_velocity(case.lat_0, case.lon_0, case.displacement_data,
-                                                      projection=case.projection, i=i - 1, j=j - 1,
-                                                      shape=case.shape, pixel_size=case.pixel_size,
-                                                      center=case.center, units=case.units, image_geod=case.image_geod,
-                                                      earth_geod=case.earth_geod)
-                self.assertTrue(speed[j - 1, i - 1], speed_i)
-                self.assertTrue(angle[j - 1, i - 1], angle_j)
+            speed_ji, angle_ji = calculate_velocity(case.lat_0, case.lon_0, case.displacement_data,
+                                                    projection=case.projection, i=case.i, j=case.j, shape=case.shape,
+                                                    pixel_size=case.pixel_size, center=case.center, units=case.units,
+                                                    image_geod=case.image_geod, earth_geod=case.earth_geod)
+            self.assertEqual(case.speed, round(speed_ji, 5))
+            self.assertEqual(case.angle, round(angle_ji, 5))
+            self.assertEqual(speed[case.j, case.i], speed_ji)
+            self.assertEqual(angle[case.j, case.i], angle_ji)
 
     def test_u_v_component(self):
         for case in self.test_cases:
             u, v = u_v_component(case.lat_0, case.lon_0, case.displacement_data, projection=case.projection,
-                                 i=case.i, j=case.j, shape=case.shape, pixel_size=case.pixel_size,
-                                 center=case.center, units=case.units, image_geod=case.image_geod,
-                                 earth_geod=case.earth_geod)
-            if np.size(u) == 1:
-                self.assertEqual(case.u, round(u, 5))
-                self.assertEqual(case.v, round(v, 5))
-            else:
-                self.assertEqual(case.u, tuple(np.round(u, 5).tolist()))
-                self.assertEqual(case.v, tuple(np.round(v, 5).tolist()))
+                                 shape=case.shape, pixel_size=case.pixel_size, center=case.center, units=case.units,
+                                 image_geod=case.image_geod, earth_geod=case.earth_geod)
+            u_ji, v_ji = u_v_component(case.lat_0, case.lon_0, case.displacement_data, projection=case.projection,
+                                       i=case.i, j=case.j, shape=case.shape, pixel_size=case.pixel_size,
+                                       center=case.center, units=case.units, image_geod=case.image_geod,
+                                       earth_geod=case.earth_geod)
+            self.assertEqual(case.u, round(u_ji, 5))
+            self.assertEqual(case.v, round(v_ji, 5))
+            self.assertEqual(u[case.j, case.i], u_ji)
+            self.assertEqual(v[case.j, case.i], v_ji)
 
     def test_compute_lat_long(self):
         for case in self.test_cases:
-            old_lat_long = compute_lat_long(case.lat_0, case.lon_0, projection=case.projection, i=case.i,
-                                            j=case.j, shape=case.shape, pixel_size=case.pixel_size,
-                                            center=case.center, units=case.units, image_geod=case.image_geod)
-            new_lat_long = compute_lat_long(case.lat_0, case.lon_0, case.displacement_data,
-                                            projection=case.projection, i=case.i,
-                                            j=case.j, shape=case.shape, pixel_size=case.pixel_size,
-                                            center=case.center, units=case.units, image_geod=case.image_geod)
-            self.assertEqual(case.old_lat_long, tuple(np.round(old_lat_long, 5).tolist()))
-            self.assertEqual(case.new_lat_long, tuple(np.round(new_lat_long, 5).tolist()))
+            old_lat, old_long = compute_lat_long(case.lat_0, case.lon_0, projection=case.projection, shape=case.shape,
+                                                 pixel_size=case.pixel_size, center=case.center, units=case.units,
+                                                 image_geod=case.image_geod)
+            new_lat, new_long = compute_lat_long(case.lat_0, case.lon_0, case.displacement_data,
+                                                 projection=case.projection, shape=case.shape,
+                                                 pixel_size=case.pixel_size, center=case.center, units=case.units,
+                                                 image_geod=case.image_geod)
+            old_lat_ji, old_long_ji = compute_lat_long(case.lat_0, case.lon_0, projection=case.projection, i=case.i,
+                                                       j=case.j, shape=case.shape, pixel_size=case.pixel_size,
+                                                       center=case.center, units=case.units, image_geod=case.image_geod)
+            new_lat_ji, new_long_ji = compute_lat_long(case.lat_0, case.lon_0, case.displacement_data,
+                                                       projection=case.projection, i=case.i, j=case.j, shape=case.shape,
+                                                       pixel_size=case.pixel_size, center=case.center, units=case.units,
+                                                       image_geod=case.image_geod)
+            self.assertEqual(case.old_lat, round(old_lat_ji, 5))
+            self.assertEqual(case.old_long, round(old_long_ji, 5))
+            self.assertEqual(case.new_lat, round(new_lat_ji, 5))
+            self.assertEqual(case.new_long, round(new_long_ji, 5))
+            self.assertEqual(old_lat[case.j, case.i], old_lat_ji)
+            self.assertEqual(old_long[case.j, case.i], old_long_ji)
+            self.assertEqual(new_lat[case.j, case.i], new_lat_ji)
+            self.assertEqual(new_long[case.j, case.i], new_long_ji)
 
     def test_pixel_to_pos(self):
         for case in self.test_cases:
             area_definition = get_area(case.lat_0, case.lon_0, projection=case.projection, shape=case.shape,
-                                       pixel_size=case.pixel_size, image_geod=case.image_geod,
-                                       units=case.units, center=case.center)
-            i_old, j_old = _extrapolate_i_j(case.i, case.j, case.shape)
-            i_new, j_new = _extrapolate_i_j(case.i, case.j, case.shape, case.i_displacements, case.j_displacements)
-            old_pos = _pixel_to_pos(area_definition, i=i_old, j=j_old)
-            new_pos = _pixel_to_pos(area_definition, i=i_new, j=j_new)
-            self.assertEqual(case.old_pos, tuple(np.round(old_pos, 5).tolist()))
-            self.assertEqual(case.new_pos, tuple(np.round(new_pos, 5).tolist()))
+                                       pixel_size=case.pixel_size, image_geod=case.image_geod, units=case.units,
+                                       center=case.center)
+            i_new, j_new = _extrapolate_i_j(None, None, case.shape, delta_i=case.i_displacements,
+                                            delta_j=case.j_displacements)
+            i_new_ji, j_new_ji = _extrapolate_i_j(case.i, case.j, case.shape, delta_i=case.i_displacements,
+                                                  delta_j=case.j_displacements)
+            old_x, old_y = _pixel_to_pos(area_definition)
+            new_x, new_y = _pixel_to_pos(area_definition, i=i_new, j=j_new)
+            old_x_ji, old_y_ji = _pixel_to_pos(area_definition, i=case.i, j=case.j)
+            new_x_ji, new_y_ji = _pixel_to_pos(area_definition, i=i_new_ji, j=j_new_ji)
+            self.assertEqual(case.old_x, round(old_x_ji, 5))
+            self.assertEqual(case.old_y, round(old_y_ji, 5))
+            self.assertEqual(case.new_x, round(new_x_ji, 5))
+            self.assertEqual(case.new_y, round(new_y_ji, 5))
+            self.assertEqual(old_x[case.j, case.i], old_x_ji)
+            self.assertEqual(old_y[case.j, case.i], old_y_ji)
+            self.assertEqual(new_x[case.j, case.i], new_x_ji)
+            self.assertEqual(new_y[case.j, case.i], new_y_ji)
 
 
 def suite():
