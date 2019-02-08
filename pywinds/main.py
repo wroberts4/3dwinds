@@ -71,7 +71,7 @@ def _get_delta(i, j, displacements, shape):
     if i is None and j is None:
         return displacements[0], displacements[1], shape
     else:
-        return displacements[0][i][j], displacements[1][i][j], shape
+        return displacements[0, j, i], displacements[1, j, i], shape
 
 
 def _pixel_to_pos(area_definition, i=None, j=None):
@@ -179,7 +179,7 @@ def u_v_component(lat_0, lon_0, displacement_data, projection='stere', i=None, j
                                          pixel_size=pixel_size, radius=radius, units=units, width=width, height=height,
                                          image_geod=image_geod)
     new_lat, new_long = compute_lat_long(lat_0, lon_0, projection=projection, i=i, j=j, area_extent=area_extent,
-                                         shape=shape, upper_left_extent=upper_left_extent, center=center,
+                                         shape=area_definition.shape, upper_left_extent=upper_left_extent, center=center,
                                          pixel_size=pixel_size, radius=radius, units=units, width=width, height=height,
                                          image_geod=image_geod, displacement_data=displacement_data)
     lat_long_distance = _lat_long_dist((new_lat + old_lat) / 2, earth_geod)

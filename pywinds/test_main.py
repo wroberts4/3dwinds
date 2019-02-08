@@ -39,13 +39,13 @@ class TestCase:
 class Test3DWinds(unittest.TestCase):
     def setUp(self):
         self.test_cases = []
-        self.test_cases.append(TestCase('/Users/wroberts/Documents/pywinds/airs1.flo', i=500, j=100, pixel_size=4000,
+        self.test_cases.append(TestCase('C:/Users/William/Documents/pywinds/airs1.flo', i=500, j=100, pixel_size=4000,
                                         lat_0=60, lon_0=0, distance=255333.02691, shape=(1000,1000), center=(90, 0),
-                                        speed=1493.04632, angle=269.98099, u=-1493.04623, v=-0.49535,
+                                        speed=1495.04187, angle=269.95167, u=-1495.04134, v=-1.26108,
                                         old_lat_long=(77.13293, 179.93048),
-                                        new_lat_long=(77.1063, -179.92276),
+                                        new_lat_long=(77.06515, -179.83879),
                                         old_pos=(2000.0, 5027327.91718),
-                                        new_pos=(-2227.05793, 5030766.26857)))
+                                        new_pos=(-4664.21032, 5036077.81418)))
         displacement_data = np.array((np.ones(4), np.ones(4)))
         old_lat_long = ([[10.01808, 10.01808], [9.98192, 9.98192]], [[9.98176, 10.01824], [9.98176, 10.01824]])
         new_lat_long = ([[9.98192, 9.98191], [9.94575, 9.94575]], [[10.01824, 10.05472], [10.01824, 10.05472]])

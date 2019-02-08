@@ -12,12 +12,12 @@ import numpy as np
 # displacements, new_shape = get_displacements('/Users/wroberts/Documents/pywinds/test')
 # print(displacements)
 
-file_name = '/Users/wroberts/Documents/pywinds/airs1.flo'
+file_name = 'C:/Users/William/Documents/pywinds/airs1.flo'
 lat_0 = 60
 lon_0 = 0
 i_in = None
 j_in = None
-i_out = 1
+i_out = 100
 j_out = 0
 pixel_size = 4000
 center = (90, 0)
@@ -27,9 +27,9 @@ shape = None
 #                               center=center, shape=shape)
 # print('speed:', '{0} m/sec, {1}°'.format(*velocity[:, j_out, i_out]))
 #
-u_v = u_v_component(lat_0, lon_0, file_name, i=i_in, j=j_in, pixel_size=pixel_size, center=center, shape=shape)
-print('(u, v):', '({0} m/sec, {1} m/sec)'.format(*u_v[:, j_out, i_out]))
-print(u_v[:, :3, :3])
+# u_v = u_v_component(lat_0, lon_0, file_name, i=i_in, j=j_in, pixel_size=pixel_size, center=center, shape=shape)
+# print('(u, v):', '({0} m/sec, {1} m/sec)'.format(*u_v[:, j_out, i_out]))
+# print(u_v[:, :3, :3])
 print(u_v_component(lat_0, lon_0, file_name, i=i_out, j=j_out, pixel_size=pixel_size, center=center, shape=shape))
 #
 # displacements, new_shape = get_displacements(file_name, shape=shape)
