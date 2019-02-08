@@ -145,7 +145,7 @@ def get_displacements(displacement_data, shape=None):
             displacement_data = (i_displacements.reshape(shape), j_displacements.reshape(shape))
         except ValueError:
             displacement_data = (i_displacements, j_displacements)
-            shape = np.size(displacement_data)
+            shape = np.size(i_displacements) + np.size(j_displacements)
     return np.array(displacement_data), shape
 
 

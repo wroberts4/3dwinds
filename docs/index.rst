@@ -14,3 +14,7 @@ Documentation
 
    installation.rst
    API.rst
+
+test
+----
+

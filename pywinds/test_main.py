@@ -1,6 +1,7 @@
 import unittest
 import numpy as np
-from pywinds.main import calculate_velocity, u_v_component, compute_lat_long, get_displacements, get_area, _get_delta,_extrapolate_i_j, _pixel_to_pos
+from pywinds.main import calculate_velocity, u_v_component, compute_lat_long, get_displacements, get_area,\
+    _get_delta,_extrapolate_i_j, _pixel_to_pos
 
 
 class TestCase:
@@ -38,13 +39,13 @@ class TestCase:
 class Test3DWinds(unittest.TestCase):
     def setUp(self):
         self.test_cases = []
-        self.test_cases.append(TestCase('/Users/wroberts/Documents/pywinds/airs1.flo', i=0, j=0, pixel_size=4000,
+        self.test_cases.append(TestCase('/Users/wroberts/Documents/pywinds/airs1.flo', i=500, j=100, pixel_size=4000,
                                         lat_0=60, lon_0=0, distance=255333.02691, shape=(1000,1000), center=(90, 0),
-                                        speed=42.57497, angle=312.6841, u=-31.29698, v=28.86394,
-                                        old_lat_long=(67.62333, -137.17366),
-                                        new_lat_long=(69.17597, -141.74266),
-                                        old_pos=(-1998000.0, 5427327.91718),
-                                        new_pos=(-1690795.53223, 5437447.69676)))
+                                        speed=1493.04632, angle=269.98099, u=-1493.04623, v=-0.49535,
+                                        old_lat_long=(77.13293, 179.93048),
+                                        new_lat_long=(77.1063, -179.92276),
+                                        old_pos=(2000.0, 5027327.91718),
+                                        new_pos=(-2227.05793, 5030766.26857)))
         displacement_data = np.array((np.ones(4), np.ones(4)))
         old_lat_long = ([[10.01808, 10.01808], [9.98192, 9.98192]], [[9.98176, 10.01824], [9.98176, 10.01824]])
         new_lat_long = ([[9.98192, 9.98191], [9.94575, 9.94575]], [[10.01824, 10.05472], [10.01824, 10.05472]])
