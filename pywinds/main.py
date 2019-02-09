@@ -3,13 +3,13 @@ from pyresample.utils import create_area_def, proj4_str_to_dict
 from pyresample.geometry import AreaDefinition
 from xarray import DataArray
 import numpy as np
-import dask
 
 
 """Find wind info"""
 
 
 def _extrapolate_i_j(i, j, shape, delta_i=0, delta_j=0):
+    """"""
     if np.size(i) != 1 or np.size(j) != 1 or i is None and j is not None or j is None and i is not None:
         raise ValueError('i and j must both be integers or None but were {0} (type: {1}) and {2} (type: {3}) '
                          'respectively'.format(i, type(i), j, type(j)))
@@ -21,6 +21,7 @@ def _extrapolate_i_j(i, j, shape, delta_i=0, delta_j=0):
 
 
 def _reverse_param(param):
+    """"""
     if np.size(param) == 1:
         return param
     if hasattr(param, 'units'):
@@ -35,6 +36,7 @@ def _reverse_param(param):
 def _get_area_and_displacements(lat_0, lon_0, displacement_data, projection='stere', i=None, j=None,
                                 area_extent=None, shape=None, upper_left_extent=None, center=None, pixel_size=None,
                                 radius=None, units=None, width=None, height=None, image_geod=None):
+    """"""
     # Try to get a shape.
     try:
         area_definition = get_area(lat_0, lon_0, projection=projection, area_extent=area_extent, shape=shape,
@@ -56,6 +58,7 @@ def _get_area_and_displacements(lat_0, lon_0, displacement_data, projection='ste
 
 
 def _to_int(num, error):
+    """"""
     if num is None:
         return None
     try:
@@ -67,6 +70,7 @@ def _to_int(num, error):
 
 
 def _get_delta(i, j, displacements, shape):
+    """"""
     if displacements is None:
         return 0, 0, shape
     if i is None and j is None:
@@ -76,6 +80,7 @@ def _get_delta(i, j, displacements, shape):
 
 
 def _pixel_to_pos(area_definition, i=None, j=None):
+    """"""
     if i is None or j is None:
         i, j = _extrapolate_i_j(i, j, area_definition.shape)
     u_l_pixel = area_definition.pixel_upper_left
@@ -85,6 +90,7 @@ def _pixel_to_pos(area_definition, i=None, j=None):
 
 
 def _delta_longitude(new_long, old_long):
+    """"""
     delta_long = new_long - old_long
     if np.all(abs(delta_long)) > 180.0:
         if np.all(delta_long) > 0.0:
@@ -95,6 +101,7 @@ def _delta_longitude(new_long, old_long):
 
 
 def _lat_long_dist(lat, g):
+    """"""
     # Credit: https://gis.stackexchange.com/questions/75528/understanding-terms-in-length-of-degree-formula/75535#75535
     if g is None:
         g = Geod(ellps='WGS84')
@@ -110,6 +117,15 @@ def _lat_long_dist(lat, g):
 def get_area(lat_0, lon_0, projection='stere', area_extent=None, shape=None,
              upper_left_extent=None, center=None, pixel_size=None, radius=None,
              units=None, width=None, height=None, image_geod=None):
+    """Computes a projection area from what data the user knows.
+
+    Parameters
+    ----------
+
+    Returns
+    -------
+
+    """
     # Center is given in (lat, long) order, but create_area_def needs it in (long, lat) order.
     if area_extent is not None:
         area_extent_ll, area_extent_ur = area_extent[0:2], area_extent[2:4]
@@ -130,6 +146,15 @@ def get_area(lat_0, lon_0, projection='stere', area_extent=None, shape=None,
 
 
 def get_displacements(displacement_data, shape=None):
+    """Retrieves pixel-displacements from a file or list.
+
+    Parameters
+    ----------
+
+    Returns
+    -------
+
+    """
     if isinstance(displacement_data, str):
         # Displacement: even index, odd index. Note: (0, 0) is in the top left, i=horizontal and j=vertical.
         i_displacements = np.fromfile(displacement_data, dtype=np.float32)[3:][0::2]
@@ -156,6 +181,15 @@ def calculate_velocity(lat_0, lon_0, displacement_data, projection='stere', i=No
                        area_extent=None, shape=None, upper_left_extent=None, center=None, pixel_size=None,
                        radius=None, units=None, width=None, height=None, image_geod=None,
                        earth_geod=None):
+    """Computes speed and angle of the wind given an area and pixel-displacement.
+
+    Parameters
+    ----------
+
+    Returns
+    -------
+
+    """
     u, v = u_v_component(lat_0, lon_0, displacement_data, projection=projection, i=i, j=j,
                          delta_time=delta_time, area_extent=area_extent, shape=shape,
                          upper_left_extent=upper_left_extent, center=center, pixel_size=pixel_size,
@@ -169,6 +203,15 @@ def u_v_component(lat_0, lon_0, displacement_data, projection='stere', i=None, j
                   area_extent=None, shape=None, upper_left_extent=None, center=None, pixel_size=None,
                   radius=None, units=None, width=None, height=None, image_geod=None,
                   earth_geod=None):
+    """Computes u and v components of the wind given an area and pixel-displacement.
+
+    Parameters
+    ----------
+
+    Returns
+    -------
+
+    """
     i_error = ValueError('i must be None or an integer but was provided {0} as type {1}'.format(i, type(i)))
     j_error = ValueError('j must be None or an integer but was provided {0} as type {1}'.format(j, type(j)))
     i, j = _to_int(i, i_error), _to_int(j, j_error)
@@ -204,8 +247,12 @@ def compute_lat_long(lat_0, lon_0, displacement_data=None, projection='stere', i
     Parameters
     ----------
     lat_0 : float
+        Normal latitude of projection
     lon_0 : float
+        Normal longitude of projection
     displacement_data : str or list
+        File or list containing displacements: [0, 0, 0, i11, j11, i12, j12, ...] or
+        [[i_displacements], [j_displacements]] respectively.
     projection : str
         Name of projection that pixels are describing (stere, laea, merc, etc).
     i : float or None, optional
@@ -225,7 +272,8 @@ def compute_lat_long(lat_0, lon_0, displacement_data=None, projection='stere', i
     area_extent : list, optional
         Area extent as a list (lower_left_x, lower_left_y, upper_right_x, upper_right_y)
     shape : list, optional
-        Number of pixels in the y and x direction (height, width)
+        Number of pixels in the y and x direction (height, width). Note that shape
+        can be found from the displacement file (in such a case, shape will be square).
     upper_left_extent : list, optional
         Upper left corner of upper left pixel (x, y)
     center : list, optional
@@ -254,7 +302,9 @@ def compute_lat_long(lat_0, lon_0, displacement_data=None, projection='stere', i
                                                                     center=center, pixel_size=pixel_size, radius=radius,
                                                                     units=units, width=width, height=height,
                                                                     image_geod=image_geod)
+    # If i and j are None, make them cover the entire image. Also update values with displacements.
     i, j = _extrapolate_i_j(i, j, area_definition.shape, delta_i=delta_i, delta_j=delta_j)
+    # Function that handles projection to lat/long transformation.
     p = Proj(area_definition.proj_dict, errcheck=True, preserve_units=True)
     # Returns (lat, long) in degrees.
     return np.array(_reverse_param(p(*_pixel_to_pos(area_definition, i=i, j=j), errcheck=True, inverse=True)))
