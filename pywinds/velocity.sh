@@ -1,2 +1,2 @@
 #!/bin/bash
-python velocity.py
+python velocity.py $*

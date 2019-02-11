@@ -1,10 +1,13 @@
-from pywinds.arg_utils import get_kwargs
-from pywinds.wind_functions import calculate_velocity
+from arg_utils import get_args
+from wind_functions import calculate_velocity
 import sys
 
 
 def main(argv):
-    velocity = calculate_velocity(argv[1], argv[2], argv[3], **get_kwargs(calculate_velocity, argv, 3))
+    args = get_args(calculate_velocity, argv, 3)
+    kwargs = args[-1]
+    args = args[:-1]
+    velocity = calculate_velocity(*args, **kwargs)
     print('speed:', '{0} m/sec, {1}°'.format(*velocity))
     return velocity
 

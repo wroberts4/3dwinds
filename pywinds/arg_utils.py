@@ -48,12 +48,12 @@ def _print_usage(func, argv, num_args):
     print(func.__doc__)
 
 
-def get_kwargs(func, argv, num_args):
+def get_args(func, argv, num_args):
     try:
         optlist, args = getopt(argv[1 + num_args:], '',
                                [arg + '=' for arg in getfullargspec(func).args[num_args:]] + ['help'])
-        if 2 * len(optlist) != len(argv[1:]) - num_args:
-            raise GetoptError('Too many positional arguments arguments provided')
+        if 2 * len(optlist) != len(argv[1:]) - num_args and '--help' not in argv[1:]:
+            raise GetoptError('Incorrect number of arguments provided arguments provided')
     except GetoptError as err:
         print(err)
         _print_usage(func, argv, num_args)
@@ -64,4 +64,4 @@ def get_kwargs(func, argv, num_args):
             _print_usage(func, argv, num_args)
             sys.exit(0)
         kwargs[duo[0][2:]] = _arg_to_param(duo[1])
-    return kwargs
+    return argv[1], argv[2], argv[3], kwargs
