@@ -1,6 +1,6 @@
 import unittest
 import numpy as np
-from pywinds.main import calculate_velocity, u_v_component, compute_lat_long, get_displacements, get_area,\
+from pywinds.wind_functions import calculate_velocity, u_v_component, compute_lat_long, get_displacements, get_area,\
     _get_delta,_extrapolate_i_j, _pixel_to_pos
 
 

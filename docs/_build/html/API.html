@@ -1,0 +1,183 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>pywinds API &#8212; pywinds  documentation</title>
+    <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="prev" title="Installing pywinds" href="installation.html" />
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <div class="section" id="module-pywinds.main">
+<span id="pywinds-api"></span><h1>pywinds API<a class="headerlink" href="#module-pywinds.main" title="Permalink to this headline">¶</a></h1>
+<dl class="function">
+<dt id="pywinds.main.calculate_velocity">
+<code class="descclassname">pywinds.main.</code><code class="descname">calculate_velocity</code><span class="sig-paren">(</span><em>lat_0</em>, <em>lon_0</em>, <em>displacement_data</em>, <em>projection='stere'</em>, <em>i=None</em>, <em>j=None</em>, <em>delta_time=100</em>, <em>area_extent=None</em>, <em>shape=None</em>, <em>upper_left_extent=None</em>, <em>center=None</em>, <em>pixel_size=None</em>, <em>radius=None</em>, <em>units=None</em>, <em>width=None</em>, <em>height=None</em>, <em>image_geod=None</em>, <em>earth_geod=None</em><span class="sig-paren">)</span><a class="headerlink" href="#pywinds.main.calculate_velocity" title="Permalink to this definition">¶</a></dt>
+<dd><p>Computes speed and angle of the wind given an area and pixel-displacement.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="pywinds.main.compute_lat_long">
+<code class="descclassname">pywinds.main.</code><code class="descname">compute_lat_long</code><span class="sig-paren">(</span><em>lat_0</em>, <em>lon_0</em>, <em>displacement_data=None</em>, <em>projection='stere'</em>, <em>i=None</em>, <em>j=None</em>, <em>area_extent=None</em>, <em>shape=None</em>, <em>upper_left_extent=None</em>, <em>center=None</em>, <em>pixel_size=None</em>, <em>radius=None</em>, <em>units=None</em>, <em>width=None</em>, <em>height=None</em>, <em>image_geod=None</em><span class="sig-paren">)</span><a class="headerlink" href="#pywinds.main.compute_lat_long" title="Permalink to this definition">¶</a></dt>
+<dd><p>Computes latitude and longitude given an area and pixel-displacement.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>lat_0</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.7)"><em>float</em></a>) – Normal latitude of projection</li>
+<li><strong>lon_0</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.7)"><em>float</em></a>) – Normal longitude of projection</li>
+<li><strong>displacement_data</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><em>str</em></a><em> or </em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.7)"><em>list</em></a>) – File or list containing displacements: [0, 0, 0, i11, j11, i12, j12, …] or
+[[i_displacements], [j_displacements]] respectively.</li>
+<li><strong>projection</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><em>str</em></a>) – Name of projection that pixels are describing (stere, laea, merc, etc).</li>
+<li><strong>i</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.7)"><em>float</em></a><em> or </em><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.7)"><em>None</em></a><em>, </em><em>optional</em>) – Horizontal value of pixel to find lat/long of.</li>
+<li><strong>j</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.7)"><em>float</em></a><em> or </em><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.7)"><em>None</em></a><em>, </em><em>optional</em>) – Vertical value of pixel to find lat/long of.</li>
+<li><strong>units</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><em>str</em></a><em>, </em><em>optional</em>) – <p>Units that provided arguments should be interpreted as. This can be
+one of ‘deg’, ‘degrees’, ‘rad’, ‘radians’, ‘meters’, ‘metres’, and any
+parameter supported by the
+<a class="reference external" href="https://proj4.org/apps/cs2cs.html#cmdoption-cs2cs-lu">cs2cs -lu</a>
+command. Units are determined in the following priority:</p>
+<ol class="arabic">
+<li>units expressed with each variable through a DataArray’s attrs attribute.</li>
+<li>units passed to <code class="docutils literal notranslate"><span class="pre">units</span></code></li>
+<li>meters</li>
+</ol>
+</li>
+<li><strong>area_extent</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.7)"><em>list</em></a><em>, </em><em>optional</em>) – Area extent as a list (lower_left_x, lower_left_y, upper_right_x, upper_right_y)</li>
+<li><strong>shape</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.7)"><em>list</em></a><em>, </em><em>optional</em>) – Number of pixels in the y and x direction (height, width). Note that shape
+can be found from the displacement file (in such a case, shape will be square).</li>
+<li><strong>upper_left_extent</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.7)"><em>list</em></a><em>, </em><em>optional</em>) – Upper left corner of upper left pixel (x, y)</li>
+<li><strong>center</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.7)"><em>list</em></a><em>, </em><em>optional</em>) – Center of projection (lat, long)</li>
+<li><strong>pixel_size</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.7)"><em>list</em></a><em> or </em><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.7)"><em>float</em></a><em>, </em><em>optional</em>) – Size of pixels: (dx, dy)</li>
+<li><strong>radius</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.7)"><em>list</em></a><em> or </em><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.7)"><em>float</em></a><em>, </em><em>optional</em>) – Length from the center to the edges of the projection (dx, dy)</li>
+<li><strong>width</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a><em>, </em><em>optional</em>) – Number of pixels in the x direction</li>
+<li><strong>height</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a><em>, </em><em>optional</em>) – Number of pixels in the y direction</li>
+<li><strong>image_geod</strong> (<em>Geod</em>) – Spheroid of projection</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>(latitude, longitude)</strong> – latitude and longitude calculated from area and pixel-displacement</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">numpy.array</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="pywinds.main.get_area">
+<code class="descclassname">pywinds.main.</code><code class="descname">get_area</code><span class="sig-paren">(</span><em>lat_0</em>, <em>lon_0</em>, <em>projection='stere'</em>, <em>area_extent=None</em>, <em>shape=None</em>, <em>upper_left_extent=None</em>, <em>center=None</em>, <em>pixel_size=None</em>, <em>radius=None</em>, <em>units=None</em>, <em>width=None</em>, <em>height=None</em>, <em>image_geod=None</em><span class="sig-paren">)</span><a class="headerlink" href="#pywinds.main.get_area" title="Permalink to this definition">¶</a></dt>
+<dd><p>Computes a projection area from what data the user knows.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="pywinds.main.get_displacements">
+<code class="descclassname">pywinds.main.</code><code class="descname">get_displacements</code><span class="sig-paren">(</span><em>displacement_data</em>, <em>shape=None</em><span class="sig-paren">)</span><a class="headerlink" href="#pywinds.main.get_displacements" title="Permalink to this definition">¶</a></dt>
+<dd><p>Retrieves pixel-displacements from a file or list.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="pywinds.main.u_v_component">
+<code class="descclassname">pywinds.main.</code><code class="descname">u_v_component</code><span class="sig-paren">(</span><em>lat_0</em>, <em>lon_0</em>, <em>displacement_data</em>, <em>projection='stere'</em>, <em>i=None</em>, <em>j=None</em>, <em>delta_time=100</em>, <em>area_extent=None</em>, <em>shape=None</em>, <em>upper_left_extent=None</em>, <em>center=None</em>, <em>pixel_size=None</em>, <em>radius=None</em>, <em>units=None</em>, <em>width=None</em>, <em>height=None</em>, <em>image_geod=None</em>, <em>earth_geod=None</em><span class="sig-paren">)</span><a class="headerlink" href="#pywinds.main.u_v_component" title="Permalink to this definition">¶</a></dt>
+<dd><p>Computes u and v components of the wind given an area and pixel-displacement.</p>
+</dd></dl>
+
+</div>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="index.html">pywinds</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="installation.html">Installing pywinds</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">pywinds API</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="index.html">Documentation overview</a><ul>
+      <li>Previous: <a href="installation.html" title="previous chapter">Installing pywinds</a></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2019, Will Roberts.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.8.2</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+      |
+      <a href="_sources/API.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

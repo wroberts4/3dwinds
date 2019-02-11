@@ -25,12 +25,11 @@ def _reverse_param(param):
     if np.size(param) == 1:
         return param
     if hasattr(param, 'units'):
-        param = DataArray(reversed(param.data.tolist()), attrs={'units': param.units})
+        return DataArray(list(reversed(param.data.tolist())), attrs={'units': param.units})
     elif isinstance(param, DataArray):
-        param = reversed(param.data.tolist())
+        return list(reversed(param.data.tolist()))
     else:
-        param = reversed(param)
-    return list(param)
+        return list(reversed(param))
 
 
 def _get_area_and_displacements(lat_0, lon_0, displacement_data, projection='stere', i=None, j=None,
@@ -64,7 +63,7 @@ def _to_int(num, error):
     try:
         if int(num) != num:
             raise TypeError
-    except TypeError:
+    except (TypeError, ValueError):
         raise error
     return int(num)
 
@@ -100,12 +99,12 @@ def _delta_longitude(new_long, old_long):
     return delta_long
 
 
-def _lat_long_dist(lat, g):
+def _lat_long_dist(lat, earth_geod):
     """"""
     # Credit: https://gis.stackexchange.com/questions/75528/understanding-terms-in-length-of-degree-formula/75535#75535
-    if g is None:
-        g = Geod(ellps='WGS84')
-    geod_info = proj4_str_to_dict(g.initstring)
+    if earth_geod is None:
+        earth_geod = 'WGS84'
+    geod_info = proj4_str_to_dict(Geod(ellps=earth_geod).initstring)
     a, f = geod_info['a'], geod_info['f']
     e2 = (2 - 1 * f) * f
     lat = np.pi / 180 * lat
@@ -138,9 +137,13 @@ def get_area(lat_0, lon_0, projection='stere', area_extent=None, shape=None,
     if center is not None and not isinstance(center, DataArray):
         center = DataArray(center, attrs={'units': 'degrees'})
     if image_geod is None:
-        image_geod = Geod(ellps='WGS84')
-    proj_string = '+lat_0={0} +lon_0={1} +proj={2} {3}'.format(lat_0, lon_0, projection, image_geod.initstring)
-    return create_area_def('3DWinds', proj_string, area_extent=area_extent, shape=shape,
+        image_geod = 'WGS84'
+    proj_dict = proj4_str_to_dict('+lat_0={0} +lon_0={1} +proj={2} {3}'.format(lat_0, lon_0, projection,
+                                                                               Geod(ellps=image_geod).initstring))
+    if proj_dict['f'] == 0:
+        proj_dict['b'] = proj_dict['a']
+        proj_dict.pop('f')
+    return create_area_def('3DWinds', proj_dict, area_extent=area_extent, shape=shape,
                            upper_left_extent=upper_left_extent, resolution=pixel_size,
                            center=center, radius=radius, units=units, width=width, height=height)
 
@@ -185,9 +188,53 @@ def calculate_velocity(lat_0, lon_0, displacement_data, projection='stere', i=No
 
     Parameters
     ----------
+    lat_0 : float
+        Normal latitude of projection
+    lon_0 : float
+        Normal longitude of projection
+    displacement_data : str or list
+        File or list containing displacements: [0, 0, 0, i11, j11, i12, j12, ...] or
+        [[i_displacements], [j_displacements]] respectively.
+    projection : str
+        Name of projection that pixels are describing (stere, laea, merc, etc).
+    i : float or None, optional
+        Horizontal value of pixel to find lat/long of.
+    j : float or None, optional
+        Vertical value of pixel to find lat/long of.
+    units : str, optional
+        Units that provided arguments should be interpreted as. This can be
+        one of 'deg', 'degrees', 'rad', 'radians', 'meters', 'metres', and any
+        parameter supported by the
+        `cs2cs -lu <https://proj4.org/apps/cs2cs.html#cmdoption-cs2cs-lu>`_
+        command. Units are determined in the following priority:
+
+        1. units expressed with each variable through a DataArray's attrs attribute.
+        2. units passed to ``units``
+        3. meters
+    area_extent : list, optional
+        Area extent as a list (lower_left_x, lower_left_y, upper_right_x, upper_right_y)
+    shape : list, optional
+        Number of pixels in the y and x direction (height, width). Note that shape
+        can be found from the displacement file (in such a case, shape will be square).
+    upper_left_extent : list, optional
+        Upper left corner of upper left pixel (x, y)
+    center : list, optional
+        Center of projection (lat, long)
+    pixel_size : list or float, optional
+        Size of pixels: (dx, dy)
+    radius : list or float, optional
+        Length from the center to the edges of the projection (dx, dy)
+    width : int, optional
+        Number of pixels in the x direction
+    height : int, optional
+        Number of pixels in the y direction
+    image_geod : string
+        Spheroid of projection
 
     Returns
     -------
+        (speed, angle) : numpy.array
+            speed and angle of wind calculated from area and pixel-displacement
 
     """
     u, v = u_v_component(lat_0, lon_0, displacement_data, projection=projection, i=i, j=j,
@@ -286,7 +333,7 @@ def compute_lat_long(lat_0, lon_0, displacement_data=None, projection='stere', i
         Number of pixels in the x direction
     height : int, optional
         Number of pixels in the y direction
-    image_geod : Geod
+    image_geod : string
         Spheroid of projection
 
     Returns
