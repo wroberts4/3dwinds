@@ -48,6 +48,7 @@ def _print_usage(func, argv, num_args):
     print(func.__doc__)
 
 
+# TODO: MAKE TRUE/FALSE ARGS NON-INPUT FLAGS
 def get_args(func, argv, num_args):
     try:
         optlist, args = getopt(argv[1 + num_args:], '',

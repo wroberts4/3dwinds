@@ -1,7 +1,7 @@
 import unittest
 import numpy as np
 from pywinds.wind_functions import calculate_velocity, u_v_component, compute_lat_long, get_displacements, get_area,\
-    _get_delta, _extrapolate_i_j, _pixel_to_pos
+    _extrapolate_j_i, _pixel_to_pos
 
 
 class TestCase:
@@ -23,7 +23,7 @@ class TestCase:
         self.shape = shape
         self.center = center
         displacements, self.shape = get_displacements(displacement_data, shape=shape, i=i, j=j)
-        self.i_displacements, self.j_displacements = displacements
+        self.j_displacements, self.i_displacements = displacements
         # Output data
         self.distance = distance
         self.speed = speed
@@ -115,10 +115,10 @@ class Test3DWinds(unittest.TestCase):
             area_definition = get_area(case.lat_0, case.lon_0, projection=case.projection, shape=case.shape,
                                        pixel_size=case.pixel_size, image_geod=case.image_geod, units=case.units,
                                        center=case.center)
-            i_new, j_new = _extrapolate_i_j(None, None, case.shape, delta_i=case.i_displacements,
-                                            delta_j=case.j_displacements)
-            i_new_ji, j_new_ji = _extrapolate_i_j(case.i, case.j, case.shape, delta_i=case.i_displacements,
-                                                  delta_j=case.j_displacements)
+            j_new, i_new = _extrapolate_j_i(None, None, case.shape, delta_j=case.j_displacements,
+                                            delta_i=case.i_displacements)
+            j_new_ji, i_new_ji = _extrapolate_j_i(case.j, case.i, case.shape, delta_j=case.j_displacements,
+                                                  delta_i=case.i_displacements)
             old_x, old_y = _pixel_to_pos(area_definition)
             new_x, new_y = _pixel_to_pos(area_definition, i=i_new, j=j_new)
             old_x_ji, old_y_ji = _pixel_to_pos(area_definition, i=case.i, j=case.j)

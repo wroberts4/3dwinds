@@ -8,7 +8,7 @@ def main(argv):
     kwargs = args[1]
     args = args[0]
     displacements = get_displacements(*args, **kwargs)
-    print('displacements (i, j): {0}\nshape: {1}'.format(*displacements))
+    print('displacements (j, i): {0}\nshape: {1}'.format(*displacements))
     return displacements
 
 
