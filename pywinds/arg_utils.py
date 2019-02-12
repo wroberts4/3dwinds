@@ -64,4 +64,4 @@ def get_args(func, argv, num_args):
             _print_usage(func, argv, num_args)
             sys.exit(0)
         kwargs[duo[0][2:]] = _arg_to_param(duo[1])
-    return argv[1], argv[2], argv[3], kwargs
+    return argv[1:num_args + 1], kwargs

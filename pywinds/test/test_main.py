@@ -1,7 +1,7 @@
 import unittest
 import numpy as np
 from pywinds.wind_functions import calculate_velocity, u_v_component, compute_lat_long, get_displacements, get_area,\
-    _get_delta,_extrapolate_i_j, _pixel_to_pos
+    _get_delta, _extrapolate_i_j, _pixel_to_pos
 
 
 class TestCase:
@@ -22,8 +22,8 @@ class TestCase:
         self.displacement_data = displacement_data
         self.shape = shape
         self.center = center
-        self.i_displacements, self.j_displacements, self.shape = _get_delta(i, j, *get_displacements(displacement_data,
-                                                                                                     shape=shape))
+        displacements, self.shape = get_displacements(displacement_data, shape=shape, i=i, j=j)
+        self.i_displacements, self.j_displacements = displacements
         # Output data
         self.distance = distance
         self.speed = speed
@@ -43,7 +43,7 @@ class TestCase:
 class Test3DWinds(unittest.TestCase):
     def setUp(self):
         self.test_cases = []
-        self.test_cases.append(TestCase('/Users/wroberts4/Documents/pywinds/pywinds/test/test_files/test_data_two.flo',
+        self.test_cases.append(TestCase('C:/Users/William/Documents/pywinds/pywinds/test/test_files/test_data_two.flo',
                                         i=1, j=8, pixel_size=10000, lat_0=60, lon_0=0, center=(90, 0),
                                         distance=255333.02691, speed=2101.88674, angle=141.3029, u=1314.1062,
                                         v=-1640.44285, old_lat=89.58692, old_long=-45.03963, new_lat=1.02424,

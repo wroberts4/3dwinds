@@ -7,7 +7,7 @@ import numpy as np
 
 
 start = datetime.utcnow()
-file_name = '/Users/wroberts/Documents/pywinds/pywinds/test/test_files/test_data_one.flo'
+file_name = 'C:/Users/William/Documents/pywinds/pywinds/test/test_files/test_data_one.flo'
 lat_0 = 60
 lon_0 = 0
 i_in = None
@@ -15,28 +15,31 @@ j_in = None
 pixel_size = 4000
 center = (90, 0)
 shape = None
-earth_geod = 'sphere'
-image_geod = 'sphere'
+earth_geod = 'WGS84'
+image_geod = 'WGS84'
+save_data=False
 
-velocity = calculate_velocity(lat_0, lon_0, file_name, i=i_in, j=j_in, pixel_size=pixel_size,
-                              center=center, shape=shape, earth_geod=earth_geod, image_geod=image_geod)
+velocity = calculate_velocity(lat_0, lon_0, file_name, i=i_in, j=j_in, pixel_size=pixel_size, center=center,
+                              shape=shape, earth_geod=earth_geod, image_geod=image_geod, save_data=save_data)
 print('speed:', '{0} m/sec, {1}°'.format(*velocity[:, 0, 0]))
 
-u_v = u_v_component(lat_0, lon_0, file_name, i=i_in, j=j_in, pixel_size=pixel_size,
-                    center=center,shape=shape, earth_geod=earth_geod, image_geod=image_geod)
+u_v = u_v_component(lat_0, lon_0, file_name, i=i_in, j=j_in, pixel_size=pixel_size, center=center,
+                    shape=shape, earth_geod=earth_geod, image_geod=image_geod, save_data=save_data)
 print('(u, v):', '({0} m/sec, {1} m/sec)'.format(*u_v[:, 0, 0]))
 
-displacements, new_shape = get_displacements(file_name, shape=shape)
-np.savetxt('/Users/wroberts/Documents/test', displacements[0])
-print(np.fromfile('/Users/wroberts/Documents/test', sep=' ').reshape(new_shape))
+displacements, new_shape = get_displacements(file_name, shape=shape, save_data=save_data)
+# np.ndarray.tofile(displacements, 'C:/Users/William/Documents/test')
+# test = np.fromfile('C:/Users/William/Documents/test', dtype=np.float32)
+# test = test.reshape((2, 1000, 1000))
+
 print('displacements:', *displacements[:, 0, 0], new_shape)
 
-old_lat_long = compute_lat_long(lat_0, lon_0, i=i_in, j=j_in, pixel_size=pixel_size, center=center, shape=new_shape,
-                                image_geod=image_geod)
+old_lat_long = compute_lat_long(lat_0, lon_0, i=i_in, j=j_in, pixel_size=pixel_size, center=center,
+                                shape=new_shape, image_geod=image_geod, save_data=save_data)
 print('old_lat, old_long:', *old_lat_long[:, 0, 0])
 
-new_lat_long = compute_lat_long(lat_0, lon_0, displacement_data=file_name, i=i_in, j=j_in,
-                                pixel_size=pixel_size, center=center, shape=new_shape, image_geod=image_geod)
+new_lat_long = compute_lat_long(lat_0, lon_0, displacement_data=file_name, i=i_in, j=j_in, pixel_size=pixel_size,
+                                center=center, shape=new_shape, image_geod=image_geod, save_data=save_data)
 print('new_lat, new_long:', *new_lat_long[:, 0, 0])
 
 area = get_area(lat_0, lon_0, pixel_size=pixel_size, center=center, shape=new_shape, image_geod=image_geod)

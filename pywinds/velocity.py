@@ -5,10 +5,10 @@ import sys
 
 def main(argv):
     args = get_args(calculate_velocity, argv, 3)
-    kwargs = args[-1]
-    args = args[:-1]
+    kwargs = args[1]
+    args = args[0]
     velocity = calculate_velocity(*args, **kwargs)
-    print('speed:', '{0} m/sec, {1}°'.format(*velocity))
+    print('speed:', '[{0} m/sec, {1}°]'.format(*velocity))
     return velocity
 
 

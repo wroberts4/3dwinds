@@ -3,7 +3,7 @@ from pyresample.utils import create_area_def, proj4_str_to_dict
 from pyresample.geometry import AreaDefinition
 from xarray import DataArray
 import numpy as np
-# TODO: ADD SAVE TO FILE FUNCTIONALITY.
+import os
 
 
 """Find wind info"""
@@ -41,13 +41,12 @@ def _get_area_and_displacements(lat_0, lon_0, displacement_data, projection='ste
     try:
         area_definition = get_area(lat_0, lon_0, projection=projection, area_extent=area_extent, shape=shape,
                                    upper_left_extent=upper_left_extent, center=center, pixel_size=pixel_size,
-                                   radius=radius,
-                                   units=units, width=width, height=height, image_geod=image_geod)
+                                   radius=radius, units=units, width=width, height=height, image_geod=image_geod)
         if hasattr(area_definition, 'shape'):
             shape = area_definition.shape
     except ValueError:
         area_definition = None
-    delta_i, delta_j, shape = _get_delta(i, j, *get_displacements(displacement_data, shape=shape))
+    delta_i, delta_j, shape = _get_delta(i, j, *get_displacements(displacement_data, shape=shape, i=i, j=j))
     if not isinstance(area_definition, AreaDefinition):
         area_definition = get_area(lat_0, lon_0, projection=projection, area_extent=area_extent, shape=shape,
                                    upper_left_extent=upper_left_extent, center=center, pixel_size=pixel_size,
@@ -73,10 +72,7 @@ def _get_delta(i, j, displacements, shape):
     """"""
     if displacements is None:
         return 0, 0, shape
-    if i is None and j is None:
-        return displacements[0], displacements[1], shape
-    else:
-        return displacements[0, j, i], displacements[1, j, i], shape
+    return displacements[0], displacements[1], shape
 
 
 def _pixel_to_pos(area_definition, i=None, j=None):
@@ -104,8 +100,10 @@ def _lat_long_dist(lat, earth_geod):
     """"""
     # Credit: https://gis.stackexchange.com/questions/75528/understanding-terms-in-length-of-degree-formula/75535#75535
     if earth_geod is None:
-        earth_geod = 'WGS84'
-    geod_info = proj4_str_to_dict(Geod(ellps=earth_geod).initstring)
+        earth_geod = Geod(ellps='WGS84')
+    elif isinstance(earth_geod, str):
+        earth_geod = Geod(ellps=earth_geod)
+    geod_info = proj4_str_to_dict(earth_geod.initstring)
     a, f = geod_info['a'], geod_info['f']
     e2 = (2 - 1 * f) * f
     lat = np.pi / 180 * lat
@@ -138,15 +136,17 @@ def get_area(lat_0, lon_0, projection='stere', area_extent=None, shape=None,
     if center is not None and not isinstance(center, DataArray):
         center = DataArray(center, attrs={'units': 'degrees'})
     if image_geod is None:
-        image_geod = 'WGS84'
+        image_geod = Geod(ellps='WGS84')
+    elif isinstance(image_geod, str):
+        image_geod = Geod(ellps=image_geod)
     proj_dict = proj4_str_to_dict('+lat_0={0} +lon_0={1} +proj={2} {3}'.format(lat_0, lon_0, projection,
-                                                                               Geod(ellps=image_geod).initstring))
+                                                                               image_geod.initstring))
     return create_area_def('3DWinds', proj_dict, area_extent=area_extent, shape=shape,
                            upper_left_extent=upper_left_extent, resolution=pixel_size,
                            center=center, radius=radius, units=units, width=width, height=height)
 
 
-def get_displacements(displacement_data, shape=None):
+def get_displacements(displacement_data, i=None, j=None, shape=None, save_data=False):
     """Retrieves pixel-displacements from a file or list.
 
     Parameters
@@ -166,22 +166,29 @@ def get_displacements(displacement_data, shape=None):
     else:
         return None, shape
     if shape is not None:
-        displacement_data = (i_displacements.reshape(shape), j_displacements.reshape(shape))
+        i_displacements = i_displacements.reshape(shape)
+        j_displacements = j_displacements.reshape(shape)
     else:
         try:
             shape = (np.size(i_displacements)**.5, np.size(j_displacements)**.5)
             shape = (_to_int(shape[0], ValueError('')), _to_int(shape[1], ValueError('')))
-            displacement_data = (i_displacements.reshape(shape), j_displacements.reshape(shape))
+            i_displacements = i_displacements.reshape(shape)
+            j_displacements = j_displacements.reshape(shape)
         except ValueError:
-            displacement_data = (i_displacements, j_displacements)
             shape = np.size(i_displacements) + np.size(j_displacements)
-    return np.array(displacement_data), shape
+    i, j = _extrapolate_i_j(i, j, shape)
+    if save_data and len(shape) == 2:
+        np.ndarray.tofile(np.array(i_displacements[j, i]),
+                          os.path.join(os.path.dirname(__file__), '..\output_data\i_displacements'))
+        np.ndarray.tofile(np.array(j_displacements[j, i]),
+                          os.path.join(os.path.dirname(__file__), '..\output_data\j_displacements'))
+    return np.array((i_displacements, j_displacements))[:, j, i], shape
 
 
 def calculate_velocity(lat_0, lon_0, displacement_data, projection='stere', i=None, j=None, delta_time=100,
                        area_extent=None, shape=None, upper_left_extent=None, center=None, pixel_size=None,
                        radius=None, units=None, width=None, height=None, image_geod=None,
-                       earth_geod=None):
+                       earth_geod=None, save_data=False):
     """Computes speed and angle of the wind given an area and pixel-displacement.
 
     Parameters
@@ -240,14 +247,18 @@ def calculate_velocity(lat_0, lon_0, displacement_data, projection='stere', i=No
                          upper_left_extent=upper_left_extent, center=center, pixel_size=pixel_size,
                          radius=radius, units=units, width=width, height=height,
                          image_geod=image_geod, earth_geod=earth_geod)
+    speed, velocity = (u**2 + v**2)**.5, ((90 - np.arctan2(v, u) * 180 / np.pi) + 360) % 360
+    if save_data:
+        np.ndarray.tofile(np.array(speed), os.path.join(os.path.dirname(__file__), '..\output_data\speed'))
+        np.ndarray.tofile(np.array(velocity), os.path.join(os.path.dirname(__file__), '..\output_data\\velocity'))
     # When wind vector azimuth is 0 degrees it points North (npematically 90 degrees) and moves clockwise.
-    return np.array(((u**2 + v**2)**.5, ((90 - np.arctan2(v, u) * 180 / np.pi) + 360) % 360))
+    return np.array((speed, velocity))
 
 
 def u_v_component(lat_0, lon_0, displacement_data, projection='stere', i=None, j=None, delta_time=100,
                   area_extent=None, shape=None, upper_left_extent=None, center=None, pixel_size=None,
                   radius=None, units=None, width=None, height=None, image_geod=None,
-                  earth_geod=None):
+                  earth_geod=None, save_data=False):
     """Computes u and v components of the wind given an area and pixel-displacement.
 
     Parameters
@@ -281,12 +292,15 @@ def u_v_component(lat_0, lon_0, displacement_data, projection='stere', i=None, j
     # meters/second. distance is in meters delta_time is in minutes.
     u = _delta_longitude(new_long, old_long) * lat_long_distance[1] / (delta_time * 60)
     v = (new_lat - old_lat) * lat_long_distance[0] / (delta_time * 60)
+    if save_data:
+        np.ndarray.tofile(np.array(u), os.path.join(os.path.dirname(__file__), '..\output_data\\u'))
+        np.ndarray.tofile(np.array(v), os.path.join(os.path.dirname(__file__), '..\output_data\\v'))
     return np.array((u, v))
 
 
 def compute_lat_long(lat_0, lon_0, displacement_data=None, projection='stere', i=None, j=None, area_extent=None,
                      shape=None, upper_left_extent=None, center=None, pixel_size=None, radius=None, units=None,
-                     width=None, height=None, image_geod=None):
+                     width=None, height=None, image_geod=None, save_data=False):
     """Computes latitude and longitude given an area and pixel-displacement.
 
     Parameters
@@ -333,6 +347,8 @@ def compute_lat_long(lat_0, lon_0, displacement_data=None, projection='stere', i
         Number of pixels in the y direction
     image_geod : string
         Spheroid of projection
+    save_data : bool
+        When True, saves lat to output_data/latitude and long to output_data/longitude
 
     Returns
     -------
@@ -352,4 +368,12 @@ def compute_lat_long(lat_0, lon_0, displacement_data=None, projection='stere', i
     # Function that handles projection to lat/long transformation.
     p = Proj(area_definition.proj_dict, errcheck=True, preserve_units=True)
     # Returns (lat, long) in degrees.
-    return np.array(_reverse_param(p(*_pixel_to_pos(area_definition, i=i, j=j), errcheck=True, inverse=True)))
+    lat, long = _reverse_param(p(*_pixel_to_pos(area_definition, i=i, j=j), errcheck=True, inverse=True))
+    if save_data:
+        if displacement_data is None:
+            np.ndarray.tofile(np.array(lat), os.path.join(os.path.dirname(__file__), '..\output_data\old_latitude'))
+            np.ndarray.tofile(np.array(long), os.path.join(os.path.dirname(__file__), '..\output_data\old_longitude'))
+        else:
+            np.ndarray.tofile(np.array(lat), os.path.join(os.path.dirname(__file__), '..\output_data\\new_latitude'))
+            np.ndarray.tofile(np.array(long), os.path.join(os.path.dirname(__file__), '..\output_data\\new_longitude'))
+    return np.array((lat, long))
