@@ -40,7 +40,7 @@ class TestCase:
         self.new_y = new_y
 
 
-class Test3DWinds(unittest.TestCase):
+class TestPywinds(unittest.TestCase):
     def setUp(self):
         self.test_cases = []
         self.test_cases.append(TestCase('C:/Users/William/Documents/pywinds/pywinds/test/test_files/test_data_two.flo',
@@ -137,5 +137,5 @@ def suite():
     """The test suite for test_main."""
     loader = unittest.TestLoader()
     mysuite = unittest.TestSuite()
-    mysuite.addTest(loader.loadTestsFromTestCase(Test3DWinds))
+    mysuite.addTest(loader.loadTestsFromTestCase(TestPywinds))
     return mysuite
