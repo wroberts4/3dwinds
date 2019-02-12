@@ -1,11 +1,17 @@
-from arg_utils import get_args
+from arg_utils import get_args, print_usage
 from wind_functions import compute_lat_long
 import sys
 
 
 def main(argv):
     args, kwargs = get_args(compute_lat_long, argv)
-    lat_long = compute_lat_long(*args, **kwargs)
+    try:
+        lat_long = compute_lat_long(*args, **kwargs)
+    except TypeError as err:
+        print(err)
+        print()
+        print_usage(compute_lat_long, argv)
+        sys.exit(1)
     print('(latitude, longitude):', '[{0}°, {1}°]'.format(*lat_long))
     return lat_long
 

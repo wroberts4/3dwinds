@@ -4,10 +4,10 @@ from pyproj import Geod, Proj
 from xarray import DataArray
 from collections import OrderedDict
 import numpy as np
-
+print(float('fv'))
 
 start = datetime.utcnow()
-file_name = 'C:/Users/William/Documents/pywinds/pywinds/test/test_files/test_data_one.flo'
+file_name = '/Users/wroberts/Documents/pywinds/pywinds/test/test_files/test_data_one.flo'
 lat_0 = 60
 lon_0 = 0
 i_in = None

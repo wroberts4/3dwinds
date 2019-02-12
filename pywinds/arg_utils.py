@@ -5,12 +5,14 @@ import sys
 
 
 def _try_num(string):
-    if not string:
-        # HERE
+    if not string or string.lower() == 'none':
         return None
     try:
         if float(string) == int(string):
             return int(string)
+    except ValueError:
+        pass
+    try:
         return float(string)
     except ValueError:
         return string
@@ -41,7 +43,9 @@ def _arg_to_param(arg):
     return string
 
 
-def _print_usage(func, argv, num_args):
+def print_usage(func, argv):
+    arg_spec = getfullargspec(func)
+    num_args = len(arg_spec.args) - len(arg_spec.defaults)
     print('Usage (' + argv[0].split('/')[-1].replace('.py', '.sh') + '):',
           *['<' + arg + '>' for arg in getfullargspec(func).args[:num_args]],
           *['--' + arg + ' <' + arg + '>' for arg in getfullargspec(func).args[num_args:]])
@@ -62,18 +66,19 @@ def get_args(func, argv):
         defaults['help'] = ''
         optlist, args = getopt(argv[1 + num_args:], 'h', defaults.keys())
         if args:
-            raise GetoptError('Incorrect number of arguments provided arguments provided')
+            raise GetoptError('Too many positional arguments provided: {0}'.format(args[0]))
     except GetoptError as err:
         print(err)
-        _print_usage(func, argv, num_args)
+        print()
+        print_usage(func, argv)
         sys.exit(1)
     kwargs = {}
     for arg in optlist:
         if arg[0] == '--help' or arg[0] == '-h':
-            _print_usage(func, argv, num_args)
+            print_usage(func, argv)
             sys.exit(0)
         elif isinstance(defaults.get(arg[0][2:]), bool):
             kwargs[arg[0][2:]] = not defaults[arg[0][2:]]
         else:
             kwargs[arg[0][2:]] = _arg_to_param(arg[1])
-    return argv[1:num_args + 1], kwargs
+    return [_arg_to_param(arg) for arg in argv[1:num_args + 1]], kwargs

@@ -124,6 +124,10 @@ def get_area(lat_0, lon_0, projection='stere', area_extent=None, shape=None,
     -------
 
     """
+    if not isinstance(lat_0, (int, float)) or not isinstance(lon_0, (int, float)):
+        raise ValueError('lat_0 and lon_0 must be ints or floats, but were ' +
+                         '{0} as type {1} and {2} as type {3} respectively'.format(lat_0, type(lat_0),
+                                                                                   lon_0, type(lon_0)))
     # Center is given in (lat, long) order, but create_area_def needs it in (long, lat) order.
     if area_extent is not None:
         area_extent_ll, area_extent_ur = area_extent[0:2], area_extent[2:4]
