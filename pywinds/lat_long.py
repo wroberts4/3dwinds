@@ -4,9 +4,7 @@ import sys
 
 
 def main(argv):
-    args = get_args(compute_lat_long, argv, 2)
-    kwargs = args[1]
-    args = args[0]
+    args, kwargs = get_args(compute_lat_long, argv)
     lat_long = compute_lat_long(*args, **kwargs)
     print('(latitude, longitude):', '[{0}°, {1}°]'.format(*lat_long))
     return lat_long

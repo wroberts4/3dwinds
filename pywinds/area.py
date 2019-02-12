@@ -4,9 +4,7 @@ import sys
 
 
 def main(argv):
-    args = get_args(get_area, argv, 2)
-    kwargs = args[1]
-    args = args[0]
+    args, kwargs = get_args(get_area, argv)
     area = get_area(*args, **kwargs)
     print(area)
     return area

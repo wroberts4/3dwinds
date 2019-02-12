@@ -4,9 +4,7 @@ import sys
 
 
 def main(argv):
-    args = get_args(u_v_component, argv, 3)
-    kwargs = args[1]
-    args = args[0]
+    args, kwargs = get_args(u_v_component, argv)
     u_v = u_v_component(*args, **kwargs)
     print('(u, v):', '[{0} m/sec, {1} m/sec]'.format(*u_v))
     return u_v

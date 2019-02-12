@@ -250,9 +250,9 @@ def calculate_velocity(lat_0, lon_0, displacement_data, projection='stere', j=No
                          radius=radius, units=units, width=width, height=height,
                          image_geod=image_geod, earth_geod=earth_geod)
     speed, velocity = (u**2 + v**2)**.5, ((90 - np.arctan2(v, u) * 180 / np.pi) + 360) % 360
-    if save_data:
+    if save_data == True:
         np.ndarray.tofile(np.array(speed), os.path.join(os.path.dirname(__file__), '..\output_data\speed'))
-        np.ndarray.tofile(np.array(velocity), os.path.join(os.path.dirname(__file__), '..\output_data\\velocity'))
+        np.ndarray.tofile(np.array(velocity), os.path.join(os.path.dirname(__file__), '..\output_data\\angle'))
     # When wind vector azimuth is 0 degrees it points North (npematically 90 degrees) and moves clockwise.
     return np.array((speed, velocity))
 
@@ -294,7 +294,7 @@ def u_v_component(lat_0, lon_0, displacement_data, projection='stere', j=None, i
     # meters/second. distance is in meters delta_time is in minutes.
     u = _delta_longitude(new_long, old_long) * lat_long_distance[1] / (delta_time * 60)
     v = (new_lat - old_lat) * lat_long_distance[0] / (delta_time * 60)
-    if save_data:
+    if save_data == True:
         np.ndarray.tofile(np.array(u), os.path.join(os.path.dirname(__file__), '..\output_data\\u'))
         np.ndarray.tofile(np.array(v), os.path.join(os.path.dirname(__file__), '..\output_data\\v'))
     return np.array((u, v))
@@ -371,7 +371,7 @@ def compute_lat_long(lat_0, lon_0, displacement_data=None, projection='stere', j
     p = Proj(area_definition.proj_dict, errcheck=True, preserve_units=True)
     # Returns (lat, long) in degrees.
     lat, long = _reverse_param(p(*_pixel_to_pos(area_definition, j=j, i=i), errcheck=True, inverse=True))
-    if save_data:
+    if save_data == True:
         if displacement_data is None:
             np.ndarray.tofile(np.array(lat), os.path.join(os.path.dirname(__file__), '..\output_data\old_latitude'))
             np.ndarray.tofile(np.array(long), os.path.join(os.path.dirname(__file__), '..\output_data\old_longitude'))

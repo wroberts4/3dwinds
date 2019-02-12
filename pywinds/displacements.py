@@ -4,9 +4,7 @@ import sys
 
 
 def main(argv):
-    args = get_args(get_displacements, argv, 1)
-    kwargs = args[1]
-    args = args[0]
+    args, kwargs = get_args(get_displacements, argv)
     displacements = get_displacements(*args, **kwargs)
     print('displacements (j, i): {0}\nshape: {1}'.format(*displacements))
     return displacements

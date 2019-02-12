@@ -4,9 +4,7 @@ import sys
 
 
 def main(argv):
-    args = get_args(calculate_velocity, argv, 3)
-    kwargs = args[1]
-    args = args[0]
+    args, kwargs = get_args(calculate_velocity, argv)
     velocity = calculate_velocity(*args, **kwargs)
     print('speed:', '[{0} m/sec, {1}°]'.format(*velocity))
     return velocity
