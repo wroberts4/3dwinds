@@ -33,12 +33,12 @@ def get_args(func, argv):
     num_args = len(arg_spec.args) - len(arg_spec.defaults)
     flags = arg_spec.args[num_args:]
     defaults = dict(zip(arg_spec.args[num_args:], arg_spec.defaults))
+    for flag in flags:
+        if not isinstance(defaults[flag], bool):
+            defaults[flag + '='] = defaults[flag]
+            defaults.pop(flag)
+    defaults['help'] = ''
     try:
-        for flag in flags:
-            if not isinstance(defaults[flag], bool):
-                defaults[flag + '='] = defaults[flag]
-                defaults.pop(flag)
-        defaults['help'] = ''
         optlist, args = getopt(argv[1 + num_args:], 'h', defaults.keys())
         if args:
             raise GetoptError('Too many positional arguments provided: {0}'.format(args[0]))
