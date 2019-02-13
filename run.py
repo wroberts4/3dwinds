@@ -1,4 +1,4 @@
-from pywinds.wind_functions import calculate_velocity, u_v_component, compute_lat_long, get_displacements, get_area
+from pywinds.wind_functions import calculate_velocity, v_u_component, compute_lat_long, get_displacements, get_area
 from datetime import datetime
 from pyproj import Geod, Proj
 from xarray import DataArray
@@ -23,9 +23,9 @@ velocity = calculate_velocity(lat_0, lon_0, file_name, i=i_in, j=j_in, pixel_siz
                               shape=shape, earth_geod=earth_geod, image_geod=image_geod, save_data=save_data)
 print('speed:', '{0} m/sec, {1}°'.format(*velocity[:, 0, 0]))
 
-u_v = u_v_component(lat_0, lon_0, file_name, i=i_in, j=j_in, pixel_size=pixel_size, center=center,
+v_u = v_u_component(lat_0, lon_0, file_name, i=i_in, j=j_in, pixel_size=pixel_size, center=center,
                     shape=shape, earth_geod=earth_geod, image_geod=image_geod, save_data=save_data)
-print('(u, v):', '({0} m/sec, {1} m/sec)'.format(*u_v[:, 0, 0]))
+print('(u, v):', '({0} m/sec, {1} m/sec)'.format(*v_u[:, 0, 0]))
 
 displacements, new_shape = get_displacements(file_name, shape=shape, save_data=save_data)
 # np.ndarray.tofile(displacements, 'C:/Users/William/Documents/test')

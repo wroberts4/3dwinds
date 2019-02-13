@@ -2,4 +2,4 @@
 
 # https://stackoverflow.com/questions/9889938/shell-script-current-directory
 PARENTDIR="$( cd "$( dirname "$0" )" && pwd )"
-python ${PARENTDIR}/uv.py $*
+python ${PARENTDIR}/vu.py $*

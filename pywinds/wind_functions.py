@@ -260,7 +260,7 @@ def calculate_velocity(lat_0, lon_0, displacement_data, projection='stere', j=No
             speed and angle of wind calculated from area and pixel-displacement
 
     """
-    u, v = u_v_component(lat_0, lon_0, displacement_data, projection=projection, j=j, i=i,
+    v, u = v_u_component(lat_0, lon_0, displacement_data, projection=projection, j=j, i=i,
                          delta_time=delta_time, area_extent=area_extent, shape=shape,
                          upper_left_extent=upper_left_extent, center=center, pixel_size=pixel_size,
                          radius=radius, units=units, width=width, height=height,
@@ -273,7 +273,7 @@ def calculate_velocity(lat_0, lon_0, displacement_data, projection='stere', j=No
     return np.array((speed, velocity))
 
 
-def u_v_component(lat_0, lon_0, displacement_data, projection='stere', j=None, i=None, delta_time=100,
+def v_u_component(lat_0, lon_0, displacement_data, projection='stere', j=None, i=None, delta_time=100,
                   area_extent=None, shape=None, upper_left_extent=None, center=None, pixel_size=None,
                   radius=None, units=None, width=None, height=None, image_geod=None,
                   earth_geod=None, save_data=False):
@@ -313,7 +313,7 @@ def u_v_component(lat_0, lon_0, displacement_data, projection='stere', j=None, i
     if save_data == True:
         np.ndarray.tofile(np.array(u), os.path.join(os.path.dirname(__file__), '..\output_data\\u'))
         np.ndarray.tofile(np.array(v), os.path.join(os.path.dirname(__file__), '..\output_data\\v'))
-    return np.array((u, v))
+    return np.array((v, u))
 
 
 def compute_lat_long(lat_0, lon_0, displacement_data=None, projection='stere', j=None, i=None, area_extent=None,

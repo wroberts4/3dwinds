@@ -1,6 +1,6 @@
 import unittest
 import numpy as np
-from pywinds.wind_functions import calculate_velocity, u_v_component, compute_lat_long, get_displacements, get_area,\
+from pywinds.wind_functions import calculate_velocity, v_u_component, compute_lat_long, get_displacements, get_area,\
     _extrapolate_j_i, _pixel_to_pos
 
 
@@ -71,19 +71,19 @@ class TestPywinds(unittest.TestCase):
             self.assertEqual(speed[case.j, case.i], speed_ji)
             self.assertEqual(angle[case.j, case.i], angle_ji)
 
-    def test_u_v_component(self):
+    def test_v_u_component(self):
         for case in self.test_cases:
-            u, v = u_v_component(case.lat_0, case.lon_0, case.displacement_data, projection=case.projection,
+            v, u = v_u_component(case.lat_0, case.lon_0, case.displacement_data, projection=case.projection,
                                  shape=case.shape, pixel_size=case.pixel_size, center=case.center, units=case.units,
                                  image_geod=case.image_geod, earth_geod=case.earth_geod)
-            u_ji, v_ji = u_v_component(case.lat_0, case.lon_0, case.displacement_data, projection=case.projection,
+            v_ji, u_ji = v_u_component(case.lat_0, case.lon_0, case.displacement_data, projection=case.projection,
                                        i=case.i, j=case.j, shape=case.shape, pixel_size=case.pixel_size,
                                        center=case.center, units=case.units, image_geod=case.image_geod,
                                        earth_geod=case.earth_geod)
-            self.assertEqual(case.u, round(u_ji, 5))
             self.assertEqual(case.v, round(v_ji, 5))
-            self.assertEqual(u[case.j, case.i], u_ji)
+            self.assertEqual(case.u, round(u_ji, 5))
             self.assertEqual(v[case.j, case.i], v_ji)
+            self.assertEqual(u[case.j, case.i], u_ji)
 
     def test_compute_lat_long(self):
         for case in self.test_cases:
