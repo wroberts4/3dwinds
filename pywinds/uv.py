@@ -1,5 +1,6 @@
 from arg_utils import get_args, print_usage
 from wind_functions import u_v_component
+from numpy import ndarray
 import sys
 
 
@@ -12,7 +13,7 @@ def main(argv):
         print()
         print_usage(u_v_component, argv)
         sys.exit(1)
-    print('(u, v):', '[{0} m/sec, {1} m/sec]'.format(*u_v))
+    print(ndarray.tolist(u_v))
     return u_v
 
 

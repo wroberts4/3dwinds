@@ -1,5 +1,6 @@
 from arg_utils import get_args, print_usage
 from wind_functions import compute_lat_long
+from numpy import ndarray
 import sys
 
 
@@ -12,7 +13,7 @@ def main(argv):
         print()
         print_usage(compute_lat_long, argv)
         sys.exit(1)
-    print('(latitude, longitude):', '[{0}°, {1}°]'.format(*lat_long))
+    print(ndarray.tolist(lat_long))
     return lat_long
 
 

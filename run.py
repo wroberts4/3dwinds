@@ -7,7 +7,7 @@ import numpy as np
 
 
 start = datetime.utcnow()
-file_name = '/Users/wroberts/Documents/pywinds/pywinds/test/test_files/test_data_one.flo'
+file_name = './pywinds/test/test_files/test_data_one.flo'
 lat_0 = 60
 lon_0 = 0
 i_in = None

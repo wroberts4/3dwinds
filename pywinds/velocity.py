@@ -1,5 +1,6 @@
 from arg_utils import get_args, print_usage
 from wind_functions import calculate_velocity
+from numpy import ndarray
 import sys
 
 
@@ -12,7 +13,7 @@ def main(argv):
         print()
         print_usage(calculate_velocity, argv)
         sys.exit(1)
-    print('velocity:', '[{0} m/sec, {1}°]'.format(*velocity))
+    print(ndarray.tolist(velocity))
     return velocity
 
 

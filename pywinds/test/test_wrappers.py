@@ -3,6 +3,8 @@ import unittest
 from pywinds.wind_functions import get_displacements
 import numpy as np
 import subprocess
+import sys
+import ast
 
 
 class TestCase:
@@ -44,7 +46,7 @@ class TestCase:
 class TestWrappers(unittest.TestCase):
     def setUp(self):
         self.test_cases = []
-        self.test_cases.append(TestCase('/Users/wroberts/Documents/pywinds/pywinds/test/test_files/test_data_two.flo',
+        self.test_cases.append(TestCase('./test_files/test_data_two.flo',
                                         i=1, j=8, pixel_size=10000, lat_0=60, lon_0=0, center=(90, 0),
                                         distance=255333.02691, speed=2101.88674, angle=141.3029, u=1314.1062,
                                         v=-1640.44285, old_lat=89.58692, old_long=-45.03963, new_lat=1.02424,
@@ -64,13 +66,24 @@ class TestWrappers(unittest.TestCase):
             kwargs_names = ['projection', 'j', 'i', 'shape', 'pixel_size', 'center',
                             'units', 'image_geod', 'earth_geod']
             kwargs_vals = list(np.vectorize(str)([case.projection, case.j, case.i, case.shape, case.pixel_size,
-                                                  case.center,
-                      case.units, case.image_geod, case.earth_geod]))
+                                                  case.center, case.units, case.image_geod, case.earth_geod]))
             kwargs = []
             for i in range(len(kwargs_names)):
-                kwargs.append('--' + kwargs_names[i] + ' ' + kwargs_vals[i].replace(' ', ''))
-            subprocess.run(['../velocity.sh'] + args + kwargs)
-            print()
+                kwargs.append('--' + kwargs_names[i])
+                kwargs.append(kwargs_vals[i].replace(' ', ''))
+            output = subprocess.check_output([sys.executable, '../velocity.py'] + args + kwargs).decode('utf-8')
+            print(ast.literal_eval('%s' % output))
+
+            kwargs_names = ['projection', 'shape', 'pixel_size', 'center',
+                            'units', 'image_geod', 'earth_geod']
+            kwargs_vals = list(np.vectorize(str)([case.projection, case.shape, case.pixel_size,
+                                                  case.center, case.units, case.image_geod, case.earth_geod]))
+            kwargs = []
+            for i in range(len(kwargs_names)):
+                kwargs.append('--' + kwargs_names[i])
+                kwargs.append(kwargs_vals[i].replace(' ', ''))
+            output = subprocess.check_output([sys.executable, '../velocity.py'] + args + kwargs).decode('utf-8')
+            print(ast.literal_eval('%s' % output))
 
     def test_uv(self):
         return

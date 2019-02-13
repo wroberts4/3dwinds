@@ -1,5 +1,6 @@
 from arg_utils import get_args, print_usage
 from wind_functions import get_displacements
+from numpy import ndarray
 import sys
 
 
@@ -12,7 +13,7 @@ def main(argv):
         print()
         print_usage(get_displacements, argv)
         sys.exit(1)
-    print('displacements (j, i): {0}\nshape: {1}'.format(*displacements))
+    print(ndarray.tolist(*displacements))
     return displacements
 
 
