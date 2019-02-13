@@ -20,7 +20,6 @@ class TestCase:
         self.projection = projection
         self.units = units
         self.displacement_data = displacement_data
-        self.shape = shape
         self.center = center
         displacements, self.shape = get_displacements(displacement_data, shape=shape, i=i, j=j)
         self.j_displacements, self.i_displacements = displacements

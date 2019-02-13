@@ -308,8 +308,8 @@ def v_u_component(lat_0, lon_0, displacement_data, projection='stere', j=None, i
     #      _delta_longitude(new_long, old_long) *
     #      _lat_long_dist(new_lat, earth_geod)[1] / (delta_time * 60)) / 2
     # meters/second. distance is in meters delta_time is in minutes.
-    u = _delta_longitude(new_long, old_long) * lat_long_distance[1] / (delta_time * 60)
     v = (new_lat - old_lat) * lat_long_distance[0] / (delta_time * 60)
+    u = _delta_longitude(new_long, old_long) * lat_long_distance[1] / (delta_time * 60)
     if save_data == True:
         np.ndarray.tofile(np.array(u), os.path.join(os.path.dirname(__file__), '..\output_data\\u'))
         np.ndarray.tofile(np.array(v), os.path.join(os.path.dirname(__file__), '..\output_data\\v'))

@@ -13,34 +13,35 @@ class TestCase:
                  angle=None, u=None, v=None, old_lat=None, old_long=None, new_lat=None, new_long=None,
                  old_x=None, old_y=None, new_x=None, new_y=None):
         # Input data
-        self.i = i
-        self.j = j
-        self.lat_0 = lat_0
-        self.lon_0 = lon_0
-        self.image_geod = image_geod
-        self.earth_geod = earth_geod
-        self.pixel_size = pixel_size
-        self.projection = projection
-        self.units = units
-        self.displacement_data = str(displacement_data)
-        self.shape = shape
-        self.center = center
-        displacements, self.shape = get_displacements(displacement_data, shape=shape, i=i, j=j)
-        self.j_displacements, self.i_displacements = displacements
+        self.i = str(i).replace(' ', '')
+        self.j = str(j).replace(' ', '')
+        self.lat_0 = str(lat_0).replace(' ', '')
+        self.lon_0 = str(lon_0).replace(' ', '')
+        self.image_geod = str(image_geod).replace(' ', '')
+        self.earth_geod = str(earth_geod).replace(' ', '')
+        self.pixel_size = str(pixel_size).replace(' ', '')
+        self.projection = str(projection).replace(' ', '')
+        self.units = str(units).replace(' ', '')
+        self.displacement_data = str(displacement_data).replace(' ', '')
+        self.center = str(center).replace(' ', '')
+        displacements, shape = get_displacements(displacement_data, shape=shape, i=i, j=j)
+        self.shape = str(shape).replace(' ', '')
+        self.j_displacements = str(displacements[0]).replace(' ', '')
+        self.i_displacements = str(displacements[1]).replace(' ', '')
         # Output data
-        self.distance = distance
-        self.speed = speed
-        self.angle = angle
-        self.u = u
-        self.v = v
-        self.old_lat = old_lat
-        self.old_long = old_long
-        self.new_lat = new_lat
-        self.new_long = new_long
-        self.old_x = old_x
-        self.old_y = old_y
-        self.new_x = new_x
-        self.new_y = new_y
+        self.distance = str(distance).replace(' ', '')
+        self.speed = str(speed).replace(' ', '')
+        self.angle = str(angle).replace(' ', '')
+        self.u = str(u).replace(' ', '')
+        self.v = str(v).replace(' ', '')
+        self.old_lat = str(old_lat).replace(' ', '')
+        self.old_long = str(old_long).replace(' ', '')
+        self.new_lat = str(new_lat).replace(' ', '')
+        self.new_long = str(new_long).replace(' ', '')
+        self.old_x =str( old_x).replace(' ', '')
+        self.old_y = str(old_y).replace(' ', '')
+        self.new_x = str(new_x).replace(' ', '')
+        self.new_y = str(new_y).replace(' ', '')
 
 
 class TestWrappers(unittest.TestCase):
@@ -61,29 +62,18 @@ class TestWrappers(unittest.TestCase):
 
     def test_velocity(self):
         for case in self.test_cases:
-            args = list(np.vectorize(str)([case.lat_0, case.lon_0, case.displacement_data]))
-            args = list(np.vectorize(str.replace)(args, ' ', ''))
-            kwargs_names = ['projection', 'j', 'i', 'shape', 'pixel_size', 'center',
-                            'units', 'image_geod', 'earth_geod']
-            kwargs_vals = list(np.vectorize(str)([case.projection, case.j, case.i, case.shape, case.pixel_size,
-                                                  case.center, case.units, case.image_geod, case.earth_geod]))
-            kwargs = []
-            for i in range(len(kwargs_names)):
-                kwargs.append('--' + kwargs_names[i])
-                kwargs.append(kwargs_vals[i].replace(' ', ''))
-            output = subprocess.check_output([sys.executable, '../velocity.py'] + args + kwargs).decode('utf-8')
+            commands_ji = [case.lat_0, case.lon_0, case.displacement_data, '--projection', case.projection, '--j', case.j,
+                        '--i', case.i, '--shape', case.shape, '--pixel_size', case.pixel_size, '--center', case.center,
+                        '--units', case.units, '--image_geod', case.image_geod, '--earth_geod', case.earth_geod]
+            output = subprocess.check_output([sys.executable, '../velocity.py'] + commands_ji).decode('utf-8')
             print(ast.literal_eval('%s' % output))
 
-            kwargs_names = ['projection', 'shape', 'pixel_size', 'center',
-                            'units', 'image_geod', 'earth_geod']
-            kwargs_vals = list(np.vectorize(str)([case.projection, case.shape, case.pixel_size,
-                                                  case.center, case.units, case.image_geod, case.earth_geod]))
-            kwargs = []
-            for i in range(len(kwargs_names)):
-                kwargs.append('--' + kwargs_names[i])
-                kwargs.append(kwargs_vals[i].replace(' ', ''))
-            output = subprocess.check_output([sys.executable, '../velocity.py'] + args + kwargs).decode('utf-8')
-            print(ast.literal_eval('%s' % output))
+            commands = [case.lat_0, case.lon_0, case.displacement_data, '--projection', case.projection, '--shape',
+                        case.shape, '--pixel_size', case.pixel_size, '--center', case.center, '--units', case.units,
+                        '--image_geod', case.image_geod, '--earth_geod', case.earth_geod]
+            output = subprocess.check_output([sys.executable, '../velocity.py'] + commands).decode('utf-8')
+            print(ast.literal_eval('%s' % output)[0][int(case.j)][int(case.i)],
+                  ast.literal_eval('%s' % output)[1][int(case.j)][int(case.i)])
 
     def test_uv(self):
         return
