@@ -7,12 +7,12 @@ def main(argv):
     args, kwargs = get_args(calculate_velocity, argv)
     try:
         velocity = calculate_velocity(*args, **kwargs)
-    except TypeError as err:
+    except (TypeError, ValueError) as err:
         print(err)
         print()
         print_usage(calculate_velocity, argv)
         sys.exit(1)
-    print('speed:', '[{0} m/sec, {1}°]'.format(*velocity))
+    print('velocity:', '[{0} m/sec, {1}°]'.format(*velocity))
     return velocity
 
 

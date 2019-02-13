@@ -103,6 +103,9 @@ def _lat_long_dist(lat, earth_geod):
         earth_geod = Geod(ellps='WGS84')
     elif isinstance(earth_geod, str):
         earth_geod = Geod(ellps=earth_geod)
+    else:
+        raise ValueError('earth_geod must be a string or Geod type, but instead was {0} as type {1}'.format(
+            earth_geod, type(earth_geod)))
     geod_info = proj4_str_to_dict(earth_geod.initstring)
     a, f = geod_info['a'], geod_info['f']
     e2 = (2 - 1 * f) * f
@@ -125,9 +128,12 @@ def get_area(lat_0, lon_0, projection='stere', area_extent=None, shape=None,
 
     """
     if not isinstance(lat_0, (int, float)) or not isinstance(lon_0, (int, float)):
-        raise ValueError('lat_0 and lon_0 must be ints or floats, but were ' +
-                         '{0} as type {1} and {2} as type {3} respectively'.format(lat_0, type(lat_0),
-                                                                                   lon_0, type(lon_0)))
+        raise ValueError('lat_0 and lon_0 must be ints or floats, but instead were ' +
+                         '{0} as type {1} and {2} as type {3} respectively'.format(
+                             lat_0, type(lat_0), lon_0, type(lon_0)))
+    if not isinstance(projection, str):
+        raise ValueError('projection must be a string, but instead was {0} as type {1}'.format(
+            projection, type(projection)))
     # Center is given in (lat, long) order, but create_area_def needs it in (long, lat) order.
     if area_extent is not None:
         area_extent_ll, area_extent_ur = area_extent[0:2], area_extent[2:4]
@@ -143,6 +149,9 @@ def get_area(lat_0, lon_0, projection='stere', area_extent=None, shape=None,
         image_geod = Geod(ellps='WGS84')
     elif isinstance(image_geod, str):
         image_geod = Geod(ellps=image_geod)
+    else:
+        raise ValueError('image_geod must be a string or Geod type, but instead was {0} as type {1}'.format(
+            image_geod, type(image_geod)))
     proj_dict = proj4_str_to_dict('+lat_0={0} +lon_0={1} +proj={2} {3}'.format(lat_0, lon_0, projection,
                                                                                image_geod.initstring))
     return create_area_def('3DWinds', proj_dict, area_extent=area_extent, shape=shape,
@@ -166,8 +175,11 @@ def get_displacements(displacement_data, j=None, i=None, shape=None, save_data=F
         j_displacements = displacements[1::2]
         i_displacements = displacements[0::2]
     elif displacement_data is not None:
-        j_displacements = displacement_data[1]
-        i_displacements = displacement_data[0]
+        if len(np.shape(displacement_data)) == 0 or np.shape(displacement_data)[0] != 2:
+            raise ValueError('displacement_data should have shape (2, m, n), but instead has shape {0}'.format(
+                np.shape(displacement_data)))
+        j_displacements = np.array(displacement_data[1])
+        i_displacements = np.array(displacement_data[0])
     else:
         return None, shape
     if shape is not None:

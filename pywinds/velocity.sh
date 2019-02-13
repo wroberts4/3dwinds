@@ -1,2 +1,5 @@
 #!/bin/bash
-python velocity.py $*
+
+# https://stackoverflow.com/questions/9889938/shell-script-current-directory
+PARENTDIR="$( cd "$( dirname "$0" )" && pwd )"
+python ${PARENTDIR}/velocity.py $*

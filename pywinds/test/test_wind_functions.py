@@ -50,7 +50,7 @@ class TestPywinds(unittest.TestCase):
                                         new_long=55.49562, old_x=-35000.0, old_y=3394327.91718, new_x=8065000.0,
                                         new_y=-4705672.08282))
         displacement_data = np.array(([x for x in range(100)], [x for x in range(100)])) * 10
-        self.test_cases.append(TestCase(displacement_data, pixel_size=5, lat_0=90, lon_0=20, i=1, j=8,
+        self.test_cases.append(TestCase(displacement_data.tolist(), pixel_size=5, lat_0=90, lon_0=20, i=1, j=8,
                                         distance=56.56842, units='km', center=(40, 10), speed=688.49049,
                                         angle=139.13855, u=450.43258, v=-520.7011, old_lat=39.84993, old_long=9.86386,
                                         new_lat=11.64909, new_long=36.80117, old_x=-1051407.88566, old_y=-5881082.99511,

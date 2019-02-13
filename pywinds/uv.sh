@@ -1,2 +1,5 @@
 #!/bin/bash
-python uv.py $*
+
+# https://stackoverflow.com/questions/9889938/shell-script-current-directory
+PARENTDIR="$( cd "$( dirname "$0" )" && pwd )"
+python ${PARENTDIR}/uv.py $*

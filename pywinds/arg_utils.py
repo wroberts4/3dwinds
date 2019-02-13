@@ -2,42 +2,17 @@ from getopt import getopt, GetoptError
 from inspect import getfullargspec
 from xarray import DataArray
 import sys
-
-
-def _try_num(string):
-    if not string or string.lower() == 'none':
-        return None
-    try:
-        if float(string) == int(string):
-            return int(string)
-    except ValueError:
-        pass
-    try:
-        return float(string)
-    except ValueError:
-        return string
-
-
-def _try_list(string):
-    try:
-        string = string.replace('(', '').replace(')', '').replace('[', '').replace(']', '')
-        if len(string.split(',')) != 1:
-            return [_try_num(num) for num in string.split(',')]
-    except AttributeError:
-        pass
-    return string
+import ast
 
 
 def _arg_to_param(arg):
     units = None
     if len(arg.split(':')) == 2:
         arg, units = arg.split(':')
-    string = _try_num(arg)
-    if isinstance(string, (float, int)):
-        if units is not None:
-            return DataArray(string, attrs={'units': units})
-        return string
-    string = _try_list(string)
+    try:
+        string = ast.literal_eval('%s' % arg)
+    except (SyntaxError, ValueError):
+        return arg
     if units is not None:
         return DataArray(string, attrs={'units': units})
     return string
