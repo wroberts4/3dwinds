@@ -25,7 +25,7 @@ print('speed:', '{0} m/sec, {1}°'.format(*velocity[:, 0, 0]))
 
 v_u = v_u_component(lat_0, lon_0, file_name, i=i_in, j=j_in, pixel_size=pixel_size, center=center,
                     shape=shape, earth_geod=earth_geod, image_geod=image_geod, save_data=save_data)
-print('(u, v):', '({0} m/sec, {1} m/sec)'.format(*v_u[:, 0, 0]))
+print('(v, u):', '({0} m/sec, {1} m/sec)'.format(*v_u[:, 0, 0]))
 
 displacements, new_shape = get_displacements(file_name, shape=shape, save_data=save_data)
 # np.ndarray.tofile(displacements, 'C:/Users/William/Documents/test')
