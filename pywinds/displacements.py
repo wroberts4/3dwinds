@@ -13,7 +13,7 @@ def main(argv):
         print()
         print_usage(get_displacements, argv)
         sys.exit(1)
-    print(ndarray.tolist(*displacements))
+    print(ndarray.tolist(displacements[0]))
     return displacements
 
 

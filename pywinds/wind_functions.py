@@ -154,7 +154,7 @@ def get_area(lat_0, lon_0, projection='stere', area_extent=None, shape=None,
             image_geod, type(image_geod)))
     proj_dict = proj4_str_to_dict('+lat_0={0} +lon_0={1} +proj={2} {3}'.format(lat_0, lon_0, projection,
                                                                                image_geod.initstring))
-    return create_area_def('3DWinds', proj_dict, area_extent=area_extent, shape=shape,
+    return create_area_def('pywinds', proj_dict, area_extent=area_extent, shape=shape,
                            upper_left_extent=upper_left_extent, resolution=pixel_size,
                            center=center, radius=radius, units=units, width=width, height=height)
 
