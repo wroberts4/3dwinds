@@ -19,12 +19,19 @@ def _arg_to_param(arg):
 
 
 def print_usage(func, argv):
+    """
+    Other command line notes
+    ------------------------
+
+    * You can add units to a specific variable by appending the variable with ":your_unit_here"
+      Examples: "--pixel_size 4:km" and "--center [10000,10000]:m"
+    """
     arg_spec = getfullargspec(func)
     num_args = len(arg_spec.args) - len(arg_spec.defaults)
     print('Usage (' + argv[0].split('/')[-1].replace('.py', '.sh') + '):',
           *['<' + arg + '>' for arg in getfullargspec(func).args[:num_args]],
           *['--' + arg + ' <' + arg + '>' for arg in getfullargspec(func).args[num_args:]])
-    print()
+    print(print_usage.__doc__)
     print(func.__doc__)
 
 

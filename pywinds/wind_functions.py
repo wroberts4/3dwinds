@@ -365,6 +365,7 @@ def v_u_component(lat_0, lon_0, displacement_data, projection='stere', j=None, i
     return np.array((v, u))
 
 
+# TODO: SWAMP X AND Y COORDS
 def compute_lat_long(lat_0, lon_0, displacement_data=None, projection='stere', j=None, i=None, area_extent=None,
                      shape=None, upper_left_extent=None, center=None, pixel_size=None, radius=None, units=None,
                      width=None, height=None, image_geod=None, save_data=False):
