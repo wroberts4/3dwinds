@@ -4,6 +4,11 @@ import sys
 
 
 def main(argv):
+    """Additional command line information
+
+    * You can add units to a specific variable by appending the variable with ":your_unit_here"
+      Examples: "--pixel_size 4:km" and "--center 10000,10000:m"
+    """
     args, kwargs = get_args(get_area, argv)
     try:
         area = get_area(*args, **kwargs)
@@ -11,6 +16,7 @@ def main(argv):
         print(err)
         print()
         print_usage(get_area, argv)
+        print(main.__doc__)
         sys.exit(1)
     print(area)
     return area

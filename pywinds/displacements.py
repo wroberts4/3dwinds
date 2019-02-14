@@ -5,6 +5,11 @@ import sys
 
 
 def main(argv):
+    """Additional command line information
+
+    * You can add units to a specific variable by appending the variable with ":your_unit_here"
+      Examples: "--pixel_size 4:km" and "--center 10000,10000:m"
+    """
     args, kwargs = get_args(get_displacements, argv)
     try:
         displacements = get_displacements(*args, **kwargs)
@@ -12,6 +17,7 @@ def main(argv):
         print(err)
         print()
         print_usage(get_displacements, argv)
+        print(main.__doc__)
         sys.exit(1)
     print(ndarray.tolist(displacements[0]))
     return displacements

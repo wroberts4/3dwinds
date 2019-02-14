@@ -207,7 +207,7 @@ def calculate_velocity(lat_0, lon_0, displacement_data, projection='stere', j=No
                        area_extent=None, shape=None, upper_left_extent=None, center=None, pixel_size=None,
                        radius=None, units=None, width=None, height=None, image_geod=None,
                        earth_geod=None, save_data=False):
-    """Computes speed and angle of the wind given an area and pixel-displacement.
+    """Computes the speed and angle of the wind given an area and pixel-displacement.
 
     Parameters
     ----------
@@ -253,12 +253,15 @@ def calculate_velocity(lat_0, lon_0, displacement_data, projection='stere', j=No
         Number of pixels in the y direction
     image_geod : string
         Spheroid of projection
+    earth_geod : string
+        Spheroid of Earth
+    save_data : bool
+        When True, saves lat to output_data/speed and long to output_data/angle
 
     Returns
     -------
         (speed, angle) : numpy.array
             speed and angle of wind calculated from area and pixel-displacement
-
     """
     v, u = v_u_component(lat_0, lon_0, displacement_data, projection=projection, j=j, i=i,
                          delta_time=delta_time, area_extent=area_extent, shape=shape,
@@ -269,7 +272,7 @@ def calculate_velocity(lat_0, lon_0, displacement_data, projection='stere', j=No
     if save_data == True:
         np.ndarray.tofile(np.array(speed), os.path.join(os.path.dirname(__file__), '..\output_data\speed'))
         np.ndarray.tofile(np.array(velocity), os.path.join(os.path.dirname(__file__), '..\output_data\\angle'))
-    # When wind vector azimuth is 0 degrees it points North (npematically 90 degrees) and moves clockwise.
+    # When wind vector azimuth is 0 degrees it points North (mathematically 90 degrees) and moves clockwise.
     return np.array((speed, velocity))
 
 
@@ -277,10 +280,56 @@ def v_u_component(lat_0, lon_0, displacement_data, projection='stere', j=None, i
                   area_extent=None, shape=None, upper_left_extent=None, center=None, pixel_size=None,
                   radius=None, units=None, width=None, height=None, image_geod=None,
                   earth_geod=None, save_data=False):
-    """Computes u and v components of the wind given an area and pixel-displacement.
+    """Computes the v and u components of the wind given an area and pixel-displacement.
 
     Parameters
     ----------
+    lat_0 : float
+        Normal latitude of projection
+    lon_0 : float
+        Normal longitude of projection
+    displacement_data : str or list
+        File or list containing displacements: [0, 0, 0, i11, j11, i12, j12, ...] or
+        [[i_displacements], [j_displacements]] respectively.
+    projection : str
+        Name of projection that pixels are describing (stere, laea, merc, etc).
+    i : float or None, optional
+        Horizontal value of pixel to find lat/long of.
+    j : float or None, optional
+        Vertical value of pixel to find lat/long of.
+    units : str, optional
+        Units that provided arguments should be interpreted as. This can be
+        one of 'deg', 'degrees', 'rad', 'radians', 'meters', 'metres', and any
+        parameter supported by the
+        `cs2cs -lu <https://proj4.org/apps/cs2cs.html#cmdoption-cs2cs-lu>`_
+        command. Units are determined in the following priority:
+
+        1. units expressed with each variable through a DataArray's attrs attribute.
+        2. units passed to ``units``
+        3. meters
+    area_extent : list, optional
+        Area extent as a list (lower_left_x, lower_left_y, upper_right_x, upper_right_y)
+    shape : list, optional
+        Number of pixels in the y and x direction (height, width). Note that shape
+        can be found from the displacement file (in such a case, shape will be square).
+    upper_left_extent : list, optional
+        Upper left corner of upper left pixel (x, y)
+    center : list, optional
+        Center of projection (lat, long)
+    pixel_size : list or float, optional
+        Size of pixels: (dx, dy)
+    radius : list or float, optional
+        Length from the center to the edges of the projection (dx, dy)
+    width : int, optional
+        Number of pixels in the x direction
+    height : int, optional
+        Number of pixels in the y direction
+    image_geod : string
+        Spheroid of projection
+    earth_geod : string
+        Spheroid of Earth
+    save_data : bool
+        When True, saves lat to output_data/v and long to output_data/u
 
     Returns
     -------
@@ -319,7 +368,7 @@ def v_u_component(lat_0, lon_0, displacement_data, projection='stere', j=None, i
 def compute_lat_long(lat_0, lon_0, displacement_data=None, projection='stere', j=None, i=None, area_extent=None,
                      shape=None, upper_left_extent=None, center=None, pixel_size=None, radius=None, units=None,
                      width=None, height=None, image_geod=None, save_data=False):
-    """Computes latitude and longitude given an area and pixel-displacement.
+    """Computes the latitude and longitude given an area and pixel-displacement.
 
     Parameters
     ----------
@@ -373,6 +422,9 @@ def compute_lat_long(lat_0, lon_0, displacement_data=None, projection='stere', j
         (latitude, longitude) : numpy.array
             latitude and longitude calculated from area and pixel-displacement
 
+    Notes
+    -----
+    * center will always be interpreted as degrees unless units are passed directly with center.
     """
     delta_j, delta_i, area_definition = _get_area_and_displacements(lat_0, lon_0, displacement_data,
                                                                     projection=projection, j=j, i=i,
