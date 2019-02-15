@@ -4,6 +4,7 @@ from pyresample.geometry import AreaDefinition
 from xarray import DataArray
 import numpy as np
 import os
+import glob
 
 
 """Find wind info"""
@@ -46,7 +47,7 @@ def _get_area_and_displacements(lat_0, lon_0, displacement_data, projection='ste
             shape = area_definition.shape
     except ValueError:
         area_definition = None
-    delta_j, delta_i, shape = _get_delta(i, j, *get_displacements(displacement_data, shape=shape, j=j, i=i))
+    delta_j, delta_i, shape = get_displacements(displacement_data, shape=shape, j=j, i=i)
     if not isinstance(area_definition, AreaDefinition):
         area_definition = get_area(lat_0, lon_0, projection=projection, area_extent=area_extent, shape=shape,
                                    upper_left_extent=upper_left_extent, center=center, pixel_size=pixel_size,
@@ -66,13 +67,6 @@ def _to_int(num, error):
     except (TypeError, ValueError):
         raise error
     return int(num)
-
-
-def _get_delta(i, j, displacements, shape):
-    """"""
-    if displacements is None:
-        return 0, 0, shape
-    return displacements[0], displacements[1], shape
 
 
 def _pixel_to_pos(area_definition, j=None, i=None):
@@ -115,6 +109,7 @@ def _lat_long_dist(lat, earth_geod):
     return lat_dist, long_dist
 
 
+# TODO: COMBINE WITH _get_area_and_displacements
 def get_area(lat_0, lon_0, projection='stere', area_extent=None, shape=None,
              upper_left_extent=None, center=None, pixel_size=None, radius=None,
              units=None, width=None, height=None, image_geod=None):
@@ -163,6 +158,8 @@ def get_area(lat_0, lon_0, projection='stere', area_extent=None, shape=None,
     return area
 
 
+# TODO: USE GLOB TO READ AND OUTPUT MULTIPLE FILE: APPEND NAME OF OUTPUT WITH FILENAME
+# TODO: SEARCH IN FILE CALLED FROM FOR READABLE FILES
 def get_displacements(displacement_data='in.flo', j=None, i=None, shape=None, save_data=False):
     """Retrieves pixel-displacements from a file or list.
 

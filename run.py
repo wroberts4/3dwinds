@@ -1,9 +1,10 @@
-from pywinds.wind_functions import calculate_velocity, v_u_component, compute_lat_long, get_displacements, get_area
+# from pywinds.wind_functions import calculate_velocity, v_u_component, compute_lat_long, get_displacements, get_area
 from datetime import datetime
 from pyproj import Geod, Proj
 from xarray import DataArray
 from collections import OrderedDict
 import numpy as np
+import glob
 
 
 start = datetime.utcnow()
@@ -20,9 +21,11 @@ image_geod = 'WGS84'
 save_data=False
 area_extent = tuple(reversed((-2000000.0, 1429327.9172, 2000000.0, 5429327.9172)))
 
-velocity = calculate_velocity(lat_0, lon_0, file_name, i=i_in, j=j_in, area_extent=area_extent, earth_geod=earth_geod,
-                              image_geod=image_geod, save_data=save_data)
-print('speed:', '{0} m/sec, {1}°'.format(*velocity[:, 0, 0]))
+print(glob.glob('*.flo'))
+
+# velocity = calculate_velocity(lat_0, lon_0, file_name, i=i_in, j=j_in, area_extent=area_extent, earth_geod=earth_geod,
+#                               image_geod=image_geod, save_data=save_data)
+# print('speed:', '{0} m/sec, {1}°'.format(*velocity[:, 0, 0]))
 #
 # v_u = v_u_component(lat_0, lon_0, file_name, i=i_in, j=j_in, pixel_size=pixel_size, center=center,
 #                     shape=shape, earth_geod=earth_geod, image_geod=image_geod, save_data=save_data)
