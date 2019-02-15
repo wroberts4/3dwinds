@@ -163,7 +163,7 @@ def get_area(lat_0, lon_0, projection='stere', area_extent=None, shape=None,
     return area
 
 
-def get_displacements(displacement_data, j=None, i=None, shape=None, save_data=False):
+def get_displacements(displacement_data='in.flo', j=None, i=None, shape=None, save_data=False):
     """Retrieves pixel-displacements from a file or list.
 
     Parameters
@@ -206,7 +206,7 @@ def get_displacements(displacement_data, j=None, i=None, shape=None, save_data=F
     return np.array((j_displacements, i_displacements))[:, j, i], shape
 
 
-def calculate_velocity(lat_0, lon_0, displacement_data, projection='stere', j=None, i=None, delta_time=100,
+def calculate_velocity(lat_0, lon_0, displacement_data='in.flo', projection='stere', j=None, i=None, delta_time=100,
                        area_extent=None, shape=None, upper_left_extent=None, center=None, pixel_size=None,
                        radius=None, units=None, width=None, height=None, image_geod=None,
                        earth_geod=None, save_data=False):
@@ -262,7 +262,7 @@ def calculate_velocity(lat_0, lon_0, displacement_data, projection='stere', j=No
         (speed, angle) : numpy.array or list
             speed and angle (measured clockwise from north) of the wind calculated from area and pixel-displacement
     """
-    v, u = v_u_component(lat_0, lon_0, displacement_data, projection=projection, j=j, i=i,
+    v, u = v_u_component(lat_0, lon_0, displacement_data=displacement_data, projection=projection, j=j, i=i,
                          delta_time=delta_time, area_extent=area_extent, shape=shape,
                          upper_left_extent=upper_left_extent, center=center, pixel_size=pixel_size,
                          radius=radius, units=units, width=width, height=height,
@@ -275,7 +275,7 @@ def calculate_velocity(lat_0, lon_0, displacement_data, projection='stere', j=No
     return np.array((speed, velocity))
 
 
-def v_u_component(lat_0, lon_0, displacement_data, projection='stere', j=None, i=None, delta_time=100,
+def v_u_component(lat_0, lon_0, displacement_data='in.flo', projection='stere', j=None, i=None, delta_time=100,
                   area_extent=None, shape=None, upper_left_extent=None, center=None, pixel_size=None,
                   radius=None, units=None, width=None, height=None, image_geod=None,
                   earth_geod=None, save_data=False):

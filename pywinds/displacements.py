@@ -12,14 +12,14 @@ def main(argv):
     """
     args, kwargs = get_args(get_displacements, argv)
     try:
-        displacements = get_displacements(*args, **kwargs)
+        displacements, shape = get_displacements(*args, **kwargs)
     except TypeError as err:
         print(err)
         print()
         print_usage(get_displacements, argv)
         print(main.__doc__)
         sys.exit(1)
-    print(ndarray.tolist(displacements[0]))
+    print([ndarray.tolist(displacements), list(shape)])
     return displacements
 
 
