@@ -13,7 +13,7 @@ def main(argv):
     args, kwargs = get_args(compute_lat_long, argv)
     try:
         lat_long = compute_lat_long(*args, **kwargs)
-    except TypeError as err:
+    except (TypeError, ValueError, FileNotFoundError) as err:
         print(err)
         print()
         print_usage(compute_lat_long, argv)

@@ -8,7 +8,7 @@ def main(argv):
     args, kwargs = get_args(calculate_velocity, argv)
     try:
         velocity = calculate_velocity(*args, **kwargs)
-    except (TypeError, ValueError) as err:
+    except (TypeError, ValueError, FileNotFoundError) as err:
         print(err)
         print()
         print_usage(calculate_velocity, argv)

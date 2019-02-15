@@ -200,9 +200,9 @@ def get_displacements(displacement_data='in.flo', j=None, i=None, shape=None, sa
     j, i = _extrapolate_j_i(j, i, shape)
     if save_data and len(shape) == 2:
         np.ndarray.tofile(np.array(i_displacements[j, i]),
-                          os.path.join(os.path.dirname(__file__), '..\output_data\i_displacements'))
+                          os.path.join(os.path.dirname(__file__), '../output_data/i_displacements'))
         np.ndarray.tofile(np.array(j_displacements[j, i]),
-                          os.path.join(os.path.dirname(__file__), '..\output_data\j_displacements'))
+                          os.path.join(os.path.dirname(__file__), '../output_data/j_displacements'))
     return np.array((j_displacements, i_displacements))[:, j, i], shape
 
 

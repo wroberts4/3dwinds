@@ -13,7 +13,7 @@ def main(argv):
     args, kwargs = get_args(v_u_component, argv)
     try:
         u_v = v_u_component(*args, **kwargs)
-    except TypeError as err:
+    except (TypeError, ValueError, FileNotFoundError) as err:
         print(err)
         print()
         print_usage(v_u_component, argv)

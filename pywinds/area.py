@@ -12,7 +12,7 @@ def main(argv):
     args, kwargs = get_args(get_area, argv)
     try:
         area = get_area(*args, **kwargs)
-    except TypeError as err:
+    except (TypeError, ValueError) as err:
         print(err)
         print()
         print_usage(get_area, argv)
