@@ -1,11 +1,10 @@
 from arg_utils import run_script, get_args, print_usage
-from wind_functions import get_displacements_and_area
+from wind_functions import get_area
 import sys
 
 
 def output_format(output, kwargs):
     if kwargs.get('save_data') != True:
-        output = output[1]
         proj_dict = dict(output.proj_dict)
         if output.height is None or output.width is None:
             shape = None
@@ -17,16 +16,16 @@ def output_format(output, kwargs):
 
 def main(argv):
     if '--displacement_data' in argv:
-        run_script(get_displacements_and_area, argv, output_format)
+        run_script(get_area, argv, output_format)
     else:
         try:
-            args, kwargs = get_args(get_displacements_and_area, argv)
-            output = get_displacements_and_area(*args, **kwargs)
+            args, kwargs = get_args(get_area, argv)
+            output = get_area(*args, **kwargs)
             print(output_format(output, kwargs))
         except (TypeError, ValueError, FileNotFoundError, RuntimeError) as err:
             print(err)
             print()
-            print_usage(get_displacements_and_area, argv)
+            print_usage(get_area, argv)
             sys.exit(1)
 
 

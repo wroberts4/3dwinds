@@ -1,5 +1,5 @@
 import unittest
-from pywinds.wind_functions import get_displacements_and_area
+from pywinds.wind_functions import get_displacements, get_area
 import numpy as np
 import subprocess
 import sys
@@ -23,8 +23,8 @@ class TestCase:
         self.displacement_data = str(displacement_data).replace(' ', '')
         self.center = str(center).replace(' ', '')
         self.area_extent = area_extent
-        displacements, area = get_displacements_and_area(lat_0, lon_0, displacement_data=displacement_data,
-                                                         shape=shape, i=i, j=j)
+        displacements = get_displacements(lat_0, lon_0, displacement_data=displacement_data, shape=shape, i=i, j=j)
+        area = get_area(lat_0, lon_0, displacement_data=displacement_data, shape=shape, i=i, j=j)
         self.j_displacements, self.i_displacements = displacements
         self.shape = (area.height, area.width)
         # Output data
@@ -132,7 +132,7 @@ class TestWrappers(unittest.TestCase):
 
     def test_area(self):
         for case in self.test_cases:
-            test_area = args_to_data(['../area.py', '--lat_0', case.lat_0, '--lon_0', case.lon_0, '--shape',
+            test_area = args_to_data(['../area.py', case.lat_0, case.lon_0, '--shape',
                                       str(case.shape).replace(' ', ''), '--center', case.center, '--pixel_size',
                                       case.pixel_size, '--units', case.units])
             self.assertTrue(str(case.area_extent[0]) in test_area)

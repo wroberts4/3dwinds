@@ -1,6 +1,6 @@
 import unittest
 import numpy as np
-from pywinds.wind_functions import calculate_velocity, v_u_component, compute_lat_long, get_displacements_and_area,\
+from pywinds.wind_functions import calculate_velocity, v_u_component, compute_lat_long, get_displacements, get_area,\
     _create_area, _extrapolate_j_i, _pixel_to_pos
 
 
@@ -21,8 +21,8 @@ class TestCase:
         self.units = units
         self.displacement_data = displacement_data
         self.center = center
-        displacements, area = get_displacements_and_area(lat_0, lon_0, displacement_data=displacement_data,
-                                                         shape=shape, i=i, j=j)
+        displacements = get_displacements(lat_0, lon_0, displacement_data=displacement_data, shape=shape, i=i, j=j)
+        area = get_area(lat_0, lon_0, displacement_data=displacement_data, shape=shape, i=i, j=j)
         self.j_displacements, self.i_displacements = displacements
         self.shape = (area.height, area.width)
         # Output data

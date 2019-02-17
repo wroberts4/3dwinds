@@ -15,7 +15,5 @@ Documentation
    installation.rst
    API.rst
    examples.rst
-
-test
-----
+   usage.rst
 

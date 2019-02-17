@@ -136,7 +136,7 @@ def _create_area(lat_0, lon_0, projection='stere', area_extent=None, shape=None,
     return area
 
 
-def _get_displacements(displacement_data=None, j=None, i=None, shape=None, save_data=False):
+def _find_displacements(displacement_data=None, j=None, i=None, shape=None, save_data=False):
     """Retrieves pixel-displacements from a file or list.
 
     Parameters
@@ -196,10 +196,17 @@ def _compute_lat_long(j, i, area_definition, displacement_data, save_data=False,
     return np.array((lat, long))
 
 
-def get_displacements_and_area(lat_0=None, lon_0=None, displacement_data=None, projection='stere', j=None, i=None,
-                                area_extent=None, shape=None, upper_left_extent=None, center=None, pixel_size=None,
-                                radius=None, units=None, image_geod=None, save_data=False):
-    """"""
+def _find_displacements_and_area(lat_0=None, lon_0=None, displacement_data=None, projection='stere', j=None, i=None,
+                               area_extent=None, shape=None, upper_left_extent=None, center=None, pixel_size=None,
+                               radius=None, units=None, image_geod=None, save_data=False):
+    """Dynamically finds displacements and area of projection
+
+    Parameters
+    ----------
+
+    Returns
+    -------
+    """
     # Try to get a shape.
     area_definition = None
     if lat_0 is not None or lon_0 is not None:
@@ -210,7 +217,7 @@ def get_displacements_and_area(lat_0=None, lon_0=None, displacement_data=None, p
             shape = (area_definition.height, area_definition.width)
         except ValueError:
             pass
-    displacements, shape = _get_displacements(displacement_data, shape=shape, j=j, i=i, save_data=save_data)
+    displacements, shape = _find_displacements(displacement_data, shape=shape, j=j, i=i, save_data=save_data)
     if not isinstance(area_definition, AreaDefinition) and (lat_0 is not None or lon_0 is not None):
         area_definition = _create_area(lat_0, lon_0, projection=projection, area_extent=area_extent, shape=shape,
                                    upper_left_extent=upper_left_extent, center=center, pixel_size=pixel_size,
@@ -218,10 +225,42 @@ def get_displacements_and_area(lat_0=None, lon_0=None, displacement_data=None, p
     return np.array((displacements, area_definition))
 
 
+def get_area(lat_0, lon_0, displacement_data=None, projection='stere', j=None, i=None, area_extent=None, shape=None,
+             upper_left_extent=None, center=None, pixel_size=None, radius=None, units=None, image_geod=None):
+    """Dynamically finds area of projection
+
+    Parameters
+    ----------
+
+    Returns
+    -------
+    """
+    return _find_displacements_and_area(lat_0=lat_0, lon_0=lon_0, displacement_data=displacement_data,
+                                        projection=projection, j=j, i=i, area_extent=area_extent, shape=shape,
+                                        upper_left_extent=upper_left_extent, center=center, pixel_size=pixel_size,
+                                        radius=radius, units=units, image_geod=image_geod)[1]
+
+
+def get_displacements(lat_0=None, lon_0=None, displacement_data=None, projection='stere', j=None, i=None,
+                      area_extent=None, shape=None, upper_left_extent=None, center=None, pixel_size=None,
+                      radius=None, units=None, image_geod=None, save_data=False):
+    """Dynamically finds displacements
+
+    Parameters
+    ----------
+
+    Returns
+    -------
+    """
+    return _find_displacements_and_area(lat_0=lat_0, lon_0=lon_0, displacement_data=displacement_data,
+                                        projection=projection, j=j, i=i, area_extent=area_extent, shape=shape,
+                                        upper_left_extent=upper_left_extent, center=center, pixel_size=pixel_size,
+                                        radius=radius, units=units, image_geod=image_geod, save_data=save_data)[0]
+
+
 def calculate_velocity(lat_0, lon_0, displacement_data=None, projection='stere', j=None, i=None, delta_time=100,
                        area_extent=None, shape=None, upper_left_extent=None, center=None, pixel_size=None,
-                       radius=None, units=None, image_geod=None,
-                       earth_geod=None, save_data=False):
+                       radius=None, units=None, image_geod=None, earth_geod=None, save_data=False):
     """Computes the speed and angle of the wind given an area and pixel-displacement.
 
     Parameters
@@ -230,15 +269,17 @@ def calculate_velocity(lat_0, lon_0, displacement_data=None, projection='stere',
         Normal latitude of projection
     lon_0 : float
         Normal longitude of projection
-    displacement_data : str or list
+    displacement_data : str or list, optional
         File or list containing displacements: [0, 0, 0, i11, j11, i12, j12, ...] or
-        [[j_displacements], [i_displacements]] respectively.
-    projection : str
-        Name of projection that pixels are describing (stere, laea, merc, etc).
+        [[j_displacements], [i_displacements]] respectively
+    projection : str, optional
+        Name of projection that pixels are describing (stere, laea, merc, etc)
     j : float or None, optional
-        Vertical value of pixel to find lat/long of.
+        Vertical value of pixel to find lat/long of
     i : float or None, optional
-        Horizontal value of pixel to find lat/long of.
+        Horizontal value of pixel to find lat/long of
+    delta_time : float, optional
+        Amount of time between images measured in minutes
     units : str, optional
         Units that provided arguments should be interpreted as. This can be
         one of 'deg', 'degrees', 'rad', 'radians', 'meters', 'metres', and any
@@ -246,7 +287,7 @@ def calculate_velocity(lat_0, lon_0, displacement_data=None, projection='stere',
         `cs2cs -lu <https://proj4.org/apps/cs2cs.html#cmdoption-cs2cs-lu>`_
         command. Units are determined in the following priority:
 
-        1. units expressed with each variable through a DataArray's attrs attribute.
+        1. units expressed with each variable through a DataArray's attrs attribute
         2. units passed to ``units``
         3. meters
     area_extent : list, optional
@@ -262,11 +303,11 @@ def calculate_velocity(lat_0, lon_0, displacement_data=None, projection='stere',
         Size of pixels: (dy, dx)
     radius : list or float, optional
         Length from the center to the edges of the projection (dy, dx)
-    image_geod : string or Geod
+    image_geod : string or Geod, optional
         Spheroid of projection
-    earth_geod : string or Geod
+    earth_geod : string or Geod, optional
         Spheroid of Earth
-    save_data : bool
+    save_data : bool, optional
         When True, saves lat to output_data/speed and long to output_data/angle
 
     Returns
@@ -343,11 +384,16 @@ def v_u_component(lat_0, lon_0, displacement_data=None, projection='stere', j=No
         (v, u) : numpy.array or list
             v and u components of wind calculated from area and pixel-displacement
     """
-    displacements, area_definition = get_displacements_and_area(lat_0, lon_0, displacement_data, projection=projection, j=j, i=i,
-                                                  area_extent=area_extent, shape=shape,
-                                                  upper_left_extent=upper_left_extent, center=center,
-                                                  pixel_size=pixel_size, radius=radius, units=units,
-                                                  image_geod=image_geod)
+    if not isinstance(lat_0, (int, float)) or not isinstance(lon_0, (int, float)):
+        raise ValueError('lat_0 and lon_0 must be ints or floats, but instead were ' +
+                         '{0} as type {1} and {2} as type {3} respectively'.format(
+                             lat_0, type(lat_0), lon_0, type(lon_0)))
+    displacements, area_definition = _find_displacements_and_area(lat_0, lon_0, displacement_data,
+                                                                  projection=projection, j=j, i=i,
+                                                                  area_extent=area_extent, shape=shape,
+                                                                  upper_left_extent=upper_left_extent, center=center,
+                                                                  pixel_size=pixel_size, radius=radius, units=units,
+                                                                  image_geod=image_geod)
     if not isinstance(area_definition, AreaDefinition):
         raise ValueError('Not enough information provided to create an area definition')
     old_lat, old_long = _compute_lat_long(j, i, area_definition, displacement_data)
@@ -430,11 +476,11 @@ def compute_lat_long(lat_0, lon_0, displacement_data=None, projection='stere', j
         raise ValueError('lat_0 and lon_0 must be ints or floats, but instead were ' +
                          '{0} as type {1} and {2} as type {3} respectively'.format(
                              lat_0, type(lat_0), lon_0, type(lon_0)))
-    displacements, area_definition = get_displacements_and_area(lat_0, lon_0, displacement_data,
-                                                                    projection=projection, j=j, i=i,
-                                                                    area_extent=area_extent, shape=shape,
-                                                                    upper_left_extent=upper_left_extent,
-                                                                    center=center, pixel_size=pixel_size,
-                                                                    radius=radius, units=units, 
-                                                                    image_geod=image_geod)
+    displacements, area_definition = _find_displacements_and_area(lat_0, lon_0, displacement_data,
+                                                                  projection=projection, j=j, i=i,
+                                                                  area_extent=area_extent, shape=shape,
+                                                                  upper_left_extent=upper_left_extent,
+                                                                  center=center, pixel_size=pixel_size,
+                                                                  radius=radius, units=units,
+                                                                  image_geod=image_geod)
     return _compute_lat_long(j, i, area_definition, displacement_data, save_data=save_data, displacements=displacements)
