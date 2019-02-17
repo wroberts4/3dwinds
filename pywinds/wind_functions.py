@@ -177,6 +177,25 @@ def _get_displacements(displacement_data=None, j=None, i=None, shape=None, save_
     return np.array((j_displacements, i_displacements))[:, j, i], shape
 
 
+def _compute_lat_long(j, i, area_definition, displacement_data, save_data=False, displacements=(0, 0)):
+    if not isinstance(area_definition, AreaDefinition):
+        raise ValueError('Not enough information provided to create an area definition')
+    j_displacement, i_displacement = displacements
+    # If i and j are None, make them cover the entire image. Also update values with displacements.
+    j, i = _extrapolate_j_i(j, i, area_definition.shape, delta_j=j_displacement, delta_i=i_displacement)
+    # Function that handles projection to lat/long transformation.
+    p = Proj(area_definition.proj_dict, errcheck=True, preserve_units=True)
+    # Returns (lat, long) in degrees.
+    lat, long = _reverse_param(p(*_pixel_to_pos(area_definition, j=j, i=i), errcheck=True, inverse=True))
+    if save_data == True:
+        if displacement_data is None:
+            raise ValueError('Cannot save old latitudes/longitudes to a file')
+        else:
+            _save_data(lat, 'new_latitude', displacement_data)
+            _save_data(long, 'new_longitude', displacement_data)
+    return np.array((lat, long))
+
+
 def get_displacements_and_area(lat_0=None, lon_0=None, displacement_data=None, projection='stere', j=None, i=None,
                                 area_extent=None, shape=None, upper_left_extent=None, center=None, pixel_size=None,
                                 radius=None, units=None, image_geod=None, save_data=False):
@@ -419,22 +438,3 @@ def compute_lat_long(lat_0, lon_0, displacement_data=None, projection='stere', j
                                                                     radius=radius, units=units, 
                                                                     image_geod=image_geod)
     return _compute_lat_long(j, i, area_definition, displacement_data, save_data=save_data, displacements=displacements)
-
-
-def _compute_lat_long(j, i, area_definition, displacement_data, save_data=False, displacements=(0, 0)):
-    if not isinstance(area_definition, AreaDefinition):
-        raise ValueError('Not enough information provided to create an area definition')
-    j_displacement, i_displacement = displacements
-    # If i and j are None, make them cover the entire image. Also update values with displacements.
-    j, i = _extrapolate_j_i(j, i, area_definition.shape, delta_j=j_displacement, delta_i=i_displacement)
-    # Function that handles projection to lat/long transformation.
-    p = Proj(area_definition.proj_dict, errcheck=True, preserve_units=True)
-    # Returns (lat, long) in degrees.
-    lat, long = _reverse_param(p(*_pixel_to_pos(area_definition, j=j, i=i), errcheck=True, inverse=True))
-    if save_data == True:
-        if displacement_data is None:
-            raise ValueError('Cannot save old latitudes/longitudes to a file')
-        else:
-            _save_data(lat, 'new_latitude', displacement_data)
-            _save_data(long, 'new_longitude', displacement_data)
-    return np.array((lat, long))
