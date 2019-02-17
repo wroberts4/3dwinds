@@ -1,13 +1,13 @@
 import numpy as np
 
 
-filename = 'test_data_three'
+filename = 'test_data_test'
 test_data = None
 test_data_shape = (5, 5)
 
 if test_data is None:
     test_data = []
-    for x in range(test_data_shape[0] * test_data_shape[1]):
+    for x in range(test_data_shape[0] * test_data_shape[1] + 2):
         test_data.append(100 * x)
         test_data.append(100 * x)
 # Can be any list of 3 integers: Does not affect data

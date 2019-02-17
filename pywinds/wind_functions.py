@@ -1,19 +1,33 @@
 from pyproj import Proj, Geod
-from pyresample.utils import create_area_def, proj4_str_to_dict
+from pyresample.utils import create_area_def, proj4_str_to_dict, proj4_dict_to_str
 from pyresample.geometry import AreaDefinition
 from xarray import DataArray
+import ntpath
 import numpy as np
 import os
-import glob
+import logging
 
 
 """Find wind info"""
 
 
+def _save_data(data, output_filename, input_filename):
+    if isinstance(input_filename, str):
+        head, tail = ntpath.split(input_filename)
+        extenion = tail or ntpath.basename(head)
+    else:
+        extenion = 'list'
+    try:
+        os.mkdir(os.path.join(os.getcwd(), extenion + '_output'))
+    except OSError:
+        pass
+    np.ndarray.tofile(np.array(data), os.path.join(os.getcwd(), extenion + '_output', output_filename))
+
+
 def _extrapolate_j_i(j, i, shape, delta_j=0, delta_i=0):
     """"""
     if np.size(i) != 1 or np.size(j) != 1 or i is None and j is not None or j is None and i is not None:
-        raise ValueError('i and j must both be integers or None but were {0} (type: {1}) and {2} (type: {3}) '
+        raise ValueError('i and j must both be integers or None but were {0} {1} and {2} {3} '
                          'respectively'.format(i, type(i), j, type(j)))
     if i is None:
         j = [[y for x in range(0, shape[1])] for y in range(0, shape[0])]
@@ -32,29 +46,6 @@ def _reverse_param(param):
         return list(reversed(param.data.tolist()))
     else:
         return list(reversed(param))
-
-
-def _get_area_and_displacements(lat_0, lon_0, displacement_data, projection='stere', j=None, i=None,
-                                area_extent=None, shape=None, upper_left_extent=None, center=None, pixel_size=None,
-                                radius=None, units=None, width=None, height=None, image_geod=None):
-    """"""
-    # Try to get a shape.
-    try:
-        area_definition = get_area(lat_0, lon_0, projection=projection, area_extent=area_extent, shape=shape,
-                                   upper_left_extent=upper_left_extent, center=center, pixel_size=pixel_size,
-                                   radius=radius, units=units, width=width, height=height, image_geod=image_geod)
-        if hasattr(area_definition, 'shape'):
-            shape = area_definition.shape
-    except ValueError:
-        area_definition = None
-    delta_j, delta_i, shape = get_displacements(displacement_data, shape=shape, j=j, i=i)
-    if not isinstance(area_definition, AreaDefinition):
-        area_definition = get_area(lat_0, lon_0, projection=projection, area_extent=area_extent, shape=shape,
-                                   upper_left_extent=upper_left_extent, center=center, pixel_size=pixel_size,
-                                   radius=radius, units=units, width=width, height=height, image_geod=image_geod)
-    if not isinstance(area_definition, AreaDefinition):
-        raise ValueError('Not enough information provided to create an area definition')
-    return delta_j, delta_i, area_definition
 
 
 def _to_int(num, error):
@@ -109,23 +100,9 @@ def _lat_long_dist(lat, earth_geod):
     return lat_dist, long_dist
 
 
-# TODO: COMBINE WITH _get_area_and_displacements
-def get_area(lat_0, lon_0, projection='stere', area_extent=None, shape=None,
-             upper_left_extent=None, center=None, pixel_size=None, radius=None,
-             units=None, width=None, height=None, image_geod=None):
-    """Computes a projection area from what data the user knows.
-
-    Parameters
-    ----------
-
-    Returns
-    -------
-
-    """
-    if not isinstance(lat_0, (int, float)) or not isinstance(lon_0, (int, float)):
-        raise ValueError('lat_0 and lon_0 must be ints or floats, but instead were ' +
-                         '{0} as type {1} and {2} as type {3} respectively'.format(
-                             lat_0, type(lat_0), lon_0, type(lon_0)))
+def _create_area(lat_0, lon_0, projection='stere', area_extent=None, shape=None,
+                upper_left_extent=None, center=None, pixel_size=None, radius=None,
+                units=None, image_geod=None):
     if not isinstance(projection, str):
         raise ValueError('projection must be a string, but instead was {0} as type {1}'.format(
             projection, type(projection)))
@@ -153,14 +130,13 @@ def get_area(lat_0, lon_0, projection='stere', area_extent=None, shape=None,
                                                                                image_geod.initstring))
     area = create_area_def('pywinds', proj_dict, area_extent=area_extent, shape=shape,
                            upper_left_extent=upper_left_extent, resolution=pixel_size,
-                           center=center, radius=radius, units=units, width=width, height=height)
-    area.area_extent = list(reversed(area.area_extent))
+                           center=center, radius=radius, units=units,)
+    if isinstance(area_extent, AreaDefinition):
+        area.area_extent = tuple(reversed(area.area_extent))
     return area
 
 
-# TODO: USE GLOB TO READ AND OUTPUT MULTIPLE FILE: APPEND NAME OF OUTPUT WITH FILENAME
-# TODO: SEARCH IN FILE CALLED FROM FOR READABLE FILES
-def get_displacements(displacement_data='in.flo', j=None, i=None, shape=None, save_data=False):
+def _get_displacements(displacement_data=None, j=None, i=None, shape=None, save_data=False):
     """Retrieves pixel-displacements from a file or list.
 
     Parameters
@@ -176,36 +152,56 @@ def get_displacements(displacement_data='in.flo', j=None, i=None, shape=None, sa
         i_displacements = displacements[0::2]
     elif displacement_data is not None:
         if len(np.shape(displacement_data)) == 0 or np.shape(displacement_data)[0] != 2:
-            raise ValueError('displacement_data should have shape (2, m, n), but instead has shape {0}'.format(
+            raise ValueError('displacement_data should have shape (2, y, x), but instead has shape {0}'.format(
                 np.shape(displacement_data)))
         j_displacements = np.array(displacement_data[1])
         i_displacements = np.array(displacement_data[0])
     else:
-        return None, shape
+        return (0, 0), shape
     if shape is not None:
         j_displacements = j_displacements.reshape(shape)
         i_displacements = i_displacements.reshape(shape)
+        j, i = _extrapolate_j_i(j, i, shape)
     else:
-        try:
-            shape = (np.size(i_displacements)**.5, np.size(j_displacements)**.5)
-            error = 'Shape was not provided and shape found from file was not comprised of integers: {0}'.format(shape)
-            shape = (_to_int(shape[0], ValueError(error)), _to_int(shape[1], ValueError(error)))
-            j_displacements = j_displacements.reshape(shape)
-            i_displacements = i_displacements.reshape(shape)
-        except ValueError:
-            shape = np.size(i_displacements) + np.size(j_displacements)
-    j, i = _extrapolate_j_i(j, i, shape)
-    if save_data and len(shape) == 2:
-        np.ndarray.tofile(np.array(i_displacements[j, i]),
-                          os.path.join(os.path.dirname(__file__), '../output_data/i_displacements'))
-        np.ndarray.tofile(np.array(j_displacements[j, i]),
-                          os.path.join(os.path.dirname(__file__), '../output_data/j_displacements'))
+        shape = (np.size(i_displacements)**.5, np.size(j_displacements)**.5)
+        error = 'Shape was not provided and shape found from file was not comprised of integers: ' \
+                '{0} pixels made a shape of {1}'.format(np.size(j_displacements) + np.size(i_displacements),
+                                                        tuple([2] + list(shape)))
+        shape = (_to_int(shape[0], ValueError(error)), _to_int(shape[1], ValueError(error)))
+        j_displacements = j_displacements.reshape(shape)
+        i_displacements = i_displacements.reshape(shape)
+        j, i = _extrapolate_j_i(j, i, shape)
+    if save_data:
+        _save_data(j_displacements[j, i], 'j_displacements', displacement_data)
+        _save_data(i_displacements[j, i], 'i_displacements', displacement_data)
     return np.array((j_displacements, i_displacements))[:, j, i], shape
 
 
-def calculate_velocity(lat_0, lon_0, displacement_data='in.flo', projection='stere', j=None, i=None, delta_time=100,
+def get_displacements_and_area(lat_0=None, lon_0=None, displacement_data=None, projection='stere', j=None, i=None,
+                                area_extent=None, shape=None, upper_left_extent=None, center=None, pixel_size=None,
+                                radius=None, units=None, image_geod=None, save_data=False):
+    """"""
+    # Try to get a shape.
+    area_definition = None
+    if lat_0 is not None or lon_0 is not None:
+        try:
+            area_definition = _create_area(lat_0, lon_0, projection=projection, area_extent=area_extent, shape=shape,
+                                       upper_left_extent=upper_left_extent, center=center, pixel_size=pixel_size,
+                                       radius=radius, units=units, image_geod=image_geod)
+            shape = (area_definition.height, area_definition.width)
+        except ValueError:
+            pass
+    displacements, shape = _get_displacements(displacement_data, shape=shape, j=j, i=i, save_data=save_data)
+    if not isinstance(area_definition, AreaDefinition) and (lat_0 is not None or lon_0 is not None):
+        area_definition = _create_area(lat_0, lon_0, projection=projection, area_extent=area_extent, shape=shape,
+                                   upper_left_extent=upper_left_extent, center=center, pixel_size=pixel_size,
+                                   radius=radius, units=units, image_geod=image_geod)
+    return np.array((displacements, area_definition))
+
+
+def calculate_velocity(lat_0, lon_0, displacement_data=None, projection='stere', j=None, i=None, delta_time=100,
                        area_extent=None, shape=None, upper_left_extent=None, center=None, pixel_size=None,
-                       radius=None, units=None, width=None, height=None, image_geod=None,
+                       radius=None, units=None, image_geod=None,
                        earth_geod=None, save_data=False):
     """Computes the speed and angle of the wind given an area and pixel-displacement.
 
@@ -262,19 +258,19 @@ def calculate_velocity(lat_0, lon_0, displacement_data='in.flo', projection='ste
     v, u = v_u_component(lat_0, lon_0, displacement_data=displacement_data, projection=projection, j=j, i=i,
                          delta_time=delta_time, area_extent=area_extent, shape=shape,
                          upper_left_extent=upper_left_extent, center=center, pixel_size=pixel_size,
-                         radius=radius, units=units, width=width, height=height,
+                         radius=radius, units=units,
                          image_geod=image_geod, earth_geod=earth_geod)
-    speed, velocity = (u**2 + v**2)**.5, ((90 - np.arctan2(v, u) * 180 / np.pi) + 360) % 360
+    speed, angle = (u**2 + v**2)**.5, ((90 - np.arctan2(v, u) * 180 / np.pi) + 360) % 360
     if save_data == True:
-        np.ndarray.tofile(np.array(speed), os.path.join(os.path.dirname(__file__), '..\output_data\speed'))
-        np.ndarray.tofile(np.array(velocity), os.path.join(os.path.dirname(__file__), '..\output_data\\angle'))
+        _save_data(speed, 'speed', displacement_data)
+        _save_data(angle, 'angle', displacement_data)
     # When wind vector azimuth is 0 degrees it points North (mathematically 90 degrees) and moves clockwise.
-    return np.array((speed, velocity))
+    return np.array((speed, angle))
 
 
-def v_u_component(lat_0, lon_0, displacement_data='in.flo', projection='stere', j=None, i=None, delta_time=100,
+def v_u_component(lat_0, lon_0, displacement_data=None, projection='stere', j=None, i=None, delta_time=100,
                   area_extent=None, shape=None, upper_left_extent=None, center=None, pixel_size=None,
-                  radius=None, units=None, width=None, height=None, image_geod=None,
+                  radius=None, units=None, image_geod=None,
                   earth_geod=None, save_data=False):
     """Computes the v and u components of the wind given an area and pixel-displacement.
 
@@ -328,22 +324,15 @@ def v_u_component(lat_0, lon_0, displacement_data='in.flo', projection='stere', 
         (v, u) : numpy.array or list
             v and u components of wind calculated from area and pixel-displacement
     """
-    i_error = ValueError('i must be None or an integer but was provided {0} as type {1}'.format(i, type(i)))
-    j_error = ValueError('j must be None or an integer but was provided {0} as type {1}'.format(j, type(j)))
-    i, j = _to_int(i, i_error), _to_int(j, j_error)
-    area_definition = _get_area_and_displacements(lat_0, lon_0, displacement_data, projection=projection, j=j, i=i,
+    displacements, area_definition = get_displacements_and_area(lat_0, lon_0, displacement_data, projection=projection, j=j, i=i,
                                                   area_extent=area_extent, shape=shape,
                                                   upper_left_extent=upper_left_extent, center=center,
-                                                  pixel_size=pixel_size, radius=radius, units=units, width=width,
-                                                  height=height, image_geod=image_geod)[2]
-    old_lat, old_long = compute_lat_long(lat_0, lon_0, projection=projection, j=j, i=i, area_extent=area_extent,
-                                         shape=area_definition.shape, upper_left_extent=upper_left_extent, center=center,
-                                         pixel_size=pixel_size, radius=radius, units=units, width=width, height=height,
-                                         image_geod=image_geod)
-    new_lat, new_long = compute_lat_long(lat_0, lon_0, projection=projection, j=j, i=i, area_extent=area_extent,
-                                         shape=area_definition.shape, upper_left_extent=upper_left_extent, center=center,
-                                         pixel_size=pixel_size, radius=radius, units=units, width=width, height=height,
-                                         image_geod=image_geod, displacement_data=displacement_data)
+                                                  pixel_size=pixel_size, radius=radius, units=units,
+                                                  image_geod=image_geod)
+    if not isinstance(area_definition, AreaDefinition):
+        raise ValueError('Not enough information provided to create an area definition')
+    old_lat, old_long = _compute_lat_long(j, i, area_definition, displacement_data)
+    new_lat, new_long = _compute_lat_long(j, i, area_definition, displacement_data, displacements=displacements)
     lat_long_distance = _lat_long_dist((new_lat + old_lat) / 2, earth_geod)
     # u = (_delta_longitude(new_long, old_long) *
     #      _lat_long_dist(old_lat, earth_geod)[1] / (delta_time * 60) +
@@ -353,14 +342,14 @@ def v_u_component(lat_0, lon_0, displacement_data='in.flo', projection='stere', 
     v = (new_lat - old_lat) * lat_long_distance[0] / (delta_time * 60)
     u = _delta_longitude(new_long, old_long) * lat_long_distance[1] / (delta_time * 60)
     if save_data == True:
-        np.ndarray.tofile(np.array(u), os.path.join(os.path.dirname(__file__), '..\output_data\\u'))
-        np.ndarray.tofile(np.array(v), os.path.join(os.path.dirname(__file__), '..\output_data\\v'))
+        _save_data(u, 'u', displacement_data)
+        _save_data(v, 'v', displacement_data)
     return np.array((v, u))
 
 
 def compute_lat_long(lat_0, lon_0, displacement_data=None, projection='stere', j=None, i=None, area_extent=None,
                      shape=None, upper_left_extent=None, center=None, pixel_size=None, radius=None, units=None,
-                     width=None, height=None, image_geod=None, save_data=False):
+                     image_geod=None, save_data=False):
     """Computes the latitude and longitude given an area and (j, i) values.
 
     Parameters
@@ -418,24 +407,34 @@ def compute_lat_long(lat_0, lon_0, displacement_data=None, projection='stere', j
     * center will always be interpreted as degrees unless units are passed directly with center
     * The list returned is in row-column form. lat[j][i] is up/down j pixels and left/right i pixels
     """
-    delta_j, delta_i, area_definition = _get_area_and_displacements(lat_0, lon_0, displacement_data,
+    if not isinstance(lat_0, (int, float)) or not isinstance(lon_0, (int, float)):
+        raise ValueError('lat_0 and lon_0 must be ints or floats, but instead were ' +
+                         '{0} as type {1} and {2} as type {3} respectively'.format(
+                             lat_0, type(lat_0), lon_0, type(lon_0)))
+    displacements, area_definition = get_displacements_and_area(lat_0, lon_0, displacement_data,
                                                                     projection=projection, j=j, i=i,
                                                                     area_extent=area_extent, shape=shape,
                                                                     upper_left_extent=upper_left_extent,
                                                                     center=center, pixel_size=pixel_size,
-                                                                    radius=radius, units=units, width=width,
-                                                                    height=height, image_geod=image_geod)
+                                                                    radius=radius, units=units, 
+                                                                    image_geod=image_geod)
+    return _compute_lat_long(j, i, area_definition, displacement_data, save_data=save_data, displacements=displacements)
+
+
+def _compute_lat_long(j, i, area_definition, displacement_data, save_data=False, displacements=(0, 0)):
+    if not isinstance(area_definition, AreaDefinition):
+        raise ValueError('Not enough information provided to create an area definition')
+    j_displacement, i_displacement = displacements
     # If i and j are None, make them cover the entire image. Also update values with displacements.
-    j, i = _extrapolate_j_i(j, i, area_definition.shape, delta_j=delta_j, delta_i=delta_i)
+    j, i = _extrapolate_j_i(j, i, area_definition.shape, delta_j=j_displacement, delta_i=i_displacement)
     # Function that handles projection to lat/long transformation.
     p = Proj(area_definition.proj_dict, errcheck=True, preserve_units=True)
     # Returns (lat, long) in degrees.
     lat, long = _reverse_param(p(*_pixel_to_pos(area_definition, j=j, i=i), errcheck=True, inverse=True))
     if save_data == True:
         if displacement_data is None:
-            np.ndarray.tofile(np.array(lat), os.path.join(os.path.dirname(__file__), '..\output_data\old_latitude'))
-            np.ndarray.tofile(np.array(long), os.path.join(os.path.dirname(__file__), '..\output_data\old_longitude'))
+            raise ValueError('Cannot save old latitudes/longitudes to a file')
         else:
-            np.ndarray.tofile(np.array(lat), os.path.join(os.path.dirname(__file__), '..\output_data\\new_latitude'))
-            np.ndarray.tofile(np.array(long), os.path.join(os.path.dirname(__file__), '..\output_data\\new_longitude'))
+            _save_data(lat, 'new_latitude', displacement_data)
+            _save_data(long, 'new_longitude', displacement_data)
     return np.array((lat, long))

@@ -1,26 +1,16 @@
-from arg_utils import get_args, print_usage
+from arg_utils import run_script
 from wind_functions import v_u_component
-from numpy import ndarray
 import sys
 
 
-def main(argv):
-    """Additional command line information
+def output_format(output, kwargs):
+    if kwargs.get('save_data') != True:
+        return output.tolist()
+    return ''
 
-    * You can add units to a specific variable by appending the variable with ":your_unit_here"
-      Examples: "--pixel_size 4:km" and "--center 10000,10000:m"
-    """
-    args, kwargs = get_args(v_u_component, argv)
-    try:
-        u_v = v_u_component(*args, **kwargs)
-    except (TypeError, ValueError, FileNotFoundError) as err:
-        print(err)
-        print()
-        print_usage(v_u_component, argv)
-        print(main.__doc__)
-        sys.exit(1)
-    print(ndarray.tolist(u_v))
-    return u_v
+
+def main(argv):
+    run_script(v_u_component, argv, output_format)
 
 
 if __name__ == "__main__":

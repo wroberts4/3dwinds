@@ -1,8 +1,5 @@
 import unittest
-from pyproj import Geod
-from pywinds.wind_functions import get_displacements
-from pyresample.geometry import AreaDefinition
-from pyresample.utils import proj4_str_to_dict
+from pywinds.wind_functions import get_displacements_and_area
 import numpy as np
 import subprocess
 import sys
@@ -25,9 +22,11 @@ class TestCase:
         self.units = str(units).replace(' ', '')
         self.displacement_data = str(displacement_data).replace(' ', '')
         self.center = str(center).replace(' ', '')
-        self.area_extent = str(area_extent)
-        displacements, self.shape = get_displacements(displacement_data, shape=shape, i=i, j=j)
+        self.area_extent = area_extent
+        displacements, area = get_displacements_and_area(lat_0, lon_0, displacement_data=displacement_data,
+                                                         shape=shape, i=i, j=j)
         self.j_displacements, self.i_displacements = displacements
+        self.shape = (area.height, area.width)
         # Output data
         self.distance = str(distance).replace(' ', '')
         self.speed = speed
@@ -45,14 +44,14 @@ class TestWrappers(unittest.TestCase):
         self.test_cases = []
         self.test_cases.append(TestCase('./test_files/test_data_three.flo',
                                         i=1, j=4, pixel_size='10:km', lat_0=60, lon_0=0, center=(90, 0),
-                                        area_extent=(3454327.9172, 25000.0, 3404327.9172, -25000.0),
+                                        area_extent=(-25000.0, 3404327.9171, 25000.0, 3454327.9171),
                                         distance=255333.02691, speed=3250.56873, angle=144.54325, u=1885.61659,
                                         v=-2647.76266, old_lat=89.81344, old_long=-26.57637, new_lat=-53.72147,
                                         new_long=80.28014))
         displacement_data = np.array(([x for x in range(25)], [x for x in range(25)])) * 10
         self.test_cases.append(TestCase(displacement_data.tolist(), pixel_size=5, lat_0=90, lon_0=20, i=1, j=4,
                                         units='km', center=(40, 10),
-                                        area_extent=(-5851082.9951, -1021407.8857, -5876082.9951, -1046407.8857),
+                                        area_extent=(-1046407.8856, -5876082.9951, -1021407.8856, -5851082.9951),
                                         distance=56.56842, speed=197.71698,
                                         angle=130.12046, u=151.19247, v=-127.40817, old_lat=39.92071, old_long=9.96938,
                                         new_lat=33.03179, new_long=20.09179))
@@ -121,8 +120,8 @@ class TestWrappers(unittest.TestCase):
 
     def test_displacements(self):
         for case in self.test_cases:
-            displacements, shape = args_to_data(['../displacements.py', '--displacement_data', case.displacement_data])
-            displacements_ji, shape_ji = args_to_data(['../displacements.py', '--displacement_data',
+            displacements = args_to_data(['../displacements.py', '--displacement_data', case.displacement_data])
+            displacements_ji = args_to_data(['../displacements.py', '--displacement_data',
                                                        case.displacement_data, '--j', str(case.j), '--i', str(case.i)])
             j_displacements, i_displacements = displacements
             j_displacements_ji, i_displacements_ji = displacements_ji
@@ -130,20 +129,24 @@ class TestWrappers(unittest.TestCase):
             self.assertEqual(case.i_displacements, round(i_displacements_ji, 5))
             self.assertEqual(j_displacements[case.j][case.i], j_displacements_ji)
             self.assertEqual(i_displacements[case.j][case.i], i_displacements_ji)
-            self.assertEqual(case.shape, tuple(shape))
-            self.assertEqual(tuple(shape), tuple(shape_ji))
 
     def test_area(self):
         for case in self.test_cases:
-            test_area = args_to_data(['../area.py', case.lat_0, case.lon_0, '--shape', str(case.shape).replace(' ', ''),
-                                      '--center', case.center, '--pixel_size', case.pixel_size, '--units', case.units])
-            self.assertTrue('Area extent: ' + case.area_extent in test_area)
-            self.assertTrue('Number of columns: {0}'.format(case.shape[1]) in test_area)
-            self.assertTrue('Number of rows: {0}'.format(case.shape[0]) in test_area)
+            test_area = args_to_data(['../area.py', '--lat_0', case.lat_0, '--lon_0', case.lon_0, '--shape',
+                                      str(case.shape).replace(' ', ''), '--center', case.center, '--pixel_size',
+                                      case.pixel_size, '--units', case.units])
+            self.assertTrue(str(case.area_extent[0]) in test_area)
+            self.assertTrue(str(case.area_extent[1]) in test_area)
+            self.assertTrue(str(case.area_extent[2]) in test_area)
+            self.assertTrue(str(case.area_extent[3]) in test_area)
+            self.assertTrue(str(case.shape) in test_area)
 
 
 def args_to_data(commands):
-    output = subprocess.check_output([sys.executable] + commands).decode('utf-8')
+    try:
+        output = subprocess.check_output([sys.executable] + commands).decode('utf-8')
+    except subprocess.CalledProcessError as err:
+        raise ValueError(err.output.decode('utf-8'))
     try:
         return np.array(ast.literal_eval('%s' % output))
     except (SyntaxError, ValueError):

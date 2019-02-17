@@ -1,26 +1,16 @@
-from arg_utils import get_args, print_usage
-from wind_functions import get_displacements
-from numpy import ndarray
+from arg_utils import run_script
+from wind_functions import get_displacements_and_area
 import sys
 
 
-def main(argv):
-    """Additional command line information
+def output_format(output, kwargs):
+    if kwargs.get('save_data') != True:
+        return output[0].tolist()
+    return ''
 
-    * You can add units to a specific variable by appending the variable with ":your_unit_here"
-      Examples: "--pixel_size 4:km" and "--center 10000,10000:m"
-    """
-    args, kwargs = get_args(get_displacements, argv)
-    try:
-        displacements, shape = get_displacements(*args, **kwargs)
-    except (TypeError, ValueError, FileNotFoundError) as err:
-        print(err)
-        print()
-        print_usage(get_displacements, argv)
-        print(main.__doc__)
-        sys.exit(1)
-    print([ndarray.tolist(displacements), list(shape)])
-    return displacements
+
+def main(argv):
+    run_script(get_displacements_and_area, argv, output_format)
 
 
 if __name__ == "__main__":

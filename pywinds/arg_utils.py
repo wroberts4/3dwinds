@@ -1,6 +1,9 @@
 from getopt import getopt, GetoptError
 from inspect import getfullargspec
 from xarray import DataArray
+from glob import glob
+from numpy import ndarray
+import os
 import sys
 import ast
 
@@ -79,3 +82,29 @@ def get_args(func, argv):
         else:
             kwargs[arg[0][2:]] = _arg_to_param(arg[1])
     return [_arg_to_param(arg) for arg in argv[1:num_args + 1]], kwargs
+
+
+def run_script(function, argv, output_format):
+    args, kwargs = get_args(function, argv)
+    try:
+        displacement_data = kwargs.get('displacement_data')
+        if displacement_data is None:
+            displacement_data = os.path.join(os.getcwd(), '*.flo')
+            kwargs['displacement_data'] = displacement_data
+        if isinstance(displacement_data, str):
+            files = glob(displacement_data)
+            if files:
+                kwargs.pop('displacement_data')
+                for file in files:
+                    output = function(*args, displacement_data=file, **kwargs)
+                    print(output_format(output, kwargs))
+            else:
+                raise FileNotFoundError("No files were found that matched: '{0}'".format(displacement_data))
+        else:
+            output = function(*args, **kwargs)
+            print(output_format(output, kwargs))
+    except (TypeError, ValueError, FileNotFoundError, RuntimeError) as err:
+        print(err)
+        print()
+        print_usage(function, argv)
+        sys.exit(1)
