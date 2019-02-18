@@ -32,7 +32,7 @@ def print_usage(func, argv):
     arg_spec = getfullargspec(func)
     num_args = len(arg_spec.args) - len(arg_spec.defaults)
     text_width = 90
-    usage_string = 'Usage (' + argv[0].split('/')[-1].replace('.py', '.sh') + '):'
+    usage_string = 'Usage (' + func.__name__ + '.sh' + '):'
     length = len(usage_string)
     for arg in ['<' + arg + '>' for arg in getfullargspec(func).args[:num_args]]:
         length = length + len(arg) + 1

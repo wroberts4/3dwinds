@@ -1,6 +1,6 @@
 import unittest
 import numpy as np
-from pywinds.wind_functions import calculate_velocity, v_u_component, compute_lat_long, get_displacements, get_area,\
+from pywinds.wind_functions import velocity, vu, lat_long, displacements, area,\
     _create_area, _extrapolate_j_i, _pixel_to_pos
 
 
@@ -21,10 +21,10 @@ class TestCase:
         self.units = units
         self.displacement_data = displacement_data
         self.center = center
-        displacements = get_displacements(lat_0, lon_0, displacement_data=displacement_data, shape=shape, i=i, j=j)
-        area = get_area(lat_0, lon_0, displacement_data=displacement_data, shape=shape, i=i, j=j)
-        self.j_displacements, self.i_displacements = displacements
-        self.shape = (area.height, area.width)
+        displacement = displacements(lat_0, lon_0, displacement_data=displacement_data, shape=shape, i=i, j=j)
+        area_definition = area(lat_0, lon_0, displacement_data=displacement_data, shape=shape, i=i, j=j)
+        self.j_displacements, self.i_displacements = displacement
+        self.shape = (area_definition.height, area_definition.width)
         # Output data
         self.distance = distance
         self.speed = speed
@@ -59,11 +59,11 @@ class TestPywinds(unittest.TestCase):
 
     def test_calculate_velocity(self):
         for case in self.test_cases:
-            speed, angle = calculate_velocity(case.lat_0, case.lon_0, displacement_data=case.displacement_data,
+            speed, angle = velocity(case.lat_0, case.lon_0, displacement_data=case.displacement_data,
                                               projection=case.projection, shape=case.shape, pixel_size=case.pixel_size,
                                               center=case.center, units=case.units, image_geod=case.image_geod,
                                               earth_geod=case.earth_geod)
-            speed_ji, angle_ji = calculate_velocity(case.lat_0, case.lon_0, displacement_data=case.displacement_data,
+            speed_ji, angle_ji = velocity(case.lat_0, case.lon_0, displacement_data=case.displacement_data,
                                                     projection=case.projection, i=case.i, j=case.j, shape=case.shape,
                                                     pixel_size=case.pixel_size, center=case.center, units=case.units,
                                                     image_geod=case.image_geod, earth_geod=case.earth_geod)
@@ -74,11 +74,11 @@ class TestPywinds(unittest.TestCase):
 
     def test_v_u_component(self):
         for case in self.test_cases:
-            v, u = v_u_component(case.lat_0, case.lon_0, displacement_data=case.displacement_data,
+            v, u = vu(case.lat_0, case.lon_0, displacement_data=case.displacement_data,
                                  projection=case.projection, shape=case.shape, pixel_size=case.pixel_size,
                                  center=case.center, units=case.units, image_geod=case.image_geod,
                                  earth_geod=case.earth_geod)
-            v_ji, u_ji = v_u_component(case.lat_0, case.lon_0, displacement_data=case.displacement_data,
+            v_ji, u_ji = vu(case.lat_0, case.lon_0, displacement_data=case.displacement_data,
                                        projection=case.projection, i=case.i, j=case.j, shape=case.shape,
                                        pixel_size=case.pixel_size, center=case.center, units=case.units,
                                        image_geod=case.image_geod, earth_geod=case.earth_geod)
@@ -89,17 +89,17 @@ class TestPywinds(unittest.TestCase):
 
     def test_compute_lat_long(self):
         for case in self.test_cases:
-            old_lat, old_long = compute_lat_long(case.lat_0, case.lon_0, projection=case.projection, shape=case.shape,
+            old_lat, old_long = lat_long(case.lat_0, case.lon_0, projection=case.projection, shape=case.shape,
                                                  pixel_size=case.pixel_size, center=case.center, units=case.units,
                                                  image_geod=case.image_geod)
-            new_lat, new_long = compute_lat_long(case.lat_0, case.lon_0, displacement_data=case.displacement_data,
+            new_lat, new_long = lat_long(case.lat_0, case.lon_0, displacement_data=case.displacement_data,
                                                  projection=case.projection, shape=case.shape,
                                                  pixel_size=case.pixel_size, center=case.center, units=case.units,
                                                  image_geod=case.image_geod)
-            old_lat_ji, old_long_ji = compute_lat_long(case.lat_0, case.lon_0, projection=case.projection, i=case.i,
+            old_lat_ji, old_long_ji = lat_long(case.lat_0, case.lon_0, projection=case.projection, i=case.i,
                                                        j=case.j, shape=case.shape, pixel_size=case.pixel_size,
                                                        center=case.center, units=case.units, image_geod=case.image_geod)
-            new_lat_ji, new_long_ji = compute_lat_long(case.lat_0, case.lon_0, displacement_data=case.displacement_data,
+            new_lat_ji, new_long_ji = lat_long(case.lat_0, case.lon_0, displacement_data=case.displacement_data,
                                                        projection=case.projection, i=case.i, j=case.j, shape=case.shape,
                                                        pixel_size=case.pixel_size, center=case.center, units=case.units,
                                                        image_geod=case.image_geod)

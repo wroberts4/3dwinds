@@ -2,4 +2,4 @@
 
 # https://stackoverflow.com/questions/9889938/shell-script-current-directory
 PARENTDIR="$( cd "$( dirname "$0" )" && pwd )"
-python ${PARENTDIR}/lat_long.py $*
+python ${PARENTDIR}/arg_functions.py lat_long $*
