@@ -1,4 +1,4 @@
-from arg_utils import run_script, get_args, print_usage
+from wrapper_utils import run_script, get_args, print_usage
 from wind_functions import velocity, displacements, vu, area, lat_long
 import sys
 
@@ -41,18 +41,7 @@ def arg_area(argv):
             return 'projection data: {0}\narea_extent: {1}\nshape: {2}'.format(proj_dict, output.area_extent, shape)
         return ''
 
-    if '--displacement_data' in argv:
-        run_script(area, argv, output_format)
-    else:
-        try:
-            args, kwargs = get_args(area, argv)
-            output = area(*args, **kwargs)
-            print(output_format(output, kwargs))
-        except (TypeError, ValueError, FileNotFoundError, RuntimeError) as err:
-            print(err)
-            print()
-            print_usage(area, argv)
-            sys.exit(1)
+    run_script(area, argv, output_format, is_area=True)
 
 
 def arg_lat_long(argv):
@@ -61,18 +50,7 @@ def arg_lat_long(argv):
             return output.tolist()
         return ''
 
-    if '--displacement_data' in argv:
-        run_script(lat_long, argv, output_format)
-    else:
-        try:
-            args, kwargs = get_args(lat_long, argv)
-            output = lat_long(*args, **kwargs)
-            print(output_format(output, kwargs))
-        except (TypeError, ValueError, FileNotFoundError, RuntimeError) as err:
-            print(err)
-            print()
-            print_usage(lat_long, argv)
-            sys.exit(1)
+    run_script(lat_long, argv, output_format, is_lat_long=True)
 
 
 def main(argv):

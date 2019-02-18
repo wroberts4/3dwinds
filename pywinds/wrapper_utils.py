@@ -2,13 +2,13 @@ from getopt import getopt, GetoptError
 from inspect import getfullargspec
 from xarray import DataArray
 from glob import glob
-from numpy import ndarray
 import os
 import sys
 import ast
 
 
 def _arg_to_param(arg):
+    """Converts command line arguments (strings) to python data passed to function."""
     units = None
     if len(arg.split(':')) == 2:
         arg, units = arg.split(':')
@@ -22,13 +22,7 @@ def _arg_to_param(arg):
 
 
 def print_usage(func, argv):
-    """
-    Other usage notes
-    -----------------
-
-    * You can add units to a specific variable by appending the variable with ":your_unit_here"
-      Examples: "--pixel_size 4:km" and "--center [10000,10000]:m"
-    """
+    """Prints the functions doc_string plus extra command line info."""
     arg_spec = getfullargspec(func)
     num_args = len(arg_spec.args) - len(arg_spec.defaults)
     text_width = 90
@@ -49,11 +43,19 @@ def print_usage(func, argv):
         else:
             usage_string = usage_string + ' ' + arg
     print(usage_string)
-    print(print_usage.__doc__)
+    extra_info = """
+    Other usage notes
+    -----------------
+
+    * You can add units to a specific variable by appending the variable with ":your_unit_here"
+      Examples: "--pixel_size 4:km" and "--center [10000,10000]:m"
+    """
+    print(extra_info)
     print(func.__doc__)
 
 
 def get_args(func, argv):
+    """Reads command line arguments and handles logic behind them."""
     if '--help' in argv or '-h' in argv:
         print_usage(func, argv)
         sys.exit(0)
@@ -84,11 +86,12 @@ def get_args(func, argv):
     return [_arg_to_param(arg) for arg in argv[1:num_args + 1]], kwargs
 
 
-def run_script(function, argv, output_format):
+def run_script(function, argv, output_format, is_area=False, is_lat_long=False):
+    """Runs python function from wind_functions.py."""
     args, kwargs = get_args(function, argv)
     try:
         displacement_data = kwargs.get('displacement_data')
-        if displacement_data is None:
+        if displacement_data is None and is_lat_long is False:
             displacement_data = os.path.join(os.getcwd(), '*.flo')
             kwargs['displacement_data'] = displacement_data
         if isinstance(displacement_data, str):
@@ -96,13 +99,16 @@ def run_script(function, argv, output_format):
             if files:
                 kwargs.pop('displacement_data')
                 for file in files:
+                    if len(files) > 1:
+                        print(file)
                     output = function(*args, displacement_data=file, **kwargs)
                     print(output_format(output, kwargs))
-            else:
+                return
+            elif is_area is False:
                 raise FileNotFoundError("No files were found that matched: '{0}'".format(displacement_data))
-        else:
-            output = function(*args, **kwargs)
-            print(output_format(output, kwargs))
+            kwargs.pop('displacement_data')
+        output = function(*args, **kwargs)
+        print(output_format(output, kwargs))
     except (TypeError, ValueError, FileNotFoundError, RuntimeError) as err:
         print(err)
         print()

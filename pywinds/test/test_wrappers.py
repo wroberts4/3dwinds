@@ -58,12 +58,12 @@ class TestWrappers(unittest.TestCase):
 
     def test_velocity(self):
         for case in self.test_cases:
-            speed, angle = args_to_data(['../arg_functions.py', 'velocity', case.lat_0, case.lon_0,
+            speed, angle = args_to_data(['../wrapper_functions.py', 'velocity', case.lat_0, case.lon_0,
                                          '--displacement_data',
                                          case.displacement_data, '--projection', case.projection, '--pixel_size',
                                          case.pixel_size, '--center', case.center, '--units', case.units,
                                          '--image_geod', case.image_geod, '--earth_geod', case.earth_geod])
-            speed_ji, angle_ji = args_to_data(['../arg_functions.py', 'velocity', case.lat_0, case.lon_0,
+            speed_ji, angle_ji = args_to_data(['../wrapper_functions.py', 'velocity', case.lat_0, case.lon_0,
                                                '--displacement_data',
                                                case.displacement_data, '--projection', case.projection, '--j',
                                                str(case.j), '--i', str(case.i), '--pixel_size', case.pixel_size,
@@ -76,11 +76,11 @@ class TestWrappers(unittest.TestCase):
 
     def test_vu(self):
         for case in self.test_cases:
-            v, u = args_to_data(['../arg_functions.py', 'vu', case.lat_0, case.lon_0, '--displacement_data', case.displacement_data,
+            v, u = args_to_data(['../wrapper_functions.py', 'vu', case.lat_0, case.lon_0, '--displacement_data', case.displacement_data,
                                  '--projection', case.projection, '--pixel_size', case.pixel_size, '--center',
                                 case.center, '--units', case.units, '--image_geod', case.image_geod, '--earth_geod',
                                 case.earth_geod])
-            v_ji, u_ji = args_to_data(['../arg_functions.py', 'vu', case.lat_0, case.lon_0, '--displacement_data',
+            v_ji, u_ji = args_to_data(['../wrapper_functions.py', 'vu', case.lat_0, case.lon_0, '--displacement_data',
                                        case.displacement_data, '--projection', case.projection, '--j', str(case.j),
                                        '--i', str(case.i), '--pixel_size', case.pixel_size, '--center', case.center,
                                        '--units', case.units, '--image_geod', case.image_geod, '--earth_geod',
@@ -92,21 +92,21 @@ class TestWrappers(unittest.TestCase):
 
     def test_lat_long(self):
         for case in self.test_cases:
-            old_lat, old_long = args_to_data(['../arg_functions.py', 'lat_long', case.lat_0, case.lon_0, '--projection', case.projection,
+            old_lat, old_long = args_to_data(['../wrapper_functions.py', 'lat_long', case.lat_0, case.lon_0, '--projection', case.projection,
                                               '--pixel_size', case.pixel_size, '--shape',
                                               str(case.shape).replace(' ', ''), '--center',
                                               case.center, '--units', case.units, '--image_geod', case.image_geod])
-            new_lat, new_long = args_to_data(['../arg_functions.py', 'lat_long', case.lat_0, case.lon_0, '--displacement_data',
+            new_lat, new_long = args_to_data(['../wrapper_functions.py', 'lat_long', case.lat_0, case.lon_0, '--displacement_data',
                                               case.displacement_data, '--projection', case.projection,
                                               '--pixel_size', case.pixel_size, '--center', case.center,
                                               '--units', case.units, '--image_geod', case.image_geod])
-            old_lat_ji, old_long_ji = args_to_data(['../arg_functions.py', 'lat_long', case.lat_0, case.lon_0, '--projection',
+            old_lat_ji, old_long_ji = args_to_data(['../wrapper_functions.py', 'lat_long', case.lat_0, case.lon_0, '--projection',
                                                     case.projection, '--j', str(case.j), '--i', str(case.i),
                                                     '--pixel_size', case.pixel_size, '--shape',
                                                     str(case.shape).replace(' ', ''), '--center',
                                                     case.center, '--units', case.units, '--image_geod',
                                                     case.image_geod])
-            new_lat_ji, new_long_ji = args_to_data(['../arg_functions.py', 'lat_long', case.lat_0, case.lon_0, '--displacement_data',
+            new_lat_ji, new_long_ji = args_to_data(['../wrapper_functions.py', 'lat_long', case.lat_0, case.lon_0, '--displacement_data',
                                                     case.displacement_data, '--projection', case.projection,
                                                     '--j', str(case.j), '--i', str(case.i),
                                                     '--pixel_size', case.pixel_size, '--center', case.center, '--units',
@@ -122,8 +122,8 @@ class TestWrappers(unittest.TestCase):
 
     def test_displacements(self):
         for case in self.test_cases:
-            displacements = args_to_data(['../arg_functions.py', 'displacements', '--displacement_data', case.displacement_data])
-            displacements_ji = args_to_data(['../arg_functions.py', 'displacements', '--displacement_data',
+            displacements = args_to_data(['../wrapper_functions.py', 'displacements', '--displacement_data', case.displacement_data])
+            displacements_ji = args_to_data(['../wrapper_functions.py', 'displacements', '--displacement_data',
                                                        case.displacement_data, '--j', str(case.j), '--i', str(case.i)])
             j_displacements, i_displacements = displacements
             j_displacements_ji, i_displacements_ji = displacements_ji
@@ -134,7 +134,7 @@ class TestWrappers(unittest.TestCase):
 
     def test_area(self):
         for case in self.test_cases:
-            test_area = args_to_data(['../arg_functions.py', 'area', case.lat_0, case.lon_0, '--shape',
+            test_area = args_to_data(['../wrapper_functions.py', 'area', case.lat_0, case.lon_0, '--shape',
                                       str(case.shape).replace(' ', ''), '--center', case.center, '--pixel_size',
                                       case.pixel_size, '--units', case.units])
             self.assertTrue(str(case.area_extent[0]) in test_area)

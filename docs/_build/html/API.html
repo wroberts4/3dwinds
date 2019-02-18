@@ -33,184 +33,24 @@
 
           <div class="body" role="main">
             
-  <div class="section" id="module-pywinds.wind_functions">
-<span id="pywinds-api"></span><h1>pywinds API<a class="headerlink" href="#module-pywinds.wind_functions" title="Permalink to this headline">¶</a></h1>
+  <div class="section" id="module-pywinds.wrapper_utils">
+<span id="pywinds-api"></span><h1>pywinds API<a class="headerlink" href="#module-pywinds.wrapper_utils" title="Permalink to this headline">¶</a></h1>
 <dl class="function">
-<dt id="pywinds.wind_functions.area">
-<code class="descclassname">pywinds.wind_functions.</code><code class="descname">area</code><span class="sig-paren">(</span><em>lat_0</em>, <em>lon_0</em>, <em>displacement_data=None</em>, <em>projection='stere'</em>, <em>j=None</em>, <em>i=None</em>, <em>area_extent=None</em>, <em>shape=None</em>, <em>upper_left_extent=None</em>, <em>center=None</em>, <em>pixel_size=None</em>, <em>radius=None</em>, <em>units=None</em>, <em>image_geod=None</em><span class="sig-paren">)</span><a class="headerlink" href="#pywinds.wind_functions.area" title="Permalink to this definition">¶</a></dt>
-<dd><p>Dynamically finds area of projection</p>
+<dt id="pywinds.wrapper_utils.get_args">
+<code class="descclassname">pywinds.wrapper_utils.</code><code class="descname">get_args</code><span class="sig-paren">(</span><em>func</em>, <em>argv</em><span class="sig-paren">)</span><a class="headerlink" href="#pywinds.wrapper_utils.get_args" title="Permalink to this definition">¶</a></dt>
+<dd><p>Reads command line arguments and handles logic behind them.</p>
 </dd></dl>
 
 <dl class="function">
-<dt id="pywinds.wind_functions.displacements">
-<code class="descclassname">pywinds.wind_functions.</code><code class="descname">displacements</code><span class="sig-paren">(</span><em>lat_0=None</em>, <em>lon_0=None</em>, <em>displacement_data=None</em>, <em>projection='stere'</em>, <em>j=None</em>, <em>i=None</em>, <em>area_extent=None</em>, <em>shape=None</em>, <em>upper_left_extent=None</em>, <em>center=None</em>, <em>pixel_size=None</em>, <em>radius=None</em>, <em>units=None</em>, <em>image_geod=None</em>, <em>save_data=False</em><span class="sig-paren">)</span><a class="headerlink" href="#pywinds.wind_functions.displacements" title="Permalink to this definition">¶</a></dt>
-<dd><p>Dynamically finds displacements</p>
+<dt id="pywinds.wrapper_utils.print_usage">
+<code class="descclassname">pywinds.wrapper_utils.</code><code class="descname">print_usage</code><span class="sig-paren">(</span><em>func</em>, <em>argv</em><span class="sig-paren">)</span><a class="headerlink" href="#pywinds.wrapper_utils.print_usage" title="Permalink to this definition">¶</a></dt>
+<dd><p>Prints the functions doc_string plus extra command line info.</p>
 </dd></dl>
 
 <dl class="function">
-<dt id="pywinds.wind_functions.lat_long">
-<code class="descclassname">pywinds.wind_functions.</code><code class="descname">lat_long</code><span class="sig-paren">(</span><em>lat_0</em>, <em>lon_0</em>, <em>displacement_data=None</em>, <em>projection='stere'</em>, <em>j=None</em>, <em>i=None</em>, <em>area_extent=None</em>, <em>shape=None</em>, <em>upper_left_extent=None</em>, <em>center=None</em>, <em>pixel_size=None</em>, <em>radius=None</em>, <em>units=None</em>, <em>image_geod=None</em>, <em>save_data=False</em><span class="sig-paren">)</span><a class="headerlink" href="#pywinds.wind_functions.lat_long" title="Permalink to this definition">¶</a></dt>
-<dd><p>Computes the latitude and longitude given an area and (j, i) values.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>lat_0</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.7)"><em>float</em></a>) – Normal latitude of projection</li>
-<li><strong>lon_0</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.7)"><em>float</em></a>) – Normal longitude of projection</li>
-<li><strong>displacement_data</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><em>str</em></a><em> or </em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.7)"><em>list</em></a>) – File or list containing displacements: [0, 0, 0, i11, j11, i12, j12, …] or
-[[j_displacement], [i_displacement]] respectively. If provided, finds the
-latitude/longitude at (j,i) + displacements.</li>
-<li><strong>projection</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><em>str</em></a>) – Name of projection that pixels are describing (stere, laea, merc, etc).</li>
-<li><strong>j</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.7)"><em>float</em></a><em> or </em><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.7)"><em>None</em></a><em>, </em><em>optional</em>) – Vertical value of pixel location (row)</li>
-<li><strong>i</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.7)"><em>float</em></a><em> or </em><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.7)"><em>None</em></a><em>, </em><em>optional</em>) – Horizontal value of pixel location (column)</li>
-<li><strong>units</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><em>str</em></a><em>, </em><em>optional</em>) – <p>Units that provided arguments should be interpreted as. This can be
-one of ‘deg’, ‘degrees’, ‘rad’, ‘radians’, ‘meters’, ‘metres’, and any
-parameter supported by the
-<a class="reference external" href="https://proj4.org/apps/cs2cs.html#cmdoption-cs2cs-lu">cs2cs -lu</a>
-command. Units are determined in the following priority:</p>
-<ol class="arabic">
-<li>units expressed with each variable through a DataArray’s attrs attribute.</li>
-<li>units passed to <code class="docutils literal notranslate"><span class="pre">units</span></code></li>
-<li>meters</li>
-</ol>
-</li>
-<li><strong>area_extent</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.7)"><em>list</em></a><em>, </em><em>optional</em>) – Area extent as a list (upper_right_y, upper_right_x, lower_left_y, lower_left_x)</li>
-<li><strong>shape</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.7)"><em>list</em></a><em>, </em><em>optional</em>) – Number of pixels in the y and x direction (height, width). Note that shape
-can be found from the displacement file (in such a case, shape will be square)
-or the area provided.</li>
-<li><strong>upper_left_extent</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.7)"><em>list</em></a><em>, </em><em>optional</em>) – Upper left corner of upper left pixel (y, x)</li>
-<li><strong>center</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.7)"><em>list</em></a><em>, </em><em>optional</em>) – Center of projection (lat, long)</li>
-<li><strong>pixel_size</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.7)"><em>list</em></a><em> or </em><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.7)"><em>float</em></a><em>, </em><em>optional</em>) – Size of pixels: (dy, dx)</li>
-<li><strong>radius</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.7)"><em>list</em></a><em> or </em><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.7)"><em>float</em></a><em>, </em><em>optional</em>) – Length from the center to the edges of the projection (dy, dx)</li>
-<li><strong>image_geod</strong> (<em>string</em><em> or </em><em>Geod</em>) – Spheroid of projection</li>
-<li><strong>save_data</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><em>bool</em></a>) – When True, saves lat to output_data/latitude and long to output_data/longitude</li>
-</ul>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>(latitude, longitude)</strong> – latitude and longitude calculated from area and pixel-displacement</p>
-</td>
-</tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">numpy.array or <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.7)">list</a></p>
-</td>
-</tr>
-</tbody>
-</table>
-<p class="rubric">Notes</p>
-<ul class="simple">
-<li>center will always be interpreted as degrees unless units are passed directly with center</li>
-<li>The list returned is in row-column form. lat[j][i] is up/down j pixels and left/right i pixels</li>
-</ul>
-</dd></dl>
-
-<dl class="function">
-<dt id="pywinds.wind_functions.velocity">
-<code class="descclassname">pywinds.wind_functions.</code><code class="descname">velocity</code><span class="sig-paren">(</span><em>lat_0</em>, <em>lon_0</em>, <em>displacement_data=None</em>, <em>projection='stere'</em>, <em>j=None</em>, <em>i=None</em>, <em>delta_time=100</em>, <em>area_extent=None</em>, <em>shape=None</em>, <em>upper_left_extent=None</em>, <em>center=None</em>, <em>pixel_size=None</em>, <em>radius=None</em>, <em>units=None</em>, <em>image_geod=None</em>, <em>earth_geod=None</em>, <em>save_data=False</em><span class="sig-paren">)</span><a class="headerlink" href="#pywinds.wind_functions.velocity" title="Permalink to this definition">¶</a></dt>
-<dd><p>Computes the speed and angle of the wind given an area and pixel-displacement.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>lat_0</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.7)"><em>float</em></a>) – Normal latitude of projection</li>
-<li><strong>lon_0</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.7)"><em>float</em></a>) – Normal longitude of projection</li>
-<li><strong>displacement_data</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><em>str</em></a><em> or </em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.7)"><em>list</em></a><em>, </em><em>optional</em>) – File or list containing displacements: [0, 0, 0, i11, j11, i12, j12, …] or
-[[j_displacement], [i_displacement]] respectively</li>
-<li><strong>projection</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><em>str</em></a><em>, </em><em>optional</em>) – Name of projection that pixels are describing (stere, laea, merc, etc)</li>
-<li><strong>j</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.7)"><em>float</em></a><em> or </em><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.7)"><em>None</em></a><em>, </em><em>optional</em>) – Vertical value of pixel to find lat/long of</li>
-<li><strong>i</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.7)"><em>float</em></a><em> or </em><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.7)"><em>None</em></a><em>, </em><em>optional</em>) – Horizontal value of pixel to find lat/long of</li>
-<li><strong>delta_time</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.7)"><em>float</em></a><em>, </em><em>optional</em>) – Amount of time between images measured in minutes</li>
-<li><strong>units</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><em>str</em></a><em>, </em><em>optional</em>) – <p>Units that provided arguments should be interpreted as. This can be
-one of ‘deg’, ‘degrees’, ‘rad’, ‘radians’, ‘meters’, ‘metres’, and any
-parameter supported by the
-<a class="reference external" href="https://proj4.org/apps/cs2cs.html#cmdoption-cs2cs-lu">cs2cs -lu</a>
-command. Units are determined in the following priority:</p>
-<ol class="arabic">
-<li>units expressed with each variable through a DataArray’s attrs attribute</li>
-<li>units passed to <code class="docutils literal notranslate"><span class="pre">units</span></code></li>
-<li>meters</li>
-</ol>
-</li>
-<li><strong>area_extent</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.7)"><em>list</em></a><em>, </em><em>optional</em>) – Area extent as a list (upper_right_y, upper_right_x, lower_left_y, lower_left_x)</li>
-<li><strong>shape</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.7)"><em>list</em></a><em>, </em><em>optional</em>) – Number of pixels in the y and x direction (height, width). Note that shape
-can be found from the displacement file (in such a case, shape will be square)</li>
-<li><strong>upper_left_extent</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.7)"><em>list</em></a><em>, </em><em>optional</em>) – Upper left corner of upper left pixel (y, x)</li>
-<li><strong>center</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.7)"><em>list</em></a><em>, </em><em>optional</em>) – Center of projection (lat, long)</li>
-<li><strong>pixel_size</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.7)"><em>list</em></a><em> or </em><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.7)"><em>float</em></a><em>, </em><em>optional</em>) – Size of pixels: (dy, dx)</li>
-<li><strong>radius</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.7)"><em>list</em></a><em> or </em><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.7)"><em>float</em></a><em>, </em><em>optional</em>) – Length from the center to the edges of the projection (dy, dx)</li>
-<li><strong>image_geod</strong> (<em>string</em><em> or </em><em>Geod</em><em>, </em><em>optional</em>) – Spheroid of projection</li>
-<li><strong>earth_geod</strong> (<em>string</em><em> or </em><em>Geod</em><em>, </em><em>optional</em>) – Spheroid of Earth</li>
-<li><strong>save_data</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><em>bool</em></a><em>, </em><em>optional</em>) – When True, saves lat to output_data/speed and long to output_data/angle</li>
-</ul>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>(speed, angle)</strong> – speed and angle (measured clockwise from north) of the wind calculated from area and pixel-displacement</p>
-</td>
-</tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">numpy.array or <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.7)">list</a></p>
-</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="function">
-<dt id="pywinds.wind_functions.vu">
-<code class="descclassname">pywinds.wind_functions.</code><code class="descname">vu</code><span class="sig-paren">(</span><em>lat_0</em>, <em>lon_0</em>, <em>displacement_data=None</em>, <em>projection='stere'</em>, <em>j=None</em>, <em>i=None</em>, <em>delta_time=100</em>, <em>area_extent=None</em>, <em>shape=None</em>, <em>upper_left_extent=None</em>, <em>center=None</em>, <em>pixel_size=None</em>, <em>radius=None</em>, <em>units=None</em>, <em>image_geod=None</em>, <em>earth_geod=None</em>, <em>save_data=False</em><span class="sig-paren">)</span><a class="headerlink" href="#pywinds.wind_functions.vu" title="Permalink to this definition">¶</a></dt>
-<dd><p>Computes the v and u components of the wind given an area and pixel-displacement.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>lat_0</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.7)"><em>float</em></a>) – Normal latitude of projection</li>
-<li><strong>lon_0</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.7)"><em>float</em></a>) – Normal longitude of projection</li>
-<li><strong>displacement_data</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><em>str</em></a><em> or </em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.7)"><em>list</em></a>) – File or list containing displacements: [0, 0, 0, i11, j11, i12, j12, …] or
-[[j_displacement], [i_displacement]] respectively.</li>
-<li><strong>projection</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><em>str</em></a>) – Name of projection that pixels are describing (stere, laea, merc, etc).</li>
-<li><strong>j</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.7)"><em>float</em></a><em> or </em><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.7)"><em>None</em></a><em>, </em><em>optional</em>) – Vertical value of pixel to find lat/long of.</li>
-<li><strong>i</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.7)"><em>float</em></a><em> or </em><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.7)"><em>None</em></a><em>, </em><em>optional</em>) – Horizontal value of pixel to find lat/long of.</li>
-<li><strong>units</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><em>str</em></a><em>, </em><em>optional</em>) – <p>Units that provided arguments should be interpreted as. This can be
-one of ‘deg’, ‘degrees’, ‘rad’, ‘radians’, ‘meters’, ‘metres’, and any
-parameter supported by the
-<a class="reference external" href="https://proj4.org/apps/cs2cs.html#cmdoption-cs2cs-lu">cs2cs -lu</a>
-command. Units are determined in the following priority:</p>
-<ol class="arabic">
-<li>units expressed with each variable through a DataArray’s attrs attribute.</li>
-<li>units passed to <code class="docutils literal notranslate"><span class="pre">units</span></code></li>
-<li>meters</li>
-</ol>
-</li>
-<li><strong>area_extent</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.7)"><em>list</em></a><em>, </em><em>optional</em>) – Area extent as a list (upper_right_y, upper_right_x, lower_left_y, lower_left_x)</li>
-<li><strong>shape</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.7)"><em>list</em></a><em>, </em><em>optional</em>) – Number of pixels in the y and x direction (height, width). Note that shape
-can be found from the displacement file (in such a case, shape will be square)</li>
-<li><strong>upper_left_extent</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.7)"><em>list</em></a><em>, </em><em>optional</em>) – Upper left corner of upper left pixel (y, x)</li>
-<li><strong>center</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.7)"><em>list</em></a><em>, </em><em>optional</em>) – Center of projection (lat, long)</li>
-<li><strong>pixel_size</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.7)"><em>list</em></a><em> or </em><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.7)"><em>float</em></a><em>, </em><em>optional</em>) – Size of pixels: (dy, dx)</li>
-<li><strong>radius</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.7)"><em>list</em></a><em> or </em><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.7)"><em>float</em></a><em>, </em><em>optional</em>) – Length from the center to the edges of the projection (dy, dx)</li>
-<li><strong>image_geod</strong> (<em>string</em><em> or </em><em>Geod</em>) – Spheroid of projection</li>
-<li><strong>earth_geod</strong> (<em>string</em><em> or </em><em>Geod</em>) – Spheroid of Earth</li>
-<li><strong>save_data</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><em>bool</em></a>) – When True, saves lat to output_data/v and long to output_data/u</li>
-</ul>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>(v, u)</strong> – v and u components of wind calculated from area and pixel-displacement</p>
-</td>
-</tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">numpy.array or <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.7)">list</a></p>
-</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<span class="target" id="module-pywinds.arg_utils"></span><dl class="function">
-<dt id="pywinds.arg_utils.print_usage">
-<code class="descclassname">pywinds.arg_utils.</code><code class="descname">print_usage</code><span class="sig-paren">(</span><em>func</em>, <em>argv</em><span class="sig-paren">)</span><a class="headerlink" href="#pywinds.arg_utils.print_usage" title="Permalink to this definition">¶</a></dt>
-<dd><ul class="simple">
-<li>You can add units to a specific variable by appending the variable with “:your_unit_here”
-Examples: “–pixel_size 4:km” and “–center [10000,10000]:m”</li>
-</ul>
+<dt id="pywinds.wrapper_utils.run_script">
+<code class="descclassname">pywinds.wrapper_utils.</code><code class="descname">run_script</code><span class="sig-paren">(</span><em>function</em>, <em>argv</em>, <em>output_format</em>, <em>is_area=False</em>, <em>is_lat_long=False</em><span class="sig-paren">)</span><a class="headerlink" href="#pywinds.wrapper_utils.run_script" title="Permalink to this definition">¶</a></dt>
+<dd><p>Runs python function from wind_functions.py.</p>
 </dd></dl>
 
 </div>
@@ -221,25 +61,7 @@ Examples: “–pixel_size 4:km” and “–center [10000,10000]:m”</li>
         </div>
       </div>
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
-        <div class="sphinxsidebarwrapper">
-<h1 class="logo"><a href="index.html">pywinds</a></h1>
-
-
-
-
-
-
-
-
-<h3>Navigation</h3>
-<ul class="current">
-<li class="toctree-l1"><a class="reference internal" href="installation.html">Installing pywinds</a></li>
-<li class="toctree-l1 current"><a class="current reference internal" href="#">pywinds API</a></li>
-<li class="toctree-l1"><a class="reference internal" href="examples.html">Examples of using pywinds</a></li>
-<li class="toctree-l1"><a class="reference internal" href="usage.html">How to use pywinds</a></li>
-</ul>
-
-<div class="relations">
+        <div class="sphinxsidebarwrapper"><div class="relations">
 <h3>Related Topics</h3>
 <ul>
   <li><a href="index.html">Documentation overview</a><ul>
@@ -248,6 +70,13 @@ Examples: “–pixel_size 4:km” and “–center [10000,10000]:m”</li>
   </ul></li>
 </ul>
 </div>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/API.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
 <div id="searchbox" style="display: none" role="search">
   <h3>Quick search</h3>
     <div class="searchformwrapper">
@@ -260,14 +89,6 @@ Examples: “–pixel_size 4:km” and “–center [10000,10000]:m”</li>
     </div>
 </div>
 <script type="text/javascript">$('#searchbox').show(0);</script>
-
-
-
-
-
-
-
-
         </div>
       </div>
       <div class="clearer"></div>
@@ -276,8 +97,8 @@ Examples: “–pixel_size 4:km” and “–center [10000,10000]:m”</li>
       &copy;2019, Will Roberts.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.8.2</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.7.5</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.11</a>
       
       |
       <a href="_sources/API.rst.txt"
