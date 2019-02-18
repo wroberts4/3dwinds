@@ -5,7 +5,7 @@ import sys
 
 def arg_velocity(argv):
     def output_format(output, kwargs):
-        if kwargs.get('save_data') != True:
+        if kwargs.get('save_data') is not True:
             return output.tolist()
         return ''
 
@@ -14,7 +14,7 @@ def arg_velocity(argv):
 
 def arg_displacements(argv):
     def output_format(output, kwargs):
-        if kwargs.get('save_data') != True:
+        if kwargs.get('save_data') is not True:
             return output.tolist()
         return ''
 
@@ -23,7 +23,7 @@ def arg_displacements(argv):
 
 def arg_vu(argv):
     def output_format(output, kwargs):
-        if kwargs.get('save_data') != True:
+        if kwargs.get('save_data') is not True:
             return output.tolist()
         return ''
 
@@ -32,7 +32,7 @@ def arg_vu(argv):
 
 def arg_area(argv):
     def output_format(output, kwargs):
-        if kwargs.get('save_data') != True:
+        if kwargs.get('save_data') is not True:
             proj_dict = dict(output.proj_dict)
             if output.height is None or output.width is None:
                 shape = None
@@ -46,7 +46,7 @@ def arg_area(argv):
 
 def arg_lat_long(argv):
     def output_format(output, kwargs):
-        if kwargs.get('save_data') != True:
+        if kwargs.get('save_data') is not True:
             return output.tolist()
         return ''
 

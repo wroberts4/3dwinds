@@ -190,7 +190,7 @@ def _compute_lat_long(j, i, area_definition, displacement_data, save_data=False,
     p = Proj(area_definition.proj_dict, errcheck=True, preserve_units=True)
     # Returns (lat, long) in degrees.
     lat, long = _reverse_param(p(*_pixel_to_pos(area_definition, j=j, i=i), errcheck=True, inverse=True))
-    if save_data == True:
+    if save_data is True:
         if displacement_data is None:
             raise ValueError('Cannot save old latitudes/longitudes to a file')
         else:
@@ -412,7 +412,7 @@ def velocity(lat_0, lon_0, displacement_data=None, projection='stere', j=None, i
               upper_left_extent=upper_left_extent, center=center, pixel_size=pixel_size,
               radius=radius, units=units, image_geod=image_geod, earth_geod=earth_geod)
     speed, angle = (u**2 + v**2)**.5, ((90 - np.arctan2(v, u) * 180 / np.pi) + 360) % 360
-    if save_data == True:
+    if save_data is True:
         _save_data(speed, 'speed', displacement_data)
         _save_data(angle, 'angle', displacement_data)
     # When wind vector azimuth is 0 degrees it points North (mathematically 90 degrees) and moves clockwise.
@@ -496,7 +496,7 @@ def vu(lat_0, lon_0, displacement_data=None, projection='stere', j=None, i=None,
     # meters/second. distance is in meters delta_time is in minutes.
     v = (new_lat - old_lat) * lat_long_distance[0] / (delta_time * 60)
     u = _delta_longitude(new_long, old_long) * lat_long_distance[1] / (delta_time * 60)
-    if save_data == True:
+    if save_data is True:
         _save_data(u, 'u', displacement_data)
         _save_data(v, 'v', displacement_data)
     return np.array((v, u))
