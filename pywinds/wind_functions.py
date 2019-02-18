@@ -1,11 +1,11 @@
 from pyproj import Proj, Geod
-from pyresample.utils import create_area_def, proj4_str_to_dict, proj4_dict_to_str
+from pyresample.utils import proj4_str_to_dict
+from pyresample import create_area_def
 from pyresample.geometry import AreaDefinition
 from xarray import DataArray
 import ntpath
 import numpy as np
 import os
-import logging
 
 
 """Find wind info"""
@@ -137,6 +137,7 @@ def _create_area(lat_0, lon_0, projection='stere', area_extent=None, shape=None,
             image_geod, type(image_geod)))
     proj_dict = proj4_str_to_dict('+lat_0={0} +lon_0={1} +proj={2} {3}'.format(lat_0, lon_0, projection,
                                                                                image_geod.initstring))
+
     area_definition = create_area_def('pywinds', proj_dict, area_extent=area_extent, shape=shape,
                            upper_left_extent=upper_left_extent, resolution=pixel_size,
                            center=center, radius=radius, units=units,)

@@ -23,9 +23,9 @@ class TestCase:
         self.displacement_data = str(displacement_data).replace(' ', '')
         self.center = str(center).replace(' ', '')
         self.area_extent = area_extent
-        displacement = displacements(lat_0, lon_0, displacement_data=displacement_data, shape=shape, i=i, j=j)
+        self.j_displacements, self.i_displacements = displacements(lat_0, lon_0, displacement_data=displacement_data,
+                                                                   shape=shape, i=i, j=j)
         area_definition = area(lat_0, lon_0, displacement_data=displacement_data, shape=shape, i=i, j=j)
-        self.j_displacements, self.i_displacements = displacement
         self.shape = (area_definition.height, area_definition.width)
         # Output data
         self.distance = str(distance).replace(' ', '')
