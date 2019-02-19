@@ -99,10 +99,11 @@ def run_script(function, argv, output_format, is_area=False, is_lat_long=False):
             if files:
                 kwargs.pop('displacement_data')
                 for file in files:
-                    if len(files) > 1:
-                        print(file)
-                    output = function(*args, displacement_data=file, **kwargs)
-                    print(output_format(output, kwargs))
+                    output = output_format(function(*args, displacement_data=file, **kwargs), kwargs)
+                    if output != '':
+                        if len(files) > 1:
+                            print(file)
+                        print(output)
                 return
             elif is_area is False:
                 raise FileNotFoundError("No files were found that matched: '{0}'".format(displacement_data))
