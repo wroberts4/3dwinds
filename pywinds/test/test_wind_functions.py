@@ -8,12 +8,13 @@ class TestCase:
     def __init__(self, displacement_data, projection='stere', i=None, j=None, shape=None, pixel_size=None, lat_0=None,
                  lon_0=None, image_geod=None, earth_geod=None, units=None, center=None, distance=None, speed=None,
                  angle=None, u=None, v=None, old_lat=None, old_long=None, new_lat=None, new_long=None,
-                 old_x=None, old_y=None, new_x=None, new_y=None):
+                 old_x=None, old_y=None, new_x=None, new_y=None, delta_time=100):
         # Input data
         self.i = i
         self.j = j
         self.lat_0 = lat_0
         self.lon_0 = lon_0
+        self.delta_time = delta_time
         self.image_geod = image_geod
         self.earth_geod = earth_geod
         self.pixel_size = pixel_size
@@ -59,11 +60,11 @@ class TestPywinds(unittest.TestCase):
 
     def test_calculate_velocity(self):
         for case in self.test_cases:
-            speed, angle = velocity(case.lat_0, case.lon_0, displacement_data=case.displacement_data,
+            speed, angle = velocity(case.lat_0, case.lon_0, case.delta_time, displacement_data=case.displacement_data,
                                               projection=case.projection, shape=case.shape, pixel_size=case.pixel_size,
                                               center=case.center, units=case.units, image_geod=case.image_geod,
                                               earth_geod=case.earth_geod)
-            speed_ji, angle_ji = velocity(case.lat_0, case.lon_0, displacement_data=case.displacement_data,
+            speed_ji, angle_ji = velocity(case.lat_0, case.lon_0, case.delta_time,  displacement_data=case.displacement_data,
                                                     projection=case.projection, i=case.i, j=case.j, shape=case.shape,
                                                     pixel_size=case.pixel_size, center=case.center, units=case.units,
                                                     image_geod=case.image_geod, earth_geod=case.earth_geod)
@@ -74,11 +75,11 @@ class TestPywinds(unittest.TestCase):
 
     def test_v_u_component(self):
         for case in self.test_cases:
-            v, u = vu(case.lat_0, case.lon_0, displacement_data=case.displacement_data,
+            v, u = vu(case.lat_0, case.lon_0, case.delta_time, displacement_data=case.displacement_data,
                                  projection=case.projection, shape=case.shape, pixel_size=case.pixel_size,
                                  center=case.center, units=case.units, image_geod=case.image_geod,
                                  earth_geod=case.earth_geod)
-            v_ji, u_ji = vu(case.lat_0, case.lon_0, displacement_data=case.displacement_data,
+            v_ji, u_ji = vu(case.lat_0, case.lon_0, case.delta_time, displacement_data=case.displacement_data,
                                        projection=case.projection, i=case.i, j=case.j, shape=case.shape,
                                        pixel_size=case.pixel_size, center=case.center, units=case.units,
                                        image_geod=case.image_geod, earth_geod=case.earth_geod)

@@ -4,7 +4,7 @@ How to use pywinds
 velocity.sh
 -----------
 
-Finds velocity
+When saved to a file, the output is in row-column format as data-type float32.
 
 Required arguments:
 

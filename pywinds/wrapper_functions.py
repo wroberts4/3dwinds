@@ -1,6 +1,7 @@
 from wrapper_utils import run_script, get_args, print_usage
 from wind_functions import velocity, displacements, vu, area, lat_long
 import sys
+import numpy as np
 
 
 def arg_velocity(argv):
@@ -53,9 +54,20 @@ def arg_lat_long(argv):
     run_script(lat_long, argv, output_format, is_lat_long=True)
 
 
+def arg_winds(argv):
+    def output_format(output, kwargs):
+        if kwargs.get('save_data') != True:
+            return np.round(output, 2).tolist()
+        return ''
+
+    run_script(lat_long, argv, output_format, is_lat_long=True)
+    run_script(velocity, argv, output_format)
+    run_script(vu, argv, output_format)
+
+
 def main(argv):
     functions = {'velocity': arg_velocity, 'vu': arg_vu, 'lat_long': arg_lat_long,
-                 'displacements': arg_displacements, 'area': arg_area}
+                 'displacements': arg_displacements, 'area': arg_area, 'winds': arg_winds}
     func = argv.pop(1)
     functions[func](argv)
 

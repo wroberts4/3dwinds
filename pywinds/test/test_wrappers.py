@@ -9,12 +9,14 @@ import ast
 class TestCase:
     def __init__(self, displacement_data, projection='stere', i=None, j=None, shape=None, pixel_size=None, lat_0=None,
                  lon_0=None, image_geod=None, earth_geod=None, units=None, center=None, area_extent=None, distance=None,
-                 speed=None, angle=None, u=None, v=None, old_lat=None, old_long=None, new_lat=None, new_long=None):
+                 speed=None, angle=None, u=None, v=None, old_lat=None, old_long=None, new_lat=None, new_long=None,
+                 delta_time=100):
         # Input data
         self.i = i
         self.j = j
         self.lat_0 = str(lat_0).replace(' ', '')
         self.lon_0 = str(lon_0).replace(' ', '')
+        self.delta_time = str(delta_time)
         self.image_geod = str(image_geod).replace(' ', '')
         self.earth_geod = str(earth_geod).replace(' ', '')
         self.pixel_size = str(pixel_size).replace(' ', '')
@@ -59,12 +61,12 @@ class TestWrappers(unittest.TestCase):
     def test_velocity(self):
         for case in self.test_cases:
             speed, angle = args_to_data(['../wrapper_functions.py', 'velocity', case.lat_0, case.lon_0,
-                                         '--displacement_data',
+                                         case.delta_time, '--displacement_data',
                                          case.displacement_data, '--projection', case.projection, '--pixel_size',
                                          case.pixel_size, '--center', case.center, '--units', case.units,
                                          '--image_geod', case.image_geod, '--earth_geod', case.earth_geod])
             speed_ji, angle_ji = args_to_data(['../wrapper_functions.py', 'velocity', case.lat_0, case.lon_0,
-                                               '--displacement_data',
+                                               case.delta_time, '--displacement_data',
                                                case.displacement_data, '--projection', case.projection, '--j',
                                                str(case.j), '--i', str(case.i), '--pixel_size', case.pixel_size,
                                                '--center', case.center, '--units', case.units, '--image_geod',
@@ -76,11 +78,13 @@ class TestWrappers(unittest.TestCase):
 
     def test_vu(self):
         for case in self.test_cases:
-            v, u = args_to_data(['../wrapper_functions.py', 'vu', case.lat_0, case.lon_0, '--displacement_data', case.displacement_data,
+            v, u = args_to_data(['../wrapper_functions.py', 'vu', case.lat_0, case.lon_0, case.delta_time,
+                                 '--displacement_data', case.displacement_data,
                                  '--projection', case.projection, '--pixel_size', case.pixel_size, '--center',
                                 case.center, '--units', case.units, '--image_geod', case.image_geod, '--earth_geod',
                                 case.earth_geod])
-            v_ji, u_ji = args_to_data(['../wrapper_functions.py', 'vu', case.lat_0, case.lon_0, '--displacement_data',
+            v_ji, u_ji = args_to_data(['../wrapper_functions.py', 'vu', case.lat_0, case.lon_0, case.delta_time,
+                                       '--displacement_data',
                                        case.displacement_data, '--projection', case.projection, '--j', str(case.j),
                                        '--i', str(case.i), '--pixel_size', case.pixel_size, '--center', case.center,
                                        '--units', case.units, '--image_geod', case.image_geod, '--earth_geod',

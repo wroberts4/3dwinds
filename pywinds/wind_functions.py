@@ -22,7 +22,9 @@ def _save_data(data, output_filename, input_filename):
         os.mkdir(os.path.join(os.getcwd(), extenion + '_output'))
     except OSError:
         pass
-    np.ndarray.tofile(np.array(data), os.path.join(os.getcwd(), extenion + '_output', output_filename))
+    np.ndarray.tofile(data, os.path.join(os.getcwd(), extenion + '_output', output_filename + '.out'),
+                      format='%.2f')
+    np.savetxt(os.path.join(os.getcwd(), extenion + '_output', output_filename + '.txt'), data, fmt='%.2f')
 
 
 def _extrapolate_j_i(j, i, shape, delta_j=0, delta_i=0):
@@ -180,7 +182,7 @@ def _find_displacements(displacement_data=None, j=None, i=None, shape=None, save
     return np.array((j_displacement, i_displacement))[:, j, i], shape
 
 
-def _compute_lat_long(j, i, area_definition, displacement_data, save_data=False, displacement=(0, 0)):
+def _compute_lat_long_from_area(j, i, area_definition, displacement_data, save_data=False, displacement=(0, 0)):
     """Computes the latitude and longitude given an area and (j, i) values."""
     if not isinstance(area_definition, AreaDefinition):
         raise ValueError('Not enough information provided to create an area definition')
@@ -351,7 +353,7 @@ def displacements(lat_0=None, lon_0=None, displacement_data=None, projection='st
                                         radius=radius, units=units, image_geod=image_geod, save_data=save_data)[0]
 
 
-def velocity(lat_0, lon_0, displacement_data=None, projection='stere', j=None, i=None, delta_time=100,
+def velocity(lat_0, lon_0, delta_time, displacement_data=None, projection='stere', j=None, i=None,
              area_extent=None, shape=None, upper_left_extent=None, center=None, pixel_size=None,
              radius=None, units=None, image_geod=None, earth_geod=None, save_data=False):
     """Computes the speed and angle of the wind given an area and pixel-displacement.
@@ -420,7 +422,7 @@ def velocity(lat_0, lon_0, displacement_data=None, projection='stere', j=None, i
     return np.array((speed, angle))
 
 
-def vu(lat_0, lon_0, displacement_data=None, projection='stere', j=None, i=None, delta_time=100,
+def vu(lat_0, lon_0, delta_time, displacement_data=None, projection='stere', j=None, i=None,
        area_extent=None, shape=None, upper_left_extent=None, center=None, pixel_size=None,
        radius=None, units=None, image_geod=None, earth_geod=None, save_data=False):
     """Computes the v and u components of the wind given an area and pixel-displacement.
@@ -431,7 +433,7 @@ def vu(lat_0, lon_0, displacement_data=None, projection='stere', j=None, i=None,
         Normal latitude of projection
     lon_0 : float
         Normal longitude of projection
-    displacement_data : str or list, optional
+    displacement_data : str or list
         File or list containing displacements: [0, 0, 0, i11, j11, i12, j12, ...] or
         [[j_displacement], [i_displacement]] respectively.
     projection : str
@@ -487,8 +489,8 @@ def vu(lat_0, lon_0, displacement_data=None, projection='stere', j=None, i=None,
                                                                   image_geod=image_geod)
     if not isinstance(area_definition, AreaDefinition):
         raise ValueError('Not enough information provided to create an area definition')
-    old_lat, old_long = _compute_lat_long(j, i, area_definition, displacement_data)
-    new_lat, new_long = _compute_lat_long(j, i, area_definition, displacement_data, displacement=displacement)
+    old_lat, old_long = _compute_lat_long_from_area(j, i, area_definition, displacement_data)
+    new_lat, new_long = _compute_lat_long_from_area(j, i, area_definition, displacement_data, displacement=displacement)
     lat_long_distance = _lat_long_dist((new_lat + old_lat) / 2, earth_geod)
     # u = (_delta_longitude(new_long, old_long) *
     #      _lat_long_dist(old_lat, earth_geod)[1] / (delta_time * 60) +
@@ -535,13 +537,13 @@ def lat_long(lat_0, lon_0, displacement_data=None, projection='stere', j=None, i
         2. units passed to ``units``
         3. meters
     area_extent : list, optional
-        Area extent as a list (upper_right_y, upper_right_x, lower_left_y, lower_left_x)
+        Area extent in projection units as a list (upper_right_y, upper_right_x, lower_left_y, lower_left_x)
     shape : list, optional
         Number of pixels in the y and x direction (height, width). Note that shape
         can be found from the displacement file (in such a case, shape will be square)
         or the area provided.
     upper_left_extent : list, optional
-        Upper left corner of upper left pixel (y, x)
+        Upper left corner of upper left pixel in projection units (y, x)
     center : list, optional
         Center of projection (lat, long)
     pixel_size : list or float, optional
@@ -574,4 +576,41 @@ def lat_long(lat_0, lon_0, displacement_data=None, projection='stere', j=None, i
                                                                   center=center, pixel_size=pixel_size,
                                                                   radius=radius, units=units,
                                                                   image_geod=image_geod)
-    return _compute_lat_long(j, i, area_definition, displacement_data, save_data=save_data, displacement=displacement)
+    return _compute_lat_long_from_area(j, i, area_definition, displacement_data,
+                                       save_data=save_data, displacement=displacement)
+
+
+# TODO: MAKE THIS SIMPLER WITHOUT MAKING CODE TOO COMPLEX. ALSO ADD SHELL VERSION
+def winds(lat_0, lon_0, delta_time, displacement_data=None, projection='stere', j=None, i=None,
+          area_extent=None, shape=None, upper_left_extent=None, center=None, pixel_size=None,
+          radius=None, units=None, image_geod=None, earth_geod=None, save_data=False):
+    displacement, area_definition = _find_displacements_and_area(lat_0, lon_0, displacement_data,
+                                                                  projection=projection, j=j, i=i,
+                                                                  area_extent=area_extent, shape=shape,
+                                                                  upper_left_extent=upper_left_extent, center=center,
+                                                                  pixel_size=pixel_size, radius=radius, units=units,
+                                                                  image_geod=image_geod)
+    if not isinstance(area_definition, AreaDefinition):
+        raise ValueError('Not enough information provided to create an area definition')
+    lat, long = _compute_lat_long_from_area(j, i, area_definition, displacement_data, displacement=displacement)
+    v, u = vu(lat_0, lon_0, delta_time, displacement_data=displacement_data, projection=projection, j=j, i=i,
+              area_extent=area_extent, shape=area_definition.shape, upper_left_extent=upper_left_extent, center=center,
+              pixel_size=pixel_size, radius=radius, units=units, image_geod=image_geod, earth_geod=earth_geod)
+    speed, angle = velocity(lat_0, lon_0, displacement_data=displacement_data, projection=projection, j=j, i=i,
+                            delta_time=delta_time, area_extent=area_extent, shape=area_definition.shape,
+                            upper_left_extent=upper_left_extent, center=center, pixel_size=pixel_size,
+                            radius=radius, units=units, image_geod=image_geod, earth_geod=earth_geod)
+    lat = np.expand_dims(np.ravel(lat), axis=1)
+    long = np.ravel(long)
+    v = np.ravel(v)
+    u = np.ravel(u)
+    speed = np.ravel(speed)
+    angle = np.ravel(angle)
+    winds = np.insert(lat, 1, long, axis=1)
+    winds = np.insert(winds, 2, speed, axis=1)
+    winds = np.insert(winds, 3, angle, axis=1)
+    winds = np.insert(winds, 4, v, axis=1)
+    winds = np.insert(winds, 5, u, axis=1)
+    if save_data is True:
+        _save_data(winds, 'winds', displacement_data)
+    return winds
