@@ -21,12 +21,12 @@ def _arg_to_param(arg):
     return string
 
 
-def print_usage(func, argv):
+def print_usage(func, name):
     """Prints the functions doc_string plus extra command line info."""
     arg_spec = getfullargspec(func)
     num_args = len(arg_spec.args) - len(arg_spec.defaults)
     text_width = 90
-    usage_string = 'Usage (' + func.__name__ + '.sh' + '):'
+    usage_string = 'Usage (' + name + '.sh' + '):'
     length = len(usage_string)
     for arg in ['<' + arg + '>' for arg in getfullargspec(func).args[:num_args]]:
         length = length + len(arg) + 1
@@ -54,10 +54,10 @@ def print_usage(func, argv):
     print(func.__doc__)
 
 
-def get_args(func, argv):
+def get_args(func, argv, name):
     """Reads command line arguments and handles logic behind them."""
     if '--help' in argv or '-h' in argv:
-        print_usage(func, argv)
+        print_usage(func, name)
         sys.exit(0)
     arg_spec = getfullargspec(func)
     num_args = len(arg_spec.args) - len(arg_spec.defaults)
@@ -75,7 +75,7 @@ def get_args(func, argv):
     except GetoptError as err:
         print(err)
         print()
-        print_usage(func, argv)
+        print_usage(func, name)
         sys.exit(1)
     kwargs = {}
     for arg in optlist:
@@ -86,9 +86,9 @@ def get_args(func, argv):
     return [_arg_to_param(arg) for arg in argv[1:num_args + 1]], kwargs
 
 
-def run_script(function, argv, output_format, is_area=False, is_lat_long=False):
+def run_script(func, argv, output_format, name, is_area=False, is_lat_long=False):
     """Runs python function from wind_functions.py."""
-    args, kwargs = get_args(function, argv)
+    args, kwargs = get_args(func, argv, name)
     try:
         displacement_data = kwargs.get('displacement_data')
         if displacement_data is None and is_lat_long is False:
@@ -99,7 +99,7 @@ def run_script(function, argv, output_format, is_area=False, is_lat_long=False):
             if files:
                 kwargs.pop('displacement_data')
                 for file in files:
-                    output = output_format(function(*args, displacement_data=file, **kwargs), kwargs)
+                    output = output_format(func(*args, displacement_data=file, **kwargs), kwargs)
                     if output != '':
                         if len(files) > 1:
                             print(file)
@@ -108,10 +108,10 @@ def run_script(function, argv, output_format, is_area=False, is_lat_long=False):
             elif is_area is False:
                 raise FileNotFoundError("No files were found that matched: '{0}'".format(displacement_data))
             kwargs.pop('displacement_data')
-        output = function(*args, **kwargs)
+        output = func(*args, **kwargs)
         print(output_format(output, kwargs))
     except (TypeError, ValueError, FileNotFoundError, RuntimeError) as err:
         print(err)
         print()
-        print_usage(function, argv)
+        print_usage(func, name)
         sys.exit(1)
