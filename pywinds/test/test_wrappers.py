@@ -46,14 +46,14 @@ class TestWrappers(unittest.TestCase):
         self.test_cases.append(TestCase('./test_files/test_data_three.flo',
                                         i=1, j=4, pixel_size='10:km', lat_0=60, lon_0=0, center=(90, 0),
                                         area_extent=(-25000.0, 3404327.9171, 25000.0, 3454327.9171),
-                                        speed=3250.57, angle=144.54, u=1885.62, v=-2647.76, old_lat=89.81,
-                                        old_long=-26.58, new_lat=-53.72, new_long=80.28))
+                                        speed=2820.83, angle=42.94, u=1921.49, v=2065.18, old_lat=89.81,
+                                        old_long=-26.58, new_lat=89.81, new_long=-26.58))
         displacement_data = np.array(([x for x in range(25)], [x for x in range(25)])) * 10
         self.test_cases.append(TestCase(displacement_data.tolist(), pixel_size=5, lat_0=90, lon_0=20, i=1, j=4,
                                         units='km', center=(40, 10),
                                         area_extent=(-1046407.8856, -5876082.9951, -1021407.8856, -5851082.9951),
-                                        speed=197.72, angle=130.12, u=151.19, v=-127.41, old_lat=39.92, old_long=9.97,
-                                        new_lat=33.03, new_long=20.09))
+                                        speed=208.14, angle=118.39, u=183.1, v=-98.98, old_lat=39.92, old_long=9.97,
+                                        new_lat=39.92, new_long=9.97))
 
     def test_wind_info(self):
         for case in self.test_cases:

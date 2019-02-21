@@ -46,15 +46,15 @@ class TestPywinds(unittest.TestCase):
         self.test_cases = []
         self.test_cases.append(TestCase('./test_files/test_data_two.flo',
                                         i=1, j=8, pixel_size=10000, lat_0=60, lon_0=0, center=(90, 0),
-                                        speed=2101.88674, angle=141.3029, u=1314.1062,
-                                        v=-1640.44285, old_lat=89.58692, old_long=-45.03963, new_lat=1.02424,
-                                        new_long=55.49562, old_x=-35000.0, old_y=3394327.91718, new_x=8065000.0,
+                                        speed=1688.18055, angle=38.95818, u=1061.44852,
+                                        v=1312.73783, old_lat=89.58692, old_long=-45.03963, new_lat=89.58692,
+                                        new_long=-45.03963, old_x=-35000.0, old_y=3394327.91718, new_x=8065000.0,
                                         new_y=-4705672.08282))
         displacement_data = np.array(([x for x in range(100)], [x for x in range(100)])) * 10
         self.test_cases.append(TestCase(displacement_data.tolist(), pixel_size=5, lat_0=90, lon_0=20, i=1, j=8,
-                                        units='km', center=(40, 10), speed=688.49049,
-                                        angle=139.13855, u=450.43258, v=-520.7011, old_lat=39.84993, old_long=9.86386,
-                                        new_lat=11.64909, new_long=36.80117, old_x=-1051407.88566, old_y=-5881082.99511,
+                                        units='km', center=(40, 10), speed=834.60569,
+                                        angle=95.29823, u=831.03988, v=-77.06734, old_lat=39.84993, old_long=9.86386,
+                                        new_lat=39.84993, new_long=9.86386, old_x=-1051407.88566, old_y=-5881082.99511,
                                         new_x=2998592.11434, new_y=-9931082.99511))
 
     def test_wind_info(self):
@@ -154,10 +154,10 @@ class TestPywinds(unittest.TestCase):
             self.assertEqual(case.old_y, round(old_y_ji, 5))
             self.assertEqual(case.new_x, round(new_x_ji, 5))
             self.assertEqual(case.new_y, round(new_y_ji, 5))
-            self.assertEqual(old_x[case.j, case.i], old_x_ji)
-            self.assertEqual(old_y[case.j, case.i], old_y_ji)
-            self.assertEqual(new_x[case.j, case.i], new_x_ji)
-            self.assertEqual(new_y[case.j, case.i], new_y_ji)
+            self.assertEqual(old_x[case.j * case.shape[0] + case.i], old_x_ji)
+            self.assertEqual(old_y[case.j * case.shape[0] + case.i], old_y_ji)
+            self.assertEqual(new_x[case.j * case.shape[0] + case.i], new_x_ji)
+            self.assertEqual(new_y[case.j * case.shape[0] + case.i], new_y_ji)
 
 
 def suite():

@@ -1,11 +1,6 @@
 from pywinds.wind_functions import velocity, vu, lat_long, displacements, area, wind_info
 from datetime import datetime
-from pyproj import Geod, Proj
-from xarray import DataArray
-from collections import OrderedDict
 import numpy as np
-import glob
-import os
 import sys
 
 
@@ -24,9 +19,9 @@ image_geod = 'WGS84'
 save_data = False
 area_extent = tuple(reversed((-2000000.0, 1429327.9172, 2000000.0, 5429327.9172)))
 
-lat, long, speed, angle, v, u = wind_info(lat_0, lon_0, 100, displacement_data='in.flo', i=i_in, j=j_in, pixel_size=pixel_size, center=center,
-              earth_geod=earth_geod, image_geod=image_geod, save_data=save_data).transpose().reshape((6, 1000, 1000))
-print(lat[1, 5])
+# winds = wind_info(lat_0, lon_0, 100, displacement_data='in.flo', i=1.5, j=5.7, pixel_size=pixel_size, center=center,
+#               earth_geod=earth_geod, image_geod=image_geod, save_data=save_data)
+# print(winds)
 # output_velocity = velocity(lat_0, lon_0, 100, displacement_data='in.flo', i=i_in, j=j_in, pixel_size=pixel_size,
 #                            center=center, earth_geod=earth_geod, image_geod=image_geod, save_data=save_data)
 # print('speed:', '{0} m/sec, {1}°'.format(*output_velocity[:, 0, 0]))
@@ -46,9 +41,9 @@ print(lat[1, 5])
 #                         shape=(1000,1000), image_geod=image_geod)
 # print('old_lat, old_long:', *old_lat_long[:, 0, 0])
 #
-new_lat_long = lat_long(lat_0, lon_0, displacement_data=file_name, i=i_in, j=j_in, pixel_size=pixel_size,
-                                center=center, shape=(1000,1000), image_geod=image_geod, save_data=save_data)
-print('new_lat, new_long:', *new_lat_long[:, 1, 5])
+# new_lat_long = lat_long(lat_0, lon_0, displacement_data=file_name, i=i_in, j=j_in, pixel_size=pixel_size,
+#                                 center=center, shape=(1000,1000), image_geod=image_geod, save_data=save_data)
+# print('new_lat, new_long:', *new_lat_long[:, 1, 5])
 
 end = datetime.utcnow()
 print("Execution seconds: ", (end - start).total_seconds())
