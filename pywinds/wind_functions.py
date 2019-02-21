@@ -22,6 +22,8 @@ def _save_data(data, output_filename, input_filename):
         os.mkdir(os.path.join(os.getcwd(), extenion + '_output'))
     except OSError:
         pass
+    if np.size(data) == 1:
+        data = np.ravel(data)
     np.ndarray.tofile(data, os.path.join(os.getcwd(), extenion + '_output', output_filename + '.out'),
                       format='%.2f')
     np.savetxt(os.path.join(os.getcwd(), extenion + '_output', output_filename + '.txt'), data, fmt='%.2f')
@@ -37,9 +39,9 @@ def _extrapolate_j_i(j, i, shape):
         i = [y for x in range(0, shape[1]) for y in range(0, shape[0])]
     else:
         if j >= shape[0]:
-            raise ValueError('index {0} is out of bounds for vertical axis with size {1}'.format(j, shape[0]))
+            raise IndexError('index {0} is out of bounds for vertical axis with size {1}'.format(j, shape[0]))
         if i >= shape[1]:
-            raise ValueError('index {0} is out of bounds for horizontal axis with size {1}'.format(i, shape[1]))
+            raise IndexError('index {0} is out of bounds for horizontal axis with size {1}'.format(i, shape[1]))
         i = _to_int(i, ValueError('i must be a positive integer'))
         j = _to_int(j, ValueError('j must be a positive integer'))
         if i < 0:
@@ -240,20 +242,20 @@ def _compute_vu(lat_0, lon_0, delta_time, displacement_data=None, projection='st
     # meters/second. distance is in meters delta_time is in minutes.
     v = (new_lat - old_lat) * lat_long_distance[0] / (delta_time * 60)
     u = _delta_longitude(new_long, old_long) * lat_long_distance[1] / (delta_time * 60)
-    return shape, v, u, new_lat, new_long
+    return shape, v, u, old_lat, old_long
 
 
 def _compute_velocity(lat_0, lon_0, delta_time, displacement_data=None, projection='stere', j=None, i=None,
                       area_extent=None, shape=None, upper_left_extent=None, center=None, pixel_size=None,
-                      radius=None, units=None, image_geod=None, earth_geod=None, save_data=False):
-    shape, v, u, new_lat, new_long = _compute_vu(lat_0, lon_0, delta_time, displacement_data=displacement_data,
+                      radius=None, units=None, image_geod=None, earth_geod=None, save_data=True):
+    shape, v, u, old_lat, old_long = _compute_vu(lat_0, lon_0, delta_time, displacement_data=displacement_data,
                                            projection=projection,
                                           j=j, i=i, area_extent=area_extent, shape=shape,
                                           upper_left_extent=upper_left_extent, center=center, pixel_size=pixel_size,
                                           radius=radius, units=units, image_geod=image_geod, earth_geod=earth_geod)
     speed, angle = (u**2 + v**2)**.5, ((90 - np.arctan2(v, u) * 180 / np.pi) + 360) % 360
     # When wind vector azimuth is 0 degrees it points North (mathematically 90 degrees) and moves clockwise.
-    return shape, speed, angle, v, u, new_lat, new_long
+    return shape, speed, angle, v, u, old_lat, old_long
 
 
 def _find_displacements_and_area(lat_0=None, lon_0=None, displacement_data=None, projection='stere', j=None, i=None,
@@ -341,7 +343,7 @@ def area(lat_0, lon_0, displacement_data=None, projection='stere', j=None, i=Non
 
 def displacements(lat_0=None, lon_0=None, displacement_data=None, projection='stere', j=None, i=None,
                   area_extent=None, shape=None, upper_left_extent=None, center=None, pixel_size=None,
-                  radius=None, units=None, image_geod=None, save_data=False):
+                  radius=None, units=None, image_geod=None, save_data=True):
     """Dynamically computes displacements.
 
         Parameters
@@ -415,9 +417,10 @@ def displacements(lat_0=None, lon_0=None, displacement_data=None, projection='st
     return np.array((j_displacement, i_displacement))
 
 
+# TODO: ERROR IF DISPLACEMENTS NOT GIVEN (SHELL SCRIPT ALREADY HANDLES THIS CASE).
 def velocity(lat_0, lon_0, delta_time, displacement_data=None, projection='stere', j=None, i=None,
              area_extent=None, shape=None, upper_left_extent=None, center=None, pixel_size=None,
-             radius=None, units=None, image_geod=None, earth_geod=None, save_data=False):
+             radius=None, units=None, image_geod=None, earth_geod=None, save_data=True):
     """Computes the speed and angle of the wind given an area and pixel-displacement.
 
     Parameters
@@ -488,7 +491,7 @@ def velocity(lat_0, lon_0, delta_time, displacement_data=None, projection='stere
 
 def vu(lat_0, lon_0, delta_time, displacement_data=None, projection='stere', j=None, i=None,
        area_extent=None, shape=None, upper_left_extent=None, center=None, pixel_size=None,
-       radius=None, units=None, image_geod=None, earth_geod=None, save_data=False):
+       radius=None, units=None, image_geod=None, earth_geod=None, save_data=True):
     """Computes the v and u components of the wind given an area and pixel-displacement.
 
     Parameters
@@ -556,7 +559,7 @@ def vu(lat_0, lon_0, delta_time, displacement_data=None, projection='stere', j=N
 
 def lat_long(lat_0, lon_0, displacement_data=None, projection='stere', j=None, i=None,
              area_extent=None, shape=None, upper_left_extent=None, center=None, pixel_size=None,
-             radius=None, units=None, image_geod=None, save_data=False):
+             radius=None, units=None, image_geod=None, save_data=True):
     """Computes the latitude and longitude given an area and (j, i) values.
 
     Parameters
@@ -614,25 +617,31 @@ def lat_long(lat_0, lon_0, displacement_data=None, projection='stere', j=None, i
     * center will always be interpreted as degrees unless units are passed directly with center
     * The list returned is in row-column form. lat[j][i] is down j pixels and right i pixels
     """
-    shape, lat, long = _compute_lat_long(lat_0, lon_0, displacement_data=displacement_data, projection=projection, j=j,
+    # If no displacements were given, then old=new
+    shape, new_lat, new_long, old_lat, old_long = _compute_lat_long(lat_0, lon_0, displacement_data=displacement_data, projection=projection, j=j,
                                       i=i, area_extent=area_extent, shape=shape, upper_left_extent=upper_left_extent,
                                       center=center, pixel_size=pixel_size, radius=radius, units=units,
-                                      image_geod=image_geod)[:3]
-    if np.size(lat) != 1:
-        lat = lat.reshape(shape)
-        long = long.reshape(shape)
+                                      image_geod=image_geod)
+    if np.size(old_lat) != 1:
+        new_lat = new_lat.reshape(shape)
+        new_long = new_long.reshape(shape)
+        old_lat = old_lat.reshape(shape)
+        old_long = old_long.reshape(shape)
     if save_data is True:
         if displacement_data is None:
-            raise ValueError('Cannot save old latitudes/longitudes to a file')
+            raise ValueError('Cannot save new latitudes/longitudes to a file without file containing displacements')
         else:
-            _save_data(lat, 'new_latitude', displacement_data)
-            _save_data(long, 'new_longitude', displacement_data)
-    return np.array((lat, long))
+            _save_data(old_lat, 'old_latitude', displacement_data)
+            _save_data(old_long, 'old_longitude', displacement_data)
+            _save_data(new_lat, 'new_latitude', displacement_data)
+            _save_data(new_long, 'new_longitude', displacement_data)
+    return np.array((old_lat, old_long))
 
 
 def wind_info(lat_0, lon_0, delta_time, displacement_data=None, projection='stere', j=None, i=None,
               area_extent=None, shape=None, upper_left_extent=None, center=None, pixel_size=None,
-              radius=None, units=None, image_geod=None, earth_geod=None, save_data=False):
+              radius=None, units=None, image_geod=None, earth_geod=None, save_data=True):
+    """"""
     shape, speed, angle, v, u, lat, long = _compute_velocity(lat_0, lon_0, displacement_data=displacement_data,
                                                       projection=projection, j=j, i=i, delta_time=delta_time,
                                                       area_extent=area_extent, shape=shape,

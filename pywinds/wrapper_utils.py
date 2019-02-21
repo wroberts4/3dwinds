@@ -106,12 +106,13 @@ def run_script(func, argv, output_format, name, is_area=False, is_lat_long=False
                         print(output)
                 return
             elif is_area is False:
-                raise FileNotFoundError("No files were found that matched: '{0}'".format(displacement_data))
+                output = func(*args, **kwargs)
+                print(output_format(output, kwargs))
             kwargs.pop('displacement_data')
         output = func(*args, **kwargs)
         print(output_format(output, kwargs))
-    except (TypeError, ValueError, FileNotFoundError, RuntimeError) as err:
-        print(err)
+    except (TypeError, ValueError, FileNotFoundError, RuntimeError, IndexError) as err:
+        print('{0}: {1}'.format(type(err).__name__, err))
         print()
         print_usage(func, name)
         sys.exit(1)

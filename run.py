@@ -13,20 +13,21 @@ i_in = None
 j_in = None
 pixel_size = 4000
 center = (90, 0)
-shape = None
+shape = (1000,1000)
 earth_geod = 'WGS84'
 image_geod = 'WGS84'
 save_data = False
 area_extent = tuple(reversed((-2000000.0, 1429327.9172, 2000000.0, 5429327.9172)))
 
-# winds = wind_info(lat_0, lon_0, 100, displacement_data='in.flo', i=1.5, j=5.7, pixel_size=pixel_size, center=center,
-#               earth_geod=earth_geod, image_geod=image_geod, save_data=save_data)
-# print(winds)
+winds = wind_info(lat_0, lon_0, 100, shape=(1000, 1000), displacement_data=None, i=j_in, j=i_in,
+                  pixel_size=pixel_size,  center=center, earth_geod=earth_geod, image_geod=image_geod,
+                  save_data=False).transpose().reshape((6, 1000, 1000))
+print(winds[:, 400, 400])
 # output_velocity = velocity(lat_0, lon_0, 100, displacement_data='in.flo', i=i_in, j=j_in, pixel_size=pixel_size,
 #                            center=center, earth_geod=earth_geod, image_geod=image_geod, save_data=save_data)
 # print('speed:', '{0} m/sec, {1}°'.format(*output_velocity[:, 0, 0]))
 #
-# output_vu = vu(lat_0, lon_0, 100, displacement_data=file_name, i=i_in, j=j_in, pixel_size=pixel_size, center=center,
+# output_vu = vu(lat_0, lon_0, 100, i=i_in, j=j_in, pixel_size=pixel_size, center=center,
 #                     shape=shape, earth_geod=earth_geod, image_geod=image_geod, save_data=save_data)
 # print('(v, u):', '({0} m/sec, {1} m/sec)'.format(*output_vu[:, 0, 0]))
 #
@@ -37,13 +38,13 @@ area_extent = tuple(reversed((-2000000.0, 1429327.9172, 2000000.0, 5429327.9172)
 # displacement = displacements(displacement_data=file_name, shape=shape, save_data=save_data)
 # print('displacements:', *displacement[:, 0, 0])
 #
-# old_lat_long = lat_long(lat_0, lon_0, i=i_in, j=j_in, pixel_size=pixel_size, center=center,
-#                         shape=(1000,1000), image_geod=image_geod)
-# print('old_lat, old_long:', *old_lat_long[:, 0, 0])
-#
-# new_lat_long = lat_long(lat_0, lon_0, displacement_data=file_name, i=i_in, j=j_in, pixel_size=pixel_size,
-#                                 center=center, shape=(1000,1000), image_geod=image_geod, save_data=save_data)
-# print('new_lat, new_long:', *new_lat_long[:, 1, 5])
+old_lat_long = lat_long(lat_0, lon_0, i=i_in, j=j_in, pixel_size=pixel_size, center=center,
+                        shape=(1000,1000), image_geod=image_geod, save_data=save_data)
+print('old_lat, old_long:', *old_lat_long[:, 0, 0])
+
+new_lat_long = lat_long(lat_0, lon_0, displacement_data=file_name, i=i_in, j=j_in, pixel_size=pixel_size,
+                                center=center, shape=(1000,1000), image_geod=image_geod, save_data=save_data)
+print('new_lat, new_long:', *new_lat_long[:, 0, 0])
 
 end = datetime.utcnow()
 print("Execution seconds: ", (end - start).total_seconds())
