@@ -23,7 +23,7 @@ class TestCase:
         self.displacement_data = displacement_data
         self.center = center
         self.j_displacements, self.i_displacements = displacements(lat_0, lon_0, displacement_data=displacement_data,
-                                                                   shape=shape, i=i, j=j, save_data=False)
+                                                                   shape=shape)[:, j, i]
         area_definition = area(lat_0, lon_0, displacement_data=displacement_data, shape=shape, i=i, j=j)
         self.shape = (area_definition.height, area_definition.width)
         # Output data
@@ -51,7 +51,7 @@ class TestPywinds(unittest.TestCase):
                                         new_long=-142.64162, old_x=-35000.0, old_y=3394327.91718, new_x=8065000.0,
                                         new_y=-4705672.08282))
         displacement_data = np.array(([x for x in range(100)], [x for x in range(100)])) * 10
-        self.test_cases.append(TestCase(displacement_data.tolist(), pixel_size=5, lat_0=90, lon_0=20, i=1, j=8,
+        self.test_cases.append(TestCase(displacement_data, pixel_size=5, lat_0=90, lon_0=20, i=1, j=8,
                                         units='km', center=(40, 10), speed=834.60569,
                                         angle=95.29823, u=831.03988, v=-77.06734, old_lat=39.84993, old_long=9.86386,
                                         new_lat=44.01303, new_long=-50.25507, old_x=-1051407.88566, old_y=-5881082.99511,
@@ -117,14 +117,14 @@ class TestPywinds(unittest.TestCase):
             old_lat_ji, old_long_ji = lat_long(case.lat_0, case.lon_0, projection=case.projection, i=case.i,
                                                        j=case.j, shape=case.shape, pixel_size=case.pixel_size,
                                                        center=case.center, units=case.units, image_geod=case.image_geod,
-                                               save_data=False)
+                                               no_save=True)
             new_lat_ji, new_long_ji = lat_long(case.lat_0, case.lon_0, displacement_data=case.displacement_data,
                                                        projection=case.projection, i=case.i, j=case.j, shape=case.shape,
                                                        pixel_size=case.pixel_size, center=case.center, units=case.units,
                                                        image_geod=case.image_geod)
             old_lat, old_long = lat_long(case.lat_0, case.lon_0, projection=case.projection, shape=case.shape,
                                                  pixel_size=case.pixel_size, center=case.center, units=case.units,
-                                                 image_geod=case.image_geod, save_data=False)
+                                                 image_geod=case.image_geod, no_save=True)
             new_lat, new_long = lat_long(case.lat_0, case.lon_0, displacement_data=case.displacement_data,
                                                  projection=case.projection, shape=case.shape,
                                                  pixel_size=case.pixel_size, center=case.center, units=case.units,
@@ -159,6 +159,8 @@ class TestPywinds(unittest.TestCase):
             self.assertEqual(old_y[case.j * case.shape[0] + case.i], old_y_ji)
             self.assertEqual(new_x[case.j * case.shape[0] + case.i], new_x_ji)
             self.assertEqual(new_y[case.j * case.shape[0] + case.i], new_y_ji)
+
+
 
 
 def suite():

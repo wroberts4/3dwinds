@@ -105,6 +105,7 @@ def run_script(func, argv, output_format, name, is_area=False, is_lat_long=False
                             print(file)
                         print(output)
                 return
+            # File not found error will be raised
             elif is_area is False:
                 output = func(*args, **kwargs)
                 print(output_format(output, kwargs))

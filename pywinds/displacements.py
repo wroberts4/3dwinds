@@ -6,7 +6,7 @@ import numpy as np
 
 
 def output_format(output, kwargs):
-    if kwargs.get('save_data') is not True:
+    if kwargs.get('no_save') is True:
         return np.round(output, 2).tolist()
     return ''
 

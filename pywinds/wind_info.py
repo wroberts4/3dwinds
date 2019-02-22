@@ -1,4 +1,4 @@
-#!../../../anaconda3/envs/newpyre/bin/python3.6
+#!/Users/wroberts/anaconda3/envs/newpyre/bin/python3.6
 from wrapper_utils import run_script
 from wind_functions import wind_info
 import sys
@@ -6,7 +6,7 @@ import numpy as np
 
 
 def output_format(output, kwargs):
-    if kwargs.get('save_data') is False:
+    if kwargs.get('no_save') is True:
         return np.round(output, 2).tolist()
     return ''
 
