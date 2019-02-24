@@ -7,24 +7,45 @@ Examples of using pywinds
 
 ::
 
-    ella:pywinds wroberts$ pwd
-    /Users/wroberts/Documents/pywinds/pywinds
-    ella:pywinds wroberts$ source activate pywinds
-    (pywinds) ella:pywinds wroberts$ ./velocity.sh 60 0 test/test_files/test_data_one.flo --j 0 --i 0 --pixel_size 4000 --center 90,0
-    [42.57496915645635, 312.6840984969709]
-    (pywinds) ella:pywinds wroberts$ ./vu.sh 60 0 test/test_files/test_data_one.flo --j 0 --i 0 --pixel_size 4000 --center 90,0
-    [28.863942177010685, -31.296978139676572]
-    (pywinds) ella:pywinds wroberts$ ./lat_long.sh 60 0 --shape 1000,1000 --j 0 --i 0 --pixel_size 4000 --center 90,0
-    [67.62332747031272, -137.1736645853314]
-    (pywinds) ella:pywinds wroberts$ ./lat_long.sh 60 0 --displacement_data test/test_files/test_data_one.flo --j 0 --i 0 --pixel_size 4000 --center 90,0
-    [69.1759713115284, -141.7426590655602]
-    (pywinds) ella:pywinds wroberts$ ./displacements.sh test/test_files/test_data_one.flo --j 0 --i 0
-    [-2.529944896697998, 76.80111694335938]
-    (pywinds) ella:pywinds wroberts$ ./area.sh 60 0 --center 90,0 --pixel_size 4000 --shape 1000,1000
-    Area ID: pywinds
-    Description: pywinds
-    Projection: {'a': '6378137.0', 'f': '0.0033528106647474805', 'lat_0': '60.0', 'lon_0': '0.0', 'proj': 'stere'}
-    Number of columns: 1000
-    Number of rows: 1000
-    Area extent: (5429327.9172, 2000000.0, 1429327.9172, -2000000.0)
+    (pywinds) ella:ls
+    in.flo
+
+    (pywinds) ella:pywinds/wind_info.py 60 0 100 --j 0 --i 0
+     --pixel_size 4:km --center 90,0 --no_save
+    [67.62, -137.17, 42.33, 317.58, 31.25, -28.55]
+
+    (pywinds) ella:pywinds/lat_long.py 60 0 --j 0 --i 0
+     --pixel_size 4:km --center 90,0 --shape 1000,1000 --no_save
+    [67.62, -137.17]
+
+    (pywinds) ella:pywinds/lat_long.py 60 0
+     --pixel_size 4:km --center 90,0 --shape 1000,1000
+
+    (pywinds) ella:pywinds/velocity.py 60 0 100 --j 0 --i 0
+     --pixel_size 4:km --center 90,0 --no_save
+    [42.33, 317.58]
+
+    (pywinds) ella:pywinds/velocity.py 60 0 100
+     --pixel_size 4:km --center 90,0
+
+    (pywinds) ella:pywinds/vu.py 60 0 100 --j 0 --i 0
+     --pixel_size 4:km --center 90,0 --no_save
+    [31.25, -28.55]
+
+    (pywinds) ella:pywinds/vu.py 60 0 100
+     --pixel_size 4:km --center 90,0
+
+    (pywinds) ella:pywinds/lat_long.py 60 0 --j 0 --i 0
+     --pixel_size 4:km --center 90,0 --displacement_data "'*.flo'" --no_save
+    [65.94, -133.28]
+
+    (pywinds) ella:pywinds/lat_long.py 60 0
+     --pixel_size 4:km --center 90,0 --displacement_data "'*.flo'"
+
+    (pywinds) ella:pywinds/area.py 60 0 --pixel_size 4:km --center 90,0
+    projection data: {'lat_0': 60.0, 'lon_0': 0.0, 'proj': 'stere', 'a': 6378137.0, 'f': 0.0033528106647474805}
+    area_extent: (5429327.917104956, 2000000.0000000785, 1429327.9172506747, -2000000.0000000785)
+    shape: (1000, 1000)
+    pixel_size: (3999.999999854281, 4000.000000000157)
+    center: (3429327.917177815, 0.0)
 

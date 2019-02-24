@@ -153,7 +153,7 @@ def _create_area(lat_0, lon_0, projection='stere', area_extent=None, shape=None,
 
     area_definition = create_area_def('pywinds', proj_dict, area_extent=area_extent, shape=shape,
                            upper_left_extent=upper_left_extent, resolution=pixel_size,
-                           center=center, radius=radius, units=units,)
+                           center=center, radius=radius, units=units)
     if isinstance(area_definition, AreaDefinition):
         area_definition.area_extent = tuple(reversed(area_definition.area_extent))
     return area_definition
@@ -167,13 +167,13 @@ def _find_displacements(displacement_data=None, j=None, i=None, shape=None):
         j_displacement = displacement[1::2]
         i_displacement = displacement[0::2]
     elif displacement_data is not None:
-        if len(np.shape(displacement_data)) == 0 or np.shape(displacement_data)[0] != 2:
+        if len(np.shape(displacement_data)) != 3 or np.shape(displacement_data)[0] != 2:
             raise ValueError('displacement_data should have shape (2, y, x), but instead has shape {0}'.format(
                 np.shape(displacement_data)))
         j_displacement = np.array(displacement_data[1])
         i_displacement = np.array(displacement_data[0])
     else:
-        return  shape, 0, 0
+        return shape, 0, 0
     if shape is None:
         shape = (np.size(i_displacement)**.5, np.size(j_displacement)**.5)
         error = 'Shape was not provided and shape found from file was not comprised of integers: ' \
@@ -238,20 +238,20 @@ def _compute_vu(lat_0, lon_0, delta_time, displacement_data=None, projection='st
     # meters/second. distance is in meters delta_time is in minutes.
     v = (new_lat - old_lat) * lat_long_distance[0] / (delta_time * 60)
     u = _delta_longitude(new_long, old_long) * lat_long_distance[1] / (delta_time * 60)
-    return shape, v, u, old_lat, old_long
+    return shape, v, u, new_lat, new_long
 
 
 def _compute_velocity(lat_0, lon_0, delta_time, displacement_data=None, projection='stere', j=None, i=None,
                       area_extent=None, shape=None, upper_left_extent=None, center=None, pixel_size=None,
                       radius=None, units=None, image_geod=None, earth_geod=None):
-    shape, v, u, old_lat, old_long = _compute_vu(lat_0, lon_0, delta_time, displacement_data=displacement_data,
+    shape, v, u, new_lat, new_long = _compute_vu(lat_0, lon_0, delta_time, displacement_data=displacement_data,
                                            projection=projection,
                                           j=j, i=i, area_extent=area_extent, shape=shape,
                                           upper_left_extent=upper_left_extent, center=center, pixel_size=pixel_size,
                                           radius=radius, units=units, image_geod=image_geod, earth_geod=earth_geod)
     speed, angle = (u**2 + v**2)**.5, ((90 - np.arctan2(v, u) * 180 / np.pi) + 360) % 360
     # When wind vector azimuth is 0 degrees it points North (mathematically 90 degrees) and moves clockwise.
-    return shape, speed, angle, v, u, old_lat, old_long
+    return shape, speed, angle, v, u, new_lat, new_long
 
 
 def _find_displacements_and_area(lat_0=None, lon_0=None, displacement_data=None, projection='stere', j=None, i=None,
@@ -264,7 +264,8 @@ def _find_displacements_and_area(lat_0=None, lon_0=None, displacement_data=None,
             area_definition = _create_area(lat_0, lon_0, projection=projection, area_extent=area_extent, shape=shape,
                                            upper_left_extent=upper_left_extent, center=center, pixel_size=pixel_size,
                                            radius=radius, units=units, image_geod=image_geod)
-            shape = (area_definition.height, area_definition.width)
+            if area_definition.height is not None and area_definition.width is not None:
+                shape = (area_definition.height, area_definition.width)
         except ValueError:
             pass
     shape, j_displacement, i_displacement = _find_displacements(displacement_data, shape=shape, j=j, i=i)
@@ -275,7 +276,7 @@ def _find_displacements_and_area(lat_0=None, lon_0=None, displacement_data=None,
     return shape, j_displacement, i_displacement, area_definition
 
 
-def area(lat_0, lon_0, displacement_data=None, projection='stere', j=None, i=None, area_extent=None, shape=None,
+def area(lat_0, lon_0, displacement_data=None, projection='stere', area_extent=None, shape=None,
          upper_left_extent=None, center=None, pixel_size=None, radius=None, units=None, image_geod=None):
     """Dynamically computes area of projection.
 
@@ -332,7 +333,7 @@ def area(lat_0, lon_0, displacement_data=None, projection='stere', j=None, i=Non
                          '{0} {1} and {2} {3} respectively'.format(
                              lat_0, type(lat_0), lon_0, type(lon_0)))
     return _find_displacements_and_area(lat_0=lat_0, lon_0=lon_0, displacement_data=displacement_data,
-                                        projection=projection, j=j, i=i, area_extent=area_extent, shape=shape,
+                                        projection=projection, area_extent=area_extent, shape=shape,
                                         upper_left_extent=upper_left_extent, center=center, pixel_size=pixel_size,
                                         radius=radius, units=units, image_geod=image_geod)[3]
 
@@ -647,6 +648,8 @@ def wind_info(lat_0, lon_0, delta_time, displacement_data=None, projection='ster
         Normal latitude of projection
     lon_0 : float
         Normal longitude of projection
+    delta_time : int
+        Amount of time that separates both files in minutes.
     displacement_data : str or list, optional
         File or list containing displacements: [0, 0, 0, i11, j11, i12, j12, ...] or
         [[j_displacement], [i_displacement]] respectively. If provided, finds the
@@ -699,6 +702,7 @@ def wind_info(lat_0, lon_0, delta_time, displacement_data=None, projection='ster
                                                       upper_left_extent=upper_left_extent, center=center,
                                                       pixel_size=pixel_size, radius=radius, units=units,
                                                       image_geod=image_geod, earth_geod=earth_geod)
+    # Make each variable its own column.
     winds = np.insert(np.expand_dims(np.ravel(lat), axis=1), 1, long, axis=1)
     winds = np.insert(winds, 2, speed, axis=1)
     winds = np.insert(winds, 3, angle, axis=1)
@@ -706,7 +710,7 @@ def wind_info(lat_0, lon_0, delta_time, displacement_data=None, projection='ster
     winds = np.insert(winds, 5, u, axis=1)
     if no_save is False:
         _no_save(winds, 'winds', displacement_data)
-    # Columns: lat, long, speed, direction, v, u
     if np.shape(winds)[0] == 1:
         winds = winds[0]
+    # Columns: lat, long, speed, direction, v, u
     return winds

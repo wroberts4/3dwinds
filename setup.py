@@ -7,4 +7,6 @@ setup(name='pywinds',
       author='William Roberts',
       author_email='wroberts4@wisc.edu',
       long_description=open('README.txt').read(),
-      packages=['numpy', 'pyproj', 'pyresample'])
+      test_suite='pywinds.test.suite',
+      setup_requires=['numpy', 'pyproj', 'pyresample', 'xarray'],
+      install_requires=['numpy', 'pyproj', 'pyresample', 'xarray'])

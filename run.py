@@ -1,6 +1,5 @@
 from pywinds.wind_functions import velocity, vu, lat_long, displacements, area, wind_info
 from datetime import datetime
-import numpy as np
 import sys
 
 
