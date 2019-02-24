@@ -14,12 +14,12 @@ Examples of using pywinds
      --pixel_size 4:km --center 90,0 --no_save
     [67.62, -137.17, 42.33, 317.58, 31.25, -28.55]
 
+    (pywinds) ella:pywinds/wind_info.py 60 0 100
+     --pixel_size 4:km --center 90,0
+
     (pywinds) ella:pywinds/lat_long.py 60 0 --j 0 --i 0
      --pixel_size 4:km --center 90,0 --shape 1000,1000 --no_save
     [67.62, -137.17]
-
-    (pywinds) ella:pywinds/lat_long.py 60 0
-     --pixel_size 4:km --center 90,0 --shape 1000,1000
 
     (pywinds) ella:pywinds/velocity.py 60 0 100 --j 0 --i 0
      --pixel_size 4:km --center 90,0 --no_save
@@ -41,6 +41,18 @@ Examples of using pywinds
 
     (pywinds) ella:pywinds/lat_long.py 60 0
      --pixel_size 4:km --center 90,0 --displacement_data "'*.flo'"
+
+    (pywinds) ella:pywinds/displacements.py --j 0 --i 0 --no_save
+     [-2.53, 76.8]
+
+    (pywinds) ella:pywinds/displacements.py --j 1 --i 0 --no_save --shape 100,10000
+     [-3.03, 79.19]
+
+    (pywinds) ella:pywinds/displacements.py --j 1 --i 0 --no_save --pixel_size 4
+     --center 90,0 --radius 200,20000 --units km
+     [-3.03, 79.19]
+
+    (pywinds) ella:pywinds/displacements.py
 
     (pywinds) ella:pywinds/area.py 60 0 --pixel_size 4:km --center 90,0
     projection data: {'lat_0': 60.0, 'lon_0': 0.0, 'proj': 'stere', 'a': 6378137.0, 'f': 0.0033528106647474805}

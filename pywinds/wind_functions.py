@@ -24,6 +24,7 @@ def _no_save(data, output_filename, input_filename):
         pass
     if np.size(data) == 1:
         data = np.ravel(data)
+    data = np.array(data, dtype=float)
     np.ndarray.tofile(data, os.path.join(os.getcwd(), extenion + '_output', output_filename + '.out'),
                       format='%.2f')
     np.savetxt(os.path.join(os.getcwd(), extenion + '_output', output_filename + '.txt'), data, fmt='%.2f')
@@ -54,14 +55,16 @@ def _extrapolate_j_i(j, i, shape):
 
 def _reverse_param(param):
     """Reverses the order of parameters (y/x-form is given, but most packages need x/y-form."""
-    if np.size(param) == 1:
-        return param
+    units = None
     if hasattr(param, 'units'):
-        return DataArray(list(reversed(param.data.tolist())), attrs={'units': param.units})
-    elif isinstance(param, DataArray):
-        return list(reversed(param.data.tolist()))
-    else:
-        return list(reversed(param))
+        units = param.units
+    if isinstance(param, DataArray):
+        param = param.data.tolist()
+    elif np.shape(param) != ():
+        param = list(reversed(param))
+    if units is not None:
+        return DataArray(param, attrs={'units': units})
+    return param
 
 
 def _to_int(num, error):
@@ -150,7 +153,6 @@ def _create_area(lat_0, lon_0, projection='stere', area_extent=None, shape=None,
             image_geod, type(image_geod)))
     proj_dict = proj4_str_to_dict('+lat_0={0} +lon_0={1} +proj={2} {3}'.format(lat_0, lon_0, projection,
                                                                                image_geod.initstring))
-
     area_definition = create_area_def('pywinds', proj_dict, area_extent=area_extent, shape=shape,
                            upper_left_extent=upper_left_extent, resolution=pixel_size,
                            center=center, radius=radius, units=units)
@@ -167,18 +169,20 @@ def _find_displacements(displacement_data=None, j=None, i=None, shape=None):
         j_displacement = displacement[1::2]
         i_displacement = displacement[0::2]
     elif displacement_data is not None:
-        if len(np.shape(displacement_data)) != 3 or np.shape(displacement_data)[0] != 2:
-            raise ValueError('displacement_data should have shape (2, y, x), but instead has shape {0}'.format(
+        if len(np.shape(displacement_data)) != 2 and len(np.shape(displacement_data)) != 3 or np.shape(displacement_data)[0] != 2:
+            raise ValueError('displacement_data should have shape (2, y * x) or (2, y, x), but instead has shape {0}'.format(
                 np.shape(displacement_data)))
-        j_displacement = np.array(displacement_data[1])
-        i_displacement = np.array(displacement_data[0])
+        if len(np.shape(displacement_data)) != 2:
+            displacement_data = np.reshape(displacement_data, (2, int(np.size(displacement_data) / 2)))
+        j_displacement = np.array(displacement_data[0])
+        i_displacement = np.array(displacement_data[1])
     else:
         return shape, 0, 0
     if shape is None:
-        shape = (np.size(i_displacement)**.5, np.size(j_displacement)**.5)
+        shape = [np.size(i_displacement)**.5, np.size(j_displacement)**.5]
         error = 'Shape was not provided and shape found from file was not comprised of integers: ' \
                 '{0} pixels made a shape of {1}'.format(np.size(j_displacement) + np.size(i_displacement),
-                                                        tuple([2] + list(shape)))
+                                                        tuple([2] + shape))
         shape = (_to_int(shape[0], ValueError(error)), _to_int(shape[1], ValueError(error)))
     if j is None and i is None:
         return shape, j_displacement, i_displacement
@@ -413,7 +417,7 @@ def displacements(lat_0=None, lon_0=None, displacement_data=None, projection='st
     if no_save:
         _no_save(j_displacement, 'j_displacement', displacement_data)
         _no_save(i_displacement, 'i_displacement', displacement_data)
-    return np.array((j_displacement, i_displacement))
+    return np.array((j_displacement, i_displacement), dtype=float)
 
 
 def velocity(lat_0, lon_0, delta_time, displacement_data=None, projection='stere', j=None, i=None,
@@ -484,7 +488,7 @@ def velocity(lat_0, lon_0, delta_time, displacement_data=None, projection='stere
     if no_save is False:
         _no_save(speed, 'speed', displacement_data)
         _no_save(angle, 'angle', displacement_data)
-    return np.array((speed, angle))
+    return np.array((speed, angle), dtype=float)
 
 
 def vu(lat_0, lon_0, delta_time, displacement_data=None, projection='stere', j=None, i=None,
@@ -552,7 +556,7 @@ def vu(lat_0, lon_0, delta_time, displacement_data=None, projection='stere', j=N
     if no_save is False:
         _no_save(v, 'v', displacement_data)
         _no_save(u, 'u', displacement_data)
-    return np.array((v, u))
+    return np.array((v, u), dtype=float)
 
 
 def lat_long(lat_0, lon_0, displacement_data=None, projection='stere', j=None, i=None,
@@ -634,7 +638,7 @@ def lat_long(lat_0, lon_0, displacement_data=None, projection='stere', j=None, i
             _no_save(old_long, 'old_longitude', displacement_data)
             _no_save(new_lat, 'new_latitude', displacement_data)
             _no_save(new_long, 'new_longitude', displacement_data)
-    return np.array((old_lat, old_long))
+    return np.array((old_lat, old_long), dtype=float)
 
 
 def wind_info(lat_0, lon_0, delta_time, displacement_data=None, projection='stere', j=None, i=None,

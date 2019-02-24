@@ -24,7 +24,7 @@ class TestCase:
         self.center = center
         self.j_displacements, self.i_displacements = displacements(lat_0, lon_0, displacement_data=displacement_data,
                                                                    shape=shape)[:, j, i]
-        area_definition = area(lat_0, lon_0, displacement_data=displacement_data, shape=shape, i=i, j=j)
+        area_definition = area(lat_0, lon_0, displacement_data=displacement_data, shape=shape)
         self.shape = (area_definition.height, area_definition.width)
         # Output data
         self.speed = speed
@@ -50,11 +50,11 @@ class TestPywinds(unittest.TestCase):
                                         v=1312.73783, old_lat=18.825, old_long=-142.64162, new_lat=89.58692,
                                         new_long=-45.03963, old_x=-8135000.0, old_y=11494327.91718, new_x=-35000.0,
                                         new_y=3394327.91718))
-        displacement_data = np.array(([x for x in range(100)], [x for x in range(100)])) * 10
+        displacement_data = (np.array([x for x in range(100)]) * 10, np.array([x for x in range(100)]) * 20)
         self.test_cases.append(TestCase(displacement_data, pixel_size=5, lat_0=90, lon_0=20, i=1, j=8,
-                                        units='km', center=(40, 10), speed=834.60569,
-                                        angle=95.29823, u=831.03988, v=-77.06734, old_lat=44.01303, old_long=-50.25507,
-                                        new_lat=39.84993, new_long=9.86386, old_x=-5101407.88566, old_y=-1831082.99511,
+                                        units='km', center=(40, 10), speed=1190.02614,
+                                        angle=69.74556, u=1116.44031, v=411.97482, old_lat=17.54702, old_long=-58.68524,
+                                        new_lat=39.84993, new_long=9.86386, old_x=-9151407.88566, old_y=-1831082.99511,
                                         new_x=-1051407.88566, new_y=-5881082.99511))
 
     def test_wind_info(self):
@@ -116,13 +116,13 @@ class TestPywinds(unittest.TestCase):
         for case in self.test_cases:
             old_lat_ji, old_long_ji = lat_long(case.lat_0, case.lon_0, projection=case.projection, i=case.i,
                                                displacement_data=case.displacement_data,
-                                                       j=case.j, shape=case.shape, pixel_size=case.pixel_size,
+                                                       j=case.j, pixel_size=case.pixel_size,
                                                        center=case.center, units=case.units, image_geod=case.image_geod,)
             new_lat_ji, new_long_ji = lat_long(case.lat_0, case.lon_0,
                                                        projection=case.projection, i=case.i, j=case.j, shape=case.shape,
                                                        pixel_size=case.pixel_size, center=case.center, units=case.units,
                                                        image_geod=case.image_geod, no_save=True)
-            old_lat, old_long = lat_long(case.lat_0, case.lon_0, projection=case.projection, shape=case.shape,
+            old_lat, old_long = lat_long(case.lat_0, case.lon_0, projection=case.projection,
                                          displacement_data=case.displacement_data,
                                                  pixel_size=case.pixel_size, center=case.center, units=case.units,
                                                  image_geod=case.image_geod)
@@ -165,7 +165,7 @@ class TestPywinds(unittest.TestCase):
 
 
 def suite():
-    """The test suite for test_main."""
+    """The test suite for test_wind_functions."""
     loader = unittest.TestLoader()
     mysuite = unittest.TestSuite()
     mysuite.addTest(loader.loadTestsFromTestCase(TestPywinds))
