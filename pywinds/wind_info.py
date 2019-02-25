@@ -1,4 +1,3 @@
-#!/Users/wroberts/anaconda3/envs/newpyre/bin/python3.6
 from wrapper_utils import run_script
 from wind_functions import wind_info
 import sys

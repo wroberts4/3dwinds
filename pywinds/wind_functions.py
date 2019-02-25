@@ -1,4 +1,3 @@
-#!/Users/wroberts/anaconda3/envs/newpyre/bin/python3.6
 from pyproj import Proj, Geod
 from pyresample.utils import proj4_str_to_dict
 from pyresample.geometry import AreaDefinition, DynamicAreaDefinition
