@@ -27,7 +27,9 @@ class TestCase:
         self.area_extent = area_extent
         self.j_displacements, self.i_displacements = displacements(lat_0, lon_0, displacement_data=displacement_data,
                                                                    shape=shape, i=i, j=j, no_save=True)
-        area_definition = area(lat_0, lon_0, displacement_data=displacement_data, shape=shape)
+        area_definition = area(lat_0, lon_0, displacement_data=displacement_data, shape=shape,
+                               pixel_size=float(str(pixel_size).split(':')[0]),
+                               center=center, no_save=True)
         self.shape = (area_definition.height, area_definition.width)
         # Output data
         self.speed = speed
@@ -162,7 +164,7 @@ class TestWrappers(unittest.TestCase):
         for case in self.test_cases:
             test_area = args_to_data(['../area.py', case.lat_0, case.lon_0, '--shape',
                                       str(case.shape).replace(' ', ''), '--center', case.center, '--pixel_size',
-                                      case.pixel_size, '--units', case.units])
+                                      case.pixel_size, '--units', case.units, '--no_save'])
             self.assertTrue(str(case.area_extent[0]) in test_area)
             self.assertTrue(str(case.area_extent[1]) in test_area)
             self.assertTrue(str(case.area_extent[2]) in test_area)

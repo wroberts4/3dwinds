@@ -24,7 +24,8 @@ class TestCase:
         self.center = center
         self.j_displacements, self.i_displacements = displacements(lat_0, lon_0, displacement_data=displacement_data,
                                                                    shape=shape)[:, j, i]
-        area_definition = area(lat_0, lon_0, displacement_data=displacement_data, shape=shape)
+        area_definition = area(lat_0, lon_0, displacement_data=displacement_data, shape=shape, pixel_size=pixel_size,
+                               center=center)
         self.shape = (area_definition.height, area_definition.width)
         # Output data
         self.speed = speed
