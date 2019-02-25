@@ -1,0 +1,127 @@
+{
+ "build": "h0a44026_1005",
+ "build_number": 1005,
+ "channel": "https://conda.anaconda.org/conda-forge/osx-64",
+ "constrains": [],
+ "depends": [
+  "libcxx >=4.0.1"
+ ],
+ "extracted_package_dir": "",
+ "features": "",
+ "files": [
+  "include/ffi.h",
+  "include/ffitarget.h",
+  "lib/libffi.6.dylib",
+  "lib/libffi.a",
+  "lib/libffi.dylib",
+  "lib/pkgconfig/libffi.pc",
+  "share/info/libffi.info",
+  "share/man/man3/ffi.3",
+  "share/man/man3/ffi_call.3",
+  "share/man/man3/ffi_prep_cif.3",
+  "share/man/man3/ffi_prep_cif_var.3"
+ ],
+ "fn": "libffi-3.2.1-h0a44026_1005.tar.bz2",
+ "license": "Custom",
+ "link": {
+  "source": "",
+  "type": 1
+ },
+ "md5": "403003f7025d137629c9c603601371cd",
+ "name": "libffi",
+ "package_tarball_full_path": "",
+ "paths_data": {
+  "paths": [
+   {
+    "_path": "include/ffi.h",
+    "path_type": "hardlink",
+    "sha256": "64634aed3d2a6c8e58d74bddada0afe7db13ff4e430ffe46bb3625c0f3dd6e4b",
+    "sha256_in_prefix": "64634aed3d2a6c8e58d74bddada0afe7db13ff4e430ffe46bb3625c0f3dd6e4b",
+    "size_in_bytes": 13346
+   },
+   {
+    "_path": "include/ffitarget.h",
+    "path_type": "hardlink",
+    "sha256": "0f311400fbb659ad7d6c30585e6b750f298930eb85ddcbce59a8ac401cfe41a1",
+    "sha256_in_prefix": "0f311400fbb659ad7d6c30585e6b750f298930eb85ddcbce59a8ac401cfe41a1",
+    "size_in_bytes": 4193
+   },
+   {
+    "_path": "lib/libffi.6.dylib",
+    "file_mode": "binary",
+    "path_type": "hardlink",
+    "prefix_placeholder": "/Users/travis/miniconda3/conda-bld/libffi_1536855481474/_h_env_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_pl",
+    "sha256": "10aac04fdaa9fc52be37366518d0e9347cf0140ab0c30133e3b9256e1fa80592",
+    "sha256_in_prefix": "f4bd8cc659f2d5bc927a4a41069b83cb31d86bbbeb29b9b44861060dc74f6abd",
+    "size_in_bytes": 32900
+   },
+   {
+    "_path": "lib/libffi.a",
+    "path_type": "hardlink",
+    "sha256": "df2162f3f7d452ad12984ab8710ed3b0478a0522cc7ec5fd9016dd01982a3dde",
+    "sha256_in_prefix": "df2162f3f7d452ad12984ab8710ed3b0478a0522cc7ec5fd9016dd01982a3dde",
+    "size_in_bytes": 35112
+   },
+   {
+    "_path": "lib/libffi.dylib",
+    "file_mode": "binary",
+    "path_type": "softlink",
+    "prefix_placeholder": "/Users/travis/miniconda3/conda-bld/libffi_1536855481474/_h_env_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_pl",
+    "sha256": "10aac04fdaa9fc52be37366518d0e9347cf0140ab0c30133e3b9256e1fa80592",
+    "size_in_bytes": 32900
+   },
+   {
+    "_path": "lib/pkgconfig/libffi.pc",
+    "file_mode": "text",
+    "path_type": "hardlink",
+    "prefix_placeholder": "/opt/anaconda1anaconda2anaconda3",
+    "sha256": "54eef4fdfc30f5012226b4250443412aa26c94a4b73180090127aecbb242a9f2",
+    "sha256_in_prefix": "ac18ad587780c1234f5e8ab1787d265579a74a370c6719e6fe14312d7c392dbb",
+    "size_in_bytes": 296
+   },
+   {
+    "_path": "share/info/libffi.info",
+    "path_type": "hardlink",
+    "sha256": "f0103f50d7686819b320dff932143d346fd5c2bcefbbc0c7d59abeeda16264e1",
+    "sha256_in_prefix": "f0103f50d7686819b320dff932143d346fd5c2bcefbbc0c7d59abeeda16264e1",
+    "size_in_bytes": 26834
+   },
+   {
+    "_path": "share/man/man3/ffi.3",
+    "path_type": "hardlink",
+    "sha256": "aa4730e114c305943a2226a524ed8447dc6b66a184523999868e5433c2c9de74",
+    "sha256_in_prefix": "aa4730e114c305943a2226a524ed8447dc6b66a184523999868e5433c2c9de74",
+    "size_in_bytes": 850
+   },
+   {
+    "_path": "share/man/man3/ffi_call.3",
+    "path_type": "hardlink",
+    "sha256": "2817ce7b78cb737d7b85b18b45899470f5f565f990d056d3d8cfabf6d779477f",
+    "sha256_in_prefix": "2817ce7b78cb737d7b85b18b45899470f5f565f990d056d3d8cfabf6d779477f",
+    "size_in_bytes": 2333
+   },
+   {
+    "_path": "share/man/man3/ffi_prep_cif.3",
+    "path_type": "hardlink",
+    "sha256": "f60c5bb9d04b55988da13511a2c3edfa0f39fb6f51abfb8ac24d0b161c4169c0",
+    "sha256_in_prefix": "f60c5bb9d04b55988da13511a2c3edfa0f39fb6f51abfb8ac24d0b161c4169c0",
+    "size_in_bytes": 1158
+   },
+   {
+    "_path": "share/man/man3/ffi_prep_cif_var.3",
+    "path_type": "hardlink",
+    "sha256": "9365685252f33f13627c9303bc01883b764227132069260c19e94100ff442a51",
+    "sha256_in_prefix": "9365685252f33f13627c9303bc01883b764227132069260c19e94100ff442a51",
+    "size_in_bytes": 1321
+   }
+  ],
+  "paths_version": 1
+ },
+ "requested_spec": "None",
+ "size": 43500,
+ "subdir": "osx-64",
+ "timestamp": 1536855593300,
+ "track_features": "",
+ "url": "https://conda.anaconda.org/conda-forge/osx-64/libffi-3.2.1-h0a44026_1005.tar.bz2",
+ "version": "3.2.1"
+}

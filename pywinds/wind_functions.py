@@ -1,8 +1,7 @@
 #!/Users/wroberts/anaconda3/envs/newpyre/bin/python3.6
 from pyproj import Proj, Geod
 from pyresample.utils import proj4_str_to_dict
-from pyresample import create_area_def
-from pyresample.geometry import AreaDefinition
+from pyresample.geometry import AreaDefinition, DynamicAreaDefinition
 from xarray import DataArray
 import ntpath
 import numpy as np
@@ -148,12 +147,11 @@ def _lat_long_dist(lat, earth_geod):
         raise ValueError('earth_geod must be a string or Geod type, but instead was {0} {1}'.format(
             earth_geod, type(earth_geod)))
     geod_info = proj4_str_to_dict(earth_geod.initstring)
-    a, f = geod_info['a'], geod_info['f']
-    e2 = (2 - 1 * f) * f
+    e2 = (2 - 1 * geod_info['f']) * geod_info['f']
     lat = np.pi / 180 * lat
     # Credit: https://gis.stackexchange.com/questions/75528/understanding-terms-in-length-of-degree-formula/75535#75535
-    lat_dist = 2 * np.pi * a * (1 - e2) / (1 - e2 * np.sin(lat)**2)**1.5 / 360
-    long_dist = 2 * np.pi * a / (1 - e2 * np.sin(lat)**2)**.5 * np.cos(lat) / 360
+    lat_dist = 2 * np.pi * geod_info['a'] * (1 - e2) / (1 - e2 * np.sin(lat)**2)**1.5 / 360
+    long_dist = 2 * np.pi * geod_info['a'] / (1 - e2 * np.sin(lat)**2)**.5 * np.cos(lat) / 360
     return lat_dist, long_dist
 
 
@@ -164,6 +162,7 @@ def _not_none(args):
     return False
 
 
+# TODO: USE CREATE_AREA WHEN RELEASES: from pyresample import create_area_def
 def _create_area(lat_0, lon_0, projection='stere', area_extent=None, shape=None,
                  upper_left_extent=None, center=None, pixel_size=None, radius=None,
                  units=None, image_geod=None):
@@ -171,6 +170,8 @@ def _create_area(lat_0, lon_0, projection='stere', area_extent=None, shape=None,
     if not isinstance(projection, str):
         raise ValueError('projection must be a string, but instead was {0} {1}'.format(
             projection, type(projection)))
+    if units is not None or radius is not None or upper_left_extent is not None:
+        raise ValueError('radius, upper_left_extent, and units are not yet supported')
     # Center is given in (lat, long) order, but create_area_def needs it in (long, lat) order.
     if area_extent is not None:
         # The order here is correct since users give input in [ur_y, ur_x, ll_y, ll_x] order.
@@ -182,8 +183,8 @@ def _create_area(lat_0, lon_0, projection='stere', area_extent=None, shape=None,
     if area_extent is not None:
         # Needs order [ll_x, ll_y, ur_x, ur_y].
         area_extent = area_extent_ll + area_extent_ur
-    if center is not None and not isinstance(center, DataArray):
-        center = DataArray(center, attrs={'units': 'degrees'})
+    # if center is not None and not isinstance(center, DataArray):
+    #     center = DataArray(center, attrs={'units': 'degrees'})
     if image_geod is None:
         image_geod = Geod(ellps='WGS84')
     elif isinstance(image_geod, str):
@@ -193,9 +194,24 @@ def _create_area(lat_0, lon_0, projection='stere', area_extent=None, shape=None,
             image_geod, type(image_geod)))
     proj_dict = proj4_str_to_dict('+lat_0={0} +lon_0={1} +proj={2} {3}'.format(lat_0, lon_0, projection,
                                                                                image_geod.initstring))
-    area_definition = create_area_def('pywinds', proj_dict, area_extent=area_extent, shape=shape,
-                           upper_left_extent=upper_left_extent, resolution=pixel_size,
-                           center=center, radius=radius, units=units)
+    # TODO: REMOVE THIS WHEN PYRESAMPLE MAKES NEW RELEASE.
+    if area_extent is None and center is not None and pixel_size is not None and shape is not None:
+        center = Proj(proj_dict)(*center, error_check=True)
+        area_extent = [center[0] - pixel_size * shape[1] / 2, center[1] - pixel_size * shape[0] / 2,
+                       center[0] + pixel_size * shape[1] / 2, center[1] + pixel_size * shape[0] / 2]
+    if shape is None and pixel_size is not None and area_extent is not None:
+        shape = (area_extent[3] - area_extent[1]) / pixel_size, (area_extent[2] - area_extent[0]) / pixel_size
+    if area_extent is not None and shape is not None:
+        area_definition = AreaDefinition('pywinds', 'pywinds', '', proj_dict, shape[1], shape[0], area_extent)
+    elif shape is not None:
+        area_definition = DynamicAreaDefinition(projection=proj_dict, width=shape[1], height=shape[0])
+    elif area_extent is not None:
+        area_definition = DynamicAreaDefinition(projection=proj_dict, area_extent=area_extent)
+    else:
+        raise ValueError('Not enough information provided to create an area definition')
+    # area_definition = create_area_def('pywinds', proj_dict, area_extent=area_extent, shape=shape,
+    #                        upper_left_extent=upper_left_extent, resolution=pixel_size,
+    #                        center=center, radius=radius, units=units)
     return area_definition
 
 
@@ -404,7 +420,7 @@ def area(lat_0, lon_0, displacement_data=None, projection='stere', area_extent=N
     except AttributeError:
         pixel_size = area_definition.resolution
 
-    area_data = {'projection': projection, 'lat_0': lat_0, 'lon_0': lon_0, 'semi-major axis radius': a,
+    area_data = {'projection': projection, 'lat_0': lat_0, 'lon_0': lon_0, 'equatorial radius': a,
                  'eccentricity': f, 'shape': shape, 'area_extent': area_extent, 'pixel_size': pixel_size,
                  'center': center}
 

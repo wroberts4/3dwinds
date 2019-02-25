@@ -45,14 +45,14 @@ class TestWrappers(unittest.TestCase):
     def setUp(self):
         self.test_cases = []
         self.test_cases.append(TestCase('./test_files/test_data_three.flo',
-                                        i=1, j=4, pixel_size='10:km', lat_0=60, lon_0=0, center=(90.0, 0.0),
-                                        area_extent=(89.70529, 135.02827, 89.70500, -45.02829),
+                                        i=1, j=4, pixel_size=10000, lat_0=60, lon_0=0, center=(90.0, 0.0),
+                                        area_extent=(89.71, 135.03, 89.71, -45.03),
                                         speed=2820.83, angle=42.94, u=1921.49, v=2065.18, old_lat=-21.9,
                                         old_long=-151.31, new_lat=89.81, new_long=-26.58))
         displacement_data = np.array(([x for x in range(25)], [x for x in range(25)])) * 10
-        self.test_cases.append(TestCase(displacement_data.tolist(), pixel_size=5, lat_0=90, lon_0=20, i=1, j=4,
-                                        units='km', center=(40.0, 10.0),
-                                        area_extent=(40.10715, 10.09781, 39.89281, 9.90266),
+        self.test_cases.append(TestCase(displacement_data.tolist(), pixel_size=5000, lat_0=90, lon_0=20, i=1, j=4,
+                                        center=(40.0, 10.0),
+                                        area_extent=(40.11, 10.1, 39.89, 9.9),
                                         speed=208.14, angle=118.39, u=183.1, v=-98.98, old_lat=45.27, old_long=-3.42,
                                         new_lat=39.92, new_long=9.97))
 

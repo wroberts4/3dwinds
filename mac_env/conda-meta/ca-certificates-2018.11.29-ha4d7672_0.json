@@ -1,0 +1,47 @@
+{
+ "build": "ha4d7672_0",
+ "build_number": 0,
+ "channel": "https://conda.anaconda.org/conda-forge/osx-64",
+ "constrains": [],
+ "depends": [],
+ "extracted_package_dir": "",
+ "features": "",
+ "files": [
+  "ssl/cacert.pem",
+  "ssl/cert.pem"
+ ],
+ "fn": "ca-certificates-2018.11.29-ha4d7672_0.tar.bz2",
+ "license": "ISC",
+ "link": {
+  "source": "",
+  "type": 1
+ },
+ "md5": "c695cfbfd5ee1406f7d89b9b7b6f8212",
+ "name": "ca-certificates",
+ "package_tarball_full_path": "",
+ "paths_data": {
+  "paths": [
+   {
+    "_path": "ssl/cacert.pem",
+    "path_type": "hardlink",
+    "sha256": "cc6cb863582ef59cbee821af8376a9742ee45cc9b77f510ba252703439c146fd",
+    "sha256_in_prefix": "cc6cb863582ef59cbee821af8376a9742ee45cc9b77f510ba252703439c146fd",
+    "size_in_bytes": 275834
+   },
+   {
+    "_path": "ssl/cert.pem",
+    "path_type": "softlink",
+    "sha256": "cc6cb863582ef59cbee821af8376a9742ee45cc9b77f510ba252703439c146fd",
+    "size_in_bytes": 275834
+   }
+  ],
+  "paths_version": 1
+ },
+ "requested_spec": "None",
+ "size": 145937,
+ "subdir": "osx-64",
+ "timestamp": 1543533583834,
+ "track_features": "",
+ "url": "https://conda.anaconda.org/conda-forge/osx-64/ca-certificates-2018.11.29-ha4d7672_0.tar.bz2",
+ "version": "2018.11.29"
+}

@@ -1,0 +1,77 @@
+{
+ "build": "h1de35cc_1001",
+ "build_number": 1001,
+ "channel": "https://conda.anaconda.org/conda-forge/osx-64",
+ "constrains": [],
+ "depends": [],
+ "extracted_package_dir": "",
+ "features": "",
+ "files": [
+  "include/yaml.h",
+  "lib/libyaml-0.2.dylib",
+  "lib/libyaml.a",
+  "lib/libyaml.dylib",
+  "lib/pkgconfig/yaml-0.1.pc"
+ ],
+ "fn": "yaml-0.1.7-h1de35cc_1001.tar.bz2",
+ "license": "MIT",
+ "link": {
+  "source": "",
+  "type": 1
+ },
+ "md5": "2e244d80d8934aae1ce512c042b55407",
+ "name": "yaml",
+ "package_tarball_full_path": "",
+ "paths_data": {
+  "paths": [
+   {
+    "_path": "include/yaml.h",
+    "path_type": "hardlink",
+    "sha256": "5a16306d95841c740f30b118cf528289f2745390008b992d72caa9a0f08b0fe9",
+    "sha256_in_prefix": "5a16306d95841c740f30b118cf528289f2745390008b992d72caa9a0f08b0fe9",
+    "size_in_bytes": 54225
+   },
+   {
+    "_path": "lib/libyaml-0.2.dylib",
+    "file_mode": "binary",
+    "path_type": "hardlink",
+    "prefix_placeholder": "/Users/travis/miniconda3/conda-bld/yaml_1536849500323/_h_env_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_plac",
+    "sha256": "1e40b58e15ae732b46046c4b4401aa3c0c6b83b27344632e0619fbe3b2598ef1",
+    "sha256_in_prefix": "a2a828c8eabce6f8fab9dc1027fc1856d9743432c94609da21e6183c6e306f34",
+    "size_in_bytes": 134044
+   },
+   {
+    "_path": "lib/libyaml.a",
+    "path_type": "hardlink",
+    "sha256": "30fe5e31e699aa496f0283c480a26b7c6f3bf57bd91da44893a25a6a69d25c27",
+    "sha256_in_prefix": "30fe5e31e699aa496f0283c480a26b7c6f3bf57bd91da44893a25a6a69d25c27",
+    "size_in_bytes": 151512
+   },
+   {
+    "_path": "lib/libyaml.dylib",
+    "file_mode": "binary",
+    "path_type": "softlink",
+    "prefix_placeholder": "/Users/travis/miniconda3/conda-bld/yaml_1536849500323/_h_env_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_plac",
+    "sha256": "1e40b58e15ae732b46046c4b4401aa3c0c6b83b27344632e0619fbe3b2598ef1",
+    "size_in_bytes": 134044
+   },
+   {
+    "_path": "lib/pkgconfig/yaml-0.1.pc",
+    "file_mode": "text",
+    "path_type": "hardlink",
+    "prefix_placeholder": "/opt/anaconda1anaconda2anaconda3",
+    "sha256": "c3949fda489ec0b8056cd54a203e3355fa2dadd9c157c71ba9d24d4b509e8e52",
+    "sha256_in_prefix": "bc2d3dd8b52cce9cd7f8f3f0cda610faddc316e30c246877e9a825ab7c2ae10a",
+    "size_in_bytes": 224
+   }
+  ],
+  "paths_version": 1
+ },
+ "requested_spec": "None",
+ "size": 81247,
+ "subdir": "osx-64",
+ "timestamp": 1536849588164,
+ "track_features": "",
+ "url": "https://conda.anaconda.org/conda-forge/osx-64/yaml-0.1.7-h1de35cc_1001.tar.bz2",
+ "version": "0.1.7"
+}

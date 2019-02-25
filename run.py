@@ -20,9 +20,7 @@ image_geod = 'WGS84'
 no_save = False
 area_extent = tuple(reversed((-2000000.0, 1429327.9172, 2000000.0, 5429327.9172)))
 
-print(area(60, 0, displacement_data=file_name,
-           area_extent=(67.60233351304605, 137.17575574861291, 65.81369642089146, -47.35448138576054),
-           units='degrees'))
+print(area(60, 0, displacement_data=file_name, area_extent=area_extent, center=center, pixel_size=pixel_size))
 
 # winds = wind_info(lat_0, lon_0, 100, shape=(1000, 1000), displacement_data=file_name, i=j_in, j=i_in,
 #                   pixel_size=pixel_size,  center=center, earth_geod=earth_geod, image_geod=image_geod,

@@ -1,0 +1,42 @@
+{
+ "build": "py37_0",
+ "build_number": 0,
+ "channel": "https://repo.anaconda.com/pkgs/main/osx-64",
+ "constrains": [],
+ "depends": [
+  "python >=3.7,<3.8.0a0"
+ ],
+ "extracted_package_dir": "",
+ "features": "",
+ "files": [
+  "lib/python3.7/version.txt"
+ ],
+ "fn": "anaconda-custom-py37_0.tar.bz2",
+ "license": "BSD",
+ "link": {
+  "source": "",
+  "type": 1
+ },
+ "md5": "b10e3a531341b29f57ef9b71a3ae18bc",
+ "name": "anaconda",
+ "package_tarball_full_path": "",
+ "paths_data": {
+  "paths": [
+   {
+    "_path": "lib/python3.7/version.txt",
+    "path_type": "hardlink",
+    "sha256": "4987d14e31340b29980e790ef9e6141ea9c55894946f503b45eb378c6710a4d7",
+    "sha256_in_prefix": "4987d14e31340b29980e790ef9e6141ea9c55894946f503b45eb378c6710a4d7",
+    "size_in_bytes": 25
+   }
+  ],
+  "paths_version": 1
+ },
+ "requested_spec": "anaconda",
+ "size": 6416,
+ "subdir": "osx-64",
+ "timestamp": 1531514277206,
+ "track_features": "",
+ "url": "https://repo.anaconda.com/pkgs/main/osx-64/anaconda-custom-py37_0.tar.bz2",
+ "version": "custom"
+}

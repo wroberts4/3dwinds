@@ -19,15 +19,15 @@ def output_format(output, kwargs):
         projection = output['projection']
         lat_0 = _round(output['lat_0'], precision)
         lon_0 = _round(output['lon_0'], precision)
-        semi_major_axis_radius = _round(output['semi-major axis radius'], precision)
+        equatorial_radius = _round(output['equatorial radius'], precision)
         eccentricity = _round(output['eccentricity'], 6)
         shape = output['shape']
         area_extent = _round(output['area_extent'], precision)
         pixel_size = _round(output['pixel_size'], precision)
         center = _round(output['center'], precision)
-        return ('projection: {0}\nlat_0: {1}\nlon_0: {2}\nsemi-major axis radius: {3}\neccentricity: {4}\n'
+        return ('projection: {0}\nlat_0: {1}\nlon_0: {2}\nequatorial radius: {3}\neccentricity: {4}\n'
             'area_extent: {5}\nshape: {6}\npixel_size: {7}\ncenter: {8}').format(projection, lat_0, lon_0,
-                                                                                 semi_major_axis_radius, eccentricity,
+                                                                                 equatorial_radius, eccentricity,
                                                                                  area_extent, shape, pixel_size, center)
     return ''
 
