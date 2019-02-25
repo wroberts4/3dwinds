@@ -10,17 +10,17 @@ def _round(val, precision):
         return None
     if np.shape(val) == ():
         return round(val, precision)
-    return tuple(np.round(val, precision))
+    return tuple(np.round(val, precision).tolist())
 
 
 def output_format(output, kwargs):
     if kwargs.get('no_save') is True:
-        precision = 8
+        precision = 2
         projection = output['projection']
         lat_0 = _round(output['lat_0'], precision)
         lon_0 = _round(output['lon_0'], precision)
         semi_major_axis_radius = _round(output['semi-major axis radius'], precision)
-        eccentricity = _round(output['eccentricity'], precision)
+        eccentricity = _round(output['eccentricity'], 6)
         shape = output['shape']
         area_extent = _round(output['area_extent'], precision)
         pixel_size = _round(output['pixel_size'], precision)

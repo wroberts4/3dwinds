@@ -5,6 +5,7 @@ from glob import glob
 import os
 import sys
 import ast
+import traceback
 
 
 def _arg_to_param(arg):
@@ -112,8 +113,8 @@ def run_script(func, argv, output_format, name, is_area=False, is_lat_long=False
             kwargs.pop('displacement_data')
         output = func(*args, **kwargs)
         print(output_format(output, kwargs))
-    except (TypeError, ValueError, FileNotFoundError, RuntimeError, IndexError) as err:
-        print('{0}: {1}'.format(type(err).__name__, err))
+    except (TypeError, ValueError, FileNotFoundError, RuntimeError, IndexError):
+        print(traceback.format_exc())
         print()
         print_usage(func, name)
         sys.exit(1)

@@ -1,3 +1,4 @@
+#!/Users/wroberts/anaconda3/envs/newpyre/bin/python3.6
 from pyproj import Proj, Geod
 from pyresample.utils import proj4_str_to_dict
 from pyresample import create_area_def
@@ -10,6 +11,16 @@ import h5py
 
 
 """Find wind info"""
+
+
+def _round(val, precision):
+    if val is None:
+        return None
+    if isinstance(val, str):
+        return val
+    if np.shape(val) == ():
+        return round(val, precision)
+    return tuple(np.round(val, precision).tolist())
 
 
 def _save_data(output_dict, displacement_filename, hdf5_group_name=None, hdf5_shape=None, area_attrs=None):
@@ -30,7 +41,10 @@ def _save_data(output_dict, displacement_filename, hdf5_group_name=None, hdf5_sh
             if val is None:
                 val = 'none'
             hdf5.attrs[attr] = val
-            file.write('{0}: {1}\n'.format(attr, val))
+            precision = 2
+            if attr == 'eccentricity':
+                precision = 6
+            file.write('{0}: {1}\n'.format(attr, _round(val, precision)))
         file.close()
     if hdf5_group_name is not None:
         hdf5.pop(hdf5_group_name, None)
@@ -182,12 +196,9 @@ def _create_area(lat_0, lon_0, projection='stere', area_extent=None, shape=None,
     area_definition = create_area_def('pywinds', proj_dict, area_extent=area_extent, shape=shape,
                            upper_left_extent=upper_left_extent, resolution=pixel_size,
                            center=center, radius=radius, units=units)
-    if isinstance(area_definition, AreaDefinition):
-        area_definition.area_extent = tuple(reversed(area_definition.area_extent))
     return area_definition
 
 
-# TODO: FIND OUT WHAT TAG OF FILE IS.
 def _find_displacements(displacement_data=None, j=None, i=None, shape=None):
     """Retrieves pixel-displacements from a file or list."""
     if isinstance(displacement_data, str):
@@ -196,7 +207,8 @@ def _find_displacements(displacement_data=None, j=None, i=None, shape=None):
         displacement = np.fromfile(displacement_data, dtype=np.float32)[3:]
         j_displacement = displacement[1::2]
         i_displacement = displacement[0::2]
-        if shape[1] != np.size(j_displacement) / shape[0] or shape[1] != np.size(i_displacement) / shape[0]:
+        if (shape[0] is 0 or shape[1] != np.size(j_displacement) / shape[0] or
+                shape[1] != np.size(i_displacement) / shape[0]):
             shape = None
     elif displacement_data is not None:
         if len(np.shape(displacement_data)) != 2 and len(np.shape(displacement_data)) != 3 or np.shape(displacement_data)[0] != 2:
@@ -374,7 +386,7 @@ def area(lat_0, lon_0, displacement_data=None, projection='stere', area_extent=N
     projection = area_definition.proj_dict['proj']
     a = area_definition.proj_dict['a']
     f = area_definition.proj_dict['f']
-    area_extent = area_definition.area_extent
+    area_extent = _reverse_param(area_definition.area_extent)
     if area_extent is not None:
         center = ((area_extent[0] + area_extent[2]) / 2, (area_extent[1] + area_extent[3]) / 2)
         center = _reverse_param(p(*_reverse_param(center), inverse=True))

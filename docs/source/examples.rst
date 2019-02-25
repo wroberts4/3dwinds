@@ -54,10 +54,13 @@ Examples of using pywinds
 
     (pywinds) ella:pywinds/displacements.py
 
-    (pywinds) ella:pywinds/area.py 60 0 --pixel_size 4:km --center 90,0
-    projection data: {'lat_0': 60.0, 'lon_0': 0.0, 'proj': 'stere', 'a': 6378137.0, 'f': 0.0033528106647474805}
-    area_extent: (5429327.917104956, 2000000.0000000785, 1429327.9172506747, -2000000.0000000785)
+    (pywinds) ella:pywinds/area.py 60 0 --pixel_size 4:km --center 90,0 --no_save
+    projection: stere
+    lat_0: 60
+    lon_0: 0
+    semi-major axis radius: 6378137.0
+    eccentricity: 0.003353
+    area_extent: (67.6, 137.18, 65.81, -47.35)
     shape: (1000, 1000)
-    pixel_size: (3999.999999854281, 4000.000000000157)
-    center: (3429327.917177815, 0.0)
-
+    pixel_size: (4000.0, 4000.0)
+    center: (90.0, 0.0)
