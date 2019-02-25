@@ -12,7 +12,7 @@ import h5py
 """Find wind info"""
 
 
-def save_data(output_dict, displacement_filename, hdf5_group_name=None, hdf5_shape=None, area_attrs=None):
+def _save_data(output_dict, displacement_filename, hdf5_group_name=None, hdf5_shape=None, area_attrs=None):
     """Saves data to a file named after the displacement_data appended with "_output"."""
     if isinstance(displacement_filename, str):
         head, tail = ntpath.split(displacement_filename)
@@ -31,6 +31,7 @@ def save_data(output_dict, displacement_filename, hdf5_group_name=None, hdf5_sha
                 val = 'none'
             hdf5.attrs[attr] = val
             file.write('{0}: {1}\n'.format(attr, val))
+        file.close()
     if hdf5_group_name is not None:
         hdf5.pop(hdf5_group_name, None)
         hdf5.create_group(hdf5_group_name)
@@ -195,7 +196,7 @@ def _find_displacements(displacement_data=None, j=None, i=None, shape=None):
         displacement = np.fromfile(displacement_data, dtype=np.float32)[3:]
         j_displacement = displacement[1::2]
         i_displacement = displacement[0::2]
-        if shape[1] * shape[0] != np.size(j_displacement) or shape[1] * shape[0] != np.size(i_displacement):
+        if shape[1] != np.size(j_displacement) / shape[0] or shape[1] != np.size(i_displacement) / shape[0]:
             shape = None
     elif displacement_data is not None:
         if len(np.shape(displacement_data)) != 2 and len(np.shape(displacement_data)) != 3 or np.shape(displacement_data)[0] != 2:
@@ -309,7 +310,6 @@ def _find_displacements_and_area(lat_0=None, lon_0=None, displacement_data=None,
     return shape, j_displacement, i_displacement, area_definition
 
 
-# TODO: MAKE THI RETURN SAME FORMAT AS WRITTEN TO FILE?
 def area(lat_0, lon_0, displacement_data=None, projection='stere', area_extent=None, shape=None,
          upper_left_extent=None, center=None, pixel_size=None, radius=None, units=None, image_geod=None, no_save=False):
     """Dynamically computes area of projection.
@@ -370,10 +370,19 @@ def area(lat_0, lon_0, displacement_data=None, projection='stere', area_extent=N
                                         projection=projection, area_extent=area_extent, shape=shape,
                                         upper_left_extent=upper_left_extent, center=center, pixel_size=pixel_size,
                                         radius=radius, units=units, image_geod=image_geod)[3]
+    p = Proj(area_definition.proj_dict, errcheck=True, preserve_units=True)
     projection = area_definition.proj_dict['proj']
     a = area_definition.proj_dict['a']
     f = area_definition.proj_dict['f']
     area_extent = area_definition.area_extent
+    if area_extent is not None:
+        center = ((area_extent[0] + area_extent[2]) / 2, (area_extent[1] + area_extent[3]) / 2)
+        center = _reverse_param(p(*_reverse_param(center), inverse=True))
+        area_extent = _reverse_param(p(*_reverse_param(area_extent[:2]), inverse=True)) +\
+                      _reverse_param(p(*_reverse_param(area_extent[2:]), inverse=True))
+    else:
+        center = None
+        area_extent = None
     if area_definition.height is None or area_definition.width is None:
         shape = None
     else:
@@ -382,18 +391,16 @@ def area(lat_0, lon_0, displacement_data=None, projection='stere', area_extent=N
         pixel_size = (area_definition.pixel_size_y, area_definition.pixel_size_x)
     except AttributeError:
         pixel_size = area_definition.resolution
-    if area_definition.area_extent is not None:
-        center = ((area_extent[0] + area_extent[2]) / 2, (area_extent[1] + area_extent[3]) / 2)
-    else:
-        center = None
+
+    area_data = {'projection': projection, 'lat_0': lat_0, 'lon_0': lon_0, 'semi-major axis radius': a,
+                 'eccentricity': f, 'shape': shape, 'area_extent': area_extent, 'pixel_size': pixel_size,
+                 'center': center}
+
     if no_save is False:
         if displacement_data is None:
             raise ValueError('Cannot save data without displacement_data')
-        save_data({}, displacement_data, area_attrs={'projection': projection, 'lat_0': lat_0, 'lon_0': lon_0,
-                                                     'semi-major': a, 'eccentricity': f, 'shape': shape,
-                                                     'area_extent': area_extent,
-                                                     'pixel_size': pixel_size, 'center': center})
-    return area_definition
+        _save_data({}, displacement_data, area_attrs=area_data)
+    return area_data
 
 
 def displacements(lat_0=None, lon_0=None, displacement_data=None, projection='stere', j=None, i=None,
@@ -469,7 +476,7 @@ def displacements(lat_0=None, lon_0=None, displacement_data=None, projection='st
         j_displacement = j_displacement.reshape(shape)
         i_displacement = i_displacement.reshape(shape)
     if no_save is False:
-        save_data({'j_displacement': j_displacement, 'i_displacement': i_displacement},
+        _save_data({'j_displacement': j_displacement, 'i_displacement': i_displacement},
                  displacement_data, hdf5_group_name='displacements')
     return np.array((j_displacement, i_displacement), dtype=float)
 
@@ -540,7 +547,7 @@ def velocity(lat_0, lon_0, delta_time, displacement_data=None, projection='stere
         speed = speed.reshape(shape)
         angle = angle.reshape(shape)
     if no_save is False:
-        save_data({'speed': DataArray(speed, attrs={'units': 'meters/second'}),
+        _save_data({'speed': DataArray(speed, attrs={'units': 'meters/second'}),
                   'angle': DataArray(angle, attrs={'units': 'degrees'})},
                  displacement_data, hdf5_group_name='velocity')
     return np.array((speed, angle), dtype=float)
@@ -609,7 +616,7 @@ def vu(lat_0, lon_0, delta_time, displacement_data=None, projection='stere', j=N
         v = v.reshape(shape)
         u = u.reshape(shape)
     if no_save is False:
-        save_data({'v': DataArray(v, attrs={'units': 'meters/second'}),
+        _save_data({'v': DataArray(v, attrs={'units': 'meters/second'}),
                   'u': DataArray(u, attrs={'units': 'meters/second'})},
                  displacement_data, hdf5_group_name='vu')
     return np.array((v, u), dtype=float)
@@ -689,7 +696,7 @@ def lat_long(lat_0, lon_0, displacement_data=None, projection='stere', j=None, i
         if np.size(new_lat) != 1:
             new_lat = new_lat.reshape(shape)
             new_long = new_long.reshape(shape)
-        save_data({'old_latitude': DataArray(old_lat, attrs={'units': 'degrees'}),
+        _save_data({'old_latitude': DataArray(old_lat, attrs={'units': 'degrees'}),
                   'old_longitude': DataArray(old_long, attrs={'units': 'degrees'}),
                   'new_latitude': DataArray(new_lat, attrs={'units': 'degrees'}),
                   'new_longitude': DataArray(new_long, attrs={'units': 'degrees'})},
@@ -774,7 +781,7 @@ def wind_info(lat_0, lon_0, delta_time, displacement_data=None, projection='ster
             winds = winds[0]
         else:
             shape = list(shape) + [6]
-        save_data({'wind_info': DataArray(winds, attrs={'description': 'new_lat (degrees), new_long (degrees), '
+        _save_data({'wind_info': DataArray(winds, attrs={'description': 'new_lat (degrees), new_long (degrees), '
                                                        'speed (meters/second), angle (degrees), v (meters/second), '
                                                        'u (meters/second)'})},
                  displacement_data, hdf5_shape=shape)

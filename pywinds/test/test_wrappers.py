@@ -27,10 +27,9 @@ class TestCase:
         self.area_extent = area_extent
         self.j_displacements, self.i_displacements = displacements(lat_0, lon_0, displacement_data=displacement_data,
                                                                    shape=shape, i=i, j=j, no_save=True)
-        area_definition = area(lat_0, lon_0, displacement_data=displacement_data, shape=shape,
-                               pixel_size=float(str(pixel_size).split(':')[0]),
-                               center=center, no_save=True)
-        self.shape = (area_definition.height, area_definition.width)
+        area_data = area(lat_0, lon_0, displacement_data=displacement_data, shape=shape, center=center,
+                         pixel_size=float(str(pixel_size).split(':')[0]), no_save=True)
+        self.shape = area_data['shape']
         # Output data
         self.speed = speed
         self.angle = angle
@@ -46,14 +45,14 @@ class TestWrappers(unittest.TestCase):
     def setUp(self):
         self.test_cases = []
         self.test_cases.append(TestCase('./test_files/test_data_three.flo',
-                                        i=1, j=4, pixel_size='10:km', lat_0=60, lon_0=0, center=(90, 0),
-                                        area_extent=(-25000.0, 3404327.91717, 25000.0, 3454327.91717),
+                                        i=1, j=4, pixel_size='10:km', lat_0=60, lon_0=0, center=(90.0, 0.0),
+                                        area_extent=(89.70529, 135.02827, 89.70500, -45.02829),
                                         speed=2820.83, angle=42.94, u=1921.49, v=2065.18, old_lat=-21.9,
                                         old_long=-151.31, new_lat=89.81, new_long=-26.58))
         displacement_data = np.array(([x for x in range(25)], [x for x in range(25)])) * 10
         self.test_cases.append(TestCase(displacement_data.tolist(), pixel_size=5, lat_0=90, lon_0=20, i=1, j=4,
-                                        units='km', center=(40, 10),
-                                        area_extent=(-1046407.88566, -5876082.99511, -1021407.88566, -5851082.99511),
+                                        units='km', center=(40.0, 10.0),
+                                        area_extent=(40.10715, 10.09781, 39.89281, 9.90266),
                                         speed=208.14, angle=118.39, u=183.1, v=-98.98, old_lat=45.27, old_long=-3.42,
                                         new_lat=39.92, new_long=9.97))
 
@@ -162,14 +161,19 @@ class TestWrappers(unittest.TestCase):
 
     def test_area(self):
         for case in self.test_cases:
-            test_area = args_to_data(['../area.py', case.lat_0, case.lon_0, '--shape',
+            area_data = args_to_data(['../area.py', case.lat_0, case.lon_0, '--shape',
                                       str(case.shape).replace(' ', ''), '--center', case.center, '--pixel_size',
                                       case.pixel_size, '--units', case.units, '--no_save'])
-            self.assertTrue(str(case.area_extent[0]) in test_area)
-            self.assertTrue(str(case.area_extent[1]) in test_area)
-            self.assertTrue(str(case.area_extent[2]) in test_area)
-            self.assertTrue(str(case.area_extent[3]) in test_area)
-            self.assertTrue(str(case.shape) in test_area)
+            self.assertTrue('center: ' + case.center.replace(',', ', ') in area_data)
+            self.assertTrue('shape: ' + str(case.shape) in area_data)
+            self.assertTrue('lat_0: ' + case.lat_0.replace(',', ', ') in area_data)
+            self.assertTrue('lon_0: ' + case.lon_0.replace(',', ', ') in area_data)
+            self.assertTrue('projection: ' + case.projection.replace(',', ', ') in area_data)
+            self.assertTrue(str(case.area_extent[0]) in area_data)
+            self.assertTrue(str(case.area_extent[1]) in area_data)
+            self.assertTrue(str(case.area_extent[2]) in area_data)
+            self.assertTrue(str(case.area_extent[3]) in area_data)
+            self.assertTrue(str(case.shape) in area_data)
 
 
 def args_to_data(commands):

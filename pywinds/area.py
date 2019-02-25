@@ -5,24 +5,31 @@ import sys
 import numpy as np
 
 
+def _round(val, precision):
+    if val is None:
+        return None
+    if np.shape(val) == ():
+        return round(val, precision)
+    return tuple(np.round(val, precision))
+
+
 def output_format(output, kwargs):
-    proj_dict = dict(output.proj_dict)
-    area_extent = output.area_extent
-    if output.height is None or output.width is None:
-        shape = None
-    else:
-        shape = (output.height, output.width)
-    try:
-        pixel_size = (output.pixel_size_y, output.pixel_size_x)
-    except AttributeError:
-        pixel_size = output.resolution
-    if output.area_extent is not None:
-        center = ((area_extent[0] + area_extent[2]) / 2, (area_extent[1] + area_extent[3]) / 2)
-    else:
-        center = None
-    return 'projection data: {0}\narea_extent: {1}\nshape: {2}\npixel_size: {3}\ncenter: {4}'.format(proj_dict,
-                                                                                                     area_extent,
-                                                                       shape, pixel_size, center)
+    if kwargs.get('no_save') is True:
+        precision = 8
+        projection = output['projection']
+        lat_0 = _round(output['lat_0'], precision)
+        lon_0 = _round(output['lon_0'], precision)
+        semi_major_axis_radius = _round(output['semi-major axis radius'], precision)
+        eccentricity = _round(output['eccentricity'], precision)
+        shape = output['shape']
+        area_extent = _round(output['area_extent'], precision)
+        pixel_size = _round(output['pixel_size'], precision)
+        center = _round(output['center'], precision)
+        return ('projection: {0}\nlat_0: {1}\nlon_0: {2}\nsemi-major axis radius: {3}\neccentricity: {4}\n'
+            'area_extent: {5}\nshape: {6}\npixel_size: {7}\ncenter: {8}').format(projection, lat_0, lon_0,
+                                                                                 semi_major_axis_radius, eccentricity,
+                                                                                 area_extent, shape, pixel_size, center)
+    return ''
 
 
 def main(argv):
