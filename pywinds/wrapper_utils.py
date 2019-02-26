@@ -11,8 +11,8 @@ import traceback
 def _arg_to_param(arg):
     """Converts command line arguments (strings) to python data passed to function."""
     units = None
-    if len(arg.split(':')) == 2:
-        arg, units = arg.split(':')
+    if len(arg.split(';')) == 2:
+        arg, units = arg.split(';')
     try:
         string = ast.literal_eval('%s' % arg)
     except (SyntaxError, ValueError):
@@ -101,7 +101,7 @@ def run_script(func, argv, output_format, name, is_area=False, is_lat_long=False
                 kwargs.pop('displacement_data')
                 for file in files:
                     output = output_format(func(*args, displacement_data=file, **kwargs), kwargs)
-                    if output != '':
+                    if output is not '':
                         if len(files) > 1:
                             print(file)
                         print(output)
@@ -113,7 +113,7 @@ def run_script(func, argv, output_format, name, is_area=False, is_lat_long=False
             kwargs.pop('displacement_data')
         output = func(*args, **kwargs)
         print(output_format(output, kwargs))
-    except (TypeError, ValueError, FileNotFoundError, RuntimeError, IndexError):
+    except (TypeError, ValueError, OSError, RuntimeError, IndexError):
         print(traceback.format_exc())
         print()
         print_usage(func, name)

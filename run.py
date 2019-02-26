@@ -3,11 +3,12 @@ from datetime import datetime
 import sys
 import numpy as np
 import h5py
+import ast
 from xarray import DataArray
 
 print(sys.executable)
 start = datetime.utcnow()
-file_name = 'in.flo'
+file_name = 'C:/Users/William/Documents/pywinds/in.flo'
 lat_0 = 60
 lon_0 = 0
 i_in = None
@@ -20,11 +21,9 @@ image_geod = 'WGS84'
 no_save = False
 area_extent = tuple(reversed((-2000000.0, 1429327.9172, 2000000.0, 5429327.9172)))
 
-print(area(60, 0, displacement_data=file_name, area_extent=area_extent, center=center, pixel_size=pixel_size))
-
-# winds = wind_info(lat_0, lon_0, 100, shape=(1000, 1000), displacement_data=file_name, i=j_in, j=i_in,
-#                   pixel_size=pixel_size,  center=center, earth_geod=earth_geod, image_geod=image_geod,
-#                   no_save=no_save).transpose().reshape((6, 1000, 1000))
+winds = wind_info(lat_0, lon_0, 100, shape=(1000, 1000), displacement_data=file_name, i=j_in, j=i_in,
+                  pixel_size=pixel_size,  center=center, earth_geod=earth_geod, image_geod=image_geod,
+                  no_save=no_save).transpose().reshape((6, 1000, 1000))
 # print(winds[:, 400, 400])
 # output_velocity = velocity(lat_0, lon_0, 100, displacement_data='in.flo', i=i_in, j=j_in, pixel_size=pixel_size,
 #                            center=center, earth_geod=earth_geod, image_geod=image_geod, no_save=no_save)
@@ -48,7 +47,8 @@ print(area(60, 0, displacement_data=file_name, area_extent=area_extent, center=c
 #                                 center=center, shape=(1000,1000), image_geod=image_geod, no_save=no_save)
 # print('new_lat, new_long:', *new_lat_long[:, 0, 0])
 #
-# hdf5 = h5py.File('in.flo_output/wind_info.hdf5', 'r')
+hdf5 = h5py.File('in.flo_output/wind_info.hdf5', 'r')
+print(hdf5['wind_info'][0, 0])
 # for attr in hdf5.attrs:
 #     print(attr, hdf5.attrs[attr])
 # for group in hdf5.keys():
@@ -57,7 +57,7 @@ print(area(60, 0, displacement_data=file_name, area_extent=area_extent, center=c
 #             print(group, key, hdf5[group][key][:], [hdf5[group][key].attrs[attr] for attr in hdf5[group][key].attrs])
 #     else:
 #         print(group, hdf5[group][0, 0], [hdf5[group].attrs[attr] for attr in hdf5[group].attrs])
-# hdf5.close()
+hdf5.close()
 
 end = datetime.utcnow()
 print("Execution seconds: ", (end - start).total_seconds())

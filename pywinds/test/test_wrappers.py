@@ -25,20 +25,22 @@ class TestCase:
         self.displacement_data = str(displacement_data).replace(' ', '')
         self.center = str(center).replace(' ', '')
         self.area_extent = area_extent
-        self.j_displacements, self.i_displacements = displacements(lat_0, lon_0, displacement_data=displacement_data,
+        j_displacements, i_displacements = displacements(lat_0, lon_0, displacement_data=displacement_data,
                                                                    shape=shape, i=i, j=j, no_save=True)
+        self.j_displacements = np.float32(j_displacements)
+        self.i_displacements = np.float32(i_displacements)
         area_data = area(lat_0, lon_0, displacement_data=displacement_data, shape=shape, center=center,
                          pixel_size=float(str(pixel_size).split(':')[0]), no_save=True)
         self.shape = area_data['shape']
         # Output data
-        self.speed = speed
-        self.angle = angle
-        self.u = u
-        self.v = v
-        self.old_lat = old_lat
-        self.old_long = old_long
-        self.new_lat = new_lat
-        self.new_long = new_long
+        self.speed = np.float32(speed)
+        self.angle = np.float32(angle)
+        self.u = np.float32(u)
+        self.v = np.float32(v)
+        self.old_lat = np.float32(old_lat)
+        self.old_long = np.float32(old_long)
+        self.new_lat = np.float32(new_lat)
+        self.new_long = np.float32(new_long)
 
 
 class TestWrappers(unittest.TestCase):
@@ -47,7 +49,7 @@ class TestWrappers(unittest.TestCase):
         self.test_cases.append(TestCase('./test_files/test_data_three.flo',
                                         i=1, j=4, pixel_size=10000, lat_0=60, lon_0=0, center=(90.0, 0.0),
                                         area_extent=(89.71, 135.03, 89.71, -45.03),
-                                        speed=2820.83, angle=42.94, u=1921.49, v=2065.18, old_lat=-21.9,
+                                        speed=2820.83, angle=42.94, u=1921.48, v=2065.18, old_lat=-21.9,
                                         old_long=-151.31, new_lat=89.81, new_long=-26.58))
         displacement_data = np.array(([x for x in range(25)], [x for x in range(25)])) * 10
         self.test_cases.append(TestCase(displacement_data.tolist(), pixel_size=5000, lat_0=90, lon_0=20, i=1, j=4,
@@ -164,7 +166,7 @@ class TestWrappers(unittest.TestCase):
             area_data = args_to_data(['../area.py', case.lat_0, case.lon_0, '--shape',
                                       str(case.shape).replace(' ', ''), '--center', case.center, '--pixel_size',
                                       case.pixel_size, '--units', case.units, '--no_save'])
-            self.assertTrue('center: ' + case.center.replace(',', ', ') in area_data)
+            self.assertTrue('center: ' + case.center.split(',')[0] in area_data)
             self.assertTrue('shape: ' + str(case.shape) in area_data)
             self.assertTrue('lat_0: ' + case.lat_0.replace(',', ', ') in area_data)
             self.assertTrue('lon_0: ' + case.lon_0.replace(',', ', ') in area_data)
@@ -182,7 +184,7 @@ def args_to_data(commands):
     except subprocess.CalledProcessError as err:
         raise ValueError(err.output.decode('utf-8'))
     try:
-        return np.array(ast.literal_eval('%s' % output))
+        return np.array(ast.literal_eval('%s' % output), dtype=np.float32)
     except (SyntaxError, ValueError):
         return output
 

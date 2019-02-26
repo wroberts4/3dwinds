@@ -22,24 +22,26 @@ class TestCase:
         self.units = units
         self.displacement_data = displacement_data
         self.center = center
-        self.j_displacements, self.i_displacements = displacements(lat_0, lon_0, displacement_data=displacement_data,
+        j_displacements, i_displacements = displacements(lat_0, lon_0, displacement_data=displacement_data,
                                                                    shape=shape)[:, j, i]
+        self.j_displacements = np.float32(j_displacements)
+        self.i_displacements = np.float32(i_displacements)
         area_data = area(lat_0, lon_0, displacement_data=displacement_data, shape=shape,
                          pixel_size=pixel_size, center=center)
         self.shape = area_data['shape']
         # Output data
-        self.speed = speed
-        self.angle = angle
-        self.u = u
-        self.v = v
-        self.old_lat = old_lat
-        self.old_long = old_long
-        self.new_lat = new_lat
-        self.new_long = new_long
-        self.old_x = old_x
-        self.old_y = old_y
-        self.new_x = new_x
-        self.new_y = new_y
+        self.speed = np.float32(speed)
+        self.angle = np.float32(angle)
+        self.u = np.float32(u)
+        self.v = np.float32(v)
+        self.old_lat = np.float32(old_lat)
+        self.old_long = np.float32(old_long)
+        self.new_lat = np.float32(new_lat)
+        self.new_long = np.float32(new_long)
+        self.old_x = np.float32(old_x)
+        self.old_y = np.float32(old_y)
+        self.new_x = np.float32(new_x)
+        self.new_y = np.float32(new_y)
 
 
 class TestPywinds(unittest.TestCase):
@@ -47,16 +49,16 @@ class TestPywinds(unittest.TestCase):
         self.test_cases = []
         self.test_cases.append(TestCase('./test_files/test_data_two.flo',
                                         i=1, j=8, pixel_size=10000, lat_0=60, lon_0=0, center=(90, 0),
-                                        speed=1688.18055, angle=38.95818, u=1061.44852,
-                                        v=1312.73783, old_lat=18.825, old_long=-142.64162, new_lat=89.58692,
-                                        new_long=-45.03963, old_x=-8135000.0, old_y=11494327.91718, new_x=-35000.0,
-                                        new_y=3394327.91718))
+                                        speed=1688.18, angle=38.95816, u=1061.4478,
+                                        v=1312.7378, old_lat=18.825, old_long=-142.64162, new_lat=89.58692,
+                                        new_long=-45.03969, old_x=-8135000.0, old_y=11494328, new_x=-35000.0,
+                                        new_y=3394328))
         displacement_data = (np.array([x for x in range(100)]) * 10, np.array([x for x in range(100)]) * 20)
         self.test_cases.append(TestCase(displacement_data, pixel_size=5000, lat_0=90, lon_0=20, i=1, j=8,
                                         center=(40, 10), speed=1190.02614,
-                                        angle=69.74556, u=1116.44031, v=411.97482, old_lat=17.54702, old_long=-58.68524,
-                                        new_lat=39.84993, new_long=9.86386, old_x=-9151407.88566, old_y=-1831082.99511,
-                                        new_x=-1051407.88566, new_y=-5881082.99511))
+                                        angle=69.74556, u=1116.44031, v=411.97485, old_lat=17.54702, old_long=-58.68524,
+                                        new_lat=39.84993, new_long=9.86386, old_x=-9151408, old_y=-1831083,
+                                        new_x=-1051407.9, new_y=-5881082.5))
 
     def test_wind_info(self):
         for case in self.test_cases:
