@@ -21,8 +21,11 @@ def _round(val, precision):
     return tuple(np.round(val, precision).tolist())
 
 
-def _save_data(output_dict, displacement_filename, hdf5_group_name=None, hdf5_shape=None, area_attrs=None):
+def _save_data(output_dict, displacement_filename, hdf5_group_name=None,
+               txt_shape=None, group_attrs=None, area_dict=None):
     """Saves data to a file named after the displacement_data appended with "_output"."""
+    if group_attrs is None:
+        group_attrs = {}
     if isinstance(displacement_filename, str):
         head, tail = ntpath.split(displacement_filename)
         extension = tail or ntpath.basename(head)
@@ -33,12 +36,11 @@ def _save_data(output_dict, displacement_filename, hdf5_group_name=None, hdf5_sh
     except OSError:
         pass
     hdf5 = h5py.File(os.path.join(os.getcwd(), extension + '_output', 'wind_info.hdf5'), 'a')
-    if area_attrs is not None:
+    if area_dict is not None:
         file = open(os.path.join(os.getcwd(), extension + '_output', 'area.txt'), 'w')
-        for attr, val in area_attrs.items():
+        for attr, val in area_dict.items():
             if val is None:
                 val = 'none'
-            hdf5.attrs[attr] = val
             precision = 2
             if attr == 'eccentricity':
                 precision = 6
@@ -51,20 +53,30 @@ def _save_data(output_dict, displacement_filename, hdf5_group_name=None, hdf5_sh
         attrs = {}
         if isinstance(data, DataArray):
             attrs = data.attrs
-            data = data.data
-        if np.size(data) == 1:
-            data = np.ravel(data)
-        # np.array(np.append([0] + list(np.shape(data)), data)).tofile(os.path.join(os.getcwd(), extenion + '_output', name + '.out'))
+            # Bug (no shape) when not converting to list then back to numpy array.
+            data = np.array(data.data.tolist(), dtype=np.float64)
         if hdf5_group_name is None:
             hdf5.pop(name, None)
-            hdf5.create_dataset(name, data=data.reshape(hdf5_shape))
+            hdf5.create_dataset(name, data=data)
             for attr, val in attrs.items():
+                if val is None:
+                    val = 'none'
                 hdf5[name].attrs[attr] = val
         else:
-            hdf5[hdf5_group_name].create_dataset(name, data=data.reshape(hdf5_shape))
+            hdf5[hdf5_group_name].create_dataset(name, data=data)
             for attr, val in attrs.items():
+                if val is None:
+                    val = 'none'
                 hdf5[hdf5_group_name][name].attrs[attr] = val
-        np.savetxt(os.path.join(os.getcwd(), extension + '_output', name + '.txt'), data, fmt='%.2f')
+            for attr, val in group_attrs.items():
+                if val is None:
+                    val = 'none'
+                hdf5[hdf5_group_name].attrs[attr] = val
+        if np.size(data) == 1:
+            data = np.ravel(data)
+        if area_dict is None:
+            np.savetxt(os.path.join(os.getcwd(), extension + '_output', name + '.txt'),
+                       data.reshape(txt_shape), fmt='%.2f')
     hdf5.close()
 
 
@@ -218,7 +230,7 @@ def _find_displacements(displacement_data=None, j=None, i=None, shape=None):
     if isinstance(displacement_data, str):
         # Displacement: even index, odd index. Note: (0, 0) is in the top left, i=horizontal and j=vertical.
         shape = np.fromfile(displacement_data, dtype=int)[1:3]
-        displacement = np.array(np.fromfile(displacement_data, dtype=np.float32)[3:], dtype=float)
+        displacement = np.array(np.fromfile(displacement_data, dtype=np.float32)[3:], dtype=np.float64)
         j_displacement = displacement[1::2]
         i_displacement = displacement[0::2]
         if (shape[0] is 0 or shape[1] != np.size(j_displacement) / shape[0] or
@@ -230,8 +242,8 @@ def _find_displacements(displacement_data=None, j=None, i=None, shape=None):
                 np.shape(displacement_data)))
         if len(np.shape(displacement_data)) != 2:
             displacement_data = np.reshape(displacement_data, (2, int(np.size(displacement_data) / 2)))
-        j_displacement = np.array(displacement_data[0], dtype=float)
-        i_displacement = np.array(displacement_data[1], dtype=float)
+        j_displacement = np.array(displacement_data[0], dtype=np.float64)
+        i_displacement = np.array(displacement_data[1], dtype=np.float64)
     else:
         return shape, 0.0, 0.0
     if shape is None:
@@ -421,11 +433,19 @@ def area(lat_0, lon_0, displacement_data=None, projection='stere', area_extent=N
     area_data = {'projection': projection, 'lat_0': lat_0, 'lon_0': lon_0, 'equatorial radius': a,
                  'eccentricity': f, 'shape': shape, 'area_extent': area_extent, 'pixel_size': pixel_size,
                  'center': center}
-
+    output_dict = {'lat_0': DataArray(lat_0, attrs={'units': 'degrees'}),
+                   'lon_0': DataArray(lon_0, attrs={'units': 'degrees'}),
+                   'equatorial radius':  DataArray(a, attrs={'units': 'meters'}),
+                   'eccentricity': DataArray(f, attrs={'units': None}),
+                   'shape': DataArray(shape, attrs={'units': None}),
+                   'area_extent': DataArray(area_extent, attrs={'units': 'degrees'}),
+                   'pixel_size': DataArray(pixel_size, attrs={'units': 'projection meters'}),
+                   'center': DataArray(center, attrs={'units': 'degrees'})}
     if no_save is False:
         if displacement_data is None:
             raise ValueError('Cannot save data without displacement_data')
-        _save_data({}, displacement_data, area_attrs=area_data)
+        _save_data(output_dict, displacement_data, group_attrs={'projection': projection},
+                   hdf5_group_name='area', area_dict=area_data)
     return area_data
 
 
@@ -502,8 +522,9 @@ def displacements(lat_0=None, lon_0=None, displacement_data=None, projection='st
         j_displacement = j_displacement.reshape(shape)
         i_displacement = i_displacement.reshape(shape)
     if no_save is False:
-        _save_data({'j_displacement': j_displacement, 'i_displacement': i_displacement},
-                    displacement_data, hdf5_group_name='displacements')
+        _save_data({'j_displacement': DataArray(j_displacement, attrs={'units': None}),
+                    'i_displacement': DataArray(i_displacement, attrs={'units': None})},
+                   displacement_data, hdf5_group_name='displacements')
     return np.array((j_displacement, i_displacement))
 
 
@@ -574,8 +595,8 @@ def velocity(lat_0, lon_0, delta_time, displacement_data=None, projection='stere
         angle = angle.reshape(shape)
     if no_save is False:
         _save_data({'speed': DataArray(speed, attrs={'units': 'meters/second'}),
-                  'angle': DataArray(angle, attrs={'units': 'degrees'})},
-                 displacement_data, hdf5_group_name='velocity')
+                    'angle': DataArray(angle, attrs={'units': 'degrees'})},
+                   displacement_data, hdf5_group_name='velocity')
     return np.array((speed, angle))
 
 
@@ -643,8 +664,8 @@ def vu(lat_0, lon_0, delta_time, displacement_data=None, projection='stere', j=N
         u = u.reshape(shape)
     if no_save is False:
         _save_data({'v': DataArray(v, attrs={'units': 'meters/second'}),
-                  'u': DataArray(u, attrs={'units': 'meters/second'})},
-                 displacement_data, hdf5_group_name='vu')
+                    'u': DataArray(u, attrs={'units': 'meters/second'})},
+                   displacement_data, hdf5_group_name='vu')
     return np.array((v, u))
 
 
@@ -723,10 +744,10 @@ def lat_long(lat_0, lon_0, displacement_data=None, projection='stere', j=None, i
             new_lat = new_lat.reshape(shape)
             new_long = new_long.reshape(shape)
         _save_data({'old_latitude': DataArray(old_lat, attrs={'units': 'degrees'}),
-                  'old_longitude': DataArray(old_long, attrs={'units': 'degrees'}),
-                  'new_latitude': DataArray(new_lat, attrs={'units': 'degrees'}),
-                  'new_longitude': DataArray(new_long, attrs={'units': 'degrees'})},
-                 displacement_data, hdf5_group_name='lat_long')
+                    'old_longitude': DataArray(old_long, attrs={'units': 'degrees'}),
+                    'new_latitude': DataArray(new_lat, attrs={'units': 'degrees'}),
+                    'new_longitude': DataArray(new_long, attrs={'units': 'degrees'})},
+                   displacement_data, hdf5_group_name='lat_long')
     return np.array((old_lat, old_long))
 
 
@@ -801,15 +822,15 @@ def wind_info(lat_0, lon_0, delta_time, displacement_data=None, projection='ster
     winds = np.insert(winds, 3, angle, axis=1)
     winds = np.insert(winds, 4, v, axis=1)
     winds = np.insert(winds, 5, u, axis=1)
+    if np.shape(winds)[0] == 1:
+        winds = winds[0]
+        txt_shape = [1, 6]
+    else:
+        txt_shape = None
     if no_save is False:
-        if np.shape(winds)[0] == 1:
-            shape = [6]
-            winds = winds[0]
-        else:
-            shape = list(shape) + [6]
-        _save_data({'wind_info': DataArray(winds, attrs={'description': 'new_lat (degrees), new_long (degrees), '
-                                                       'speed (meters/second), angle (degrees), v (meters/second), '
-                                                       'u (meters/second)'})},
-                 displacement_data, hdf5_shape=shape)
+        description = ('new_lat ({0}), new_long ({0}), speed ({1}), angle ({0}),'
+                       'v ({1}), u ({1})').format('degrees', 'meters/second')
+        _save_data({'wind_info': DataArray(winds, attrs={'description': description})},
+                   displacement_data, txt_shape=txt_shape)
     # Columns: lat, long, speed, direction, v, u
     return winds
