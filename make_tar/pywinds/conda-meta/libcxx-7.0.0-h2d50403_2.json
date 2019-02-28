@@ -1,0 +1,1578 @@
+{
+ "build": "h2d50403_2",
+ "build_number": 2,
+ "channel": "https://conda.anaconda.org/conda-forge/osx-64",
+ "constrains": [],
+ "depends": [
+  "llvm-meta 7.0.0"
+ ],
+ "extracted_package_dir": "",
+ "features": "",
+ "files": [
+  "include/c++/v1/__bit_reference",
+  "include/c++/v1/__bsd_locale_defaults.h",
+  "include/c++/v1/__bsd_locale_fallbacks.h",
+  "include/c++/v1/__config",
+  "include/c++/v1/__cxxabi_config.h",
+  "include/c++/v1/__debug",
+  "include/c++/v1/__errc",
+  "include/c++/v1/__functional_03",
+  "include/c++/v1/__functional_base",
+  "include/c++/v1/__functional_base_03",
+  "include/c++/v1/__hash_table",
+  "include/c++/v1/__libcpp_version",
+  "include/c++/v1/__locale",
+  "include/c++/v1/__mutex_base",
+  "include/c++/v1/__node_handle",
+  "include/c++/v1/__nullptr",
+  "include/c++/v1/__split_buffer",
+  "include/c++/v1/__sso_allocator",
+  "include/c++/v1/__std_stream",
+  "include/c++/v1/__string",
+  "include/c++/v1/__threading_support",
+  "include/c++/v1/__tree",
+  "include/c++/v1/__tuple",
+  "include/c++/v1/__undef_macros",
+  "include/c++/v1/algorithm",
+  "include/c++/v1/any",
+  "include/c++/v1/array",
+  "include/c++/v1/atomic",
+  "include/c++/v1/bitset",
+  "include/c++/v1/cassert",
+  "include/c++/v1/ccomplex",
+  "include/c++/v1/cctype",
+  "include/c++/v1/cerrno",
+  "include/c++/v1/cfenv",
+  "include/c++/v1/cfloat",
+  "include/c++/v1/charconv",
+  "include/c++/v1/chrono",
+  "include/c++/v1/cinttypes",
+  "include/c++/v1/ciso646",
+  "include/c++/v1/climits",
+  "include/c++/v1/clocale",
+  "include/c++/v1/cmath",
+  "include/c++/v1/codecvt",
+  "include/c++/v1/compare",
+  "include/c++/v1/complex",
+  "include/c++/v1/complex.h",
+  "include/c++/v1/condition_variable",
+  "include/c++/v1/csetjmp",
+  "include/c++/v1/csignal",
+  "include/c++/v1/cstdarg",
+  "include/c++/v1/cstdbool",
+  "include/c++/v1/cstddef",
+  "include/c++/v1/cstdint",
+  "include/c++/v1/cstdio",
+  "include/c++/v1/cstdlib",
+  "include/c++/v1/cstring",
+  "include/c++/v1/ctgmath",
+  "include/c++/v1/ctime",
+  "include/c++/v1/ctype.h",
+  "include/c++/v1/cwchar",
+  "include/c++/v1/cwctype",
+  "include/c++/v1/cxxabi.h",
+  "include/c++/v1/deque",
+  "include/c++/v1/errno.h",
+  "include/c++/v1/exception",
+  "include/c++/v1/experimental/__config",
+  "include/c++/v1/experimental/__memory",
+  "include/c++/v1/experimental/algorithm",
+  "include/c++/v1/experimental/any",
+  "include/c++/v1/experimental/chrono",
+  "include/c++/v1/experimental/coroutine",
+  "include/c++/v1/experimental/deque",
+  "include/c++/v1/experimental/dynarray",
+  "include/c++/v1/experimental/filesystem",
+  "include/c++/v1/experimental/forward_list",
+  "include/c++/v1/experimental/functional",
+  "include/c++/v1/experimental/iterator",
+  "include/c++/v1/experimental/list",
+  "include/c++/v1/experimental/map",
+  "include/c++/v1/experimental/memory_resource",
+  "include/c++/v1/experimental/numeric",
+  "include/c++/v1/experimental/optional",
+  "include/c++/v1/experimental/propagate_const",
+  "include/c++/v1/experimental/ratio",
+  "include/c++/v1/experimental/regex",
+  "include/c++/v1/experimental/set",
+  "include/c++/v1/experimental/simd",
+  "include/c++/v1/experimental/string",
+  "include/c++/v1/experimental/string_view",
+  "include/c++/v1/experimental/system_error",
+  "include/c++/v1/experimental/tuple",
+  "include/c++/v1/experimental/type_traits",
+  "include/c++/v1/experimental/unordered_map",
+  "include/c++/v1/experimental/unordered_set",
+  "include/c++/v1/experimental/utility",
+  "include/c++/v1/experimental/vector",
+  "include/c++/v1/ext/__hash",
+  "include/c++/v1/ext/hash_map",
+  "include/c++/v1/ext/hash_set",
+  "include/c++/v1/filesystem",
+  "include/c++/v1/float.h",
+  "include/c++/v1/forward_list",
+  "include/c++/v1/fstream",
+  "include/c++/v1/functional",
+  "include/c++/v1/future",
+  "include/c++/v1/initializer_list",
+  "include/c++/v1/inttypes.h",
+  "include/c++/v1/iomanip",
+  "include/c++/v1/ios",
+  "include/c++/v1/iosfwd",
+  "include/c++/v1/iostream",
+  "include/c++/v1/istream",
+  "include/c++/v1/iterator",
+  "include/c++/v1/limits",
+  "include/c++/v1/limits.h",
+  "include/c++/v1/list",
+  "include/c++/v1/locale",
+  "include/c++/v1/locale.h",
+  "include/c++/v1/map",
+  "include/c++/v1/math.h",
+  "include/c++/v1/memory",
+  "include/c++/v1/module.modulemap",
+  "include/c++/v1/mutex",
+  "include/c++/v1/new",
+  "include/c++/v1/numeric",
+  "include/c++/v1/optional",
+  "include/c++/v1/ostream",
+  "include/c++/v1/queue",
+  "include/c++/v1/random",
+  "include/c++/v1/ratio",
+  "include/c++/v1/regex",
+  "include/c++/v1/scoped_allocator",
+  "include/c++/v1/set",
+  "include/c++/v1/setjmp.h",
+  "include/c++/v1/shared_mutex",
+  "include/c++/v1/span",
+  "include/c++/v1/sstream",
+  "include/c++/v1/stack",
+  "include/c++/v1/stdbool.h",
+  "include/c++/v1/stddef.h",
+  "include/c++/v1/stdexcept",
+  "include/c++/v1/stdint.h",
+  "include/c++/v1/stdio.h",
+  "include/c++/v1/stdlib.h",
+  "include/c++/v1/streambuf",
+  "include/c++/v1/string",
+  "include/c++/v1/string.h",
+  "include/c++/v1/string_view",
+  "include/c++/v1/strstream",
+  "include/c++/v1/support/android/locale_bionic.h",
+  "include/c++/v1/support/fuchsia/xlocale.h",
+  "include/c++/v1/support/ibm/limits.h",
+  "include/c++/v1/support/ibm/locale_mgmt_aix.h",
+  "include/c++/v1/support/ibm/support.h",
+  "include/c++/v1/support/ibm/xlocale.h",
+  "include/c++/v1/support/musl/xlocale.h",
+  "include/c++/v1/support/newlib/xlocale.h",
+  "include/c++/v1/support/solaris/floatingpoint.h",
+  "include/c++/v1/support/solaris/wchar.h",
+  "include/c++/v1/support/solaris/xlocale.h",
+  "include/c++/v1/support/win32/limits_msvc_win32.h",
+  "include/c++/v1/support/win32/locale_win32.h",
+  "include/c++/v1/support/xlocale/__nop_locale_mgmt.h",
+  "include/c++/v1/support/xlocale/__posix_l_fallback.h",
+  "include/c++/v1/support/xlocale/__strtonum_fallback.h",
+  "include/c++/v1/support/xlocale/xlocale.h",
+  "include/c++/v1/system_error",
+  "include/c++/v1/tgmath.h",
+  "include/c++/v1/thread",
+  "include/c++/v1/tuple",
+  "include/c++/v1/type_traits",
+  "include/c++/v1/typeindex",
+  "include/c++/v1/typeinfo",
+  "include/c++/v1/unordered_map",
+  "include/c++/v1/unordered_set",
+  "include/c++/v1/utility",
+  "include/c++/v1/valarray",
+  "include/c++/v1/variant",
+  "include/c++/v1/vector",
+  "include/c++/v1/version",
+  "include/c++/v1/wchar.h",
+  "include/c++/v1/wctype.h",
+  "lib/libc++.1.0.dylib",
+  "lib/libc++.1.dylib",
+  "lib/libc++.a",
+  "lib/libc++.dylib",
+  "lib/libc++abi.1.0.dylib",
+  "lib/libc++abi.1.dylib",
+  "lib/libc++abi.a",
+  "lib/libc++abi.dylib",
+  "lib/libc++experimental.a",
+  "lib/libc++fs.a"
+ ],
+ "fn": "libcxx-7.0.0-h2d50403_2.tar.bz2",
+ "license": "NCSA",
+ "link": {
+  "source": "",
+  "type": 1
+ },
+ "md5": "1661fe091fd1fe9408523411bfbf2a5d",
+ "name": "libcxx",
+ "package_tarball_full_path": "",
+ "paths_data": {
+  "paths": [
+   {
+    "_path": "include/c++/v1/__bit_reference",
+    "path_type": "hardlink",
+    "sha256": "730e1b5aa5da7ce4e9f5f414a635c66b4507e997670cf754828f18f308f8baf2",
+    "sha256_in_prefix": "730e1b5aa5da7ce4e9f5f414a635c66b4507e997670cf754828f18f308f8baf2",
+    "size_in_bytes": 52074
+   },
+   {
+    "_path": "include/c++/v1/__bsd_locale_defaults.h",
+    "path_type": "hardlink",
+    "sha256": "70c398c1792b1345893a7ce92ca6c6529491db9864eeb6d3132d8282ce16163f",
+    "sha256_in_prefix": "70c398c1792b1345893a7ce92ca6c6529491db9864eeb6d3132d8282ce16163f",
+    "size_in_bytes": 2092
+   },
+   {
+    "_path": "include/c++/v1/__bsd_locale_fallbacks.h",
+    "path_type": "hardlink",
+    "sha256": "5b2e678053ad44f98f8a02cca4c3beb3cc139a6c79467916f105d456c2a4ac0b",
+    "sha256_in_prefix": "5b2e678053ad44f98f8a02cca4c3beb3cc139a6c79467916f105d456c2a4ac0b",
+    "size_in_bytes": 4019
+   },
+   {
+    "_path": "include/c++/v1/__config",
+    "path_type": "hardlink",
+    "sha256": "38a819c757f6b836b6bcc24f64541a284ed72c5cfcc88d30cc61835902dc8c21",
+    "sha256_in_prefix": "38a819c757f6b836b6bcc24f64541a284ed72c5cfcc88d30cc61835902dc8c21",
+    "size_in_bytes": 43863
+   },
+   {
+    "_path": "include/c++/v1/__cxxabi_config.h",
+    "path_type": "hardlink",
+    "sha256": "e7f38ffa064d354743011e64622cc6ed59cb8f83673a30b2ad3c23ce4c9ff876",
+    "sha256_in_prefix": "e7f38ffa064d354743011e64622cc6ed59cb8f83673a30b2ad3c23ce4c9ff876",
+    "size_in_bytes": 2278
+   },
+   {
+    "_path": "include/c++/v1/__debug",
+    "path_type": "hardlink",
+    "sha256": "87bddf98e27c60189f1d5ed6b76c18cc7bdeca7a1297fc7f1d5a7abbabead6a3",
+    "sha256_in_prefix": "87bddf98e27c60189f1d5ed6b76c18cc7bdeca7a1297fc7f1d5a7abbabead6a3",
+    "size_in_bytes": 8831
+   },
+   {
+    "_path": "include/c++/v1/__errc",
+    "path_type": "hardlink",
+    "sha256": "f6deeac332358f167f99381c9706340f5a493bee8bd464208d8b69e622257ca8",
+    "sha256_in_prefix": "f6deeac332358f167f99381c9706340f5a493bee8bd464208d8b69e622257ca8",
+    "size_in_bytes": 9231
+   },
+   {
+    "_path": "include/c++/v1/__functional_03",
+    "path_type": "hardlink",
+    "sha256": "8a6298d17e5c02316ad386d28140a36f9f8dacf5b5f0000a7f8475fd09150299",
+    "sha256_in_prefix": "8a6298d17e5c02316ad386d28140a36f9f8dacf5b5f0000a7f8475fd09150299",
+    "size_in_bytes": 44443
+   },
+   {
+    "_path": "include/c++/v1/__functional_base",
+    "path_type": "hardlink",
+    "sha256": "1a04da86060d40e90a58bf722c29ae783bca428440765775760a40026ac92cdd",
+    "sha256_in_prefix": "1a04da86060d40e90a58bf722c29ae783bca428440765775760a40026ac92cdd",
+    "size_in_bytes": 17626
+   },
+   {
+    "_path": "include/c++/v1/__functional_base_03",
+    "path_type": "hardlink",
+    "sha256": "71fcf21aa8435f30acf0a0fcd51cd09a9f157a17ec67a77c69d87c6a7e3ffe3e",
+    "sha256_in_prefix": "71fcf21aa8435f30acf0a0fcd51cd09a9f157a17ec67a77c69d87c6a7e3ffe3e",
+    "size_in_bytes": 6519
+   },
+   {
+    "_path": "include/c++/v1/__hash_table",
+    "path_type": "hardlink",
+    "sha256": "f7502ef2906e1645ac57230a31d9364ad6fc3c06adf9adb5dcad0f990c22f997",
+    "sha256_in_prefix": "f7502ef2906e1645ac57230a31d9364ad6fc3c06adf9adb5dcad0f990c22f997",
+    "size_in_bytes": 99347
+   },
+   {
+    "_path": "include/c++/v1/__libcpp_version",
+    "path_type": "hardlink",
+    "sha256": "09671f09bccb88c87acced40642a061e0d257d13282c22a1128807aab3d1719b",
+    "sha256_in_prefix": "09671f09bccb88c87acced40642a061e0d257d13282c22a1128807aab3d1719b",
+    "size_in_bytes": 5
+   },
+   {
+    "_path": "include/c++/v1/__locale",
+    "path_type": "hardlink",
+    "sha256": "398781448af5ac01af88a5b9fb8068824ca9f16b5e54688de1bd418fc91fd6e7",
+    "sha256_in_prefix": "398781448af5ac01af88a5b9fb8068824ca9f16b5e54688de1bd418fc91fd6e7",
+    "size_in_bytes": 47441
+   },
+   {
+    "_path": "include/c++/v1/__mutex_base",
+    "path_type": "hardlink",
+    "sha256": "93452a173769c940c1cb96697a79c3c212e4c70f1f8d3d2bcf69dfea10868d57",
+    "sha256_in_prefix": "93452a173769c940c1cb96697a79c3c212e4c70f1f8d3d2bcf69dfea10868d57",
+    "size_in_bytes": 13061
+   },
+   {
+    "_path": "include/c++/v1/__node_handle",
+    "path_type": "hardlink",
+    "sha256": "6f29dbca2e09011563aba8514e0e16b9c75f48085ce6431895164ea712661761",
+    "sha256_in_prefix": "6f29dbca2e09011563aba8514e0e16b9c75f48085ce6431895164ea712661761",
+    "size_in_bytes": 6168
+   },
+   {
+    "_path": "include/c++/v1/__nullptr",
+    "path_type": "hardlink",
+    "sha256": "d512fc7037851783e9b9abcd97f9a256c988a81f8d4482cdbf340d416aa13a1f",
+    "sha256_in_prefix": "d512fc7037851783e9b9abcd97f9a256c988a81f8d4482cdbf340d416aa13a1f",
+    "size_in_bytes": 1721
+   },
+   {
+    "_path": "include/c++/v1/__split_buffer",
+    "path_type": "hardlink",
+    "sha256": "8a156b1b0af847fbac719b5685366d0730148c67065f2463bcba76b4f0ed0c66",
+    "sha256_in_prefix": "8a156b1b0af847fbac719b5685366d0730148c67065f2463bcba76b4f0ed0c66",
+    "size_in_bytes": 21995
+   },
+   {
+    "_path": "include/c++/v1/__sso_allocator",
+    "path_type": "hardlink",
+    "sha256": "f74943deb54c09a42abdc4fd8a2a025f01327c9796ba3de4e9240f9686d59759",
+    "sha256_in_prefix": "f74943deb54c09a42abdc4fd8a2a025f01327c9796ba3de4e9240f9686d59759",
+    "size_in_bytes": 2504
+   },
+   {
+    "_path": "include/c++/v1/__std_stream",
+    "path_type": "hardlink",
+    "sha256": "14e72968823391a5e65d4b4b74b5be739dedc19a07dee47c1447dee843073d1e",
+    "sha256_in_prefix": "14e72968823391a5e65d4b4b74b5be739dedc19a07dee47c1447dee843073d1e",
+    "size_in_bytes": 10555
+   },
+   {
+    "_path": "include/c++/v1/__string",
+    "path_type": "hardlink",
+    "sha256": "a6ab06b1234287d02ea65fefd4e7b92a14139ce3ced7c75565e13c2031cb5bea",
+    "sha256_in_prefix": "a6ab06b1234287d02ea65fefd4e7b92a14139ce3ced7c75565e13c2031cb5bea",
+    "size_in_bytes": 27923
+   },
+   {
+    "_path": "include/c++/v1/__threading_support",
+    "path_type": "hardlink",
+    "sha256": "abfa826aff530076afec48975a7e6ffbacafd3aaeab5f7449d4b95248e0ee8bd",
+    "sha256_in_prefix": "abfa826aff530076afec48975a7e6ffbacafd3aaeab5f7449d4b95248e0ee8bd",
+    "size_in_bytes": 10514
+   },
+   {
+    "_path": "include/c++/v1/__tree",
+    "path_type": "hardlink",
+    "sha256": "d7186b9d60bb01b991cb35fbbfc2dddda2389567d9ca405986fbb1d4167761e8",
+    "sha256_in_prefix": "d7186b9d60bb01b991cb35fbbfc2dddda2389567d9ca405986fbb1d4167761e8",
+    "size_in_bytes": 104353
+   },
+   {
+    "_path": "include/c++/v1/__tuple",
+    "path_type": "hardlink",
+    "sha256": "62413ae00ef5072b0b627901500ffa54121cea8658b1c47deb96bf2d6ea26d69",
+    "sha256_in_prefix": "62413ae00ef5072b0b627901500ffa54121cea8658b1c47deb96bf2d6ea26d69",
+    "size_in_bytes": 20181
+   },
+   {
+    "_path": "include/c++/v1/__undef_macros",
+    "path_type": "hardlink",
+    "sha256": "666ec0f4d837e2d99c565715477c3f31e7b7f43ab737e87a61425617357bac13",
+    "sha256_in_prefix": "666ec0f4d837e2d99c565715477c3f31e7b7f43ab737e87a61425617357bac13",
+    "size_in_bytes": 1019
+   },
+   {
+    "_path": "include/c++/v1/algorithm",
+    "path_type": "hardlink",
+    "sha256": "37f723594b999dcb90baa1c76f30f770a922e91e1b1076c73850efbb87ebc8da",
+    "sha256_in_prefix": "37f723594b999dcb90baa1c76f30f770a922e91e1b1076c73850efbb87ebc8da",
+    "size_in_bytes": 208571
+   },
+   {
+    "_path": "include/c++/v1/any",
+    "path_type": "hardlink",
+    "sha256": "63b63acb1bd3d1688a4adfd1c8ec6b150a6223b8720e3e2cfe6249f217d7cbc8",
+    "sha256_in_prefix": "63b63acb1bd3d1688a4adfd1c8ec6b150a6223b8720e3e2cfe6249f217d7cbc8",
+    "size_in_bytes": 18788
+   },
+   {
+    "_path": "include/c++/v1/array",
+    "path_type": "hardlink",
+    "sha256": "e9e5291f213b4aa8097dce42f8a93405dc8d13a12a46c109a96ef6ddf47a94c1",
+    "sha256_in_prefix": "e9e5291f213b4aa8097dce42f8a93405dc8d13a12a46c109a96ef6ddf47a94c1",
+    "size_in_bytes": 16942
+   },
+   {
+    "_path": "include/c++/v1/atomic",
+    "path_type": "hardlink",
+    "sha256": "4307f7319c8950f090c5919635cc857d16ff5a6fcf9780d0087fc4099e456036",
+    "sha256_in_prefix": "4307f7319c8950f090c5919635cc857d16ff5a6fcf9780d0087fc4099e456036",
+    "size_in_bytes": 63749
+   },
+   {
+    "_path": "include/c++/v1/bitset",
+    "path_type": "hardlink",
+    "sha256": "7cd7a5a93173105c330b2ef46f9484ea480ac01b1806fe6713d106a9b98abd23",
+    "sha256_in_prefix": "7cd7a5a93173105c330b2ef46f9484ea480ac01b1806fe6713d106a9b98abd23",
+    "size_in_bytes": 33716
+   },
+   {
+    "_path": "include/c++/v1/cassert",
+    "path_type": "hardlink",
+    "sha256": "cdc7ff1c26192eafac0ef24d43545a4fa8fe27ffe31ea31e4647a5c0ae389a48",
+    "sha256_in_prefix": "cdc7ff1c26192eafac0ef24d43545a4fa8fe27ffe31ea31e4647a5c0ae389a48",
+    "size_in_bytes": 546
+   },
+   {
+    "_path": "include/c++/v1/ccomplex",
+    "path_type": "hardlink",
+    "sha256": "006a3fa1dc1bdc6e9bd8748e712e569258082b2dc32ef55f5d01a56f8c08a8ad",
+    "sha256_in_prefix": "006a3fa1dc1bdc6e9bd8748e712e569258082b2dc32ef55f5d01a56f8c08a8ad",
+    "size_in_bytes": 627
+   },
+   {
+    "_path": "include/c++/v1/cctype",
+    "path_type": "hardlink",
+    "sha256": "7310f7d180e52239654ae0bbe35dc400bce60c3296c4011bd395e3d65ba6dbaa",
+    "sha256_in_prefix": "7310f7d180e52239654ae0bbe35dc400bce60c3296c4011bd395e3d65ba6dbaa",
+    "size_in_bytes": 1745
+   },
+   {
+    "_path": "include/c++/v1/cerrno",
+    "path_type": "hardlink",
+    "sha256": "6fcde00519a3f01fb764cec242f4eaf633ae7f74339f149e8848dfbb5408fe16",
+    "sha256_in_prefix": "6fcde00519a3f01fb764cec242f4eaf633ae7f74339f149e8848dfbb5408fe16",
+    "size_in_bytes": 656
+   },
+   {
+    "_path": "include/c++/v1/cfenv",
+    "path_type": "hardlink",
+    "sha256": "4d741e32697c9cc425c9daa073f5190fe3c524493d08c4b8356e8fbb272b2f24",
+    "sha256_in_prefix": "4d741e32697c9cc425c9daa073f5190fe3c524493d08c4b8356e8fbb272b2f24",
+    "size_in_bytes": 1588
+   },
+   {
+    "_path": "include/c++/v1/cfloat",
+    "path_type": "hardlink",
+    "sha256": "20a42de1b2ba0dee908e7fb2726e6d266d70d85a55a7c9fed0ce9aa0fc6b718d",
+    "sha256_in_prefix": "20a42de1b2ba0dee908e7fb2726e6d266d70d85a55a7c9fed0ce9aa0fc6b718d",
+    "size_in_bytes": 1414
+   },
+   {
+    "_path": "include/c++/v1/charconv",
+    "path_type": "hardlink",
+    "sha256": "900e692e18187f5a8cf509a3d2df40e53f92f13a79e89795c0557f9c62a92786",
+    "sha256_in_prefix": "900e692e18187f5a8cf509a3d2df40e53f92f13a79e89795c0557f9c62a92786",
+    "size_in_bytes": 17729
+   },
+   {
+    "_path": "include/c++/v1/chrono",
+    "path_type": "hardlink",
+    "sha256": "750760d35a90869adb4045dc1bf29053e87cd2e6101338a158013f9a686cdf75",
+    "sha256_in_prefix": "750760d35a90869adb4045dc1bf29053e87cd2e6101338a158013f9a686cdf75",
+    "size_in_bytes": 63793
+   },
+   {
+    "_path": "include/c++/v1/cinttypes",
+    "path_type": "hardlink",
+    "sha256": "7a8da0424ac426fb92a61cd56f39d30824b900629b1b4fae13639a478a106d94",
+    "sha256_in_prefix": "7a8da0424ac426fb92a61cd56f39d30824b900629b1b4fae13639a478a106d94",
+    "size_in_bytes": 3490
+   },
+   {
+    "_path": "include/c++/v1/ciso646",
+    "path_type": "hardlink",
+    "sha256": "6496691a8ef3df4b711336b593235c7bd8c6f5777f41b3209c835301fdf2df6e",
+    "sha256_in_prefix": "6496691a8ef3df4b711336b593235c7bd8c6f5777f41b3209c835301fdf2df6e",
+    "size_in_bytes": 582
+   },
+   {
+    "_path": "include/c++/v1/climits",
+    "path_type": "hardlink",
+    "sha256": "f2784782f22c497533f2f75d955ed8759293eecacf66996e7e35eab73f65045d",
+    "sha256_in_prefix": "f2784782f22c497533f2f75d955ed8759293eecacf66996e7e35eab73f65045d",
+    "size_in_bytes": 894
+   },
+   {
+    "_path": "include/c++/v1/clocale",
+    "path_type": "hardlink",
+    "sha256": "c59c790be7f89527aa9b6b64185875f191be0dd318174728f6bae5dba2f6c6ef",
+    "sha256_in_prefix": "c59c790be7f89527aa9b6b64185875f191be0dd318174728f6bae5dba2f6c6ef",
+    "size_in_bytes": 985
+   },
+   {
+    "_path": "include/c++/v1/cmath",
+    "path_type": "hardlink",
+    "sha256": "a01b0c2d1fe2df25c041a9bc513e23798692947d6c01a9749df561d250e343b7",
+    "sha256_in_prefix": "a01b0c2d1fe2df25c041a9bc513e23798692947d6c01a9749df561d250e343b7",
+    "size_in_bytes": 14490
+   },
+   {
+    "_path": "include/c++/v1/codecvt",
+    "path_type": "hardlink",
+    "sha256": "0806949d0124bd295741b372bc1f867ce3277a5a76c219ecd881198ccecefd31",
+    "sha256_in_prefix": "0806949d0124bd295741b372bc1f867ce3277a5a76c219ecd881198ccecefd31",
+    "size_in_bytes": 20515
+   },
+   {
+    "_path": "include/c++/v1/compare",
+    "path_type": "hardlink",
+    "sha256": "640bf3e67357d99d53ea5543a6066900350cf5566cefb2673deb7e2de3e03216",
+    "sha256_in_prefix": "640bf3e67357d99d53ea5543a6066900350cf5566cefb2673deb7e2de3e03216",
+    "size_in_bytes": 26513
+   },
+   {
+    "_path": "include/c++/v1/complex",
+    "path_type": "hardlink",
+    "sha256": "72c4046213f883c403228dcfcc84015fe54e2f4f475a093c7e48429dac4a1945",
+    "sha256_in_prefix": "72c4046213f883c403228dcfcc84015fe54e2f4f475a093c7e48429dac4a1945",
+    "size_in_bytes": 46588
+   },
+   {
+    "_path": "include/c++/v1/complex.h",
+    "path_type": "hardlink",
+    "sha256": "64cdfc64f87ec00c14c06bc88fb59379dfd30e53b26dcfea4ec22ba46e38ad70",
+    "sha256_in_prefix": "64cdfc64f87ec00c14c06bc88fb59379dfd30e53b26dcfea4ec22ba46e38ad70",
+    "size_in_bytes": 726
+   },
+   {
+    "_path": "include/c++/v1/condition_variable",
+    "path_type": "hardlink",
+    "sha256": "9c3c8d573f0990e02731d633feb520093755581200e9dd15ac4f88dafc0a0145",
+    "sha256_in_prefix": "9c3c8d573f0990e02731d633feb520093755581200e9dd15ac4f88dafc0a0145",
+    "size_in_bytes": 7593
+   },
+   {
+    "_path": "include/c++/v1/csetjmp",
+    "path_type": "hardlink",
+    "sha256": "06d305cb99095f0b9c4fd9bc04384f7ad310c1abef24222daaea634fead03eaf",
+    "sha256_in_prefix": "06d305cb99095f0b9c4fd9bc04384f7ad310c1abef24222daaea634fead03eaf",
+    "size_in_bytes": 800
+   },
+   {
+    "_path": "include/c++/v1/csignal",
+    "path_type": "hardlink",
+    "sha256": "ea81d6621ed2fce3b7ad1736f8572a43d9d26c854a68a71c3b3111dc8226268f",
+    "sha256_in_prefix": "ea81d6621ed2fce3b7ad1736f8572a43d9d26c854a68a71c3b3111dc8226268f",
+    "size_in_bytes": 951
+   },
+   {
+    "_path": "include/c++/v1/cstdarg",
+    "path_type": "hardlink",
+    "sha256": "c6ddab96f6b07c47b0cd5d67e8691684034c2e3e040af158634e9d1df5a0cc3e",
+    "sha256_in_prefix": "c6ddab96f6b07c47b0cd5d67e8691684034c2e3e040af158634e9d1df5a0cc3e",
+    "size_in_bytes": 890
+   },
+   {
+    "_path": "include/c++/v1/cstdbool",
+    "path_type": "hardlink",
+    "sha256": "ea7414aae4e6a95069a1fa214ec3d255b8aeab1daa5e2276a7550fb55039718d",
+    "sha256_in_prefix": "ea7414aae4e6a95069a1fa214ec3d255b8aeab1daa5e2276a7550fb55039718d",
+    "size_in_bytes": 708
+   },
+   {
+    "_path": "include/c++/v1/cstddef",
+    "path_type": "hardlink",
+    "sha256": "a7c06903ff5f68ab423e58525fa723a89c0016648f1a0b8a71a9680a488ae5a0",
+    "sha256_in_prefix": "a7c06903ff5f68ab423e58525fa723a89c0016648f1a0b8a71a9680a488ae5a0",
+    "size_in_bytes": 2425
+   },
+   {
+    "_path": "include/c++/v1/cstdint",
+    "path_type": "hardlink",
+    "sha256": "a6accf4072737474ab83c3011f758f201af9250251d76ee8f54569e14cef532c",
+    "sha256_in_prefix": "a6accf4072737474ab83c3011f758f201af9250251d76ee8f54569e14cef532c",
+    "size_in_bytes": 2785
+   },
+   {
+    "_path": "include/c++/v1/cstdio",
+    "path_type": "hardlink",
+    "sha256": "b84cc966f5bdddb7ca82b5bb94b77c35fa3141881fcd803b8ebe97479bcd494d",
+    "sha256_in_prefix": "b84cc966f5bdddb7ca82b5bb94b77c35fa3141881fcd803b8ebe97479bcd494d",
+    "size_in_bytes": 4301
+   },
+   {
+    "_path": "include/c++/v1/cstdlib",
+    "path_type": "hardlink",
+    "sha256": "68141a607a1cc5815586e7a8a547875e9ef7dd3299f7d4644c3f594496326df9",
+    "sha256_in_prefix": "68141a607a1cc5815586e7a8a547875e9ef7dd3299f7d4644c3f594496326df9",
+    "size_in_bytes": 4793
+   },
+   {
+    "_path": "include/c++/v1/cstring",
+    "path_type": "hardlink",
+    "sha256": "4cc1299ba593e12cac9aae6c0142095e68446afd69cd92d9dc44caf7cf188087",
+    "sha256_in_prefix": "4cc1299ba593e12cac9aae6c0142095e68446afd69cd92d9dc44caf7cf188087",
+    "size_in_bytes": 2526
+   },
+   {
+    "_path": "include/c++/v1/ctgmath",
+    "path_type": "hardlink",
+    "sha256": "6b6314c3bb1a7dea2ea470bd7bb9f50188ed1064179086ae7680f97fb841e744",
+    "sha256_in_prefix": "6b6314c3bb1a7dea2ea470bd7bb9f50188ed1064179086ae7680f97fb841e744",
+    "size_in_bytes": 637
+   },
+   {
+    "_path": "include/c++/v1/ctime",
+    "path_type": "hardlink",
+    "sha256": "a4ad9b8a3e2ac5d1d4d4636529c01ea8ba9dad0ba2085e9ed4d735425ced59a9",
+    "sha256_in_prefix": "a4ad9b8a3e2ac5d1d4d4636529c01ea8ba9dad0ba2085e9ed4d735425ced59a9",
+    "size_in_bytes": 1701
+   },
+   {
+    "_path": "include/c++/v1/ctype.h",
+    "path_type": "hardlink",
+    "sha256": "74a36cf277d9231fde682e0fef0a110f961ba0e4e36bc2fd17b29682934a2c0d",
+    "sha256_in_prefix": "74a36cf277d9231fde682e0fef0a110f961ba0e4e36bc2fd17b29682934a2c0d",
+    "size_in_bytes": 1136
+   },
+   {
+    "_path": "include/c++/v1/cwchar",
+    "path_type": "hardlink",
+    "sha256": "2ac5d795dd1b8bd13dfe249c5755dc5f7c1f5551d79c10b47e3e018be59a3db2",
+    "sha256_in_prefix": "2ac5d795dd1b8bd13dfe249c5755dc5f7c1f5551d79c10b47e3e018be59a3db2",
+    "size_in_bytes": 6272
+   },
+   {
+    "_path": "include/c++/v1/cwctype",
+    "path_type": "hardlink",
+    "sha256": "ed7a099aea8070605110aa7affe7e64878e1541d4671890ab414ee533ce85cfb",
+    "sha256_in_prefix": "ed7a099aea8070605110aa7affe7e64878e1541d4671890ab414ee533ce85cfb",
+    "size_in_bytes": 1678
+   },
+   {
+    "_path": "include/c++/v1/cxxabi.h",
+    "path_type": "hardlink",
+    "sha256": "cc483ab4dc9051019bd108c7ea0d58bc8d3393bc574ba01ba7ac7a6c86e3346e",
+    "sha256_in_prefix": "cc483ab4dc9051019bd108c7ea0d58bc8d3393bc574ba01ba7ac7a6c86e3346e",
+    "size_in_bytes": 6945
+   },
+   {
+    "_path": "include/c++/v1/deque",
+    "path_type": "hardlink",
+    "sha256": "27cd37797441462aa2ba3a322f91fada6996e8b7e5014b1065ccc18f0ecb6b5d",
+    "sha256_in_prefix": "27cd37797441462aa2ba3a322f91fada6996e8b7e5014b1065ccc18f0ecb6b5d",
+    "size_in_bytes": 105378
+   },
+   {
+    "_path": "include/c++/v1/errno.h",
+    "path_type": "hardlink",
+    "sha256": "fdea4e50e27fcc106278ba68e41c7c054b4fba3332c6c51c6321b951ab787f82",
+    "sha256_in_prefix": "fdea4e50e27fcc106278ba68e41c7c054b4fba3332c6c51c6321b951ab787f82",
+    "size_in_bytes": 5131
+   },
+   {
+    "_path": "include/c++/v1/exception",
+    "path_type": "hardlink",
+    "sha256": "c1ddc10d39fef9734dd97347d3e15d43c304f1f6e25c30b513c1fe6d58c164a4",
+    "sha256_in_prefix": "c1ddc10d39fef9734dd97347d3e15d43c304f1f6e25c30b513c1fe6d58c164a4",
+    "size_in_bytes": 9578
+   },
+   {
+    "_path": "include/c++/v1/experimental/__config",
+    "path_type": "hardlink",
+    "sha256": "d75e06bab667a5115400fe16cda5011fce5241164128db8742e33de3b004e6fe",
+    "sha256_in_prefix": "d75e06bab667a5115400fe16cda5011fce5241164128db8742e33de3b004e6fe",
+    "size_in_bytes": 2725
+   },
+   {
+    "_path": "include/c++/v1/experimental/__memory",
+    "path_type": "hardlink",
+    "sha256": "c77e8a5c71d3f16aa5a2053fb082cd145cb2f8cfe84d06a74b85516e3cccf66c",
+    "sha256_in_prefix": "c77e8a5c71d3f16aa5a2053fb082cd145cb2f8cfe84d06a74b85516e3cccf66c",
+    "size_in_bytes": 2731
+   },
+   {
+    "_path": "include/c++/v1/experimental/algorithm",
+    "path_type": "hardlink",
+    "sha256": "b6ff2debe9d3e23212229b3779d4a58c3fbb4132625095ca5482da9e88b68257",
+    "sha256_in_prefix": "b6ff2debe9d3e23212229b3779d4a58c3fbb4132625095ca5482da9e88b68257",
+    "size_in_bytes": 1442
+   },
+   {
+    "_path": "include/c++/v1/experimental/any",
+    "path_type": "hardlink",
+    "sha256": "73cb356fc09471271decb333f0487462ac6a47c8e07d612a8f7d230c3933da2c",
+    "sha256_in_prefix": "73cb356fc09471271decb333f0487462ac6a47c8e07d612a8f7d230c3933da2c",
+    "size_in_bytes": 422
+   },
+   {
+    "_path": "include/c++/v1/experimental/chrono",
+    "path_type": "hardlink",
+    "sha256": "6821e88781ec03f6f2e3485f46265cfabf30f77d046021e4b7f507e606e5af82",
+    "sha256_in_prefix": "6821e88781ec03f6f2e3485f46265cfabf30f77d046021e4b7f507e606e5af82",
+    "size_in_bytes": 429
+   },
+   {
+    "_path": "include/c++/v1/experimental/coroutine",
+    "path_type": "hardlink",
+    "sha256": "398a5a8adb88150c2258bc847e2265614220dc3b410a4d5c9a36197534e8d5f8",
+    "sha256_in_prefix": "398a5a8adb88150c2258bc847e2265614220dc3b410a4d5c9a36197534e8d5f8",
+    "size_in_bytes": 10342
+   },
+   {
+    "_path": "include/c++/v1/experimental/deque",
+    "path_type": "hardlink",
+    "sha256": "9f85c33c7438b498d9d9b85c044ac99a9d930c63b903dd691387d7bb5600272d",
+    "sha256_in_prefix": "9f85c33c7438b498d9d9b85c044ac99a9d930c63b903dd691387d7bb5600272d",
+    "size_in_bytes": 1137
+   },
+   {
+    "_path": "include/c++/v1/experimental/dynarray",
+    "path_type": "hardlink",
+    "sha256": "64ef345b16a575a295b18a5cc082b3735d44b196c53a2a99acf2af19fbe99aea",
+    "sha256_in_prefix": "64ef345b16a575a295b18a5cc082b3735d44b196c53a2a99acf2af19fbe99aea",
+    "size_in_bytes": 11182
+   },
+   {
+    "_path": "include/c++/v1/experimental/filesystem",
+    "path_type": "hardlink",
+    "sha256": "d18fa7f37de5623f2a895e702b238d55d8ec0ccf8283a645122e61cc41feabf9",
+    "sha256_in_prefix": "d18fa7f37de5623f2a895e702b238d55d8ec0ccf8283a645122e61cc41feabf9",
+    "size_in_bytes": 9139
+   },
+   {
+    "_path": "include/c++/v1/experimental/forward_list",
+    "path_type": "hardlink",
+    "sha256": "bdf7a9db24f862dbc3d4702616ad935f3249101c5b4c6efc391b0b83b1f85f2d",
+    "sha256_in_prefix": "bdf7a9db24f862dbc3d4702616ad935f3249101c5b4c6efc391b0b83b1f85f2d",
+    "size_in_bytes": 1200
+   },
+   {
+    "_path": "include/c++/v1/experimental/functional",
+    "path_type": "hardlink",
+    "sha256": "b92c26b26ed8cc48da7ee6d232ae3b458628d4f58a2acb0c8864408f31ecdbac",
+    "sha256_in_prefix": "b92c26b26ed8cc48da7ee6d232ae3b458628d4f58a2acb0c8864408f31ecdbac",
+    "size_in_bytes": 17889
+   },
+   {
+    "_path": "include/c++/v1/experimental/iterator",
+    "path_type": "hardlink",
+    "sha256": "eb3dc3f7e02cce80d6b85e26133bded1261f52ea32e85ae5dc9008d0f2464473",
+    "sha256_in_prefix": "eb3dc3f7e02cce80d6b85e26133bded1261f52ea32e85ae5dc9008d0f2464473",
+    "size_in_bytes": 3901
+   },
+   {
+    "_path": "include/c++/v1/experimental/list",
+    "path_type": "hardlink",
+    "sha256": "ef82595ecf8c80d10012803c62f6d4dc29c4a0596f282ee9297bc6fd1fc93905",
+    "sha256_in_prefix": "ef82595ecf8c80d10012803c62f6d4dc29c4a0596f282ee9297bc6fd1fc93905",
+    "size_in_bytes": 1127
+   },
+   {
+    "_path": "include/c++/v1/experimental/map",
+    "path_type": "hardlink",
+    "sha256": "edfac56fafaaf24f3f9a7f78843c3f00f7924678e05536f12ad5fac4ee7434dc",
+    "sha256_in_prefix": "edfac56fafaaf24f3f9a7f78843c3f00f7924678e05536f12ad5fac4ee7434dc",
+    "size_in_bytes": 1692
+   },
+   {
+    "_path": "include/c++/v1/experimental/memory_resource",
+    "path_type": "hardlink",
+    "sha256": "d8820d29828f3c7949bbb6787240b2c8c65197b32c1362d5bf1fcc8de120f944",
+    "sha256_in_prefix": "d8820d29828f3c7949bbb6787240b2c8c65197b32c1362d5bf1fcc8de120f944",
+    "size_in_bytes": 13324
+   },
+   {
+    "_path": "include/c++/v1/experimental/numeric",
+    "path_type": "hardlink",
+    "sha256": "52f598636c2efa8556c6f7f8343120bbd589d34281f723547f2651c879c4b58f",
+    "sha256_in_prefix": "52f598636c2efa8556c6f7f8343120bbd589d34281f723547f2651c879c4b58f",
+    "size_in_bytes": 445
+   },
+   {
+    "_path": "include/c++/v1/experimental/optional",
+    "path_type": "hardlink",
+    "sha256": "51a5a3e7e39896ef0d484415632d6898c2a1baf8784ad3f99fb1731f6871bd45",
+    "sha256_in_prefix": "51a5a3e7e39896ef0d484415632d6898c2a1baf8784ad3f99fb1731f6871bd45",
+    "size_in_bytes": 447
+   },
+   {
+    "_path": "include/c++/v1/experimental/propagate_const",
+    "path_type": "hardlink",
+    "sha256": "77d6f82928b078c3ac88d4530fda7de5669d032b81cf94b55750e89d5cb16edd",
+    "sha256_in_prefix": "77d6f82928b078c3ac88d4530fda7de5669d032b81cf94b55750e89d5cb16edd",
+    "size_in_bytes": 20510
+   },
+   {
+    "_path": "include/c++/v1/experimental/ratio",
+    "path_type": "hardlink",
+    "sha256": "2facd26b92bd85bd97b469e4071778bdb9020761c338df03aeca93e47b980545",
+    "sha256_in_prefix": "2facd26b92bd85bd97b469e4071778bdb9020761c338df03aeca93e47b980545",
+    "size_in_bytes": 426
+   },
+   {
+    "_path": "include/c++/v1/experimental/regex",
+    "path_type": "hardlink",
+    "sha256": "c3b841764a31fbeb5fc0a2b4b310bc2fe05952536540b469c480984708abeee4",
+    "sha256_in_prefix": "c3b841764a31fbeb5fc0a2b4b310bc2fe05952536540b469c480984708abeee4",
+    "size_in_bytes": 1780
+   },
+   {
+    "_path": "include/c++/v1/experimental/set",
+    "path_type": "hardlink",
+    "sha256": "7a7f103c658772f42b378b88994b97ef1e78ee6f13c48fa6291ff01abb12a042",
+    "sha256_in_prefix": "7a7f103c658772f42b378b88994b97ef1e78ee6f13c48fa6291ff01abb12a042",
+    "size_in_bytes": 1623
+   },
+   {
+    "_path": "include/c++/v1/experimental/simd",
+    "path_type": "hardlink",
+    "sha256": "a54600d885a7a7d36630786421188d5198eee7d37de2ab9c40bafb3f86b1adcb",
+    "sha256_in_prefix": "a54600d885a7a7d36630786421188d5198eee7d37de2ab9c40bafb3f86b1adcb",
+    "size_in_bytes": 61250
+   },
+   {
+    "_path": "include/c++/v1/experimental/string",
+    "path_type": "hardlink",
+    "sha256": "066c3187ed5c85edaf6830579567a035a4b593a7c241fd676b54276cdb3c29ff",
+    "sha256_in_prefix": "066c3187ed5c85edaf6830579567a035a4b593a7c241fd676b54276cdb3c29ff",
+    "size_in_bytes": 1768
+   },
+   {
+    "_path": "include/c++/v1/experimental/string_view",
+    "path_type": "hardlink",
+    "sha256": "72e6e8c0c65ae6e6a01b23e18c36a08cfec1c5c92db7f14be9435f8bd714c722",
+    "sha256_in_prefix": "72e6e8c0c65ae6e6a01b23e18c36a08cfec1c5c92db7f14be9435f8bd714c722",
+    "size_in_bytes": 438
+   },
+   {
+    "_path": "include/c++/v1/experimental/system_error",
+    "path_type": "hardlink",
+    "sha256": "5019cd23b5d2d837b58b13ad966f3c6b491802a805ad2d9cba597b41be55b235",
+    "sha256_in_prefix": "5019cd23b5d2d837b58b13ad966f3c6b491802a805ad2d9cba597b41be55b235",
+    "size_in_bytes": 455
+   },
+   {
+    "_path": "include/c++/v1/experimental/tuple",
+    "path_type": "hardlink",
+    "sha256": "8cb5be6d2d00eb872fb1d0978c2c9110c68d7dfa3670f845f6d35ba084775bcb",
+    "sha256_in_prefix": "8cb5be6d2d00eb872fb1d0978c2c9110c68d7dfa3670f845f6d35ba084775bcb",
+    "size_in_bytes": 441
+   },
+   {
+    "_path": "include/c++/v1/experimental/type_traits",
+    "path_type": "hardlink",
+    "sha256": "31e585dbc5218e857e074616cabb871c80b2588d7e79aba8c7574dc1f3c381cb",
+    "sha256_in_prefix": "31e585dbc5218e857e074616cabb871c80b2588d7e79aba8c7574dc1f3c381cb",
+    "size_in_bytes": 5425
+   },
+   {
+    "_path": "include/c++/v1/experimental/unordered_map",
+    "path_type": "hardlink",
+    "sha256": "9fcf49cfca4bfb738d0248b105dcf84fdbefa3ecf3902df0f317259de2f6a041",
+    "sha256_in_prefix": "9fcf49cfca4bfb738d0248b105dcf84fdbefa3ecf3902df0f317259de2f6a041",
+    "size_in_bytes": 2009
+   },
+   {
+    "_path": "include/c++/v1/experimental/unordered_set",
+    "path_type": "hardlink",
+    "sha256": "4b1539ce2da61ce4f8dc38925cbe8a277c806c7b21c6117e9e77cef2f2c06cc0",
+    "sha256_in_prefix": "4b1539ce2da61ce4f8dc38925cbe8a277c806c7b21c6117e9e77cef2f2c06cc0",
+    "size_in_bytes": 1812
+   },
+   {
+    "_path": "include/c++/v1/experimental/utility",
+    "path_type": "hardlink",
+    "sha256": "5a8b1ad075b472273066af9ce4326e56774321a16df1c41330dcefd35b4e8db7",
+    "sha256_in_prefix": "5a8b1ad075b472273066af9ce4326e56774321a16df1c41330dcefd35b4e8db7",
+    "size_in_bytes": 1020
+   },
+   {
+    "_path": "include/c++/v1/experimental/vector",
+    "path_type": "hardlink",
+    "sha256": "ea9e414b466f0ab1660f00661288ae83bd75c0b79586f5159332003966ad2acd",
+    "sha256_in_prefix": "ea9e414b466f0ab1660f00661288ae83bd75c0b79586f5159332003966ad2acd",
+    "size_in_bytes": 1148
+   },
+   {
+    "_path": "include/c++/v1/ext/__hash",
+    "path_type": "hardlink",
+    "sha256": "b109391fcbcab44752efde6aba2340d013f8ceef7916594fb7407230effc0238",
+    "sha256_in_prefix": "b109391fcbcab44752efde6aba2340d013f8ceef7916594fb7407230effc0238",
+    "size_in_bytes": 3167
+   },
+   {
+    "_path": "include/c++/v1/ext/hash_map",
+    "path_type": "hardlink",
+    "sha256": "24dee6b29f474d331aa9c8ca469afe6d11d3f68124d2ca4f940e19884ffa4550",
+    "sha256_in_prefix": "24dee6b29f474d331aa9c8ca469afe6d11d3f68124d2ca4f940e19884ffa4550",
+    "size_in_bytes": 38598
+   },
+   {
+    "_path": "include/c++/v1/ext/hash_set",
+    "path_type": "hardlink",
+    "sha256": "efe4a04e821873ccb4af49be7e2955783d2c0fb9c9bed22db891d4c9fd4fb93d",
+    "sha256_in_prefix": "efe4a04e821873ccb4af49be7e2955783d2c0fb9c9bed22db891d4c9fd4fb93d",
+    "size_in_bytes": 24846
+   },
+   {
+    "_path": "include/c++/v1/filesystem",
+    "path_type": "hardlink",
+    "sha256": "b807589f8df623611ca23df2cc46bac4dff80e26ca6ebba5292cb2d44fa1b8b6",
+    "sha256_in_prefix": "b807589f8df623611ca23df2cc46bac4dff80e26ca6ebba5292cb2d44fa1b8b6",
+    "size_in_bytes": 82779
+   },
+   {
+    "_path": "include/c++/v1/float.h",
+    "path_type": "hardlink",
+    "sha256": "c5b352d5c8c7b2baefb04c8022bedb64da6030b1247b56f2d8e176a2a4270663",
+    "sha256_in_prefix": "c5b352d5c8c7b2baefb04c8022bedb64da6030b1247b56f2d8e176a2a4270663",
+    "size_in_bytes": 1608
+   },
+   {
+    "_path": "include/c++/v1/forward_list",
+    "path_type": "hardlink",
+    "sha256": "1127ff975ace87cca5c0642fc164671d8aa52e5d56c78ba332091ecfd48f1c94",
+    "sha256_in_prefix": "1127ff975ace87cca5c0642fc164671d8aa52e5d56c78ba332091ecfd48f1c94",
+    "size_in_bytes": 60284
+   },
+   {
+    "_path": "include/c++/v1/fstream",
+    "path_type": "hardlink",
+    "sha256": "bdf7b1c0e63537a12073ff0df8261d405f87dff21554870a88e31d47a1252f4c",
+    "sha256_in_prefix": "bdf7b1c0e63537a12073ff0df8261d405f87dff21554870a88e31d47a1252f4c",
+    "size_in_bytes": 53764
+   },
+   {
+    "_path": "include/c++/v1/functional",
+    "path_type": "hardlink",
+    "sha256": "d2456f03f39adbd19ef18fb35c305fee7dc39d7c7ebefe2599d917ddfd834f6a",
+    "sha256_in_prefix": "d2456f03f39adbd19ef18fb35c305fee7dc39d7c7ebefe2599d917ddfd834f6a",
+    "size_in_bytes": 79145
+   },
+   {
+    "_path": "include/c++/v1/future",
+    "path_type": "hardlink",
+    "sha256": "eeb05779766a38ff56333c9d19e9de05dc4848f922d2cfe78dc88c44afc6bc91",
+    "sha256_in_prefix": "eeb05779766a38ff56333c9d19e9de05dc4848f922d2cfe78dc88c44afc6bc91",
+    "size_in_bytes": 72660
+   },
+   {
+    "_path": "include/c++/v1/initializer_list",
+    "path_type": "hardlink",
+    "sha256": "256db3286336d7d36ea8b025224f1f2a8ccc99c8b7655cfc95875ce412274df1",
+    "sha256_in_prefix": "256db3286336d7d36ea8b025224f1f2a8ccc99c8b7655cfc95875ce412274df1",
+    "size_in_bytes": 2833
+   },
+   {
+    "_path": "include/c++/v1/inttypes.h",
+    "path_type": "hardlink",
+    "sha256": "a276f62c3ff5853a35bbf676fd62fcb078224ada94cd80c90f7f037bb0ac5964",
+    "sha256_in_prefix": "a276f62c3ff5853a35bbf676fd62fcb078224ada94cd80c90f7f037bb0ac5964",
+    "size_in_bytes": 3597
+   },
+   {
+    "_path": "include/c++/v1/iomanip",
+    "path_type": "hardlink",
+    "sha256": "2ddedcf1b53fdc45bfc04eac8357fee454b20854ffe527344249545ae6a6cf3d",
+    "sha256_in_prefix": "2ddedcf1b53fdc45bfc04eac8357fee454b20854ffe527344249545ae6a6cf3d",
+    "size_in_bytes": 18251
+   },
+   {
+    "_path": "include/c++/v1/ios",
+    "path_type": "hardlink",
+    "sha256": "2f608bed970139ae1f8b88c4fe4a8749b807e4e0397449f87585b22a66b594ec",
+    "sha256_in_prefix": "2f608bed970139ae1f8b88c4fe4a8749b807e4e0397449f87585b22a66b594ec",
+    "size_in_bytes": 25744
+   },
+   {
+    "_path": "include/c++/v1/iosfwd",
+    "path_type": "hardlink",
+    "sha256": "aac5be533632aca27889643b69a9cfbe87b65075517bf0442e6536cceb709bc0",
+    "sha256_in_prefix": "aac5be533632aca27889643b69a9cfbe87b65075517bf0442e6536cceb709bc0",
+    "size_in_bytes": 7871
+   },
+   {
+    "_path": "include/c++/v1/iostream",
+    "path_type": "hardlink",
+    "sha256": "a7e5b7af24c47a09eac68187f6735e9c7f037651507a629e12abea932615612c",
+    "sha256_in_prefix": "a7e5b7af24c47a09eac68187f6735e9c7f037651507a629e12abea932615612c",
+    "size_in_bytes": 1378
+   },
+   {
+    "_path": "include/c++/v1/istream",
+    "path_type": "hardlink",
+    "sha256": "336b9d781a388ec332e3951c3913573c18fcd6f658df5fe314355f3b7c6a9123",
+    "sha256_in_prefix": "336b9d781a388ec332e3951c3913573c18fcd6f658df5fe314355f3b7c6a9123",
+    "size_in_bytes": 43309
+   },
+   {
+    "_path": "include/c++/v1/iterator",
+    "path_type": "hardlink",
+    "sha256": "dddf7540a8ff9834b6428a3eb9ce46eb5ac71440d4efb373e8ea7c137c9e149f",
+    "sha256_in_prefix": "dddf7540a8ff9834b6428a3eb9ce46eb5ac71440d4efb373e8ea7c137c9e149f",
+    "size_in_bytes": 67698
+   },
+   {
+    "_path": "include/c++/v1/limits",
+    "path_type": "hardlink",
+    "sha256": "36d65ad68dfa324fe52b8cc07494e254f5ab29c99378e088e204e04bf80bc800",
+    "sha256_in_prefix": "36d65ad68dfa324fe52b8cc07494e254f5ab29c99378e088e204e04bf80bc800",
+    "size_in_bytes": 40572
+   },
+   {
+    "_path": "include/c++/v1/limits.h",
+    "path_type": "hardlink",
+    "sha256": "eb4011f907969eace3644fb72857d41a3397d661fb7610ab69bc4680533cc42c",
+    "sha256_in_prefix": "eb4011f907969eace3644fb72857d41a3397d661fb7610ab69bc4680533cc42c",
+    "size_in_bytes": 1459
+   },
+   {
+    "_path": "include/c++/v1/list",
+    "path_type": "hardlink",
+    "sha256": "b8c1e46406e590d912b5be93b2f8ac376ab3a463f657bb87322846ed1358f6ae",
+    "sha256_in_prefix": "b8c1e46406e590d912b5be93b2f8ac376ab3a463f657bb87322846ed1358f6ae",
+    "size_in_bytes": 78157
+   },
+   {
+    "_path": "include/c++/v1/locale",
+    "path_type": "hardlink",
+    "sha256": "e5f153f018ea997128cf4714cfce5b884f94aa03a5a142087adbd90f4946a651",
+    "sha256_in_prefix": "e5f153f018ea997128cf4714cfce5b884f94aa03a5a142087adbd90f4946a651",
+    "size_in_bytes": 152946
+   },
+   {
+    "_path": "include/c++/v1/locale.h",
+    "path_type": "hardlink",
+    "sha256": "6f092f40f256f9a5a40af6249c44d8401b9542a2be7ce48a39fc7f162f208eb0",
+    "sha256_in_prefix": "6f092f40f256f9a5a40af6249c44d8401b9542a2be7ce48a39fc7f162f208eb0",
+    "size_in_bytes": 763
+   },
+   {
+    "_path": "include/c++/v1/map",
+    "path_type": "hardlink",
+    "sha256": "95c786ce97fa427a8670c166c7bd41f432ef3aa88aadd679aa0b65bac4e39fd4",
+    "sha256_in_prefix": "95c786ce97fa427a8670c166c7bd41f432ef3aa88aadd679aa0b65bac4e39fd4",
+    "size_in_bytes": 75520
+   },
+   {
+    "_path": "include/c++/v1/math.h",
+    "path_type": "hardlink",
+    "sha256": "ccb698bba066ba4b9cef6ccddd5a79ae5c389def391adb10d2de1be77f05b69d",
+    "sha256_in_prefix": "ccb698bba066ba4b9cef6ccddd5a79ae5c389def391adb10d2de1be77f05b69d",
+    "size_in_bytes": 49478
+   },
+   {
+    "_path": "include/c++/v1/memory",
+    "path_type": "hardlink",
+    "sha256": "50fb2880224c728934507a4b0aa2ca3a2a5a214ca6bf81bb7f6ddb67798bdeb5",
+    "sha256_in_prefix": "50fb2880224c728934507a4b0aa2ca3a2a5a214ca6bf81bb7f6ddb67798bdeb5",
+    "size_in_bytes": 174005
+   },
+   {
+    "_path": "include/c++/v1/module.modulemap",
+    "path_type": "hardlink",
+    "sha256": "1df109475f2100f90a0ae444ef54e27a82ba5ddbca43672ca16d4198e25d5d78",
+    "sha256_in_prefix": "1df109475f2100f90a0ae444ef54e27a82ba5ddbca43672ca16d4198e25d5d78",
+    "size_in_bytes": 11971
+   },
+   {
+    "_path": "include/c++/v1/mutex",
+    "path_type": "hardlink",
+    "sha256": "ed7c2eb548f53938be8ac88243447f2fffe9e9c2f125214e6a274d85961e679f",
+    "sha256_in_prefix": "ed7c2eb548f53938be8ac88243447f2fffe9e9c2f125214e6a274d85961e679f",
+    "size_in_bytes": 17244
+   },
+   {
+    "_path": "include/c++/v1/new",
+    "path_type": "hardlink",
+    "sha256": "4e04f604ace9ff28b888333aec33df5473ec1be7b6f9643c940619eb607b914d",
+    "sha256_in_prefix": "4e04f604ace9ff28b888333aec33df5473ec1be7b6f9643c940619eb607b914d",
+    "size_in_bytes": 12204
+   },
+   {
+    "_path": "include/c++/v1/numeric",
+    "path_type": "hardlink",
+    "sha256": "d73bffe33982914e2e41e0b716286ab9cef5bbd9cccaf413cacdcc3d78e81d7c",
+    "sha256_in_prefix": "d73bffe33982914e2e41e0b716286ab9cef5bbd9cccaf413cacdcc3d78e81d7c",
+    "size_in_bytes": 18281
+   },
+   {
+    "_path": "include/c++/v1/optional",
+    "path_type": "hardlink",
+    "sha256": "8378f4b42cd67ffbf9708557a3cf62341e2b2d4bae46bc3eaed9fbc8d061a6e3",
+    "sha256_in_prefix": "8378f4b42cd67ffbf9708557a3cf62341e2b2d4bae46bc3eaed9fbc8d061a6e3",
+    "size_in_bytes": 42082
+   },
+   {
+    "_path": "include/c++/v1/ostream",
+    "path_type": "hardlink",
+    "sha256": "0c2c06d388569b53348ecda9b5108f57b9029f1f5a5fb4b7bc4e20c53559d331",
+    "sha256_in_prefix": "0c2c06d388569b53348ecda9b5108f57b9029f1f5a5fb4b7bc4e20c53559d331",
+    "size_in_bytes": 32769
+   },
+   {
+    "_path": "include/c++/v1/queue",
+    "path_type": "hardlink",
+    "sha256": "8f746e83466b95d2215b072c62b9c906593817b0acf48b69f68d35401b7013ec",
+    "sha256_in_prefix": "8f746e83466b95d2215b072c62b9c906593817b0acf48b69f68d35401b7013ec",
+    "size_in_bytes": 28123
+   },
+   {
+    "_path": "include/c++/v1/random",
+    "path_type": "hardlink",
+    "sha256": "44bc9f05f9f18988088040dfe1665897380e5d248aed4041c2f7d9f13bcc821e",
+    "sha256_in_prefix": "44bc9f05f9f18988088040dfe1665897380e5d248aed4041c2f7d9f13bcc821e",
+    "size_in_bytes": 225950
+   },
+   {
+    "_path": "include/c++/v1/ratio",
+    "path_type": "hardlink",
+    "sha256": "29bfa990dc112ab997ece3be314ce49d45d08b28496e363d11ddefaaf69dfaae",
+    "sha256_in_prefix": "29bfa990dc112ab997ece3be314ce49d45d08b28496e363d11ddefaaf69dfaae",
+    "size_in_bytes": 16416
+   },
+   {
+    "_path": "include/c++/v1/regex",
+    "path_type": "hardlink",
+    "sha256": "30f7bb4210f20b31d595f49c04485750d793f51a12f551cfb5df2b49ad4850f3",
+    "sha256_in_prefix": "30f7bb4210f20b31d595f49c04485750d793f51a12f551cfb5df2b49ad4850f3",
+    "size_in_bytes": 221997
+   },
+   {
+    "_path": "include/c++/v1/scoped_allocator",
+    "path_type": "hardlink",
+    "sha256": "c3f4edad2dd8d6cf50080c19f693c052f82cb7071d36bb24279a16fea716427c",
+    "sha256_in_prefix": "c3f4edad2dd8d6cf50080c19f693c052f82cb7071d36bb24279a16fea716427c",
+    "size_in_bytes": 25708
+   },
+   {
+    "_path": "include/c++/v1/set",
+    "path_type": "hardlink",
+    "sha256": "5050f474939222e75590c689ea6afe1dc4b39e0b1b5b083a66a4a38812e9410b",
+    "sha256_in_prefix": "5050f474939222e75590c689ea6afe1dc4b39e0b1b5b083a66a4a38812e9410b",
+    "size_in_bytes": 48584
+   },
+   {
+    "_path": "include/c++/v1/setjmp.h",
+    "path_type": "hardlink",
+    "sha256": "9b2489eced08135d0266c5fe3bbe2a3b6375db98bb915f150bb4f12a13c637d5",
+    "sha256_in_prefix": "9b2489eced08135d0266c5fe3bbe2a3b6375db98bb915f150bb4f12a13c637d5",
+    "size_in_bytes": 789
+   },
+   {
+    "_path": "include/c++/v1/shared_mutex",
+    "path_type": "hardlink",
+    "sha256": "cbca87a72b9214a9d3558c0344b9925f73f03b44c149475213b1dfcb9f68387c",
+    "sha256_in_prefix": "cbca87a72b9214a9d3558c0344b9925f73f03b44c149475213b1dfcb9f68387c",
+    "size_in_bytes": 14639
+   },
+   {
+    "_path": "include/c++/v1/span",
+    "path_type": "hardlink",
+    "sha256": "1f76e40198adbdc23f8d17d82f87c8dd10134a2bb5e1201c847aef7041a2b7fd",
+    "sha256_in_prefix": "1f76e40198adbdc23f8d17d82f87c8dd10134a2bb5e1201c847aef7041a2b7fd",
+    "size_in_bytes": 26460
+   },
+   {
+    "_path": "include/c++/v1/sstream",
+    "path_type": "hardlink",
+    "sha256": "ec684dbb1453e36d5dabfe36c5a6d96971092f8699046bac40b30fab6e4db875",
+    "sha256_in_prefix": "ec684dbb1453e36d5dabfe36c5a6d96971092f8699046bac40b30fab6e4db875",
+    "size_in_bytes": 33325
+   },
+   {
+    "_path": "include/c++/v1/stack",
+    "path_type": "hardlink",
+    "sha256": "9373c759a81d52f513f03379e1d3d0afbd557117d7da9f297e5c32e174e27aad",
+    "sha256_in_prefix": "9373c759a81d52f513f03379e1d3d0afbd557117d7da9f297e5c32e174e27aad",
+    "size_in_bytes": 10089
+   },
+   {
+    "_path": "include/c++/v1/stdbool.h",
+    "path_type": "hardlink",
+    "sha256": "e9a1211ac86a821474c2f7d6867380b1bfc0bb0202a2680be6ea3c51c3213158",
+    "sha256_in_prefix": "e9a1211ac86a821474c2f7d6867380b1bfc0bb0202a2680be6ea3c51c3213158",
+    "size_in_bytes": 802
+   },
+   {
+    "_path": "include/c++/v1/stddef.h",
+    "path_type": "hardlink",
+    "sha256": "b931539c10b0fcaafcf991f154049fa3c3c4aae02360a1be5edd6778182406f3",
+    "sha256_in_prefix": "b931539c10b0fcaafcf991f154049fa3c3c4aae02360a1be5edd6778182406f3",
+    "size_in_bytes": 1297
+   },
+   {
+    "_path": "include/c++/v1/stdexcept",
+    "path_type": "hardlink",
+    "sha256": "53f5f9fd2e130063450387ed009b31eeedc3a3bb5d6e25c9a7662e0d641ddc8d",
+    "sha256_in_prefix": "53f5f9fd2e130063450387ed009b31eeedc3a3bb5d6e25c9a7662e0d641ddc8d",
+    "size_in_bytes": 6598
+   },
+   {
+    "_path": "include/c++/v1/stdint.h",
+    "path_type": "hardlink",
+    "sha256": "ed35ae99230f7245d2576ef376e685a5dc89442ad947cbd775da8cbaf67128c0",
+    "sha256_in_prefix": "ed35ae99230f7245d2576ef376e685a5dc89442ad947cbd775da8cbaf67128c0",
+    "size_in_bytes": 2038
+   },
+   {
+    "_path": "include/c++/v1/stdio.h",
+    "path_type": "hardlink",
+    "sha256": "98b0503235977489a9bd9f5279df2b71ee58142ebe0b7f98cc20e1f5e3f07c78",
+    "sha256_in_prefix": "98b0503235977489a9bd9f5279df2b71ee58142ebe0b7f98cc20e1f5e3f07c78",
+    "size_in_bytes": 3508
+   },
+   {
+    "_path": "include/c++/v1/stdlib.h",
+    "path_type": "hardlink",
+    "sha256": "45a189476b3c679912e3c3b8f856282a719853db186739f00857d0bef7b0b5f7",
+    "sha256_in_prefix": "45a189476b3c679912e3c3b8f856282a719853db186739f00857d0bef7b0b5f7",
+    "size_in_bytes": 4399
+   },
+   {
+    "_path": "include/c++/v1/streambuf",
+    "path_type": "hardlink",
+    "sha256": "56cf5d7f48aa7ad3c8ad1797404951b05af4ae5f8e7f29641770ff6a6d7ec05f",
+    "sha256_in_prefix": "56cf5d7f48aa7ad3c8ad1797404951b05af4ae5f8e7f29641770ff6a6d7ec05f",
+    "size_in_bytes": 14698
+   },
+   {
+    "_path": "include/c++/v1/string",
+    "path_type": "hardlink",
+    "sha256": "c214fb64a1ad6d6aeec7747c41bde4b0ecc62b47c747d06686d5b9d8a58d1251",
+    "sha256_in_prefix": "c214fb64a1ad6d6aeec7747c41bde4b0ecc62b47c747d06686d5b9d8a58d1251",
+    "size_in_bytes": 160513
+   },
+   {
+    "_path": "include/c++/v1/string.h",
+    "path_type": "hardlink",
+    "sha256": "7e0c97d37ef4d7826b705d53e0d24f3db35906ef6e58e0d9ccf99c9bce68104c",
+    "sha256_in_prefix": "7e0c97d37ef4d7826b705d53e0d24f3db35906ef6e58e0d9ccf99c9bce68104c",
+    "size_in_bytes": 4661
+   },
+   {
+    "_path": "include/c++/v1/string_view",
+    "path_type": "hardlink",
+    "sha256": "f6eb21d191a01b5b8329321ffa8cd0680974a2692627e5c67ad32b0f7787f0a3",
+    "sha256_in_prefix": "f6eb21d191a01b5b8329321ffa8cd0680974a2692627e5c67ad32b0f7787f0a3",
+    "size_in_bytes": 34054
+   },
+   {
+    "_path": "include/c++/v1/strstream",
+    "path_type": "hardlink",
+    "sha256": "2ad4d7e7de7bb06c5eba0b52270dce897732e63b3acc86de8574483a9bc664c8",
+    "sha256_in_prefix": "2ad4d7e7de7bb06c5eba0b52270dce897732e63b3acc86de8574483a9bc664c8",
+    "size_in_bytes": 11132
+   },
+   {
+    "_path": "include/c++/v1/support/android/locale_bionic.h",
+    "path_type": "hardlink",
+    "sha256": "3743ede6e763e2ecbf8b6761742ff2a2abf402583b748e7c9d8b9fb6006ea5ee",
+    "sha256_in_prefix": "3743ede6e763e2ecbf8b6761742ff2a2abf402583b748e7c9d8b9fb6006ea5ee",
+    "size_in_bytes": 1799
+   },
+   {
+    "_path": "include/c++/v1/support/fuchsia/xlocale.h",
+    "path_type": "hardlink",
+    "sha256": "69d77d57f897c11ec88609b817de5ac9bea62391ed10a14aaad3ece56eebc3fe",
+    "sha256_in_prefix": "69d77d57f897c11ec88609b817de5ac9bea62391ed10a14aaad3ece56eebc3fe",
+    "size_in_bytes": 694
+   },
+   {
+    "_path": "include/c++/v1/support/ibm/limits.h",
+    "path_type": "hardlink",
+    "sha256": "5b95d86a5f9cfe8a8f2cc8f19c023e1b0d720ddd3fa9d0d38b6c18469b913d38",
+    "sha256_in_prefix": "5b95d86a5f9cfe8a8f2cc8f19c023e1b0d720ddd3fa9d0d38b6c18469b913d38",
+    "size_in_bytes": 3597
+   },
+   {
+    "_path": "include/c++/v1/support/ibm/locale_mgmt_aix.h",
+    "path_type": "hardlink",
+    "sha256": "aeff8eb166de07ba5b608748fcc8c27e499299d5177d83084e2a206bf97c10d7",
+    "sha256_in_prefix": "aeff8eb166de07ba5b608748fcc8c27e499299d5177d83084e2a206bf97c10d7",
+    "size_in_bytes": 2441
+   },
+   {
+    "_path": "include/c++/v1/support/ibm/support.h",
+    "path_type": "hardlink",
+    "sha256": "2ee9fc09d568189118e90f0bbe367dbcb71fc48b72ba23b436356c022a0a70a8",
+    "sha256_in_prefix": "2ee9fc09d568189118e90f0bbe367dbcb71fc48b72ba23b436356c022a0a70a8",
+    "size_in_bytes": 1680
+   },
+   {
+    "_path": "include/c++/v1/support/ibm/xlocale.h",
+    "path_type": "hardlink",
+    "sha256": "545e891f36422894b3ec2b7b2ad81c32e6c0e0969941815c3ad85a573f4c4f4e",
+    "sha256_in_prefix": "545e891f36422894b3ec2b7b2ad81c32e6c0e0969941815c3ad85a573f4c4f4e",
+    "size_in_bytes": 5693
+   },
+   {
+    "_path": "include/c++/v1/support/musl/xlocale.h",
+    "path_type": "hardlink",
+    "sha256": "c30ce6d70338d82ba5a9262dceddecdf756aa18af71c96439e5688ca5a46546e",
+    "sha256_in_prefix": "c30ce6d70338d82ba5a9262dceddecdf756aa18af71c96439e5688ca5a46546e",
+    "size_in_bytes": 1861
+   },
+   {
+    "_path": "include/c++/v1/support/newlib/xlocale.h",
+    "path_type": "hardlink",
+    "sha256": "3c19e37170d1b85cb109673271f6ff5e60b0e048e00537faed9906cb2ca89bde",
+    "sha256_in_prefix": "3c19e37170d1b85cb109673271f6ff5e60b0e048e00537faed9906cb2ca89bde",
+    "size_in_bytes": 824
+   },
+   {
+    "_path": "include/c++/v1/support/solaris/floatingpoint.h",
+    "path_type": "hardlink",
+    "sha256": "8be97082c87cf823ce8feae2f298739500ba705a56fbcc57bf6430a69c2249b4",
+    "sha256_in_prefix": "8be97082c87cf823ce8feae2f298739500ba705a56fbcc57bf6430a69c2249b4",
+    "size_in_bytes": 463
+   },
+   {
+    "_path": "include/c++/v1/support/solaris/wchar.h",
+    "path_type": "hardlink",
+    "sha256": "b28b13581f702df4e4eecfd9c1d2f65efb7714ece3966f98ef83eb4f692dba08",
+    "sha256_in_prefix": "b28b13581f702df4e4eecfd9c1d2f65efb7714ece3966f98ef83eb4f692dba08",
+    "size_in_bytes": 1217
+   },
+   {
+    "_path": "include/c++/v1/support/solaris/xlocale.h",
+    "path_type": "hardlink",
+    "sha256": "46b3fd5d3084dccbce55bec4f860427327c8e8e62e98fffef6712abef6923ba8",
+    "sha256_in_prefix": "46b3fd5d3084dccbce55bec4f860427327c8e8e62e98fffef6712abef6923ba8",
+    "size_in_bytes": 2244
+   },
+   {
+    "_path": "include/c++/v1/support/win32/limits_msvc_win32.h",
+    "path_type": "hardlink",
+    "sha256": "76b03a4ed83eba437888d313379d9cfa672919eda5fde94b861a8cd1c9f79dfc",
+    "sha256_in_prefix": "76b03a4ed83eba437888d313379d9cfa672919eda5fde94b861a8cd1c9f79dfc",
+    "size_in_bytes": 2619
+   },
+   {
+    "_path": "include/c++/v1/support/win32/locale_win32.h",
+    "path_type": "hardlink",
+    "sha256": "8d04241fd438e87cddb085204ea8817e4e41419b390277af210a2691911d3543",
+    "sha256_in_prefix": "8d04241fd438e87cddb085204ea8817e4e41419b390277af210a2691911d3543",
+    "size_in_bytes": 6805
+   },
+   {
+    "_path": "include/c++/v1/support/xlocale/__nop_locale_mgmt.h",
+    "path_type": "hardlink",
+    "sha256": "8a111380161df3d00d1b53c914981937088923f407664f929d4b451769eebd7d",
+    "sha256_in_prefix": "8a111380161df3d00d1b53c914981937088923f407664f929d4b451769eebd7d",
+    "size_in_bytes": 1414
+   },
+   {
+    "_path": "include/c++/v1/support/xlocale/__posix_l_fallback.h",
+    "path_type": "hardlink",
+    "sha256": "9467cf0a2605bcec2d0db50b0580821ff8f35346fb36c7ec9aed11524192f481",
+    "sha256_in_prefix": "9467cf0a2605bcec2d0db50b0580821ff8f35346fb36c7ec9aed11524192f481",
+    "size_in_bytes": 4600
+   },
+   {
+    "_path": "include/c++/v1/support/xlocale/__strtonum_fallback.h",
+    "path_type": "hardlink",
+    "sha256": "05bdb77a2962bb6955cbe0744be00d331c7925a35d371afcaa219ed019697ced",
+    "sha256_in_prefix": "05bdb77a2962bb6955cbe0744be00d331c7925a35d371afcaa219ed019697ced",
+    "size_in_bytes": 2339
+   },
+   {
+    "_path": "include/c++/v1/support/xlocale/xlocale.h",
+    "path_type": "hardlink",
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "sha256_in_prefix": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "size_in_bytes": 0
+   },
+   {
+    "_path": "include/c++/v1/system_error",
+    "path_type": "hardlink",
+    "sha256": "8165ed9b81ef9ef37d74b0c9838e45aea8d7206dd5427e9b8c1558840e97e470",
+    "sha256_in_prefix": "8165ed9b81ef9ef37d74b0c9838e45aea8d7206dd5427e9b8c1558840e97e470",
+    "size_in_bytes": 14143
+   },
+   {
+    "_path": "include/c++/v1/tgmath.h",
+    "path_type": "hardlink",
+    "sha256": "d1286b06778c2f35b54d5ca1bc1cb1a846348761291942c2fadf2c962656fded",
+    "sha256_in_prefix": "d1286b06778c2f35b54d5ca1bc1cb1a846348761291942c2fadf2c962656fded",
+    "size_in_bytes": 719
+   },
+   {
+    "_path": "include/c++/v1/thread",
+    "path_type": "hardlink",
+    "sha256": "a3ff0d38e9ad3f3b4413e5b04576227f1349dda815186b1e18e5d58af220a5f6",
+    "sha256_in_prefix": "a3ff0d38e9ad3f3b4413e5b04576227f1349dda815186b1e18e5d58af220a5f6",
+    "size_in_bytes": 13145
+   },
+   {
+    "_path": "include/c++/v1/tuple",
+    "path_type": "hardlink",
+    "sha256": "af64a426e504a3f0be6fa71a4545d4b822d07fa9c62678f6149fbcff3a7b11f0",
+    "sha256_in_prefix": "af64a426e504a3f0be6fa71a4545d4b822d07fa9c62678f6149fbcff3a7b11f0",
+    "size_in_bytes": 53442
+   },
+   {
+    "_path": "include/c++/v1/type_traits",
+    "path_type": "hardlink",
+    "sha256": "0f371c2fab34b30e1522b082ef66a6e2a59832ca5ba3730fe6f1abba4c3d635b",
+    "sha256_in_prefix": "0f371c2fab34b30e1522b082ef66a6e2a59832ca5ba3730fe6f1abba4c3d635b",
+    "size_in_bytes": 163899
+   },
+   {
+    "_path": "include/c++/v1/typeindex",
+    "path_type": "hardlink",
+    "sha256": "c004c7107136f21f742d0fdeae53713d7b86a73c51ead1568da0f8245b15c472",
+    "sha256_in_prefix": "c004c7107136f21f742d0fdeae53713d7b86a73c51ead1568da0f8245b15c472",
+    "size_in_bytes": 2818
+   },
+   {
+    "_path": "include/c++/v1/typeinfo",
+    "path_type": "hardlink",
+    "sha256": "8d489c3b6652318ff8389fdb832894bfa1252e179492a759a67b7da57254e748",
+    "sha256_in_prefix": "8d489c3b6652318ff8389fdb832894bfa1252e179492a759a67b7da57254e748",
+    "size_in_bytes": 5993
+   },
+   {
+    "_path": "include/c++/v1/unordered_map",
+    "path_type": "hardlink",
+    "sha256": "08ce6a3b4a41ab5409a994ea71fc666e4a9b8334d2be4efe3aa8c1d40a2d76a6",
+    "sha256_in_prefix": "08ce6a3b4a41ab5409a994ea71fc666e4a9b8334d2be4efe3aa8c1d40a2d76a6",
+    "size_in_bytes": 84739
+   },
+   {
+    "_path": "include/c++/v1/unordered_set",
+    "path_type": "hardlink",
+    "sha256": "9f22d0e0cd10bbf78de28427ab4bf72e0689cb097b92a4716f1e0643e4372282",
+    "sha256_in_prefix": "9f22d0e0cd10bbf78de28427ab4bf72e0689cb097b92a4716f1e0643e4372282",
+    "size_in_bytes": 57021
+   },
+   {
+    "_path": "include/c++/v1/utility",
+    "path_type": "hardlink",
+    "sha256": "244921f0e970603438fc389f1c67dadc5dd00cff0f04e2f3ab215222739f51d0",
+    "sha256_in_prefix": "244921f0e970603438fc389f1c67dadc5dd00cff0f04e2f3ab215222739f51d0",
+    "size_in_bytes": 46955
+   },
+   {
+    "_path": "include/c++/v1/valarray",
+    "path_type": "hardlink",
+    "sha256": "d9f620051aa658d57242f028c8228ef997146fb964df236d08e7418010be4937",
+    "sha256_in_prefix": "d9f620051aa658d57242f028c8228ef997146fb964df236d08e7418010be4937",
+    "size_in_bytes": 135165
+   },
+   {
+    "_path": "include/c++/v1/variant",
+    "path_type": "hardlink",
+    "sha256": "acc293560b7ef43f08b5e7d2b346db3eac755ce5022e0a0d217d7f207400148e",
+    "sha256_in_prefix": "acc293560b7ef43f08b5e7d2b346db3eac755ce5022e0a0d217d7f207400148e",
+    "size_in_bytes": 59004
+   },
+   {
+    "_path": "include/c++/v1/vector",
+    "path_type": "hardlink",
+    "sha256": "38f19c976591cccfec0503bce4728652c029d198aabdeda240de6821fa01eec6",
+    "sha256_in_prefix": "38f19c976591cccfec0503bce4728652c029d198aabdeda240de6821fa01eec6",
+    "size_in_bytes": 111158
+   },
+   {
+    "_path": "include/c++/v1/version",
+    "path_type": "hardlink",
+    "sha256": "5002e6ec1432103b8c9080f0e4e328c7e0b833a9618e0cc778235101a7c4a76b",
+    "sha256_in_prefix": "5002e6ec1432103b8c9080f0e4e328c7e0b833a9618e0cc778235101a7c4a76b",
+    "size_in_bytes": 585
+   },
+   {
+    "_path": "include/c++/v1/wchar.h",
+    "path_type": "hardlink",
+    "sha256": "27ff803b17a31d7dece2990d0bd117cf0f84f66dfa5a3554019835824ef9f9ac",
+    "sha256_in_prefix": "27ff803b17a31d7dece2990d0bd117cf0f84f66dfa5a3554019835824ef9f9ac",
+    "size_in_bytes": 8408
+   },
+   {
+    "_path": "include/c++/v1/wctype.h",
+    "path_type": "hardlink",
+    "sha256": "e42a84375c36c25da3a2be1f1772be600eb528ef96c21caba4286de57ccbe90b",
+    "sha256_in_prefix": "e42a84375c36c25da3a2be1f1772be600eb528ef96c21caba4286de57ccbe90b",
+    "size_in_bytes": 1541
+   },
+   {
+    "_path": "lib/libc++.1.0.dylib",
+    "file_mode": "binary",
+    "path_type": "hardlink",
+    "prefix_placeholder": "/Users/travis/miniconda3/conda-bld/libcxx_1541222631824/_h_env_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_pl",
+    "sha256": "c3111336d585d479e862bb00c4e783fb6da6a63d53d13f13e595d868ba1fbcd9",
+    "sha256_in_prefix": "57a1e60f6963fa32183ec6cf839a7a11c4c2862aa97c00b31009b3d6d38a201e",
+    "size_in_bytes": 853004
+   },
+   {
+    "_path": "lib/libc++.1.dylib",
+    "file_mode": "binary",
+    "path_type": "softlink",
+    "prefix_placeholder": "/Users/travis/miniconda3/conda-bld/libcxx_1541222631824/_h_env_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_pl",
+    "sha256": "c3111336d585d479e862bb00c4e783fb6da6a63d53d13f13e595d868ba1fbcd9",
+    "size_in_bytes": 853004
+   },
+   {
+    "_path": "lib/libc++.a",
+    "path_type": "hardlink",
+    "sha256": "8d6033b40fde79babadb3126f62be2520cc23202deb1d60fc9e9ec288c889829",
+    "sha256_in_prefix": "8d6033b40fde79babadb3126f62be2520cc23202deb1d60fc9e9ec288c889829",
+    "size_in_bytes": 1302304
+   },
+   {
+    "_path": "lib/libc++.dylib",
+    "file_mode": "binary",
+    "path_type": "softlink",
+    "prefix_placeholder": "/Users/travis/miniconda3/conda-bld/libcxx_1541222631824/_h_env_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_pl",
+    "sha256": "c3111336d585d479e862bb00c4e783fb6da6a63d53d13f13e595d868ba1fbcd9",
+    "size_in_bytes": 853004
+   },
+   {
+    "_path": "lib/libc++abi.1.0.dylib",
+    "file_mode": "binary",
+    "path_type": "hardlink",
+    "prefix_placeholder": "/Users/travis/miniconda3/conda-bld/libcxx_1541222631824/_h_env_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_pl",
+    "sha256": "68676f8e8a8d52882ec5985ad4d705e8f00b8b82e79f3fa100aeea0ab86741dd",
+    "sha256_in_prefix": "60f389afaf6a06b5f824e49ed41d6ea46c2ec718442cc2da44182ac27da9707c",
+    "size_in_bytes": 221120
+   },
+   {
+    "_path": "lib/libc++abi.1.dylib",
+    "file_mode": "binary",
+    "path_type": "softlink",
+    "prefix_placeholder": "/Users/travis/miniconda3/conda-bld/libcxx_1541222631824/_h_env_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_pl",
+    "sha256": "68676f8e8a8d52882ec5985ad4d705e8f00b8b82e79f3fa100aeea0ab86741dd",
+    "size_in_bytes": 221120
+   },
+   {
+    "_path": "lib/libc++abi.a",
+    "path_type": "hardlink",
+    "sha256": "980460c8e638d136f5a0ad6e584ac1c575feaa0750b5a19166acac2235f6e01b",
+    "sha256_in_prefix": "980460c8e638d136f5a0ad6e584ac1c575feaa0750b5a19166acac2235f6e01b",
+    "size_in_bytes": 308736
+   },
+   {
+    "_path": "lib/libc++abi.dylib",
+    "file_mode": "binary",
+    "path_type": "softlink",
+    "prefix_placeholder": "/Users/travis/miniconda3/conda-bld/libcxx_1541222631824/_h_env_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_pl",
+    "sha256": "68676f8e8a8d52882ec5985ad4d705e8f00b8b82e79f3fa100aeea0ab86741dd",
+    "size_in_bytes": 221120
+   },
+   {
+    "_path": "lib/libc++experimental.a",
+    "path_type": "hardlink",
+    "sha256": "bb69710bb554ebe4f36fa74ba4fd70aa294d62cf800009bf22840897fa05d650",
+    "sha256_in_prefix": "bb69710bb554ebe4f36fa74ba4fd70aa294d62cf800009bf22840897fa05d650",
+    "size_in_bytes": 8104
+   },
+   {
+    "_path": "lib/libc++fs.a",
+    "path_type": "hardlink",
+    "sha256": "d6dfdd2e1adfec3678f3c57beb3b359f79199e02c1845d0a780d15f0c44fda25",
+    "sha256_in_prefix": "d6dfdd2e1adfec3678f3c57beb3b359f79199e02c1845d0a780d15f0c44fda25",
+    "size_in_bytes": 125760
+   }
+  ],
+  "paths_version": 1
+ },
+ "requested_spec": "None",
+ "size": 1190041,
+ "subdir": "osx-64",
+ "timestamp": 1541222717556,
+ "track_features": "",
+ "url": "https://conda.anaconda.org/conda-forge/osx-64/libcxx-7.0.0-h2d50403_2.tar.bz2",
+ "version": "7.0.0"
+}
