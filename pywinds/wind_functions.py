@@ -21,6 +21,7 @@ def _round(val, precision):
     return tuple(np.round(val, precision).tolist())
 
 
+# TODO: MAKE TEXT SAVE INTO A CSV?
 def _save_data(output_dict, displacement_filename, hdf5_group_name=None,
                txt_shape=None, group_attrs=None, area_dict=None):
     """Saves data to a file named after the displacement_data appended with "_output"."""
