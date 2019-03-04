@@ -36,66 +36,63 @@
   <div class="section" id="examples-of-using-pywinds">
 <h1>Examples of using pywinds<a class="headerlink" href="#examples-of-using-pywinds" title="Permalink to this headline">¶</a></h1>
 <p><img alt="test" src="_images/base_examples.png" /></p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>ella:pywinds wroberts$ pwd
-/Users/wroberts/Documents/pywinds/pywinds
-ella:pywinds wroberts$ source activate pywinds
-(pywinds) ella:pywinds wroberts$ ./velocity.sh 60 0 test/test_files/test_data_one.flo --j 0 --i 0 --pixel_size 4000 --center 90,0
-[42.57496915645635, 312.6840984969709]
-(pywinds) ella:pywinds wroberts$ ./vu.sh 60 0 test/test_files/test_data_one.flo --j 0 --i 0 --pixel_size 4000 --center 90,0
-[28.863942177010685, -31.296978139676572]
-(pywinds) ella:pywinds wroberts$ ./lat_long.sh 60 0 --shape 1000,1000 --j 0 --i 0 --pixel_size 4000 --center 90,0
-[67.62332747031272, -137.1736645853314]
-(pywinds) ella:pywinds wroberts$ ./lat_long.sh 60 0 --displacement_data test/test_files/test_data_one.flo --j 0 --i 0 --pixel_size 4000 --center 90,0
-[69.1759713115284, -141.7426590655602]
-(pywinds) ella:pywinds wroberts$ ./displacements.sh test/test_files/test_data_one.flo --j 0 --i 0
-[-2.529944896697998, 76.80111694335938]
-(pywinds) ella:pywinds wroberts$ ./area.sh 60 0 --center 90,0 --pixel_size 4000 --shape 1000,1000
-Area ID: pywinds
-Description: pywinds
-Projection: {&#39;a&#39;: &#39;6378137.0&#39;, &#39;f&#39;: &#39;0.0033528106647474805&#39;, &#39;lat_0&#39;: &#39;60.0&#39;, &#39;lon_0&#39;: &#39;0.0&#39;, &#39;proj&#39;: &#39;stere&#39;}
-Number of columns: 1000
-Number of rows: 1000
-Area extent: (5429327.9172, 2000000.0, 1429327.9172, -2000000.0)
-</pre></div>
-</div>
-<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">ella:pywinds wroberts$</span> <span class="nb">pwd</span>
-<span class="go">/Users/wroberts/Documents/pywinds/pywinds</span>
-<span class="gp">ella:pywinds wroberts$</span> <span class="nb">source</span> activate pywinds
-<span class="go">(pywinds) ella:pywinds wroberts$ ./velocity.sh 60 0 test/test_files/test_data_one.flo --j 0 --i 0 --pixel_size 4000 --center 90,0</span>
-<span class="go">[42.57496915645635, 312.6840984969709]</span>
-<span class="go">(pywinds) ella:pywinds wroberts$ ./vu.sh 60 0 test/test_files/test_data_one.flo --j 0 --i 0 --pixel_size 4000 --center 90,0</span>
-<span class="go">[28.863942177010685, -31.296978139676572]</span>
-<span class="go">(pywinds) ella:pywinds wroberts$ ./lat_long.sh 60 0 --shape 1000,1000 --j 0 --i 0 --pixel_size 4000 --center 90,0</span>
-<span class="go">[67.62332747031272, -137.1736645853314]</span>
-<span class="go">(pywinds) ella:pywinds wroberts$ ./lat_long.sh 60 0 --displacement_data test/test_files/test_data_one.flo --j 0 --i 0 --pixel_size 4000 --center 90,0</span>
-<span class="go">[69.1759713115284, -141.7426590655602]</span>
-<span class="go">(pywinds) ella:pywinds wroberts$ ./displacements.sh test/test_files/test_data_one.flo --j 0 --i 0</span>
-<span class="go">[-2.529944896697998, 76.80111694335938]</span>
-<span class="go">(pywinds) ella:pywinds wroberts$ ./area.sh 60 0 --center 90,0 --pixel_size 4000 --shape 1000,1000</span>
-<span class="go">Area ID: pywinds</span>
-<span class="go">Description: pywinds</span>
-<span class="go">Projection: {&#39;a&#39;: &#39;6378137.0&#39;, &#39;f&#39;: &#39;0.0033528106647474805&#39;, &#39;lat_0&#39;: &#39;60.0&#39;, &#39;lon_0&#39;: &#39;0.0&#39;, &#39;proj&#39;: &#39;stere&#39;}</span>
-<span class="go">Number of columns: 1000</span>
-<span class="go">Number of rows: 1000</span>
-<span class="go">Area extent: (5429327.9172, 2000000.0, 1429327.9172, -2000000.0)</span>
-</pre></div>
-</div>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">(</span><span class="n">pywinds</span><span class="p">)</span> <span class="n">ella</span><span class="p">:</span><span class="n">ls</span>
+<span class="ow">in</span><span class="o">.</span><span class="n">flo</span>
 
+<span class="p">(</span><span class="n">pywinds</span><span class="p">)</span> <span class="n">ella</span><span class="p">:</span><span class="n">pywinds</span><span class="o">/</span><span class="n">wind_info</span><span class="o">.</span><span class="n">py</span> <span class="mi">60</span> <span class="mi">0</span> <span class="mi">100</span> <span class="o">--</span><span class="n">j</span> <span class="mi">0</span> <span class="o">--</span><span class="n">i</span> <span class="mi">0</span>
+ <span class="o">--</span><span class="n">pixel_size</span> <span class="mi">4</span><span class="p">:</span><span class="n">km</span> <span class="o">--</span><span class="n">center</span> <span class="mi">90</span><span class="p">,</span><span class="mi">0</span> <span class="o">--</span><span class="n">no_save</span>
+<span class="p">[</span><span class="mf">67.62</span><span class="p">,</span> <span class="o">-</span><span class="mf">137.17</span><span class="p">,</span> <span class="mf">42.33</span><span class="p">,</span> <span class="mf">317.58</span><span class="p">,</span> <span class="mf">31.25</span><span class="p">,</span> <span class="o">-</span><span class="mf">28.55</span><span class="p">]</span>
 
-<span class="n">filename</span> <span class="o">=</span> <span class="s1">&#39;test_data_test&#39;</span>
-<span class="n">test_data</span> <span class="o">=</span> <span class="kc">None</span>
-<span class="n">test_data_shape</span> <span class="o">=</span> <span class="p">(</span><span class="mi">5</span><span class="p">,</span> <span class="mi">5</span><span class="p">)</span>
+<span class="p">(</span><span class="n">pywinds</span><span class="p">)</span> <span class="n">ella</span><span class="p">:</span><span class="n">pywinds</span><span class="o">/</span><span class="n">wind_info</span><span class="o">.</span><span class="n">py</span> <span class="mi">60</span> <span class="mi">0</span> <span class="mi">100</span>
+ <span class="o">--</span><span class="n">pixel_size</span> <span class="mi">4</span><span class="p">:</span><span class="n">km</span> <span class="o">--</span><span class="n">center</span> <span class="mi">90</span><span class="p">,</span><span class="mi">0</span>
 
-<span class="k">if</span> <span class="n">test_data</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-    <span class="n">test_data</span> <span class="o">=</span> <span class="p">[]</span>
-    <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">test_data_shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">*</span> <span class="n">test_data_shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="mi">2</span><span class="p">):</span>
-        <span class="n">test_data</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="mi">100</span> <span class="o">*</span> <span class="n">x</span><span class="p">)</span>
-        <span class="n">test_data</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="mi">100</span> <span class="o">*</span> <span class="n">x</span><span class="p">)</span>
-<span class="c1"># Can be any list of 3 integers: Does not affect data</span>
-<span class="n">header</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span>
-<span class="n">filename</span> <span class="o">=</span> <span class="s1">&#39;C:/Users/William/Documents/pywinds/pywinds/test/test_files/&#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39;.flo&#39;</span>
-<span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="o">.</span><span class="n">tofile</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">header</span> <span class="o">+</span> <span class="n">test_data</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">),</span> <span class="n">filename</span><span class="p">)</span>
+<span class="p">(</span><span class="n">pywinds</span><span class="p">)</span> <span class="n">ella</span><span class="p">:</span><span class="n">pywinds</span><span class="o">/</span><span class="n">lat_long</span><span class="o">.</span><span class="n">py</span> <span class="mi">60</span> <span class="mi">0</span> <span class="o">--</span><span class="n">j</span> <span class="mi">0</span> <span class="o">--</span><span class="n">i</span> <span class="mi">0</span>
+ <span class="o">--</span><span class="n">pixel_size</span> <span class="mi">4</span><span class="p">:</span><span class="n">km</span> <span class="o">--</span><span class="n">center</span> <span class="mi">90</span><span class="p">,</span><span class="mi">0</span> <span class="o">--</span><span class="n">shape</span> <span class="mi">1000</span><span class="p">,</span><span class="mi">1000</span> <span class="o">--</span><span class="n">no_save</span>
+<span class="p">[</span><span class="mf">67.62</span><span class="p">,</span> <span class="o">-</span><span class="mf">137.17</span><span class="p">]</span>
+
+<span class="p">(</span><span class="n">pywinds</span><span class="p">)</span> <span class="n">ella</span><span class="p">:</span><span class="n">pywinds</span><span class="o">/</span><span class="n">velocity</span><span class="o">.</span><span class="n">py</span> <span class="mi">60</span> <span class="mi">0</span> <span class="mi">100</span> <span class="o">--</span><span class="n">j</span> <span class="mi">0</span> <span class="o">--</span><span class="n">i</span> <span class="mi">0</span>
+ <span class="o">--</span><span class="n">pixel_size</span> <span class="mi">4</span><span class="p">:</span><span class="n">km</span> <span class="o">--</span><span class="n">center</span> <span class="mi">90</span><span class="p">,</span><span class="mi">0</span> <span class="o">--</span><span class="n">no_save</span>
+<span class="p">[</span><span class="mf">42.33</span><span class="p">,</span> <span class="mf">317.58</span><span class="p">]</span>
+
+<span class="p">(</span><span class="n">pywinds</span><span class="p">)</span> <span class="n">ella</span><span class="p">:</span><span class="n">pywinds</span><span class="o">/</span><span class="n">velocity</span><span class="o">.</span><span class="n">py</span> <span class="mi">60</span> <span class="mi">0</span> <span class="mi">100</span>
+ <span class="o">--</span><span class="n">pixel_size</span> <span class="mi">4</span><span class="p">:</span><span class="n">km</span> <span class="o">--</span><span class="n">center</span> <span class="mi">90</span><span class="p">,</span><span class="mi">0</span>
+
+<span class="p">(</span><span class="n">pywinds</span><span class="p">)</span> <span class="n">ella</span><span class="p">:</span><span class="n">pywinds</span><span class="o">/</span><span class="n">vu</span><span class="o">.</span><span class="n">py</span> <span class="mi">60</span> <span class="mi">0</span> <span class="mi">100</span> <span class="o">--</span><span class="n">j</span> <span class="mi">0</span> <span class="o">--</span><span class="n">i</span> <span class="mi">0</span>
+ <span class="o">--</span><span class="n">pixel_size</span> <span class="mi">4</span><span class="p">:</span><span class="n">km</span> <span class="o">--</span><span class="n">center</span> <span class="mi">90</span><span class="p">,</span><span class="mi">0</span> <span class="o">--</span><span class="n">no_save</span>
+<span class="p">[</span><span class="mf">31.25</span><span class="p">,</span> <span class="o">-</span><span class="mf">28.55</span><span class="p">]</span>
+
+<span class="p">(</span><span class="n">pywinds</span><span class="p">)</span> <span class="n">ella</span><span class="p">:</span><span class="n">pywinds</span><span class="o">/</span><span class="n">vu</span><span class="o">.</span><span class="n">py</span> <span class="mi">60</span> <span class="mi">0</span> <span class="mi">100</span>
+ <span class="o">--</span><span class="n">pixel_size</span> <span class="mi">4</span><span class="p">:</span><span class="n">km</span> <span class="o">--</span><span class="n">center</span> <span class="mi">90</span><span class="p">,</span><span class="mi">0</span>
+
+<span class="p">(</span><span class="n">pywinds</span><span class="p">)</span> <span class="n">ella</span><span class="p">:</span><span class="n">pywinds</span><span class="o">/</span><span class="n">lat_long</span><span class="o">.</span><span class="n">py</span> <span class="mi">60</span> <span class="mi">0</span> <span class="o">--</span><span class="n">j</span> <span class="mi">0</span> <span class="o">--</span><span class="n">i</span> <span class="mi">0</span>
+ <span class="o">--</span><span class="n">pixel_size</span> <span class="mi">4</span><span class="p">:</span><span class="n">km</span> <span class="o">--</span><span class="n">center</span> <span class="mi">90</span><span class="p">,</span><span class="mi">0</span> <span class="o">--</span><span class="n">displacement_data</span> <span class="s2">&quot;&#39;*.flo&#39;&quot;</span> <span class="o">--</span><span class="n">no_save</span>
+<span class="p">[</span><span class="mf">65.94</span><span class="p">,</span> <span class="o">-</span><span class="mf">133.28</span><span class="p">]</span>
+
+<span class="p">(</span><span class="n">pywinds</span><span class="p">)</span> <span class="n">ella</span><span class="p">:</span><span class="n">pywinds</span><span class="o">/</span><span class="n">lat_long</span><span class="o">.</span><span class="n">py</span> <span class="mi">60</span> <span class="mi">0</span>
+ <span class="o">--</span><span class="n">pixel_size</span> <span class="mi">4</span><span class="p">:</span><span class="n">km</span> <span class="o">--</span><span class="n">center</span> <span class="mi">90</span><span class="p">,</span><span class="mi">0</span> <span class="o">--</span><span class="n">displacement_data</span> <span class="s2">&quot;&#39;*.flo&#39;&quot;</span>
+
+<span class="p">(</span><span class="n">pywinds</span><span class="p">)</span> <span class="n">ella</span><span class="p">:</span><span class="n">pywinds</span><span class="o">/</span><span class="n">displacements</span><span class="o">.</span><span class="n">py</span> <span class="o">--</span><span class="n">j</span> <span class="mi">0</span> <span class="o">--</span><span class="n">i</span> <span class="mi">0</span> <span class="o">--</span><span class="n">no_save</span>
+ <span class="p">[</span><span class="o">-</span><span class="mf">2.53</span><span class="p">,</span> <span class="mf">76.8</span><span class="p">]</span>
+
+<span class="p">(</span><span class="n">pywinds</span><span class="p">)</span> <span class="n">ella</span><span class="p">:</span><span class="n">pywinds</span><span class="o">/</span><span class="n">displacements</span><span class="o">.</span><span class="n">py</span> <span class="o">--</span><span class="n">j</span> <span class="mi">1</span> <span class="o">--</span><span class="n">i</span> <span class="mi">0</span> <span class="o">--</span><span class="n">no_save</span> <span class="o">--</span><span class="n">shape</span> <span class="mi">100</span><span class="p">,</span><span class="mi">10000</span>
+ <span class="p">[</span><span class="o">-</span><span class="mf">3.03</span><span class="p">,</span> <span class="mf">79.19</span><span class="p">]</span>
+
+<span class="p">(</span><span class="n">pywinds</span><span class="p">)</span> <span class="n">ella</span><span class="p">:</span><span class="n">pywinds</span><span class="o">/</span><span class="n">displacements</span><span class="o">.</span><span class="n">py</span> <span class="o">--</span><span class="n">j</span> <span class="mi">1</span> <span class="o">--</span><span class="n">i</span> <span class="mi">0</span> <span class="o">--</span><span class="n">no_save</span> <span class="o">--</span><span class="n">pixel_size</span> <span class="mi">4</span>
+ <span class="o">--</span><span class="n">center</span> <span class="mi">90</span><span class="p">,</span><span class="mi">0</span> <span class="o">--</span><span class="n">radius</span> <span class="mi">200</span><span class="p">,</span><span class="mi">20000</span> <span class="o">--</span><span class="n">units</span> <span class="n">km</span>
+ <span class="p">[</span><span class="o">-</span><span class="mf">3.03</span><span class="p">,</span> <span class="mf">79.19</span><span class="p">]</span>
+
+<span class="p">(</span><span class="n">pywinds</span><span class="p">)</span> <span class="n">ella</span><span class="p">:</span><span class="n">pywinds</span><span class="o">/</span><span class="n">displacements</span><span class="o">.</span><span class="n">py</span>
+
+<span class="p">(</span><span class="n">pywinds</span><span class="p">)</span> <span class="n">ella</span><span class="p">:</span><span class="n">pywinds</span><span class="o">/</span><span class="n">area</span><span class="o">.</span><span class="n">py</span> <span class="mi">60</span> <span class="mi">0</span> <span class="o">--</span><span class="n">pixel_size</span> <span class="mi">4</span><span class="p">:</span><span class="n">km</span> <span class="o">--</span><span class="n">center</span> <span class="mi">90</span><span class="p">,</span><span class="mi">0</span> <span class="o">--</span><span class="n">no_save</span>
+<span class="n">projection</span><span class="p">:</span> <span class="n">stere</span>
+<span class="n">lat_0</span><span class="p">:</span> <span class="mi">60</span>
+<span class="n">lon_0</span><span class="p">:</span> <span class="mi">0</span>
+<span class="n">semi</span><span class="o">-</span><span class="n">major</span> <span class="n">axis</span> <span class="n">radius</span><span class="p">:</span> <span class="mf">6378137.0</span>
+<span class="n">eccentricity</span><span class="p">:</span> <span class="mf">0.003353</span>
+<span class="n">area_extent</span><span class="p">:</span> <span class="p">(</span><span class="mf">67.6</span><span class="p">,</span> <span class="mf">137.18</span><span class="p">,</span> <span class="mf">65.81</span><span class="p">,</span> <span class="o">-</span><span class="mf">47.35</span><span class="p">)</span>
+<span class="n">shape</span><span class="p">:</span> <span class="p">(</span><span class="mi">1000</span><span class="p">,</span> <span class="mi">1000</span><span class="p">)</span>
+<span class="n">pixel_size</span><span class="p">:</span> <span class="p">(</span><span class="mf">4000.0</span><span class="p">,</span> <span class="mf">4000.0</span><span class="p">)</span>
+<span class="n">center</span><span class="p">:</span> <span class="p">(</span><span class="mf">90.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -106,7 +103,25 @@ Area extent: (5429327.9172, 2000000.0, 1429327.9172, -2000000.0)
         </div>
       </div>
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
-        <div class="sphinxsidebarwrapper"><div class="relations">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="index.html">pywinds</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="installation.html">Installing pywinds</a></li>
+<li class="toctree-l1"><a class="reference internal" href="API.html">pywinds API</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Examples of using pywinds</a></li>
+<li class="toctree-l1"><a class="reference internal" href="usage.html">How to use pywinds</a></li>
+</ul>
+
+<div class="relations">
 <h3>Related Topics</h3>
 <ul>
   <li><a href="index.html">Documentation overview</a><ul>
@@ -115,13 +130,6 @@ Area extent: (5429327.9172, 2000000.0, 1429327.9172, -2000000.0)
   </ul></li>
 </ul>
 </div>
-  <div role="note" aria-label="source link">
-    <h3>This Page</h3>
-    <ul class="this-page-menu">
-      <li><a href="_sources/examples.rst.txt"
-            rel="nofollow">Show Source</a></li>
-    </ul>
-   </div>
 <div id="searchbox" style="display: none" role="search">
   <h3>Quick search</h3>
     <div class="searchformwrapper">
@@ -134,6 +142,14 @@ Area extent: (5429327.9172, 2000000.0, 1429327.9172, -2000000.0)
     </div>
 </div>
 <script type="text/javascript">$('#searchbox').show(0);</script>
+
+
+
+
+
+
+
+
         </div>
       </div>
       <div class="clearer"></div>
@@ -142,8 +158,8 @@ Area extent: (5429327.9172, 2000000.0, 1429327.9172, -2000000.0)
       &copy;2019, Will Roberts.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.7.5</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.11</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.8.2</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
       
       |
       <a href="_sources/examples.rst.txt"

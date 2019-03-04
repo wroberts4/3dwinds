@@ -98,12 +98,12 @@ def run_script(func, argv, output_format, name, is_area=False, is_lat_long=False
         if isinstance(displacement_data, str):
             files = glob(displacement_data)
             if files:
-                kwargs.pop('displacement_data')
                 for file in files:
-                    output = output_format(func(*args, displacement_data=file, **kwargs), kwargs)
+                    kwargs['displacement_data'] = file
+                    output = output_format(func(*args, **kwargs), kwargs)
                     if output is not '':
                         if len(files) > 1:
-                            print(file)
+                            print('Reading displacements from:', file)
                         print(output)
                 return
             # File not found error will be raised

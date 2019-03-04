@@ -18,15 +18,15 @@ j_in = None
 pixel_size = 4000
 center = (90, 0)
 shape = (1000,1000)
-earth_geod = 'WGS84'
-image_geod = 'WGS84'
+earth_geod = 'sphere'
+image_geod = 'sphere'
 no_save = False
-area_extent = tuple(reversed((-2000000.0, 1429327.9172, 2000000.0, 5429327.9172)))
+area_extent = tuple(reversed((2000000.0, 5429327.9172, -2000000.0, 1429327.9172)))
 
-# winds = wind_info(lat_0, lon_0, 100, shape=(1000, 1000), displacement_data=file_name, i=j_in, j=i_in,
-#                   pixel_size=pixel_size,  center=center, earth_geod=earth_geod, image_geod=image_geod,
-#                   no_save=no_save).reshape((1000, 1000, 6))
-# print(winds[0, 0, :])
+winds = wind_info(lat_0, lon_0, 100, shape=(1000, 1000), displacement_data=file_name, i=j_in, j=i_in,
+                  pixel_size=pixel_size,  center=center, earth_geod=earth_geod, image_geod=image_geod,
+                  no_save=no_save).reshape((1000, 1000, 6))
+print(winds[0, 0, :])
 # output_velocity = velocity(lat_0, lon_0, 100, displacement_data='in.flo', i=i_in, j=j_in, pixel_size=pixel_size,
 #                            center=center, earth_geod=earth_geod, image_geod=image_geod, no_save=no_save)
 # print('speed:', '{0} m/sec, {1}°'.format(*output_velocity[:, 0, 0]))
@@ -44,12 +44,12 @@ area_extent = tuple(reversed((-2000000.0, 1429327.9172, 2000000.0, 5429327.9172)
 #
 # old_lat_long = lat_long(lat_0, lon_0, i=i_in, j=j_in, pixel_size=pixel_size, center=center,
 #                         shape=(1000,1000), image_geod=image_geod, no_save=True)
-# print('old_lat, old_long:', *old_lat_long[:, 0, 0])
+# print('old_lat, old_long:', *old_lat_long[:, 2, 5])
 #
 # new_lat_long = lat_long(lat_0, lon_0, displacement_data=file_name, i=i_in, j=j_in, pixel_size=pixel_size,
 #                                 center=center, shape=(1000,1000), image_geod=image_geod, no_save=no_save)
-# print('new_lat, new_long:', *new_lat_long[:, 0, 0])
-
+# print('new_lat, new_long:', *new_lat_long[:, 2, 5])
+#
 # hdf5 = h5py.File('in.flo_output/wind_info.hdf5', 'r')
 # for group in hdf5.keys():
 #     if isinstance(hdf5[group], h5py.Group):
@@ -59,8 +59,6 @@ area_extent = tuple(reversed((-2000000.0, 1429327.9172, 2000000.0, 5429327.9172)
 #     else:
 #         print(group, np.array(hdf5[group]), [attr + ': ' + hdf5[group].attrs[attr] for attr in hdf5[group].attrs])
 # hdf5.close()
-
-print(setuptools.find_packages())
 
 end = datetime.utcnow()
 print("Execution seconds: ", (end - start).total_seconds())

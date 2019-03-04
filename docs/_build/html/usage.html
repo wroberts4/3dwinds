@@ -36,7 +36,7 @@
 <h1>How to use pywinds<a class="headerlink" href="#how-to-use-pywinds" title="Permalink to this headline">¶</a></h1>
 <div class="section" id="velocity-sh">
 <h2>velocity.sh<a class="headerlink" href="#velocity-sh" title="Permalink to this headline">¶</a></h2>
-<p>Finds velocity</p>
+<p>When saved to a file, the output is in row-column format as data-type float32.</p>
 <p>Required arguments:</p>
 <ul class="simple">
 <li><strong>lat_0</strong>: Normal latitude of projection</li>
@@ -57,6 +57,14 @@
 <li><strong>save_data</strong>: When true, saves velocity to “speed” and “angle” under a new output
 directory by the name of the displacement file_name appended with “output”</li>
 </ul>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">(</span><span class="n">pywinds</span><span class="p">)</span> <span class="n">ella</span><span class="p">:</span><span class="n">pywinds</span><span class="o">/</span><span class="n">velocity</span><span class="o">.</span><span class="n">py</span> <span class="mi">60</span> <span class="mi">0</span> <span class="mi">100</span> <span class="o">--</span><span class="n">j</span> <span class="mi">0</span> <span class="o">--</span><span class="n">i</span> <span class="mi">0</span>
+ <span class="o">--</span><span class="n">pixel_size</span> <span class="mi">4</span><span class="p">:</span><span class="n">km</span> <span class="o">--</span><span class="n">center</span> <span class="mi">90</span><span class="p">,</span><span class="mi">0</span> <span class="o">--</span><span class="n">no_save</span>
+<span class="p">[</span><span class="mf">42.33</span><span class="p">,</span> <span class="mf">317.58</span><span class="p">]</span>
+
+<span class="p">(</span><span class="n">pywinds</span><span class="p">)</span> <span class="n">ella</span><span class="p">:</span><span class="n">pywinds</span><span class="o">/</span><span class="n">velocity</span><span class="o">.</span><span class="n">py</span> <span class="mi">60</span> <span class="mi">0</span> <span class="mi">100</span>
+ <span class="o">--</span><span class="n">pixel_size</span> <span class="mi">4</span><span class="p">:</span><span class="n">km</span> <span class="o">--</span><span class="n">center</span> <span class="mi">90</span><span class="p">,</span><span class="mi">0</span>
+</pre></div>
+</div>
 </div>
 <div class="section" id="vu-sh">
 <h2>vu.sh<a class="headerlink" href="#vu-sh" title="Permalink to this headline">¶</a></h2>
@@ -81,6 +89,14 @@ directory by the name of the displacement file_name appended with “output”</
 <li><strong>save_data</strong>: When true, saves vu to “v” and “u” under a new output
 directory by the name of the displacement file_name appended with “output”</li>
 </ul>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">(</span><span class="n">pywinds</span><span class="p">)</span> <span class="n">ella</span><span class="p">:</span><span class="n">pywinds</span><span class="o">/</span><span class="n">vu</span><span class="o">.</span><span class="n">py</span> <span class="mi">60</span> <span class="mi">0</span> <span class="mi">100</span> <span class="o">--</span><span class="n">j</span> <span class="mi">0</span> <span class="o">--</span><span class="n">i</span> <span class="mi">0</span>
+ <span class="o">--</span><span class="n">pixel_size</span> <span class="mi">4</span><span class="p">:</span><span class="n">km</span> <span class="o">--</span><span class="n">center</span> <span class="mi">90</span><span class="p">,</span><span class="mi">0</span> <span class="o">--</span><span class="n">no_save</span>
+<span class="p">[</span><span class="mf">31.25</span><span class="p">,</span> <span class="o">-</span><span class="mf">28.55</span><span class="p">]</span>
+
+<span class="p">(</span><span class="n">pywinds</span><span class="p">)</span> <span class="n">ella</span><span class="p">:</span><span class="n">pywinds</span><span class="o">/</span><span class="n">vu</span><span class="o">.</span><span class="n">py</span> <span class="mi">60</span> <span class="mi">0</span> <span class="mi">100</span>
+ <span class="o">--</span><span class="n">pixel_size</span> <span class="mi">4</span><span class="p">:</span><span class="n">km</span> <span class="o">--</span><span class="n">center</span> <span class="mi">90</span><span class="p">,</span><span class="mi">0</span>
+</pre></div>
+</div>
 </div>
 <div class="section" id="lat-long-sh">
 <h2>lat_long.sh<a class="headerlink" href="#lat-long-sh" title="Permalink to this headline">¶</a></h2>
@@ -105,6 +121,18 @@ directory by the name of the displacement file_name appended with “output”</
 <li><strong>save_data</strong>: When true, saves lat_long to “latitude” and “longitude” under a new output
 directory by the name of the displacement file_name appended with “output”</li>
 </ul>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">(</span><span class="n">pywinds</span><span class="p">)</span> <span class="n">ella</span><span class="p">:</span><span class="n">pywinds</span><span class="o">/</span><span class="n">lat_long</span><span class="o">.</span><span class="n">py</span> <span class="mi">60</span> <span class="mi">0</span> <span class="o">--</span><span class="n">j</span> <span class="mi">0</span> <span class="o">--</span><span class="n">i</span> <span class="mi">0</span>
+ <span class="o">--</span><span class="n">pixel_size</span> <span class="mi">4</span><span class="p">:</span><span class="n">km</span> <span class="o">--</span><span class="n">center</span> <span class="mi">90</span><span class="p">,</span><span class="mi">0</span> <span class="o">--</span><span class="n">shape</span> <span class="mi">1000</span><span class="p">,</span><span class="mi">1000</span> <span class="o">--</span><span class="n">no_save</span>
+<span class="p">[</span><span class="mf">67.62</span><span class="p">,</span> <span class="o">-</span><span class="mf">137.17</span><span class="p">]</span>
+
+<span class="p">(</span><span class="n">pywinds</span><span class="p">)</span> <span class="n">ella</span><span class="p">:</span><span class="n">pywinds</span><span class="o">/</span><span class="n">lat_long</span><span class="o">.</span><span class="n">py</span> <span class="mi">60</span> <span class="mi">0</span> <span class="o">--</span><span class="n">j</span> <span class="mi">0</span> <span class="o">--</span><span class="n">i</span> <span class="mi">0</span>
+ <span class="o">--</span><span class="n">pixel_size</span> <span class="mi">4</span><span class="p">:</span><span class="n">km</span> <span class="o">--</span><span class="n">center</span> <span class="mi">90</span><span class="p">,</span><span class="mi">0</span> <span class="o">--</span><span class="n">displacement_data</span> <span class="s2">&quot;&#39;*.flo&#39;&quot;</span> <span class="o">--</span><span class="n">no_save</span>
+<span class="p">[</span><span class="mf">65.94</span><span class="p">,</span> <span class="o">-</span><span class="mf">133.28</span><span class="p">]</span>
+
+<span class="p">(</span><span class="n">pywinds</span><span class="p">)</span> <span class="n">ella</span><span class="p">:</span><span class="n">pywinds</span><span class="o">/</span><span class="n">lat_long</span><span class="o">.</span><span class="n">py</span> <span class="mi">60</span> <span class="mi">0</span>
+ <span class="o">--</span><span class="n">pixel_size</span> <span class="mi">4</span><span class="p">:</span><span class="n">km</span> <span class="o">--</span><span class="n">center</span> <span class="mi">90</span><span class="p">,</span><span class="mi">0</span> <span class="o">--</span><span class="n">displacement_data</span> <span class="s2">&quot;&#39;*.flo&#39;&quot;</span>
+</pre></div>
+</div>
 </div>
 <div class="section" id="displacements-sh">
 <h2>displacements.sh<a class="headerlink" href="#displacements-sh" title="Permalink to this headline">¶</a></h2>
@@ -126,6 +154,19 @@ directory by the name of the displacement file_name appended with “output”</
 <li><strong>save_data</strong>: When true, saves displacements to “j_displacements” and “i_displacements”
 under a new output directory by the name of the displacement file_name appended with “output”</li>
 </ul>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">(</span><span class="n">pywinds</span><span class="p">)</span> <span class="n">ella</span><span class="p">:</span><span class="n">pywinds</span><span class="o">/</span><span class="n">displacements</span><span class="o">.</span><span class="n">py</span> <span class="o">--</span><span class="n">j</span> <span class="mi">0</span> <span class="o">--</span><span class="n">i</span> <span class="mi">0</span> <span class="o">--</span><span class="n">no_save</span>
+ <span class="p">[</span><span class="o">-</span><span class="mf">2.53</span><span class="p">,</span> <span class="mf">76.8</span><span class="p">]</span>
+
+<span class="p">(</span><span class="n">pywinds</span><span class="p">)</span> <span class="n">ella</span><span class="p">:</span><span class="n">pywinds</span><span class="o">/</span><span class="n">displacements</span><span class="o">.</span><span class="n">py</span> <span class="o">--</span><span class="n">j</span> <span class="mi">1</span> <span class="o">--</span><span class="n">i</span> <span class="mi">0</span> <span class="o">--</span><span class="n">no_save</span> <span class="o">--</span><span class="n">shape</span> <span class="mi">100</span><span class="p">,</span><span class="mi">10000</span>
+ <span class="p">[</span><span class="o">-</span><span class="mf">3.03</span><span class="p">,</span> <span class="mf">79.19</span><span class="p">]</span>
+
+<span class="p">(</span><span class="n">pywinds</span><span class="p">)</span> <span class="n">ella</span><span class="p">:</span><span class="n">pywinds</span><span class="o">/</span><span class="n">displacements</span><span class="o">.</span><span class="n">py</span> <span class="o">--</span><span class="n">j</span> <span class="mi">1</span> <span class="o">--</span><span class="n">i</span> <span class="mi">0</span> <span class="o">--</span><span class="n">no_save</span> <span class="o">--</span><span class="n">pixel_size</span> <span class="mi">4</span>
+ <span class="o">--</span><span class="n">center</span> <span class="mi">90</span><span class="p">,</span><span class="mi">0</span> <span class="o">--</span><span class="n">radius</span> <span class="mi">200</span><span class="p">,</span><span class="mi">20000</span> <span class="o">--</span><span class="n">units</span> <span class="n">km</span>
+ <span class="p">[</span><span class="o">-</span><span class="mf">3.03</span><span class="p">,</span> <span class="mf">79.19</span><span class="p">]</span>
+
+<span class="p">(</span><span class="n">pywinds</span><span class="p">)</span> <span class="n">ella</span><span class="p">:</span><span class="n">pywinds</span><span class="o">/</span><span class="n">displacements</span><span class="o">.</span><span class="n">py</span>
+</pre></div>
+</div>
 </div>
 <div class="section" id="area-sh">
 <h2>area.sh<a class="headerlink" href="#area-sh" title="Permalink to this headline">¶</a></h2>
@@ -146,6 +187,14 @@ under a new output directory by the name of the displacement file_name appended 
 <li><strong>radius</strong>: Length from the center to the top/bottom and left/right outer edges (dy, dx)</li>
 <li><strong>displacement_data</strong>: File or list containing displacements</li>
 </ul>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">(</span><span class="n">pywinds</span><span class="p">)</span> <span class="n">ella</span><span class="p">:</span><span class="n">pywinds</span><span class="o">/</span><span class="n">area</span><span class="o">.</span><span class="n">py</span> <span class="mi">60</span> <span class="mi">0</span> <span class="o">--</span><span class="n">pixel_size</span> <span class="mi">4</span><span class="p">:</span><span class="n">km</span> <span class="o">--</span><span class="n">center</span> <span class="mi">90</span><span class="p">,</span><span class="mi">0</span>
+<span class="n">projection</span> <span class="n">data</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;lat_0&#39;</span><span class="p">:</span> <span class="mf">60.0</span><span class="p">,</span> <span class="s1">&#39;lon_0&#39;</span><span class="p">:</span> <span class="mf">0.0</span><span class="p">,</span> <span class="s1">&#39;proj&#39;</span><span class="p">:</span> <span class="s1">&#39;stere&#39;</span><span class="p">,</span> <span class="s1">&#39;a&#39;</span><span class="p">:</span> <span class="mf">6378137.0</span><span class="p">,</span> <span class="s1">&#39;f&#39;</span><span class="p">:</span> <span class="mf">0.0033528106647474805</span><span class="p">}</span>
+<span class="n">area_extent</span><span class="p">:</span> <span class="p">(</span><span class="mf">5429327.917104956</span><span class="p">,</span> <span class="mf">2000000.0000000785</span><span class="p">,</span> <span class="mf">1429327.9172506747</span><span class="p">,</span> <span class="o">-</span><span class="mf">2000000.0000000785</span><span class="p">)</span>
+<span class="n">shape</span><span class="p">:</span> <span class="p">(</span><span class="mi">1000</span><span class="p">,</span> <span class="mi">1000</span><span class="p">)</span>
+<span class="n">pixel_size</span><span class="p">:</span> <span class="p">(</span><span class="mf">3999.999999854281</span><span class="p">,</span> <span class="mf">4000.000000000157</span><span class="p">)</span>
+<span class="n">center</span><span class="p">:</span> <span class="p">(</span><span class="mf">3429327.917177815</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">)</span>
+</pre></div>
+</div>
 </div>
 </div>
 
@@ -156,17 +205,30 @@ under a new output directory by the name of the displacement file_name appended 
       </div>
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
         <div class="sphinxsidebarwrapper">
-  <h3><a href="index.html">Table Of Contents</a></h3>
-  <ul>
-<li><a class="reference internal" href="#">How to use pywinds</a><ul>
-<li><a class="reference internal" href="#velocity-sh">velocity.sh</a></li>
-<li><a class="reference internal" href="#vu-sh">vu.sh</a></li>
-<li><a class="reference internal" href="#lat-long-sh">lat_long.sh</a></li>
-<li><a class="reference internal" href="#displacements-sh">displacements.sh</a></li>
-<li><a class="reference internal" href="#area-sh">area.sh</a></li>
+<h1 class="logo"><a href="index.html">pywinds</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="installation.html">Installing pywinds</a></li>
+<li class="toctree-l1"><a class="reference internal" href="API.html">pywinds API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="examples.html">Examples of using pywinds</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">How to use pywinds</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#velocity-sh">velocity.sh</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#vu-sh">vu.sh</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#lat-long-sh">lat_long.sh</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#displacements-sh">displacements.sh</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#area-sh">area.sh</a></li>
 </ul>
 </li>
 </ul>
+
 <div class="relations">
 <h3>Related Topics</h3>
 <ul>
@@ -175,13 +237,6 @@ under a new output directory by the name of the displacement file_name appended 
   </ul></li>
 </ul>
 </div>
-  <div role="note" aria-label="source link">
-    <h3>This Page</h3>
-    <ul class="this-page-menu">
-      <li><a href="_sources/usage.rst.txt"
-            rel="nofollow">Show Source</a></li>
-    </ul>
-   </div>
 <div id="searchbox" style="display: none" role="search">
   <h3>Quick search</h3>
     <div class="searchformwrapper">
@@ -194,6 +249,14 @@ under a new output directory by the name of the displacement file_name appended 
     </div>
 </div>
 <script type="text/javascript">$('#searchbox').show(0);</script>
+
+
+
+
+
+
+
+
         </div>
       </div>
       <div class="clearer"></div>
@@ -202,8 +265,8 @@ under a new output directory by the name of the displacement file_name appended 
       &copy;2019, Will Roberts.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.7.5</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.11</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.8.2</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
       
       |
       <a href="_sources/usage.rst.txt"

@@ -3,6 +3,8 @@ from pywinds.wrapper_utils import run_script
 from pywinds.wind_functions import area
 import sys
 import numpy as np
+import os
+import ntpath
 
 
 def _round(val, precision):
@@ -29,7 +31,11 @@ def output_format(output, kwargs):
             'area_extent: {5}\nshape: {6}\npixel_size: {7}\ncenter: {8}').format(projection, lat_0, lon_0,
                                                                                  equatorial_radius, eccentricity,
                                                                                  area_extent, shape, pixel_size, center)
-    return ''
+    head, tail = ntpath.split(kwargs['displacement_data'])
+    extension = tail or ntpath.basename(head)
+    save_directory = os.path.join(os.getcwd(), extension + '_output')
+    return 'Saving area to:\n{0}\n{1}'.format(os.path.join(save_directory, 'area.txt'),
+                                                   os.path.join(save_directory, 'wind_info.hdf5'))
 
 
 def main(argv):

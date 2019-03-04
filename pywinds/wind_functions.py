@@ -21,7 +21,6 @@ def _round(val, precision):
     return tuple(np.round(val, precision).tolist())
 
 
-# TODO: MAKE TEXT SAVE INTO A CSV?
 def _save_data(output_dict, displacement_filename, hdf5_group_name=None,
                txt_shape=None, group_attrs=None, area_dict=None):
     """Saves data to a file named after the displacement_data appended with "_output"."""
@@ -77,7 +76,7 @@ def _save_data(output_dict, displacement_filename, hdf5_group_name=None,
             data = np.ravel(data)
         if area_dict is None:
             np.savetxt(os.path.join(os.getcwd(), extension + '_output', name + '.txt'),
-                       data.reshape(txt_shape), fmt='%.2f')
+                       data.reshape(txt_shape), fmt='%.2f', delimiter=',')
     hdf5.close()
 
 
@@ -186,7 +185,7 @@ def _create_area(lat_0, lon_0, projection='stere', area_extent=None, shape=None,
     # Center is given in (lat, long) order, but create_area_def needs it in (long, lat) order.
     if area_extent is not None:
         # The order here is correct since users give input in [ur_y, ur_x, ll_y, ll_x] order.
-        area_extent_ur, area_extent_ll = area_extent[0:2], area_extent[2:4]
+        area_extent_ll, area_extent_ur = area_extent[0:2], area_extent[2:4]
     else:
         area_extent_ll, area_extent_ur = None, None
     upper_left_extent, center, pixel_size, radius, area_extent_ll, area_extent_ur =\
@@ -205,6 +204,10 @@ def _create_area(lat_0, lon_0, projection='stere', area_extent=None, shape=None,
             image_geod, type(image_geod)))
     proj_dict = proj4_str_to_dict('+lat_0={0} +lon_0={1} +proj={2} {3}'.format(lat_0, lon_0, projection,
                                                                                image_geod.initstring))
+    # Temporary fix to allow sphere until proj4 6.0.0 releases.
+    if proj_dict['f'] == 0:
+        proj_dict.pop('f', None)
+        proj_dict['R'] = proj_dict.pop('a', None)
     # TODO: REMOVE THIS WHEN PYRESAMPLE MAKES NEW RELEASE.
     if area_extent is None and center is not None and pixel_size is not None and shape is not None:
         center = Proj(proj_dict)(*center, error_check=True)
@@ -380,7 +383,7 @@ def area(lat_0, lon_0, displacement_data=None, projection='stere', area_extent=N
             2. units passed to ``units``
             3. meters
         area_extent : list, optional
-            Area extent as a list (upper_right_y, upper_right_x, lower_left_y, lower_left_x)
+            Area extent as a list (lower_left_y, lower_left_x, upper_right_y, upper_right_x)
         shape : list, optional
             Number of pixels in the y and x direction (height, width). Note that shape
             can be found from the displacement file (in such a case, shape will be square)
@@ -413,7 +416,8 @@ def area(lat_0, lon_0, displacement_data=None, projection='stere', area_extent=N
     projection = area_definition.proj_dict['proj']
     a = area_definition.proj_dict['a']
     f = area_definition.proj_dict['f']
-    area_extent = _reverse_param(area_definition.area_extent)
+    area_extent = area_definition.area_extent
+    area_extent = [area_extent[1], area_extent[0], area_extent[3], area_extent[2]]
     if area_extent is not None:
         center = ((area_extent[0] + area_extent[2]) / 2, (area_extent[1] + area_extent[3]) / 2)
         center = _reverse_param(p(*_reverse_param(center), inverse=True))
@@ -482,7 +486,7 @@ def displacements(lat_0=None, lon_0=None, displacement_data=None, projection='st
             2. units passed to ``units``
             3. meters
         area_extent : list, optional
-            Area extent as a list (upper_right_y, upper_right_x, lower_left_y, lower_left_x)
+            Area extent as a list (lower_left_y, lower_left_x, upper_right_y, upper_right_x)
         shape : list, optional
             Number of pixels in the y and x direction (height, width). Note that shape
             can be found from the displacement file (in such a case, shape will be square)
@@ -562,7 +566,7 @@ def velocity(lat_0, lon_0, delta_time, displacement_data=None, projection='stere
         2. units passed to ``units``
         3. meters
     area_extent : list, optional
-        Area extent as a list (upper_right_y, upper_right_x, lower_left_y, lower_left_x)
+        Area extent as a list (lower_left_y, lower_left_x, upper_right_y, upper_right_x)
     shape : list, optional
         Number of pixels in the y and x direction (height, width). Note that shape
         can be found from the displacement file (in such a case, shape will be square)
@@ -632,7 +636,7 @@ def vu(lat_0, lon_0, delta_time, displacement_data=None, projection='stere', j=N
         2. units passed to ``units``
         3. meters
     area_extent : list, optional
-        Area extent as a list (upper_right_y, upper_right_x, lower_left_y, lower_left_x)
+        Area extent as a list (lower_left_y, lower_left_x, upper_right_y, upper_right_x)
     shape : list, optional
         Number of pixels in the y and x direction (height, width). Note that shape
         can be found from the displacement file (in such a case, shape will be square)
@@ -702,7 +706,7 @@ def lat_long(lat_0, lon_0, displacement_data=None, projection='stere', j=None, i
         2. units passed to ``units``
         3. meters
     area_extent : list, optional
-        Area extent in projection units as a list (upper_right_y, upper_right_x, lower_left_y, lower_left_x)
+        Area extent in projection units as a list (lower_left_y, lower_left_x, upper_right_y, upper_right_x)
     shape : list, optional
         Number of pixels in the y and x direction (height, width). Note that shape
         can be found from the displacement file (in such a case, shape will be square)
@@ -766,15 +770,14 @@ def wind_info(lat_0, lon_0, delta_time, displacement_data=None, projection='ster
     delta_time : int
         Amount of time that separates both files in minutes.
     displacement_data : str or list, optional
-        File or list containing displacements: [tag, nx, ny, i11, j11, i12, j12, ...] or
-        [[j_displacement], [i_displacement]] respectively. If provided, finds the
-        latitude/longitude at (j,i) + displacements.
+        File or list containing displacements: [tag, width, height, i_11, j_11, i_12, j_12, ..., i_nm, j_nm] or
+        [[j_displacement], [i_displacement]] respectively
     projection : str
         Name of projection that pixels are describing (stere, laea, merc, etc).
     j : float or None, optional
-        Vertical value of pixel location (row)
+        Specifies the vertical location in pixel-space to run calculations on (row)
     i : float or None, optional
-        Horizontal value of pixel location (column)
+        Specifies the horizontal location in pixel-space to run calculations on (column)
     units : str, optional
         Units that provided arguments should be interpreted as. This can be
         one of 'deg', 'degrees', 'rad', 'radians', 'meters', 'metres', and any
@@ -786,11 +789,10 @@ def wind_info(lat_0, lon_0, delta_time, displacement_data=None, projection='ster
         2. units passed to ``units``
         3. meters
     area_extent : list, optional
-        Area extent in projection units as a list (upper_right_y, upper_right_x, lower_left_y, lower_left_x)
+        Area extent in projection units [lower_left_y, lower_left_x, upper_right_y, upper_right_x]
     shape : list, optional
         Number of pixels in the y and x direction (height, width). Note that shape
-        can be found from the displacement file (in such a case, shape will be square)
-        or the area provided.
+        can be found from the displacement file or the area provided.
     upper_left_extent : list, optional
         Upper left corner of upper left pixel in projection units (y, x)
     center : list, optional
@@ -799,17 +801,19 @@ def wind_info(lat_0, lon_0, delta_time, displacement_data=None, projection='ster
         Size of pixels: (dy, dx)
     radius : list or float, optional
         Length from the center to the edges of the projection (dy, dx)
-    image_geod : string or Geod
-        Spheroid of projection
-    earth_geod : string or Geod
-        Spheroid of Earth
-    no_save : bool
-        When True, saves lat to output_data/latitude and long to output_data/longitude
+    image_geod : string or Geod, optional
+        Spheroid of projection (WGS84, sphere, etc)
+    earth_geod : string or Geod, optional
+        Spheroid of Earth (WGS84, sphere, etc)
+    no_save : bool, optional
+        When False, saves data to displacement_file.flo_output/wind_info.txt and to
+        displacement_file.flo_output/wind_info.hdf5 under the group "wind_info"
+        (where displacement_file.flo is the name of the file containing displacements)
 
     Returns
     -------
         (latitude, longitude, velocity, angle, v, and u at each pixel) : numpy.array or list
-            latitude, longitude, velocity, angle, v, and u at each pixel
+            [latitude, longitude, velocity, angle, v, u] at each pixel
     """
     shape, speed, angle, v, u, lat, long = _compute_velocity(lat_0, lon_0, displacement_data=displacement_data,
                                                       projection=projection, j=j, i=i, delta_time=delta_time,

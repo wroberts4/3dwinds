@@ -23,7 +23,7 @@ class TestCase:
         self.displacement_data = displacement_data
         self.center = center
         j_displacements, i_displacements = displacements(lat_0, lon_0, displacement_data=displacement_data,
-                                                                   shape=shape)[:, j, i]
+                                                         shape=shape)[:, j, i]
         self.j_displacements = j_displacements
         self.i_displacements = i_displacements
         area_data = area(lat_0, lon_0, displacement_data=displacement_data, shape=shape,
