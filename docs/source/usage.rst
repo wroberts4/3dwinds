@@ -1,39 +1,52 @@
-How to use pywinds
-==================
+Usage
+=====
 
 velocity.sh
 -----------
-
-When saved to a file, the output is in row-column format as data-type float64.
 
 Required arguments:
 
 * **lat_0**: Normal latitude of projection
 * **lon_0**: Normal longitude of projection
+* **delta_time**: Amount of time that separates both files in minutes
 
 optional arguments:
 
-* **units**: Units that provided arguments should be interpreted as
-* **shape**: Number of pixels in the y and x direction following row-column format (height, width)
-* **area_extent**: Area extent as a tuple (lower_left_y, lower_left_x, upper_right_y, upper_right_x)
-* **upper_left_extent**: y and x coordinates of the upper left corner of the upper left pixel (y, x)
 * **center**: y and x coordinate of the center of projection (y, x)
 * **pixel_size**: Size of pixels in the y and x direction (dy, dx)
-* **radius**: Length from the center to the top/bottom and left/right outer edges (dy, dx)
-* **displacement_data**: File or list containing displacements
-* **j**: y pixel to compute displacements at
-* **i**: x pixel to compute displacements at
-* **no_save**: When true, saves velocity to "speed" and "angle" under a new output
-  directory by the name of the displacement file_name appended with "output"
+* **shape**: Number of pixels in the y and x direction following row-major format (height, width)
+* **displacement_data**: Name of file or list containing displacements
+* **j**: Row to run calculations on
+* **i**: Column to run calculations on
+* **no_save**: When false, saves velocity to speed.txt, angle.txt, and wind_info.hdf5 (under the group "velocity")
+  in a new directory by the name of the displacement file appended with "_output", which will be
+  created where the script is ran, and does not print data.
+
+  When true, prints data to shell without saving.
+* **area_extent**: Area extent as a list (y_ll, x_ll, y_ur, x_ur)
+
+where
+
+* **y_ll**: projection y coordinate of the lower left corner of the lower left pixel
+* **x_ll**: projection x coordinate of the lower left corner of the lower left pixel
+* **y_ur**: projection y coordinate of the upper right corner of the upper right pixel
+* **x_ur**: projection x coordinate of the upper right corner of the upper right pixel
 
 ::
 
-    (pywinds) ella:pywinds/velocity.py 60 0 100 --j 0 --i 0
-     --pixel_size 4:km --center 90,0 --no_save
+    $ pwd
+    /Desktop
+    $ ls
+    in.flo	    pywinds
+    $ pywinds/velocity.sh 60 0 100 --j 0 --i 0
+      --pixel_size 4000 --center 90,0 --no_save
     [42.33, 317.58]
-
-    (pywinds) ella:pywinds/velocity.py 60 0 100
-     --pixel_size 4:km --center 90,0
+    $ pywinds/velocity.sh 60 0 100
+      --pixel_size 4000 --center 90,0
+    Saving velocity to:
+    /Desktop/in.flo_output/speed.txt
+    /Desktop/in.flo_output/angle.txt
+    /Desktop/in.flo_output/wind_info.hdf5
 
 vu.sh
 -----
@@ -47,9 +60,8 @@ Required arguments:
 
 optional arguments:
 
-* **units**: Units that provided arguments should be interpreted as
-* **shape**: Number of pixels in the y and x direction following row-column format (height, width)
-* **area_extent**: Area extent as a tuple (lower_left_y, lower_left_x, upper_right_y, upper_right_x)
+* **shape**: Number of pixels in the y and x direction following row-major format (height, width)
+* **area_extent**: Area extent as a list (lower_left_y, lower_left_x, upper_right_y, upper_right_x)
 * **upper_left_extent**: y and x coordinates of the upper left corner of the upper left pixel (y, x)
 * **center**: y and x coordinate of the center of projection (y, x)
 * **pixel_size**: Size of pixels in the y and x direction (dy, dx)
@@ -62,12 +74,19 @@ optional arguments:
 
 ::
 
-    (pywinds) ella:pywinds/vu.py 60 0 100 --j 0 --i 0
-     --pixel_size 4:km --center 90,0 --no_save
+    $ pwd
+    /Desktop
+    $ ls
+    in.flo	    pywinds
+    $ pywinds/vu.sh 60 0 100 --j 0 --i 0
+      --pixel_size 4000 --center 90,0 --no_save
     [31.25, -28.55]
-
-    (pywinds) ella:pywinds/vu.py 60 0 100
-     --pixel_size 4:km --center 90,0
+    $ pywinds/vu.sh 60 0 100
+      --pixel_size 4000 --center 90,0
+    Saving vu to:
+    /Desktop/in.flo_output/v.txt
+    /Desktop/in.flo_output/u.txt
+    /Desktop/in.flo_output/wind_info.hdf5
 
 lat_long.sh
 -----------
@@ -82,8 +101,8 @@ Required arguments:
 optional arguments:
 
 * **units**: Units that provided arguments should be interpreted as
-* **shape**: Number of pixels in the y and x direction following row-column format (height, width)
-* **area_extent**: Area extent as a tuple (lower_left_y, lower_left_x, upper_right_y, upper_right_x)
+* **shape**: Number of pixels in the y and x direction following row-major format (height, width)
+* **area_extent**: Area extent as a list (lower_left_y, lower_left_x, upper_right_y, upper_right_x)
 * **upper_left_extent**: y and x coordinates of the upper left corner of the upper left pixel (y, x)
 * **center**: y and x coordinate of the center of projection (y, x)
 * **pixel_size**: Size of pixels in the y and x direction (dy, dx)
@@ -94,18 +113,29 @@ optional arguments:
 * **no_save**: When true, saves lat_long to "latitude" and "longitude" under a new output
   directory by the name of the displacement file_name appended with "output"
 
+Note: lat_long.sh does not search for a displacement file since it can find new and old latitudes/longitudes.
+Thus displacement_data must be provided in order to save data.
+
 ::
 
-    (pywinds) ella:pywinds/lat_long.py 60 0 --j 0 --i 0
-     --pixel_size 4:km --center 90,0 --shape 1000,1000 --no_save
+    $ pwd
+    /Desktop
+    $ ls
+    in.flo	    pywinds
+    $ pywinds/lat_long.sh 60 0 --j 0 --i 0
+      --pixel_size 4000 --center 90,0 --shape 1000,1000 --no_save
     [67.62, -137.17]
-
-    (pywinds) ella:pywinds/lat_long.py 60 0 --j 0 --i 0
-     --pixel_size 4:km --center 90,0 --displacement_data "'*.flo'" --no_save
+    $ pywinds/lat_long.sh 60 0 --j 0 --i 0 --pixel_size 4000
+      --center 90,0 --displacement_data "'*.flo'" --no_save
     [65.94, -133.28]
-
-    (pywinds) ella:pywinds/lat_long.py 60 0
-     --pixel_size 4:km --center 90,0 --displacement_data "'*.flo'"
+    $ pywinds/lat_long.sh 60 0 --pixel_size 4000
+      --center 90,0 --displacement_data "'*.flo'"
+    Saving lat_long to:
+    /Documents/in.flo_output/old_latitude.txt
+    /Documents/in.flo_output/old_longitude.txt
+    /Documents/in.flo_output/new_latitude.txt
+    /Documents/in.flo_output/new_longitude.txt
+    /Documents/in.flo_output/wind_info.hdf5
 
 displacements.sh
 ----------------
@@ -117,8 +147,8 @@ optional arguments:
 * **lat_0**: Normal latitude of projection
 * **lon_0**: Normal longitude of projection
 * **units**: Units that provided arguments should be interpreted as
-* **shape**: Number of pixels in the y and x direction following row-column format (height, width)
-* **area_extent**: Area extent as a tuple (lower_left_y, lower_left_x, upper_right_y, upper_right_x)
+* **shape**: Number of pixels in the y and x direction following row-major format (height, width)
+* **area_extent**: Area extent as a list (lower_left_y, lower_left_x, upper_right_y, upper_right_x)
 * **upper_left_extent**: y and x coordinates of the upper left corner of the upper left pixel (y, x)
 * **center**: y and x coordinate of the center of projection (y, x)
 * **pixel_size**: Size of pixels in the y and x direction (dy, dx)
@@ -131,17 +161,19 @@ optional arguments:
 
 ::
 
-    (pywinds) ella:pywinds/displacements.py --j 0 --i 0 --no_save
-     [-2.53, 76.8]
-
-    (pywinds) ella:pywinds/displacements.py --j 1 --i 0 --no_save --shape 100,10000
-     [-3.03, 79.19]
-
-    (pywinds) ella:pywinds/displacements.py --j 1 --i 0 --no_save --pixel_size 4
-     --center 90,0 --radius 200,20000 --units km
-     [-3.03, 79.19]
-
-    (pywinds) ella:pywinds/displacements.py
+    $ pwd
+    /Desktop
+    $ ls
+    in.flo	    pywinds
+    $ pywinds/displacements.sh --j 0 --i 0 --no_save
+    [-2.53, 76.8]
+    $ pywinds/displacements.sh --j 1 --i 0 --no_save --shape 100,10000
+    [-3.03, 79.19]
+    $ pywinds/displacements.sh
+    Saving displacements to:
+    /Documents/in.flo_output/j_displacement.txt
+    /Documents/in.flo_output/i_displacement.txt
+    /Documents/in.flo_output/wind_info.hdf5
 
 area.sh
 -------
@@ -156,8 +188,8 @@ Required arguments:
 optional arguments:
 
 * **units**: Units that provided arguments should be interpreted as
-* **shape**: Number of pixels in the y and x direction following row-column format (height, width)
-* **area_extent**: Area extent as a tuple (lower_left_y, lower_left_x, upper_right_y, upper_right_x)
+* **shape**: Number of pixels in the y and x direction following row-major format (height, width)
+* **area_extent**: Area extent as a list (lower_left_y, lower_left_x, upper_right_y, upper_right_x)
 * **upper_left_extent**: y and x coordinates of the upper left corner of the upper left pixel (y, x)
 * **center**: y and x coordinate of the center of projection (y, x)
 * **pixel_size**: Size of pixels in the y and x direction (dy, dx)
@@ -166,9 +198,21 @@ optional arguments:
 
 ::
 
-    (pywinds) ella:pywinds/area.py 60 0 --pixel_size 4:km --center 90,0
-    projection data: {'lat_0': 60.0, 'lon_0': 0.0, 'proj': 'stere', 'a': 6378137.0, 'f': 0.0033528106647474805}
-    area_extent: (5429327.917104956, 2000000.0000000785, 1429327.9172506747, -2000000.0000000785)
+    $ pwd
+    /Desktop
+    $ ls
+    in.flo	    pywinds
+    $ pywinds/area.sh 60 0 --pixel_size 4000 --center 90,0 --no_save
+    projection: stere
+    lat_0: 60
+    lon_0: 0
+    equatorial radius: 6378137.0
+    eccentricity: 0.003353
+    area_extent: (65.81, -47.35, 67.6, 137.18)
     shape: (1000, 1000)
-    pixel_size: (3999.999999854281, 4000.000000000157)
-    center: (3429327.917177815, 0.0)
+    pixel_size: (4000.0, 4000.0)
+    center: (90.0, 0.0)
+    $ pywinds/area.sh 60 0 --pixel_size 4000 --center 90,0
+    Saving area to:
+    /Documents/in.flo_output/area.txt
+    /Documents/in.flo_output/wind_info.hdf5

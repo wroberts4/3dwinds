@@ -1,11 +1,11 @@
-from getopt import getopt, GetoptError
-from inspect import getfullargspec
-from xarray import DataArray
-from glob import glob
+import ast
 import os
 import sys
-import ast
 import traceback
+from getopt import GetoptError, getopt
+from glob import glob
+from inspect import getfullargspec
+from xarray import DataArray
 
 
 def _arg_to_param(arg):

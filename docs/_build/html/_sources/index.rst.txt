@@ -13,7 +13,6 @@ Documentation
    :maxdepth: 2
 
    installation.rst
-   API.rst
-   examples.rst
    usage.rst
-
+   examples.rst
+   API.rst

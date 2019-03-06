@@ -1,10 +1,10 @@
 #!/usr/bin/env python3
-from pywinds.wrapper_utils import run_script
-from pywinds.wind_functions import lat_long
+import ntpath
+import os
 import sys
 import numpy as np
-import os
-import ntpath
+from pywinds.wind_functions import lat_long
+from pywinds.wrapper_utils import run_script
 
 
 def output_format(output, kwargs):
@@ -13,9 +13,11 @@ def output_format(output, kwargs):
     head, tail = ntpath.split(kwargs['displacement_data'])
     extension = tail or ntpath.basename(head)
     save_directory = os.path.join(os.getcwd(), extension + '_output')
-    return 'Saving lat_long to:\n{0}\n{1}\n{2}'.format(os.path.join(save_directory, 'latitude.txt'),
-                                                  os.path.join(save_directory, 'longitude.txt'),
-                                                  os.path.join(save_directory, 'wind_info.hdf5'))
+    return 'Saving lat_long to:\n{0}\n{1}\n{2}'.format(os.path.join(save_directory, 'old_latitude.txt'),
+                                                       os.path.join(save_directory, 'old_longitude.txt'),
+                                                       os.path.join(save_directory, 'new_latitude.txt'),
+                                                       os.path.join(save_directory, 'new_longitude.txt'),
+                                                       os.path.join(save_directory, 'wind_info.hdf5'))
 
 
 def main(argv):

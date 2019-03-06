@@ -1,5 +1,5 @@
-Examples of using pywinds
-=========================
+Examples
+========
 
 .. |test| image:: ../_build/html/_images/base_examples.png
 

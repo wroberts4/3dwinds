@@ -1,11 +1,13 @@
 #!/usr/bin/env bash
 
-pip install .
 PARENTDIR="$( cd -P "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
-#source activate pywinds
-#conda-pack
+. ~/Anaconda3/etc/profile.d/conda.sh
+conda activate pywinds
+pip install $PARENTDIR/../.
+rm new_pywinds.tar.gz
+conda-pack -o new_pywinds.tar.gz
 mkdir pywinds
-tar -zxvf $PARENTDIR/pywinds.tar.gz -C $PARENTDIR/pywinds
+tar -zxvf $PARENTDIR/new_pywinds.tar.gz -C $PARENTDIR/pywinds
 cp $PARENTDIR/run_scripts/* $PARENTDIR/pywinds/.
 tar -czvf $PARENTDIR/new_pywinds.tar.gz pywinds
-rm -rf $PARENTDIR/pywinds
+#rm -rf $PARENTDIR/pywinds

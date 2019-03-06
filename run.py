@@ -1,12 +1,6 @@
-from pywinds.wind_functions import velocity, vu, lat_long, displacements, area, wind_info
-from datetime import datetime
 import sys
-import numpy as np
-import h5py
-import ast
-from xarray import DataArray
-import setuptools
-
+from datetime import datetime
+from pywinds.wind_functions import area, wind_info
 
 print(sys.executable)
 start = datetime.utcnow()
@@ -17,15 +11,14 @@ i_in = None
 j_in = None
 pixel_size = 4000
 center = (90, 0)
-shape = (1000,1000)
-earth_geod = 'sphere'
-image_geod = 'sphere'
+shape = (1000, 1000)
+earth_geod = 'WGS84'
+image_geod = 'WGS84'
 no_save = False
 area_extent = tuple(reversed((2000000.0, 5429327.9172, -2000000.0, 1429327.9172)))
 
-winds = wind_info(lat_0, lon_0, 100, shape=(1000, 1000), displacement_data=file_name, i=j_in, j=i_in,
-                  pixel_size=pixel_size,  center=center, earth_geod=earth_geod, image_geod=image_geod,
-                  no_save=no_save).reshape((1000, 1000, 6))
+winds = wind_info(lat_0, lon_0, 100, shape=shape, displacement_data=file_name, i=j_in, j=i_in, pixel_size=pixel_size,
+                  center=center, earth_geod=earth_geod, image_geod=image_geod, no_save=no_save).reshape((1000, 1000, 6))
 print(winds[0, 0, :])
 # output_velocity = velocity(lat_0, lon_0, 100, displacement_data='in.flo', i=i_in, j=j_in, pixel_size=pixel_size,
 #                            center=center, earth_geod=earth_geod, image_geod=image_geod, no_save=no_save)
@@ -35,9 +28,9 @@ print(winds[0, 0, :])
 #                     shape=shape, earth_geod=earth_geod, image_geod=image_geod, no_save=no_save)
 # print('(v, u):', '({0} m/sec, {1} m/sec)'.format(*output_vu[:, 0, 0]))
 #
-# area_def = area(lat_0, lon_0, displacement_data=file_name, pixel_size=pixel_size, center=center,
-#                 image_geod=image_geod, no_save=no_save)
-# print(area_def)
+area_def = area(lat_0, lon_0, displacement_data=file_name, pixel_size=pixel_size, center=center, image_geod=image_geod,
+                no_save=no_save)
+print(area_def)
 #
 # displacement = displacements(displacement_data=file_name, no_save=no_save)
 # print('displacements:', *displacement[:, 0, 0])

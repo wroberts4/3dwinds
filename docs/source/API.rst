@@ -1,5 +1,5 @@
-pywinds API
-===========
+API
+===
 
 .. automodule:: pywinds.wind_functions
     :members:
