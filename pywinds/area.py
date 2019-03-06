@@ -20,7 +20,7 @@ def output_format(output, kwargs):
         precision = 2
         projection = output['projection']
         lat_0 = _round(output['lat_0'], precision)
-        lon_0 = _round(output['long_0'], precision)
+        long_0 = _round(output['long_0'], precision)
         equatorial_radius = _round(output['equatorial radius'], precision)
         eccentricity = _round(output['eccentricity'], 6)
         shape = output['shape']
@@ -28,7 +28,7 @@ def output_format(output, kwargs):
         pixel_size = _round(output['pixel_size'], precision)
         center = _round(output['center'], precision)
         return ('projection: {0}\nlat_0: {1}\nlong_0: {2}\nequatorial radius: {3}\neccentricity: {4}\n'
-            'area_extent: {5}\nshape: {6}\npixel_size: {7}\ncenter: {8}').format(projection, lat_0, lon_0,
+            'area_extent: {5}\nshape: {6}\npixel_size: {7}\ncenter: {8}').format(projection, lat_0, long_0,
                                                                                  equatorial_radius, eccentricity,
                                                                                  area_extent, shape, pixel_size, center)
     head, tail = ntpath.split(kwargs['displacement_data'])

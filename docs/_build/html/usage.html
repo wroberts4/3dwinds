@@ -14,7 +14,6 @@
     <script type="text/javascript" src="_static/jquery.js"></script>
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
-    <script type="text/javascript" src="_static/language_data.js"></script>
     
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
@@ -49,27 +48,44 @@
 <h1>Usage<a class="headerlink" href="#usage" title="Permalink to this headline">¶</a></h1>
 <div class="section" id="velocity-sh">
 <h2>velocity.sh<a class="headerlink" href="#velocity-sh" title="Permalink to this headline">¶</a></h2>
-<p>When saved to a file, the output is in row-column format as data-type float64.</p>
 <p>Required arguments:</p>
 <ul class="simple">
 <li><strong>lat_0</strong>: Normal latitude of projection</li>
 <li><strong>lon_0</strong>: Normal longitude of projection</li>
+<li><strong>delta_time</strong>: Amount of time that separates both files in minutes</li>
 </ul>
 <p>optional arguments:</p>
 <ul class="simple">
-<li><strong>units</strong>: Units that provided arguments should be interpreted as</li>
-<li><strong>shape</strong>: Number of pixels in the y and x direction following row-column format (height, width)</li>
-<li><strong>area_extent</strong>: Area extent as a tuple (lower_left_y, lower_left_x, upper_right_y, upper_right_x)</li>
-<li><strong>upper_left_extent</strong>: y and x coordinates of the upper left corner of the upper left pixel (y, x)</li>
-<li><strong>center</strong>: y and x coordinate of the center of projection (y, x)</li>
-<li><strong>pixel_size</strong>: Size of pixels in the y and x direction (dy, dx)</li>
-<li><strong>radius</strong>: Length from the center to the top/bottom and left/right outer edges (dy, dx)</li>
-<li><strong>displacement_data</strong>: File or list containing displacements</li>
-<li><strong>j</strong>: y pixel to compute displacements at</li>
-<li><strong>i</strong>: x pixel to compute displacements at</li>
-<li><strong>no_save</strong>: When true, saves velocity to “speed” and “angle” under a new output
-directory by the name of the displacement file_name appended with “output”</li>
+<li><strong>center</strong>: projection y and x coordinate of the center of projection in degrees (lat, long)</li>
+<li><strong>pixel_size</strong>: Size of pixels in the y and x direction in meters (dy, dx)</li>
+<li><strong>shape</strong>: Number of pixels in the y and x direction following row-major format (height, width)</li>
+<li><strong>displacement_data</strong>: Name of file or list containing displacements; wildcard (“*”) syntax is accepted.
+If not provided, reads every file ending in “.flo” where the script is ran</li>
+<li><strong>j</strong>: Row to run calculations on</li>
+<li><strong>i</strong>: Column to run calculations on</li>
+<li><strong>no_save</strong>:<ol class="arabic">
+<li>When not flagged (Default): saves velocity and does not print velocity to shell</li>
+<li>When flagged: prints velocity to shell without saving</li>
+</ol>
+</li>
+<li><strong>image_geod</strong>: Spheroid of projection (WGS84, sphere, etc). Defaults to WGS84</li>
+<li><strong>earth_geod</strong>: Spheroid of Earth (WGS84, sphere, etc). Defaults to WGS84</li>
+<li><strong>projection</strong>: Name of projection that the image is in (stere, laea, merc, etc). Defaults to stere</li>
+<li><strong>area_extent</strong>: Area extent as a list (y_ll, x_ll, y_ur, x_ur)</li>
 </ul>
+<p>where</p>
+<ul class="simple">
+<li><strong>y_ll</strong>: projection y coordinate of the lower left corner of the lower left pixel in meters</li>
+<li><strong>x_ll</strong>: projection x coordinate of the lower left corner of the lower left pixel in meters</li>
+<li><strong>y_ur</strong>: projection y coordinate of the upper right corner of the upper right pixel in meters</li>
+<li><strong>x_ur</strong>: projection x coordinate of the upper right corner of the upper right pixel in meters</li>
+</ul>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">velocity is saved to to speed.txt, angle.txt, and wind_info.hdf5 (under the group “velocity”)
+in a new directory by the name of the displacement file appended with “_output”, which will be
+created where the script is ran</p>
+</div>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ pwd
 /Desktop
 $ ls
@@ -93,22 +109,40 @@ Saving velocity to:
 <ul class="simple">
 <li><strong>lat_0</strong>: Normal latitude of projection</li>
 <li><strong>lon_0</strong>: Normal longitude of projection</li>
+<li><strong>delta_time</strong>: Amount of time that separates both files in minutes</li>
 </ul>
 <p>optional arguments:</p>
 <ul class="simple">
-<li><strong>units</strong>: Units that provided arguments should be interpreted as</li>
-<li><strong>shape</strong>: Number of pixels in the y and x direction following row-column format (height, width)</li>
-<li><strong>area_extent</strong>: Area extent as a tuple (lower_left_y, lower_left_x, upper_right_y, upper_right_x)</li>
-<li><strong>upper_left_extent</strong>: y and x coordinates of the upper left corner of the upper left pixel (y, x)</li>
-<li><strong>center</strong>: y and x coordinate of the center of projection (y, x)</li>
-<li><strong>pixel_size</strong>: Size of pixels in the y and x direction (dy, dx)</li>
-<li><strong>radius</strong>: Length from the center to the top/bottom and left/right outer edges (dy, dx)</li>
-<li><strong>displacement_data</strong>: File or list containing displacements</li>
-<li><strong>j</strong>: y pixel to compute displacements at</li>
-<li><strong>i</strong>: x pixel to compute displacements at</li>
-<li><strong>no_save</strong>: When true, saves vu to “v” and “u” under a new output
-directory by the name of the displacement file_name appended with “output”</li>
+<li><strong>center</strong>: projection y and x coordinate of the center of projection in degrees (lat, long)</li>
+<li><strong>pixel_size</strong>: Size of pixels in the y and x direction in meters (dy, dx)</li>
+<li><strong>shape</strong>: Number of pixels in the y and x direction following row-major format (height, width)</li>
+<li><strong>displacement_data</strong>: Name of file or list containing displacements; wildcard (“*”) syntax is accepted.
+If not provided, reads every file ending in “.flo” where the script is ran</li>
+<li><strong>j</strong>: Row to run calculations on</li>
+<li><strong>i</strong>: Column to run calculations on</li>
+<li><strong>no_save</strong>:<ol class="arabic">
+<li>When not flagged (Default): saves vu and does not print vu to shell</li>
+<li>When flagged: prints vu to shell without saving</li>
+</ol>
+</li>
+<li><strong>image_geod</strong>: Spheroid of projection (WGS84, sphere, etc). Defaults to WGS84</li>
+<li><strong>earth_geod</strong>: Spheroid of Earth (WGS84, sphere, etc). Defaults to WGS84</li>
+<li><strong>projection</strong>: Name of projection that the image is in (stere, laea, merc, etc). Defaults to stere</li>
+<li><strong>area_extent</strong>: Area extent as a list (y_ll, x_ll, y_ur, x_ur)</li>
 </ul>
+<p>where</p>
+<ul class="simple">
+<li><strong>y_ll</strong>: projection y coordinate of the lower left corner of the lower left pixel in meters</li>
+<li><strong>x_ll</strong>: projection x coordinate of the lower left corner of the lower left pixel in meters</li>
+<li><strong>y_ur</strong>: projection y coordinate of the upper right corner of the upper right pixel in meters</li>
+<li><strong>x_ur</strong>: projection x coordinate of the upper right corner of the upper right pixel in meters</li>
+</ul>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">vu is saved to to v.txt, u.txt, and wind_info.hdf5 (under the group “vu”)
+in a new directory by the name of the displacement file appended with “_output”,
+which will be created where the script is ran</p>
+</div>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ pwd
 /Desktop
 $ ls
@@ -135,21 +169,37 @@ Saving vu to:
 </ul>
 <p>optional arguments:</p>
 <ul class="simple">
-<li><strong>units</strong>: Units that provided arguments should be interpreted as</li>
-<li><strong>shape</strong>: Number of pixels in the y and x direction following row-column format (height, width)</li>
-<li><strong>area_extent</strong>: Area extent as a tuple (lower_left_y, lower_left_x, upper_right_y, upper_right_x)</li>
-<li><strong>upper_left_extent</strong>: y and x coordinates of the upper left corner of the upper left pixel (y, x)</li>
-<li><strong>center</strong>: y and x coordinate of the center of projection (y, x)</li>
-<li><strong>pixel_size</strong>: Size of pixels in the y and x direction (dy, dx)</li>
-<li><strong>radius</strong>: Length from the center to the top/bottom and left/right outer edges (dy, dx)</li>
-<li><strong>displacement_data</strong>: File or list containing displacements</li>
-<li><strong>j</strong>: y pixel to compute displacements at</li>
-<li><strong>i</strong>: x pixel to compute displacements at</li>
-<li><strong>no_save</strong>: When true, saves lat_long to “latitude” and “longitude” under a new output
-directory by the name of the displacement file_name appended with “output”</li>
+<li><strong>center</strong>: projection y and x coordinate of the center of projection in degrees (lat, long)</li>
+<li><strong>pixel_size</strong>: Size of pixels in the y and x direction in meters (dy, dx)</li>
+<li><strong>shape</strong>: Number of pixels in the y and x direction following row-major format (height, width)</li>
+<li><strong>displacement_data</strong>: Name of file or list containing displacements; wildcard (“*”) syntax is accepted.
+If not provided, then old lats/longs will be calculated. If provided, new lats/longs will be calculated.
+Thus does <strong>NOT</strong> default to searching for displacement files.</li>
+<li><strong>j</strong>: Row to run calculations on</li>
+<li><strong>i</strong>: Column to run calculations on</li>
+<li><strong>no_save</strong>:<ol class="arabic">
+<li>When not flagged (Default): saves lat_long and does not print lat_long to shell</li>
+<li>When flagged: prints lat_long to shell without saving</li>
+</ol>
+</li>
+<li><strong>image_geod</strong>: Spheroid of projection (WGS84, sphere, etc). Defaults to WGS84</li>
+<li><strong>projection</strong>: Name of projection that the image is in (stere, laea, merc, etc). Defaults to stere</li>
+<li><strong>area_extent</strong>: Area extent as a list (y_ll, x_ll, y_ur, x_ur)</li>
 </ul>
-<p>Note: lat_long.sh does not search for a displacement file since it can find new and old latitudes/longitudes.
-Thus displacement_data must be provided in order to save data.</p>
+<p>where</p>
+<ul class="simple">
+<li><strong>y_ll</strong>: projection y coordinate of the lower left corner of the lower left pixel in meters</li>
+<li><strong>x_ll</strong>: projection x coordinate of the lower left corner of the lower left pixel in meters</li>
+<li><strong>y_ur</strong>: projection y coordinate of the upper right corner of the upper right pixel in meters</li>
+<li><strong>x_ur</strong>: projection x coordinate of the upper right corner of the upper right pixel in meters</li>
+</ul>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">lat_long is saved to to old_latitude.txt, old_longitude.txt, new_latitude.txt, new_longitude.txt,
+and wind_info.hdf5 (under the group “lat_long”) in a new directory by the name of the displacement
+file appended with “_output”, which will be created where the script is ran. Thus displacement_data must be
+provided in order to save area to a file.</p>
+</div>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ pwd
 /Desktop
 $ ls
@@ -163,11 +213,11 @@ $ pywinds/lat_long.sh 60 0 --j 0 --i 0 --pixel_size 4000
 $ pywinds/lat_long.sh 60 0 --pixel_size 4000
   --center 90,0 --displacement_data &quot;&#39;*.flo&#39;&quot;
 Saving lat_long to:
-/Documents/in.flo_output/old_latitude.txt
-/Documents/in.flo_output/old_longitude.txt
-/Documents/in.flo_output/new_latitude.txt
-/Documents/in.flo_output/new_longitude.txt
-/Documents/in.flo_output/wind_info.hdf5
+/Desktop/in.flo_output/old_latitude.txt
+/Desktop/in.flo_output/old_longitude.txt
+/Desktop/in.flo_output/new_latitude.txt
+/Desktop/in.flo_output/new_longitude.txt
+/Desktop/in.flo_output/wind_info.hdf5
 </pre></div>
 </div>
 </div>
@@ -176,21 +226,38 @@ Saving lat_long to:
 <p>Finds displacements</p>
 <p>optional arguments:</p>
 <ul class="simple">
+<li><strong>displacement_data</strong>: Name of file or list containing displacements; wildcard (“*”) syntax is accepted.
+If not provided, reads every file ending in “.flo” where the script is ran</li>
+<li><strong>shape</strong>: Number of pixels in the y and x direction following row-major format (height, width)</li>
+<li><strong>j</strong>: Row to run calculations on</li>
+<li><strong>i</strong>: Column to run calculations on</li>
 <li><strong>lat_0</strong>: Normal latitude of projection</li>
 <li><strong>lon_0</strong>: Normal longitude of projection</li>
-<li><strong>units</strong>: Units that provided arguments should be interpreted as</li>
-<li><strong>shape</strong>: Number of pixels in the y and x direction following row-column format (height, width)</li>
-<li><strong>area_extent</strong>: Area extent as a tuple (lower_left_y, lower_left_x, upper_right_y, upper_right_x)</li>
-<li><strong>upper_left_extent</strong>: y and x coordinates of the upper left corner of the upper left pixel (y, x)</li>
-<li><strong>center</strong>: y and x coordinate of the center of projection (y, x)</li>
-<li><strong>pixel_size</strong>: Size of pixels in the y and x direction (dy, dx)</li>
-<li><strong>radius</strong>: Length from the center to the top/bottom and left/right outer edges (dy, dx)</li>
-<li><strong>displacement_data</strong>: File or list containing displacements</li>
-<li><strong>j</strong>: y pixel to compute displacements at</li>
-<li><strong>i</strong>: x pixel to compute displacements at</li>
-<li><strong>no_save</strong>: When true, saves displacements to “j_displacements” and “i_displacements”
-under a new output directory by the name of the displacement file_name appended with “output”</li>
+<li><strong>center</strong>: projection y and x coordinate of the center of projection in degrees (lat, long)</li>
+<li><strong>pixel_size</strong>: Size of pixels in the y and x direction in meters (dy, dx)</li>
+<li><strong>no_save</strong>:<ol class="arabic">
+<li>When not flagged (Default): saves displacements and does not print displacements to shell</li>
+<li>When flagged: prints displacements to shell without saving</li>
+</ol>
+</li>
+<li><strong>image_geod</strong>: Spheroid of projection (WGS84, sphere, etc). Defaults to WGS84</li>
+<li><strong>projection</strong>: Name of projection that the image is in (stere, laea, merc, etc). Defaults to stere</li>
+<li><strong>area_extent</strong>: Area extent as a list (y_ll, x_ll, y_ur, x_ur)</li>
 </ul>
+<p>where</p>
+<ul class="simple">
+<li><strong>y_ll</strong>: projection y coordinate of the lower left corner of the lower left pixel in meters</li>
+<li><strong>x_ll</strong>: projection x coordinate of the lower left corner of the lower left pixel in meters</li>
+<li><strong>y_ur</strong>: projection y coordinate of the upper right corner of the upper right pixel in meters</li>
+<li><strong>x_ur</strong>: projection x coordinate of the upper right corner of the upper right pixel in meters</li>
+</ul>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">displacements is saved to to j_displacement.txt, i_displacement.txt, and wind_info.hdf5
+(under the group “displacements”) in a new directory by the name of the displacement
+file appended with “_output”, which will be created where the script is ran. Thus
+displacement_data must be found in order to save displacements to a file.</p>
+</div>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ pwd
 /Desktop
 $ ls
@@ -201,9 +268,9 @@ $ pywinds/displacements.sh --j 1 --i 0 --no_save --shape 100,10000
 [-3.03, 79.19]
 $ pywinds/displacements.sh
 Saving displacements to:
-/Documents/in.flo_output/j_displacement.txt
-/Documents/in.flo_output/i_displacement.txt
-/Documents/in.flo_output/wind_info.hdf5
+/Desktop/in.flo_output/j_displacement.txt
+/Desktop/in.flo_output/i_displacement.txt
+/Desktop/in.flo_output/wind_info.hdf5
 </pre></div>
 </div>
 </div>
@@ -217,15 +284,34 @@ Saving displacements to:
 </ul>
 <p>optional arguments:</p>
 <ul class="simple">
-<li><strong>units</strong>: Units that provided arguments should be interpreted as</li>
-<li><strong>shape</strong>: Number of pixels in the y and x direction following row-column format (height, width)</li>
-<li><strong>area_extent</strong>: Area extent as a tuple (lower_left_y, lower_left_x, upper_right_y, upper_right_x)</li>
-<li><strong>upper_left_extent</strong>: y and x coordinates of the upper left corner of the upper left pixel (y, x)</li>
-<li><strong>center</strong>: y and x coordinate of the center of projection (y, x)</li>
-<li><strong>pixel_size</strong>: Size of pixels in the y and x direction (dy, dx)</li>
-<li><strong>radius</strong>: Length from the center to the top/bottom and left/right outer edges (dy, dx)</li>
-<li><strong>displacement_data</strong>: File or list containing displacements</li>
+<li><strong>center</strong>: projection y and x coordinate of the center of projection in degrees (lat, long)</li>
+<li><strong>pixel_size</strong>: Size of pixels in the y and x direction in meters (dy, dx)</li>
+<li><strong>shape</strong>: Number of pixels in the y and x direction following row-major format (height, width)</li>
+<li><strong>displacement_data</strong>: Name of file or list containing displacements; wildcard (“*”) syntax is accepted.
+If not provided, reads every file ending in “.flo” where the script is ran</li>
+<li><strong>no_save</strong>:<ol class="arabic">
+<li>When not flagged (Default): saves lat_long and does not print lat_long to shell</li>
+<li>When flagged: prints lat_long to shell without saving</li>
+</ol>
+</li>
+<li><strong>image_geod</strong>: Spheroid of projection (WGS84, sphere, etc). Defaults to WGS84</li>
+<li><strong>projection</strong>: Name of projection that the image is in (stere, laea, merc, etc). Defaults to stere</li>
+<li><strong>area_extent</strong>: Area extent as a list (y_ll, x_ll, y_ur, x_ur)</li>
 </ul>
+<p>where</p>
+<ul class="simple">
+<li><strong>y_ll</strong>: projection y coordinate of the lower left corner of the lower left pixel in meters</li>
+<li><strong>x_ll</strong>: projection x coordinate of the lower left corner of the lower left pixel in meters</li>
+<li><strong>y_ur</strong>: projection y coordinate of the upper right corner of the upper right pixel in meters</li>
+<li><strong>x_ur</strong>: projection x coordinate of the upper right corner of the upper right pixel in meters</li>
+</ul>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">area is saved to to area.txt and wind_info.hdf5 (under the group “area”)
+in a new directory by the name of the displacement file appended with “_output”,
+which will be created where the script is ran. Thus displacement_data must be
+found in order to save area to a file.</p>
+</div>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ pwd
 /Desktop
 $ ls
@@ -242,8 +328,8 @@ pixel_size: (4000.0, 4000.0)
 center: (90.0, 0.0)
 $ pywinds/area.sh 60 0 --pixel_size 4000 --center 90,0
 Saving area to:
-/Documents/in.flo_output/area.txt
-/Documents/in.flo_output/wind_info.hdf5
+/Desktop/in.flo_output/area.txt
+/Desktop/in.flo_output/wind_info.hdf5
 </pre></div>
 </div>
 </div>
@@ -316,7 +402,7 @@ Saving area to:
     </div>
     <div class="footer" role="contentinfo">
         &#169; Copyright 2019, Will Roberts.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.4.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.2.
     </div>
   </body>
 </html>

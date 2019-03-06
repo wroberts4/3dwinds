@@ -12,25 +12,35 @@ Required arguments:
 
 optional arguments:
 
-* **center**: y and x coordinate of the center of projection (y, x)
-* **pixel_size**: Size of pixels in the y and x direction (dy, dx)
+* **center**: projection y and x coordinate of the center of projection in degrees (lat, long)
+* **pixel_size**: Size of pixels in the y and x direction in meters (dy, dx)
 * **shape**: Number of pixels in the y and x direction following row-major format (height, width)
-* **displacement_data**: Name of file or list containing displacements
+* **displacement_data**: Name of file or list containing displacements; wildcard ("*") syntax is accepted.
+  If not provided, reads every file ending in ".flo" where the script is ran
 * **j**: Row to run calculations on
 * **i**: Column to run calculations on
-* **no_save**: When false, saves velocity to speed.txt, angle.txt, and wind_info.hdf5 (under the group "velocity")
-  in a new directory by the name of the displacement file appended with "_output", which will be
-  created where the script is ran, and does not print data.
+* **no_save**:
 
-  When true, prints data to shell without saving.
+  1. When not flagged (Default): saves velocity and does not print velocity to shell
+  2. When flagged: prints velocity to shell without saving
+
+* **image_geod**: Spheroid of projection (WGS84, sphere, etc). Defaults to WGS84
+* **earth_geod**: Spheroid of Earth (WGS84, sphere, etc). Defaults to WGS84
+* **projection**: Name of projection that the image is in (stere, laea, merc, etc). Defaults to stere
 * **area_extent**: Area extent as a list (y_ll, x_ll, y_ur, x_ur)
 
 where
 
-* **y_ll**: projection y coordinate of the lower left corner of the lower left pixel
-* **x_ll**: projection x coordinate of the lower left corner of the lower left pixel
-* **y_ur**: projection y coordinate of the upper right corner of the upper right pixel
-* **x_ur**: projection x coordinate of the upper right corner of the upper right pixel
+* **y_ll**: projection y coordinate of the lower left corner of the lower left pixel in meters
+* **x_ll**: projection x coordinate of the lower left corner of the lower left pixel in meters
+* **y_ur**: projection y coordinate of the upper right corner of the upper right pixel in meters
+* **x_ur**: projection x coordinate of the upper right corner of the upper right pixel in meters
+
+.. note::
+
+    velocity is saved to to speed.txt, angle.txt, and wind_info.hdf5 (under the group "velocity")
+    in a new directory by the name of the displacement file appended with "_output", which will be
+    created where the script is ran
 
 ::
 
@@ -57,20 +67,39 @@ Required arguments:
 
 * **lat_0**: Normal latitude of projection
 * **lon_0**: Normal longitude of projection
+* **delta_time**: Amount of time that separates both files in minutes
 
 optional arguments:
 
+* **center**: projection y and x coordinate of the center of projection in degrees (lat, long)
+* **pixel_size**: Size of pixels in the y and x direction in meters (dy, dx)
 * **shape**: Number of pixels in the y and x direction following row-major format (height, width)
-* **area_extent**: Area extent as a list (lower_left_y, lower_left_x, upper_right_y, upper_right_x)
-* **upper_left_extent**: y and x coordinates of the upper left corner of the upper left pixel (y, x)
-* **center**: y and x coordinate of the center of projection (y, x)
-* **pixel_size**: Size of pixels in the y and x direction (dy, dx)
-* **radius**: Length from the center to the top/bottom and left/right outer edges (dy, dx)
-* **displacement_data**: File or list containing displacements
-* **j**: y pixel to compute displacements at
-* **i**: x pixel to compute displacements at
-* **no_save**: When true, saves vu to "v" and "u" under a new output
-  directory by the name of the displacement file_name appended with "output"
+* **displacement_data**: Name of file or list containing displacements; wildcard ("*") syntax is accepted.
+  If not provided, reads every file ending in ".flo" where the script is ran
+* **j**: Row to run calculations on
+* **i**: Column to run calculations on
+* **no_save**:
+
+  1. When not flagged (Default): saves vu and does not print vu to shell
+  2. When flagged: prints vu to shell without saving
+
+* **image_geod**: Spheroid of projection (WGS84, sphere, etc). Defaults to WGS84
+* **earth_geod**: Spheroid of Earth (WGS84, sphere, etc). Defaults to WGS84
+* **projection**: Name of projection that the image is in (stere, laea, merc, etc). Defaults to stere
+* **area_extent**: Area extent as a list (y_ll, x_ll, y_ur, x_ur)
+
+where
+
+* **y_ll**: projection y coordinate of the lower left corner of the lower left pixel in meters
+* **x_ll**: projection x coordinate of the lower left corner of the lower left pixel in meters
+* **y_ur**: projection y coordinate of the upper right corner of the upper right pixel in meters
+* **x_ur**: projection x coordinate of the upper right corner of the upper right pixel in meters
+
+.. note::
+
+    vu is saved to to v.txt, u.txt, and wind_info.hdf5 (under the group "vu")
+    in a new directory by the name of the displacement file appended with "_output",
+    which will be created where the script is ran
 
 ::
 
@@ -100,21 +129,36 @@ Required arguments:
 
 optional arguments:
 
-* **units**: Units that provided arguments should be interpreted as
+* **center**: projection y and x coordinate of the center of projection in degrees (lat, long)
+* **pixel_size**: Size of pixels in the y and x direction in meters (dy, dx)
 * **shape**: Number of pixels in the y and x direction following row-major format (height, width)
-* **area_extent**: Area extent as a list (lower_left_y, lower_left_x, upper_right_y, upper_right_x)
-* **upper_left_extent**: y and x coordinates of the upper left corner of the upper left pixel (y, x)
-* **center**: y and x coordinate of the center of projection (y, x)
-* **pixel_size**: Size of pixels in the y and x direction (dy, dx)
-* **radius**: Length from the center to the top/bottom and left/right outer edges (dy, dx)
-* **displacement_data**: File or list containing displacements
-* **j**: y pixel to compute displacements at
-* **i**: x pixel to compute displacements at
-* **no_save**: When true, saves lat_long to "latitude" and "longitude" under a new output
-  directory by the name of the displacement file_name appended with "output"
+* **displacement_data**: Name of file or list containing displacements; wildcard ("*") syntax is accepted.
+  If not provided, then old lats/longs will be calculated. If provided, new lats/longs will be calculated.
+  Thus does **NOT** default to searching for displacement files.
+* **j**: Row to run calculations on
+* **i**: Column to run calculations on
+* **no_save**:
 
-Note: lat_long.sh does not search for a displacement file since it can find new and old latitudes/longitudes.
-Thus displacement_data must be provided in order to save data.
+  1. When not flagged (Default): saves lat_long and does not print lat_long to shell
+  2. When flagged: prints lat_long to shell without saving
+
+* **image_geod**: Spheroid of projection (WGS84, sphere, etc). Defaults to WGS84
+* **projection**: Name of projection that the image is in (stere, laea, merc, etc). Defaults to stere
+* **area_extent**: Area extent as a list (y_ll, x_ll, y_ur, x_ur)
+
+where
+
+* **y_ll**: projection y coordinate of the lower left corner of the lower left pixel in meters
+* **x_ll**: projection x coordinate of the lower left corner of the lower left pixel in meters
+* **y_ur**: projection y coordinate of the upper right corner of the upper right pixel in meters
+* **x_ur**: projection x coordinate of the upper right corner of the upper right pixel in meters
+
+.. note::
+
+    lat_long is saved to to old_latitude.txt, old_longitude.txt, new_latitude.txt, new_longitude.txt,
+    and wind_info.hdf5 (under the group "lat_long") in a new directory by the name of the displacement
+    file appended with "_output", which will be created where the script is ran. Thus displacement_data must be
+    provided in order to save area to a file.
 
 ::
 
@@ -131,11 +175,11 @@ Thus displacement_data must be provided in order to save data.
     $ pywinds/lat_long.sh 60 0 --pixel_size 4000
       --center 90,0 --displacement_data "'*.flo'"
     Saving lat_long to:
-    /Documents/in.flo_output/old_latitude.txt
-    /Documents/in.flo_output/old_longitude.txt
-    /Documents/in.flo_output/new_latitude.txt
-    /Documents/in.flo_output/new_longitude.txt
-    /Documents/in.flo_output/wind_info.hdf5
+    /Desktop/in.flo_output/old_latitude.txt
+    /Desktop/in.flo_output/old_longitude.txt
+    /Desktop/in.flo_output/new_latitude.txt
+    /Desktop/in.flo_output/new_longitude.txt
+    /Desktop/in.flo_output/wind_info.hdf5
 
 displacements.sh
 ----------------
@@ -144,20 +188,37 @@ Finds displacements
 
 optional arguments:
 
+* **displacement_data**: Name of file or list containing displacements; wildcard ("*") syntax is accepted.
+  If not provided, reads every file ending in ".flo" where the script is ran
+* **shape**: Number of pixels in the y and x direction following row-major format (height, width)
+* **j**: Row to run calculations on
+* **i**: Column to run calculations on
 * **lat_0**: Normal latitude of projection
 * **lon_0**: Normal longitude of projection
-* **units**: Units that provided arguments should be interpreted as
-* **shape**: Number of pixels in the y and x direction following row-major format (height, width)
-* **area_extent**: Area extent as a list (lower_left_y, lower_left_x, upper_right_y, upper_right_x)
-* **upper_left_extent**: y and x coordinates of the upper left corner of the upper left pixel (y, x)
-* **center**: y and x coordinate of the center of projection (y, x)
-* **pixel_size**: Size of pixels in the y and x direction (dy, dx)
-* **radius**: Length from the center to the top/bottom and left/right outer edges (dy, dx)
-* **displacement_data**: File or list containing displacements
-* **j**: y pixel to compute displacements at
-* **i**: x pixel to compute displacements at
-* **no_save**: When true, saves displacements to "j_displacements" and "i_displacements"
-  under a new output directory by the name of the displacement file_name appended with "output"
+* **center**: projection y and x coordinate of the center of projection in degrees (lat, long)
+* **pixel_size**: Size of pixels in the y and x direction in meters (dy, dx)
+* **no_save**:
+
+  1. When not flagged (Default): saves displacements and does not print displacements to shell
+  2. When flagged: prints displacements to shell without saving
+
+* **image_geod**: Spheroid of projection (WGS84, sphere, etc). Defaults to WGS84
+* **projection**: Name of projection that the image is in (stere, laea, merc, etc). Defaults to stere
+* **area_extent**: Area extent as a list (y_ll, x_ll, y_ur, x_ur)
+
+where
+
+* **y_ll**: projection y coordinate of the lower left corner of the lower left pixel in meters
+* **x_ll**: projection x coordinate of the lower left corner of the lower left pixel in meters
+* **y_ur**: projection y coordinate of the upper right corner of the upper right pixel in meters
+* **x_ur**: projection x coordinate of the upper right corner of the upper right pixel in meters
+
+.. note::
+
+    displacements is saved to to j_displacement.txt, i_displacement.txt, and wind_info.hdf5
+    (under the group "displacements") in a new directory by the name of the displacement
+    file appended with "_output", which will be created where the script is ran. Thus
+    displacement_data must be found in order to save displacements to a file.
 
 ::
 
@@ -171,9 +232,9 @@ optional arguments:
     [-3.03, 79.19]
     $ pywinds/displacements.sh
     Saving displacements to:
-    /Documents/in.flo_output/j_displacement.txt
-    /Documents/in.flo_output/i_displacement.txt
-    /Documents/in.flo_output/wind_info.hdf5
+    /Desktop/in.flo_output/j_displacement.txt
+    /Desktop/in.flo_output/i_displacement.txt
+    /Desktop/in.flo_output/wind_info.hdf5
 
 area.sh
 -------
@@ -187,14 +248,33 @@ Required arguments:
 
 optional arguments:
 
-* **units**: Units that provided arguments should be interpreted as
+* **center**: projection y and x coordinate of the center of projection in degrees (lat, long)
+* **pixel_size**: Size of pixels in the y and x direction in meters (dy, dx)
 * **shape**: Number of pixels in the y and x direction following row-major format (height, width)
-* **area_extent**: Area extent as a list (lower_left_y, lower_left_x, upper_right_y, upper_right_x)
-* **upper_left_extent**: y and x coordinates of the upper left corner of the upper left pixel (y, x)
-* **center**: y and x coordinate of the center of projection (y, x)
-* **pixel_size**: Size of pixels in the y and x direction (dy, dx)
-* **radius**: Length from the center to the top/bottom and left/right outer edges (dy, dx)
-* **displacement_data**: File or list containing displacements
+* **displacement_data**: Name of file or list containing displacements; wildcard ("*") syntax is accepted.
+  If not provided, reads every file ending in ".flo" where the script is ran
+* **no_save**:
+
+  1. When not flagged (Default): saves lat_long and does not print lat_long to shell
+  2. When flagged: prints lat_long to shell without saving
+
+* **image_geod**: Spheroid of projection (WGS84, sphere, etc). Defaults to WGS84
+* **projection**: Name of projection that the image is in (stere, laea, merc, etc). Defaults to stere
+* **area_extent**: Area extent as a list (y_ll, x_ll, y_ur, x_ur)
+
+where
+
+* **y_ll**: projection y coordinate of the lower left corner of the lower left pixel in meters
+* **x_ll**: projection x coordinate of the lower left corner of the lower left pixel in meters
+* **y_ur**: projection y coordinate of the upper right corner of the upper right pixel in meters
+* **x_ur**: projection x coordinate of the upper right corner of the upper right pixel in meters
+
+.. note::
+
+    area is saved to to area.txt and wind_info.hdf5 (under the group "area")
+    in a new directory by the name of the displacement file appended with "_output",
+    which will be created where the script is ran. Thus displacement_data must be
+    found in order to save area to a file.
 
 ::
 
@@ -214,5 +294,5 @@ optional arguments:
     center: (90.0, 0.0)
     $ pywinds/area.sh 60 0 --pixel_size 4000 --center 90,0
     Saving area to:
-    /Documents/in.flo_output/area.txt
-    /Documents/in.flo_output/wind_info.hdf5
+    /Desktop/in.flo_output/area.txt
+    /Desktop/in.flo_output/wind_info.hdf5

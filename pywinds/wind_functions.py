@@ -438,14 +438,14 @@ def displacements(lat_0=None, long_0=None, displacement_data=None, projection='s
 
     Parameters
     ----------
-    lat_0 : float
+    lat_0 : float, optional
         Normal latitude of projection
-    long_0 : float
+    long_0 : float, optional
         Normal longitude of projection
     displacement_data : str or list, optional
         File or list containing displacements: [tag, width, height, i_11, j_11, i_12, j_12, ..., i_nm, j_nm] or
         [[j_displacement], [i_displacement]] respectively
-    projection : str
+    projection : str, optional
         Name of projection that pixels are describing (stere, laea, merc, etc).
     j : float or None, optional
         Row to run calculations on
@@ -477,9 +477,8 @@ def displacements(lat_0=None, long_0=None, displacement_data=None, projection='s
     if (not isinstance(lat_0, (int, float)) or not isinstance(long_0, (int, float))) and _not_none(
             [lat_0, long_0, area_extent, center, pixel_size, image_geod]):
         raise ValueError(
-            'If lat_0 or long_0 were provided they both must be provided, but instead were ' + '{0} {1} and {2} {3} '
-                                                                                               'respectively'.format(
-                lat_0, type(lat_0), long_0, type(long_0)))
+            'If lat_0 or long_0 were provided they both must be provided,'
+            'but instead were {0} {1} and {2} {3}  respectively'.format(lat_0, type(lat_0), long_0, type(long_0)))
     shape, j_displacement, i_displacement = _find_displacements_and_area(lat_0=lat_0, long_0=long_0,
                                                                          displacement_data=displacement_data,
                                                                          projection=projection, j=j, i=i,
@@ -512,7 +511,7 @@ def velocity(lat_0, long_0, delta_time, displacement_data=None, projection='ster
         File or list containing displacements: [tag, width, height, i_11, j_11, i_12, j_12, ..., i_nm, j_nm] or
         [[j_displacement], [i_displacement]] respectively
     projection : str
-        Name of projection that pixels are describing (stere, laea, merc, etc).
+        Name of projection that the image is in (stere, laea, merc, etc).
     j : float or None, optional
         Row to run calculations on
     i : float or None, optional
