@@ -27,9 +27,6 @@
           <a href="genindex.html" title="General Index"
              accesskey="I">index</a></li>
         <li class="right" >
-          <a href="py-modindex.html" title="Python Module Index"
-             >modules</a> |</li>
-        <li class="right" >
           <a href="examples.html" title="Examples"
              accesskey="N">next</a> |</li>
         <li class="right" >
@@ -51,10 +48,10 @@
 <p>Required arguments:</p>
 <ul class="simple">
 <li><strong>lat_0</strong>: Normal latitude of projection</li>
-<li><strong>lon_0</strong>: Normal longitude of projection</li>
+<li><strong>long_0</strong>: Normal longitude of projection</li>
 <li><strong>delta_time</strong>: Amount of time that separates both files in minutes</li>
 </ul>
-<p>optional arguments:</p>
+<p>Optional arguments:</p>
 <ul class="simple">
 <li><strong>center</strong>: projection y and x coordinate of the center of projection in degrees (lat, long)</li>
 <li><strong>pixel_size</strong>: Size of pixels in the y and x direction in meters (dy, dx)</li>
@@ -108,10 +105,10 @@ Saving velocity to:
 <p>Required arguments:</p>
 <ul class="simple">
 <li><strong>lat_0</strong>: Normal latitude of projection</li>
-<li><strong>lon_0</strong>: Normal longitude of projection</li>
+<li><strong>long_0</strong>: Normal longitude of projection</li>
 <li><strong>delta_time</strong>: Amount of time that separates both files in minutes</li>
 </ul>
-<p>optional arguments:</p>
+<p>Optional arguments:</p>
 <ul class="simple">
 <li><strong>center</strong>: projection y and x coordinate of the center of projection in degrees (lat, long)</li>
 <li><strong>pixel_size</strong>: Size of pixels in the y and x direction in meters (dy, dx)</li>
@@ -165,9 +162,9 @@ Saving vu to:
 <p>Required arguments:</p>
 <ul class="simple">
 <li><strong>lat_0</strong>: Normal latitude of projection</li>
-<li><strong>lon_0</strong>: Normal longitude of projection</li>
+<li><strong>long_0</strong>: Normal longitude of projection</li>
 </ul>
-<p>optional arguments:</p>
+<p>Optional arguments:</p>
 <ul class="simple">
 <li><strong>center</strong>: projection y and x coordinate of the center of projection in degrees (lat, long)</li>
 <li><strong>pixel_size</strong>: Size of pixels in the y and x direction in meters (dy, dx)</li>
@@ -198,7 +195,7 @@ Thus does <strong>NOT</strong> default to searching for displacement files.</li>
 <p class="last">lat_long is saved to to old_latitude.txt, old_longitude.txt, new_latitude.txt, new_longitude.txt,
 and wind_info.hdf5 (under the group “lat_long”) in a new directory by the name of the displacement
 file appended with “_output”, which will be created where the script is ran. Thus displacement_data must be
-provided in order to save area to a file.</p>
+provided in order to save lat_long to a file.</p>
 </div>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ pwd
 /Desktop
@@ -224,7 +221,7 @@ Saving lat_long to:
 <div class="section" id="displacements-sh">
 <h2>displacements.sh<a class="headerlink" href="#displacements-sh" title="Permalink to this headline">¶</a></h2>
 <p>Finds displacements</p>
-<p>optional arguments:</p>
+<p>Optional arguments:</p>
 <ul class="simple">
 <li><strong>displacement_data</strong>: Name of file or list containing displacements; wildcard (“*”) syntax is accepted.
 If not provided, reads every file ending in “.flo” where the script is ran</li>
@@ -232,7 +229,7 @@ If not provided, reads every file ending in “.flo” where the script is ran</
 <li><strong>j</strong>: Row to run calculations on</li>
 <li><strong>i</strong>: Column to run calculations on</li>
 <li><strong>lat_0</strong>: Normal latitude of projection</li>
-<li><strong>lon_0</strong>: Normal longitude of projection</li>
+<li><strong>long_0</strong>: Normal longitude of projection</li>
 <li><strong>center</strong>: projection y and x coordinate of the center of projection in degrees (lat, long)</li>
 <li><strong>pixel_size</strong>: Size of pixels in the y and x direction in meters (dy, dx)</li>
 <li><strong>no_save</strong>:<ol class="arabic">
@@ -280,9 +277,9 @@ Saving displacements to:
 <p>Required arguments:</p>
 <ul class="simple">
 <li><strong>lat_0</strong>: Normal latitude of projection</li>
-<li><strong>lon_0</strong>: Normal longitude of projection</li>
+<li><strong>long_0</strong>: Normal longitude of projection</li>
 </ul>
-<p>optional arguments:</p>
+<p>Optional arguments:</p>
 <ul class="simple">
 <li><strong>center</strong>: projection y and x coordinate of the center of projection in degrees (lat, long)</li>
 <li><strong>pixel_size</strong>: Size of pixels in the y and x direction in meters (dy, dx)</li>
@@ -319,7 +316,7 @@ in.flo          pywinds
 $ pywinds/area.sh 60 0 --pixel_size 4000 --center 90,0 --no_save
 projection: stere
 lat_0: 60
-lon_0: 0
+long_0: 0
 equatorial radius: 6378137.0
 eccentricity: 0.003353
 area_extent: (65.81, -47.35, 67.6, 137.18)
@@ -388,9 +385,6 @@ Saving area to:
         <li class="right" style="margin-right: 10px">
           <a href="genindex.html" title="General Index"
              >index</a></li>
-        <li class="right" >
-          <a href="py-modindex.html" title="Python Module Index"
-             >modules</a> |</li>
         <li class="right" >
           <a href="examples.html" title="Examples"
              >next</a> |</li>

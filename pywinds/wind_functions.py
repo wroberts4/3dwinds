@@ -5,19 +5,10 @@ import numpy as np
 from pyproj import Geod, Proj
 from pyresample.geometry import AreaDefinition, DynamicAreaDefinition
 from pyresample.utils import proj4_str_to_dict
+from pywinds.wrapper_utils import area_to_string
 from xarray import DataArray
 
 """Find wind info"""
-
-
-def _round(val, precision):
-    if val is None:
-        return None
-    if isinstance(val, str):
-        return val
-    if np.shape(val) == ():
-        return round(val, precision)
-    return tuple(np.round(val, precision).tolist())
 
 
 def _save_data(output_dict, displacement_filename, hdf5_group_name=None, txt_shape=None, group_attrs=None,
@@ -36,15 +27,8 @@ def _save_data(output_dict, displacement_filename, hdf5_group_name=None, txt_sha
         pass
     hdf5 = h5py.File(os.path.join(os.getcwd(), extension + '_output', 'wind_info.hdf5'), 'a')
     if area_dict is not None:
-        file = open(os.path.join(os.getcwd(), extension + '_output', 'area.txt'), 'w')
-        for attr, val in area_dict.items():
-            if val is None:
-                val = 'none'
-            precision = 2
-            if attr == 'eccentricity':
-                precision = 6
-            file.write('{0}: {1}\n'.format(attr, _round(val, precision)))
-        file.close()
+        with open(os.path.join(os.getcwd(), extension + '_output', 'area.txt'), 'w') as file:
+            file.write(area_to_string(area_dict))
     if hdf5_group_name is not None:
         hdf5.pop(hdf5_group_name, None)
         hdf5.create_group(hdf5_group_name)

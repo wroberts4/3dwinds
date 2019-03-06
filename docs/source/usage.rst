@@ -7,10 +7,10 @@ velocity.sh
 Required arguments:
 
 * **lat_0**: Normal latitude of projection
-* **lon_0**: Normal longitude of projection
+* **long_0**: Normal longitude of projection
 * **delta_time**: Amount of time that separates both files in minutes
 
-optional arguments:
+Optional arguments:
 
 * **center**: projection y and x coordinate of the center of projection in degrees (lat, long)
 * **pixel_size**: Size of pixels in the y and x direction in meters (dy, dx)
@@ -66,10 +66,10 @@ Finds vu
 Required arguments:
 
 * **lat_0**: Normal latitude of projection
-* **lon_0**: Normal longitude of projection
+* **long_0**: Normal longitude of projection
 * **delta_time**: Amount of time that separates both files in minutes
 
-optional arguments:
+Optional arguments:
 
 * **center**: projection y and x coordinate of the center of projection in degrees (lat, long)
 * **pixel_size**: Size of pixels in the y and x direction in meters (dy, dx)
@@ -125,9 +125,9 @@ Finds lat_long
 Required arguments:
 
 * **lat_0**: Normal latitude of projection
-* **lon_0**: Normal longitude of projection
+* **long_0**: Normal longitude of projection
 
-optional arguments:
+Optional arguments:
 
 * **center**: projection y and x coordinate of the center of projection in degrees (lat, long)
 * **pixel_size**: Size of pixels in the y and x direction in meters (dy, dx)
@@ -158,7 +158,7 @@ where
     lat_long is saved to to old_latitude.txt, old_longitude.txt, new_latitude.txt, new_longitude.txt,
     and wind_info.hdf5 (under the group "lat_long") in a new directory by the name of the displacement
     file appended with "_output", which will be created where the script is ran. Thus displacement_data must be
-    provided in order to save area to a file.
+    provided in order to save lat_long to a file.
 
 ::
 
@@ -186,7 +186,7 @@ displacements.sh
 
 Finds displacements
 
-optional arguments:
+Optional arguments:
 
 * **displacement_data**: Name of file or list containing displacements; wildcard ("*") syntax is accepted.
   If not provided, reads every file ending in ".flo" where the script is ran
@@ -194,7 +194,7 @@ optional arguments:
 * **j**: Row to run calculations on
 * **i**: Column to run calculations on
 * **lat_0**: Normal latitude of projection
-* **lon_0**: Normal longitude of projection
+* **long_0**: Normal longitude of projection
 * **center**: projection y and x coordinate of the center of projection in degrees (lat, long)
 * **pixel_size**: Size of pixels in the y and x direction in meters (dy, dx)
 * **no_save**:
@@ -244,9 +244,9 @@ Finds area
 Required arguments:
 
 * **lat_0**: Normal latitude of projection
-* **lon_0**: Normal longitude of projection
+* **long_0**: Normal longitude of projection
 
-optional arguments:
+Optional arguments:
 
 * **center**: projection y and x coordinate of the center of projection in degrees (lat, long)
 * **pixel_size**: Size of pixels in the y and x direction in meters (dy, dx)
@@ -285,7 +285,7 @@ where
     $ pywinds/area.sh 60 0 --pixel_size 4000 --center 90,0 --no_save
     projection: stere
     lat_0: 60
-    lon_0: 0
+    long_0: 0
     equatorial radius: 6378137.0
     eccentricity: 0.003353
     area_extent: (65.81, -47.35, 67.6, 137.18)

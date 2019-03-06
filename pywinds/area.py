@@ -2,35 +2,13 @@
 import ntpath
 import os
 import sys
-import numpy as np
 from pywinds.wind_functions import area
-from pywinds.wrapper_utils import run_script
-
-
-def _round(val, precision):
-    if val is None:
-        return None
-    if np.shape(val) == ():
-        return round(val, precision)
-    return list(np.round(val, precision).tolist())
+from pywinds.wrapper_utils import area_to_string, run_script
 
 
 def output_format(output, kwargs):
     if kwargs.get('no_save') is True:
-        precision = 2
-        projection = output['projection']
-        lat_0 = _round(output['lat_0'], precision)
-        long_0 = _round(output['long_0'], precision)
-        equatorial_radius = _round(output['equatorial radius'], precision)
-        eccentricity = _round(output['eccentricity'], 6)
-        shape = output['shape']
-        area_extent = _round(output['area_extent'], precision)
-        pixel_size = _round(output['pixel_size'], precision)
-        center = _round(output['center'], precision)
-        return ('projection: {0}\nlat_0: {1}\nlong_0: {2}\nequatorial radius: {3}\neccentricity: {4}\n'
-            'area_extent: {5}\nshape: {6}\npixel_size: {7}\ncenter: {8}').format(projection, lat_0, long_0,
-                                                                                 equatorial_radius, eccentricity,
-                                                                                 area_extent, shape, pixel_size, center)
+        return area_to_string(output)
     head, tail = ntpath.split(kwargs['displacement_data'])
     extension = tail or ntpath.basename(head)
     save_directory = os.path.join(os.getcwd(), extension + '_output')
