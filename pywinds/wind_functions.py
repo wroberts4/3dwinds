@@ -214,14 +214,14 @@ def _find_displacements(displacement_data=None, j=None, i=None, shape=None):
     """Retrieves pixel-displacements from a file or list."""
     if isinstance(displacement_data, str):
         # Displacement: even index, odd index. Note: (0, 0) is in the top left, i=horizontal and j=vertical.
-        if shape is None:
-            shape = np.fromfile(displacement_data, dtype=int)[1:3]
         displacement = np.array(np.fromfile(displacement_data, dtype=np.float32)[3:], dtype=np.float64)
         j_displacement = displacement[1::2]
         i_displacement = displacement[0::2]
-        if (shape[0] is 0 or shape[1] != np.size(j_displacement) / shape[0] or shape[1] != np.size(i_displacement) /
-                shape[0]):
-            shape = None
+        if shape is None:
+            shape = np.fromfile(displacement_data, dtype=int)[1:3]
+            if (shape[0] is 0 or shape[1] != np.size(j_displacement) / shape[0] or
+                    shape[1] != np.size(i_displacement) / shape[0]):
+                shape = None
     elif displacement_data is not None:
         if len(np.shape(displacement_data)) != 2 and len(np.shape(displacement_data)) != 3 or \
                 np.shape(displacement_data)[0] != 2:
@@ -240,6 +240,12 @@ def _find_displacements(displacement_data=None, j=None, i=None, shape=None):
                 '{0} pixels made a shape of {1}'.format(np.size(j_displacement) + np.size(i_displacement),
                                                         tuple([2] + shape))
         shape = (_to_int(shape[0], ValueError(error)), _to_int(shape[1], ValueError(error)))
+    if shape[0] is 0 or shape[1] != np.size(j_displacement) / shape[0]:
+        raise ValueError('Could not reshape displacement data of size {0} to shape {1}'.format(
+            np.size(j_displacement), shape))
+    if shape[0] is 0 or shape[1] != np.size(i_displacement) / shape[0]:
+        raise ValueError('Could not reshape displacement data of size {0} to shape {1}'.format(
+            np.size(i_displacement), shape))
     if j is None and i is None:
         return shape, j_displacement, i_displacement
     j, i = _extrapolate_j_i(j, i, shape)
@@ -363,8 +369,8 @@ def area(lat_0, long_0, displacement_data=None, projection='stere', area_extent=
         Returns
         -------
             area : dict
-                projection, lat_0 (in degrees), long_0 (in degrees), equatorial radius (in meters),
-                eccentricity, shape, area_extent (in degrees), pixel_size (in projection meters), center (in degrees)
+                projection, lat_0 (degrees), long_0 (degrees), equatorial radius (meters),
+                eccentricity, shape, area_extent (degrees), pixel_size (projection meters), center (degrees)
     """
     if not isinstance(lat_0, (int, float)) or not isinstance(long_0, (int, float)):
         raise ValueError(

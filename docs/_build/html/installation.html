@@ -24,6 +24,7 @@
         <script type="text/javascript" src="_static/jquery.js"></script>
         <script type="text/javascript" src="_static/underscore.js"></script>
         <script type="text/javascript" src="_static/doctools.js"></script>
+        <script type="text/javascript" src="_static/language_data.js"></script>
     
     <script type="text/javascript" src="_static/js/theme.js"></script>
 
@@ -80,7 +81,10 @@
             
             
               <ul class="current">
-<li class="toctree-l1 current"><a class="current reference internal" href="#">Installing pywinds</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Installing pywinds</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#package-installation">Package installation</a></li>
+</ul>
+</li>
 <li class="toctree-l1"><a class="reference internal" href="usage.html">Usage</a></li>
 <li class="toctree-l1"><a class="reference internal" href="examples.html">Examples</a></li>
 <li class="toctree-l1"><a class="reference internal" href="API.html">API</a></li>
@@ -150,6 +154,17 @@
             
   <div class="section" id="installing-pywinds">
 <h1>Installing pywinds<a class="headerlink" href="#installing-pywinds" title="Permalink to this headline">¶</a></h1>
+<p>pywinds depends on pyproj, numpy, xarray, pyresample, and h5py (and sphinx_rtd_theme for the docs).</p>
+<div class="section" id="package-installation">
+<h2>Package installation<a class="headerlink" href="#package-installation" title="Permalink to this headline">¶</a></h2>
+<p>If using pywinds from tarball, everything should already be setup and ready to go after you untar it.</p>
+<p>If installing the package, you will need to use anaconda:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ conda install -y -c conda-forge pyproj xarray pyresample h5py
+$ conda install -y numpy
+$ pip install .
+</pre></div>
+</div>
+</div>
 </div>
 
 

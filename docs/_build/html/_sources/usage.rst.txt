@@ -1,6 +1,81 @@
 Usage
 =====
 
+Use the **-h** or **--help** flags on any of these scripts to print usage.
+
+wind_info.sh
+------------
+Calculates latitude, longitude, velocity, angle, v, and u.
+
+Required arguments:
+
+* **lat_0**: Normal latitude of projection
+* **long_0**: Normal longitude of projection
+* **delta_time**: Amount of time that separates both files in minutes
+
+Optional arguments:
+
+* **center**: Projection y and x coordinate of the center of projection in degrees (lat, long)
+* **pixel_size**: Size of pixels in the y and x direction in meters (dy, dx)
+* **shape**: Number of pixels in the y and x direction (height, width). If shape is not provided,
+  it attempts to be found from displacement_data.
+* **displacement_data**: Name of file or list containing displacements; wildcard ("*") syntax is accepted.
+  If not provided, reads every file ending in ".flo" where the script is ran
+* **j**: Row to run calculations on
+* **i**: Column to run calculations on
+* **no_save**:
+
+  1. When not flagged (Default): saves velocity and does not print velocity to shell
+  2. When flagged: prints velocity to shell without saving
+
+* **image_geod**: Spheroid of projection (WGS84, sphere, etc). Defaults to WGS84
+* **earth_geod**: Spheroid of Earth (WGS84, sphere, etc). Defaults to WGS84
+* **projection**: Name of projection that the image is in (stere, laea, merc, etc). Defaults to stere
+* **area_extent**: Area extent as a list (y_ll, x_ll, y_ur, x_ur)
+
+where
+
+* **y_ll**: projection y coordinate of the lower left corner of the lower left pixel in meters
+* **x_ll**: projection x coordinate of the lower left corner of the lower left pixel in meters
+* **y_ur**: projection y coordinate of the upper right corner of the upper right pixel in meters
+* **x_ur**: projection x coordinate of the upper right corner of the upper right pixel in meters
+
+If j and i values are provided, then velocity is calculated at a single pixel:
+
+::
+
+    [latitude, longitude, velocity, angle, v, u]
+
+If no j and i values are provided, then velocity is calculated at every pixel (n-rows, m-columns):
+
+::
+
+    [[latitude_11, longitude_11, velocity_11, angle_11, v_11, u_11],
+     ...,
+     [latitude_1m, longitude_1m, velocity_1m, angle_1m, v_1m, u_1m],
+     ...,
+     [latitude_nm, longitude_nm, velocity_nm, angle_nm, v_nm, u_nm]]
+
+.. note::
+
+    wind_info is saved to to wind_info.txt and wind_info.hdf5 (under the group "wind_info")
+    in a new directory by the name of the displacement file appended with "_output", which will be
+    created where the script is ran
+
+Calculating wind_info::
+
+    $ pwd
+    /Desktop
+    $ ls
+    in.flo	    pywinds
+    $ pywinds/velocity.sh 60 0 100 --j 0 --i 0 --pixel_size 4000 --center 90,0 --no_save
+    [67.62, -137.17, 42.33, 317.58, 31.25, -28.55]
+    $ pywinds/wind_info.sh 60 0 100 --pixel_size 4000 --center 90,0
+    Saving wind_info to:
+    /Desktop/in.flo_output/wind_info.txt
+    /Desktop/in.flo_output/wind_info.hdf5
+
+
 velocity.sh
 -----------
 
@@ -14,9 +89,10 @@ Required arguments:
 
 Optional arguments:
 
-* **center**: projection y and x coordinate of the center of projection in degrees (lat, long)
+* **center**: Projection y and x coordinate of the center of projection in degrees (lat, long)
 * **pixel_size**: Size of pixels in the y and x direction in meters (dy, dx)
-* **shape**: Number of pixels in the y and x direction following row-major format (height, width)
+* **shape**: Number of pixels in the y and x direction (height, width). If shape is not provided,
+  it attempts to be found from displacement_data.
 * **displacement_data**: Name of file or list containing displacements; wildcard ("*") syntax is accepted.
   If not provided, reads every file ending in ".flo" where the script is ran
 * **j**: Row to run calculations on
@@ -49,11 +125,11 @@ If no j and i values are provided, then velocity is calculated at every pixel (n
 ::
 
     [[[speed_11, ..., speed_1m],
-    ...,
-    [speed_n1, ..., speed_nm]],
-    [[angle_11, ..., angle_1m],
-    ...,
-    [angle_n1, ..., angle_nm]]]
+      ...,
+      [speed_n1, ..., speed_nm]],
+     [[angle_11, ..., angle_1m],
+      ...,
+      [angle_n1, ..., angle_nm]]]
 
 .. note::
 
@@ -75,6 +151,7 @@ Calculating velocity::
     /Desktop/in.flo_output/angle.txt
     /Desktop/in.flo_output/wind_info.hdf5
 
+
 vu.sh
 -----
 
@@ -88,9 +165,10 @@ Required arguments:
 
 Optional arguments:
 
-* **center**: projection y and x coordinate of the center of projection in degrees (lat, long)
+* **center**: Projection y and x coordinate of the center of projection in degrees (lat, long)
 * **pixel_size**: Size of pixels in the y and x direction in meters (dy, dx)
-* **shape**: Number of pixels in the y and x direction following row-major format (height, width)
+* **shape**: Number of pixels in the y and x direction (height, width). If shape is not provided,
+  it attempts to be found from displacement_data.
 * **displacement_data**: Name of file or list containing displacements; wildcard ("*") syntax is accepted.
   If not provided, reads every file ending in ".flo" where the script is ran
 * **j**: Row to run calculations on
@@ -112,13 +190,30 @@ where
 * **y_ur**: projection y coordinate of the upper right corner of the upper right pixel in meters
 * **x_ur**: projection x coordinate of the upper right corner of the upper right pixel in meters
 
+If j and i values are provided, then vu is calculated at a single pixel:
+
+::
+
+    [v, u]
+
+If no j and i values are provided, then vu is calculated at every pixel (n-rows, m-columns):
+
+::
+
+    [[[v_11, ..., v_1m],
+      ...,
+      [v_n1, ..., v_nm]],
+     [[u_11, ..., u_1m],
+      ...,
+      [u_n1, ..., u_nm]]]
+
 .. note::
 
     vu is saved to to v.txt, u.txt, and wind_info.hdf5 (under the group "vu")
     in a new directory by the name of the displacement file appended with "_output",
     which will be created where the script is ran
 
-::
+Calculating vu::
 
     $ pwd
     /Desktop
@@ -134,6 +229,7 @@ where
     /Desktop/in.flo_output/u.txt
     /Desktop/in.flo_output/wind_info.hdf5
 
+
 lat_long.sh
 -----------
 
@@ -146,9 +242,10 @@ Required arguments:
 
 Optional arguments:
 
-* **center**: projection y and x coordinate of the center of projection in degrees (lat, long)
+* **center**: Projection y and x coordinate of the center of projection in degrees (lat, long)
 * **pixel_size**: Size of pixels in the y and x direction in meters (dy, dx)
-* **shape**: Number of pixels in the y and x direction following row-major format (height, width)
+* **shape**: Number of pixels in the y and x direction (height, width). If shape is not provided,
+  it attempts to be found from displacement_data.
 * **displacement_data**: Name of file or list containing displacements; wildcard ("*") syntax is accepted.
   If not provided, then old lats/longs will be calculated. If provided, new lats/longs will be calculated.
   Thus does **NOT** default to searching for displacement files.
@@ -170,6 +267,23 @@ where
 * **y_ur**: projection y coordinate of the upper right corner of the upper right pixel in meters
 * **x_ur**: projection x coordinate of the upper right corner of the upper right pixel in meters
 
+If j and i values are provided, then lat_long is calculated at a single pixel:
+
+::
+
+    [latitude, longitude]
+
+If no j and i values are provided, then lat_long is calculated at every pixel (n-rows, m-columns):
+
+::
+
+    [[[latitude_11, ..., latitude_1m],
+      ...,
+      [latitude_n1, ..., latitude_nm]],
+     [[longitude_11, ..., longitude_1m],
+      ...,
+      [longitude_n1, ..., longitude_nm]]]
+
 .. note::
 
     lat_long is saved to to old_latitude.txt, old_longitude.txt, new_latitude.txt, new_longitude.txt,
@@ -177,7 +291,7 @@ where
     file appended with "_output", which will be created where the script is ran. Thus displacement_data must be
     provided in order to save lat_long to a file.
 
-::
+Calculating lat_long::
 
     $ pwd
     /Desktop
@@ -198,6 +312,7 @@ where
     /Desktop/in.flo_output/new_longitude.txt
     /Desktop/in.flo_output/wind_info.hdf5
 
+
 displacements.sh
 ----------------
 
@@ -207,12 +322,13 @@ Optional arguments:
 
 * **displacement_data**: Name of file or list containing displacements; wildcard ("*") syntax is accepted.
   If not provided, reads every file ending in ".flo" where the script is ran
-* **shape**: Number of pixels in the y and x direction following row-major format (height, width)
+* **shape**: Number of pixels in the y and x direction (height, width). If shape is not provided,
+  it attempts to be found from displacement_data.
 * **j**: Row to run calculations on
 * **i**: Column to run calculations on
 * **lat_0**: Normal latitude of projection
 * **long_0**: Normal longitude of projection
-* **center**: projection y and x coordinate of the center of projection in degrees (lat, long)
+* **center**: Projection y and x coordinate of the center of projection in degrees (lat, long)
 * **pixel_size**: Size of pixels in the y and x direction in meters (dy, dx)
 * **no_save**:
 
@@ -237,7 +353,24 @@ where
     file appended with "_output", which will be created where the script is ran. Thus
     displacement_data must be found in order to save displacements to a file.
 
+If j and i values are provided, then displacements is calculated at a single pixel:
+
 ::
+
+    [j_displacement, i_displacement]
+
+If no j and i values are provided, then displacements is calculated at every pixel (n-rows, m-columns):
+
+::
+
+    [[[j_displacement_11, ..., j_displacement_1m],
+      ...,
+      [j_displacement_n1, ..., j_displacement_nm]],
+     [[i_displacement_11, ..., i_displacement_1m],
+      ...,
+      [i_displacement_n1, ..., i_displacement_nm]]]
+
+Calculating displacements::
 
     $ pwd
     /Desktop
@@ -245,13 +378,12 @@ where
     in.flo	    pywinds
     $ pywinds/displacements.sh --j 0 --i 0 --no_save
     [-2.53, 76.8]
-    $ pywinds/displacements.sh --j 1 --i 0 --no_save --shape 100,10000
-    [-3.03, 79.19]
     $ pywinds/displacements.sh
     Saving displacements to:
     /Desktop/in.flo_output/j_displacement.txt
     /Desktop/in.flo_output/i_displacement.txt
     /Desktop/in.flo_output/wind_info.hdf5
+
 
 area.sh
 -------
@@ -265,9 +397,10 @@ Required arguments:
 
 Optional arguments:
 
-* **center**: projection y and x coordinate of the center of projection in degrees (lat, long)
+* **center**: Projection y and x coordinate of the center of projection in degrees (lat, long)
 * **pixel_size**: Size of pixels in the y and x direction in meters (dy, dx)
-* **shape**: Number of pixels in the y and x direction following row-major format (height, width)
+* **shape**: Number of pixels in the y and x direction (height, width). If shape is not provided,
+  it attempts to be found from displacement_data.
 * **displacement_data**: Name of file or list containing displacements; wildcard ("*") syntax is accepted.
   If not provided, reads every file ending in ".flo" where the script is ran
 * **no_save**:
@@ -293,7 +426,7 @@ where
     which will be created where the script is ran. Thus displacement_data must be
     found in order to save area to a file.
 
-::
+Calculating area::
 
     $ pwd
     /Desktop
@@ -313,3 +446,4 @@ where
     Saving area to:
     /Desktop/in.flo_output/area.txt
     /Desktop/in.flo_output/wind_info.hdf5
+

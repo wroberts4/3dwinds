@@ -77,8 +77,7 @@ def print_usage(func, name):
     Other usage notes
     -----------------
 
-    * You can add units to a specific variable by appending the variable with ":your_unit_here"
-      Examples: "--pixel_size 4:km" and "--center [10000,10000]:m"
+    * Use the -h or --help flags to print usage"
     """
     print(extra_info)
     print(func.__doc__)
