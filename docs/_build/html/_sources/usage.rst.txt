@@ -4,6 +4,8 @@ Usage
 velocity.sh
 -----------
 
+Calculates the speed and angle of wind given an area and displacements.
+
 Required arguments:
 
 * **lat_0**: Normal latitude of projection
@@ -36,23 +38,38 @@ where
 * **y_ur**: projection y coordinate of the upper right corner of the upper right pixel in meters
 * **x_ur**: projection x coordinate of the upper right corner of the upper right pixel in meters
 
+If j and i values are provided, then velocity is calculated at a single pixel:
+
+::
+
+    [speed, direction]
+
+If no j and i values are provided, then velocity is calculated at every pixel (n-rows, m-columns):
+
+::
+
+    [[[speed_11, ..., speed_1m],
+    ...,
+    [speed_n1, ..., speed_nm]],
+    [[angle_11, ..., angle_1m],
+    ...,
+    [angle_n1, ..., angle_nm]]]
+
 .. note::
 
     velocity is saved to to speed.txt, angle.txt, and wind_info.hdf5 (under the group "velocity")
     in a new directory by the name of the displacement file appended with "_output", which will be
     created where the script is ran
 
-::
+Calculating velocity::
 
     $ pwd
     /Desktop
     $ ls
     in.flo	    pywinds
-    $ pywinds/velocity.sh 60 0 100 --j 0 --i 0
-      --pixel_size 4000 --center 90,0 --no_save
+    $ pywinds/velocity.sh 60 0 100 --j 0 --i 0 --pixel_size 4000 --center 90,0 --no_save
     [42.33, 317.58]
-    $ pywinds/velocity.sh 60 0 100
-      --pixel_size 4000 --center 90,0
+    $ pywinds/velocity.sh 60 0 100 --pixel_size 4000 --center 90,0
     Saving velocity to:
     /Desktop/in.flo_output/speed.txt
     /Desktop/in.flo_output/angle.txt

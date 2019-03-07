@@ -7,4 +7,4 @@ setup(name='pywinds',
       author='William Roberts',
       author_email='wroberts4@wisc.edu',
       url='https://github.com/wroberts4/pywinds',
-      packages=['pywinds'])
+      packages=['pywinds', 'sphinx_rtd_theme'])
