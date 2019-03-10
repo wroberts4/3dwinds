@@ -5,7 +5,7 @@ Use the **-h** or **--help** flags on any of these scripts to print usage.
 
 wind_info.sh
 ------------
-Calculates latitude, longitude, velocity, angle, v, and u.
+Calculates latitude, longitude, velocity, angle, v, and u at pixel(s).
 
 Required arguments:
 
@@ -79,7 +79,7 @@ Calculating wind_info::
 velocity.sh
 -----------
 
-Calculates the speed and angle of wind given an area and displacements.
+Calculates the speed and angle of wind given an area and displacements at pixel(s).
 
 Required arguments:
 
@@ -155,7 +155,7 @@ Calculating velocity::
 vu.sh
 -----
 
-Finds vu
+Calculates the v and u component of wind at pixel(s).
 
 Required arguments:
 
@@ -233,7 +233,7 @@ Calculating vu::
 lat_long.sh
 -----------
 
-Finds lat_long
+Calculates the latitude and longitude of pixel(s).
 
 Required arguments:
 
@@ -301,10 +301,10 @@ Calculating lat_long::
       --pixel_size 4000 --center 90,0 --shape 1000,1000 --no_save
     [67.62, -137.17]
     $ pywinds/lat_long.sh 60 0 --j 0 --i 0 --pixel_size 4000
-      --center 90,0 --displacement_data "'*.flo'" --no_save
+      --center 90,0 --displacement_data "'in.flo'" --no_save
     [65.94, -133.28]
     $ pywinds/lat_long.sh 60 0 --pixel_size 4000
-      --center 90,0 --displacement_data "'*.flo'"
+      --center 90,0 --displacement_data "'in.flo'"
     Saving lat_long to:
     /Desktop/in.flo_output/old_latitude.txt
     /Desktop/in.flo_output/old_longitude.txt
@@ -316,7 +316,7 @@ Calculating lat_long::
 displacements.sh
 ----------------
 
-Finds displacements
+Finds displacements of pixel(s).
 
 Optional arguments:
 
@@ -388,7 +388,7 @@ Calculating displacements::
 area.sh
 -------
 
-Finds area
+Calculates information about the area that images are describing.
 
 Required arguments:
 

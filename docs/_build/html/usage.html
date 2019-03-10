@@ -162,7 +162,7 @@
 <p>Use the <strong>-h</strong> or <strong>–help</strong> flags on any of these scripts to print usage.</p>
 <div class="section" id="wind-info-sh">
 <h2>wind_info.sh<a class="headerlink" href="#wind-info-sh" title="Permalink to this headline">¶</a></h2>
-<p>Calculates latitude, longitude, velocity, angle, v, and u.</p>
+<p>Calculates latitude, longitude, velocity, angle, v, and u at pixel(s).</p>
 <p>Required arguments:</p>
 <ul class="simple">
 <li><strong>lat_0</strong>: Normal latitude of projection</li>
@@ -230,7 +230,7 @@ Saving wind_info to:
 </div>
 <div class="section" id="velocity-sh">
 <h2>velocity.sh<a class="headerlink" href="#velocity-sh" title="Permalink to this headline">¶</a></h2>
-<p>Calculates the speed and angle of wind given an area and displacements.</p>
+<p>Calculates the speed and angle of wind given an area and displacements at pixel(s).</p>
 <p>Required arguments:</p>
 <ul class="simple">
 <li><strong>lat_0</strong>: Normal latitude of projection</li>
@@ -300,7 +300,7 @@ Saving velocity to:
 </div>
 <div class="section" id="vu-sh">
 <h2>vu.sh<a class="headerlink" href="#vu-sh" title="Permalink to this headline">¶</a></h2>
-<p>Finds vu</p>
+<p>Calculates the v and u component of wind at pixel(s).</p>
 <p>Required arguments:</p>
 <ul class="simple">
 <li><strong>lat_0</strong>: Normal latitude of projection</li>
@@ -372,7 +372,7 @@ Saving vu to:
 </div>
 <div class="section" id="lat-long-sh">
 <h2>lat_long.sh<a class="headerlink" href="#lat-long-sh" title="Permalink to this headline">¶</a></h2>
-<p>Finds lat_long</p>
+<p>Calculates the latitude and longitude of pixel(s).</p>
 <p>Required arguments:</p>
 <ul class="simple">
 <li><strong>lat_0</strong>: Normal latitude of projection</li>
@@ -434,10 +434,10 @@ $ pywinds/lat_long.sh 60 0 --j 0 --i 0
   --pixel_size 4000 --center 90,0 --shape 1000,1000 --no_save
 [67.62, -137.17]
 $ pywinds/lat_long.sh 60 0 --j 0 --i 0 --pixel_size 4000
-  --center 90,0 --displacement_data &quot;&#39;*.flo&#39;&quot; --no_save
+  --center 90,0 --displacement_data &quot;&#39;in.flo&#39;&quot; --no_save
 [65.94, -133.28]
 $ pywinds/lat_long.sh 60 0 --pixel_size 4000
-  --center 90,0 --displacement_data &quot;&#39;*.flo&#39;&quot;
+  --center 90,0 --displacement_data &quot;&#39;in.flo&#39;&quot;
 Saving lat_long to:
 /Desktop/in.flo_output/old_latitude.txt
 /Desktop/in.flo_output/old_longitude.txt
@@ -449,7 +449,7 @@ Saving lat_long to:
 </div>
 <div class="section" id="displacements-sh">
 <h2>displacements.sh<a class="headerlink" href="#displacements-sh" title="Permalink to this headline">¶</a></h2>
-<p>Finds displacements</p>
+<p>Finds displacements of pixel(s).</p>
 <p>Optional arguments:</p>
 <ul class="simple">
 <li><strong>displacement_data</strong>: Name of file or list containing displacements; wildcard (“*”) syntax is accepted.
@@ -515,7 +515,7 @@ Saving displacements to:
 </div>
 <div class="section" id="area-sh">
 <h2>area.sh<a class="headerlink" href="#area-sh" title="Permalink to this headline">¶</a></h2>
-<p>Finds area</p>
+<p>Calculates information about the area that images are describing.</p>
 <p>Required arguments:</p>
 <ul class="simple">
 <li><strong>lat_0</strong>: Normal latitude of projection</li>

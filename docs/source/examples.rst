@@ -39,6 +39,13 @@ Specifying one file to run::
       --displacement_data in.flo --no_save
     [67.62, -137.17, 42.33, 317.58, 31.25, -28.55]
 
+Specifying multiple files to run::
+
+    $ pwd
+    /Desktop
+    $ ls
+    in.flo        test.flo        pywinds
+
 Altering spheroids::
 
     $ pwd
