@@ -6,11 +6,41 @@ from pyproj import Geod, Proj
 from pyresample.geometry import AreaDefinition, DynamicAreaDefinition
 from pyresample.utils import proj4_str_to_dict
 from pywinds.wrapper_utils import area_to_string
-from xarray import DataArray
+import xarray
 
 """Find wind info"""
 
 
+def save_data(displacement_filename, group, data_list, txt_shape=None, dtype=float, area_dict=None):
+    if isinstance(displacement_filename, str):
+        head, tail = ntpath.split(displacement_filename)
+        extension = tail or ntpath.basename(head)
+    else:
+        extension = 'list'
+    directory = os.path.join(os.getcwd(), extension + '_output')
+    netcdf4_path = os.path.join(directory, 'wind_info.netcdf4')
+    try:
+        os.mkdir(directory)
+    except OSError:
+        pass
+    dataset_dict = {}
+    names = []
+    if area_dict is not None:
+        with open(os.path.join(os.getcwd(), extension + '_output', 'area.txt'), 'w') as file:
+            file.write(area_to_string(area_dict))
+    for data in data_list:
+        names.append(data.name)
+        dataset_dict[data.name] = data
+        if area_dict is None:
+            text_path = os.path.join(directory, data.name + '.txt')
+            np.savetxt(text_path, data.data.reshape(txt_shape), fmt='%.2f', delimiter=',')
+    mode = 'a' if os.path.isfile(netcdf4_path) else 'w'
+    attrs = {} if area_dict is None else {'projection': area_dict['projection']}
+    xarray.Dataset(dataset_dict, attrs=attrs).to_netcdf(netcdf4_path, group=group, mode=mode, format='NETCDF4')
+                                           # encoding={name: {'dtype': dtype} for name in names})
+
+
+# TODO: USE XARRAY.to_netcdf
 def _save_data(output_dict, displacement_filename, hdf5_group_name=None, txt_shape=None, group_attrs=None,
                area_dict=None):
     """Saves data to a file named after the displacement_data appended with "_output"."""
@@ -34,7 +64,7 @@ def _save_data(output_dict, displacement_filename, hdf5_group_name=None, txt_sha
         hdf5.create_group(hdf5_group_name)
     for name, data in output_dict.items():
         attrs = {}
-        if isinstance(data, DataArray):
+        if isinstance(data, xarray.DataArray):
             attrs = data.attrs
             # Bug (no shape) when not converting to list then back to numpy array.
             data = np.array(data.data.tolist(), dtype=np.float64)
@@ -91,13 +121,13 @@ def _reverse_params(params):
     reversed_params = []
     for param in params:
         units = None
-        if isinstance(param, DataArray):
+        if isinstance(param, xarray.DataArray):
             units = param.attrs.get('units', None)
             param = param.data.tolist()
         if np.shape(param) != ():
             param = list(reversed(param))
         if units is not None:
-            return DataArray(param, attrs={'units': units})
+            return xarray.DataArray(param, attrs={'units': units})
         reversed_params.append(param)
     return reversed_params
 
@@ -174,8 +204,8 @@ def _create_area(lat_0, long_0, projection='stere', area_extent=None, shape=None
     if area_extent is not None:
         # Needs order [ll_x, ll_y, ur_x, ur_y].
         area_extent = area_extent_ll + area_extent_ur
-    # if center is not None and not isinstance(center, DataArray):
-    #     center = DataArray(center, attrs={'units': 'degrees'})
+    # if center is not None and not isinstance(center, xarray.DataArray):
+    #     center = xarray.DataArray(center, attrs={'units': 'degrees'})
     if image_geod is None:
         image_geod = Geod(ellps='WGS84')
     elif isinstance(image_geod, str):
@@ -406,14 +436,22 @@ def area(lat_0, long_0, displacement_data=None, projection='stere', area_extent=
 
     area_data = {'projection': projection, 'lat_0': lat_0, 'long_0': long_0, 'equatorial radius': a, 'eccentricity': f,
                  'shape': shape, 'area_extent': area_extent, 'pixel_size': pixel_size, 'center': center}
-    output_dict = {'lat_0': DataArray(lat_0, attrs={'units': 'degrees'}),
-                   'long_0': DataArray(long_0, attrs={'units': 'degrees'}),
-                   'equatorial radius': DataArray(a, attrs={'units': 'meters'}),
-                   'eccentricity': DataArray(f, attrs={'units': None}),
-                   'shape': DataArray(shape, attrs={'units': None}),
-                   'area_extent': DataArray(area_extent, attrs={'units': 'degrees'}),
-                   'pixel_size': DataArray(pixel_size, attrs={'units': 'projection meters'}),
-                   'center': DataArray(center, attrs={'units': 'degrees'})}
+    output_dict = {'lat_0': xarray.DataArray(lat_0, attrs={'units': 'degrees'}),
+                   'long_0': xarray.DataArray(long_0, attrs={'units': 'degrees'}),
+                   'equatorial radius': xarray.DataArray(a, attrs={'units': 'meters'}),
+                   'eccentricity': xarray.DataArray(f, attrs={'units': None}),
+                   'shape': xarray.DataArray(shape, attrs={'units': 'pixels'}),
+                   'area_extent': xarray.DataArray(area_extent, attrs={'units': 'degrees'}),
+                   'pixel_size': xarray.DataArray(pixel_size, attrs={'units': 'projection meters'}),
+                   'center': xarray.DataArray(center, attrs={'units': 'degrees'})}
+    save_data(displacement_data, 'area', (xarray.DataArray(lat_0, name='lat_0', attrs={'units': 'degrees'}),
+                   xarray.DataArray(long_0, name='long_0', attrs={'units': 'degrees'}),
+                   xarray.DataArray(a, name='equatorial_radius', attrs={'units': 'meters'}),
+                   xarray.DataArray(f, name='eccentricity'),
+                   xarray.DataArray(shape, name='shape', dims=['height, width'], attrs={'units': 'pixels'}),
+                   xarray.DataArray(area_extent, name='area_extent', dims=['lat_ll, long_ll, lat_ur, long_ur'], attrs={'units': 'degrees'}),
+                   xarray.DataArray(pixel_size, name='pixel_size', dims=['y_size, x_size'], attrs={'units': 'projection meters'}),
+                   xarray.DataArray(center, name='center', dims=['lat, long'], attrs={'units': 'degrees'})), area_dict=area_data)
     if no_save is False:
         if displacement_data is None:
             raise ValueError('Cannot save data without displacement_data')
@@ -422,6 +460,7 @@ def area(lat_0, long_0, displacement_data=None, projection='stere', area_extent=
     return area_data
 
 
+# TODO: FIX FOR SINGLE DATA SAVING
 def displacements(lat_0=None, long_0=None, displacement_data=None, projection='stere', j=None, i=None, area_extent=None,
                   shape=None, center=None, pixel_size=None, image_geod=None, no_save=False):
     """Dynamically computes displacements.
@@ -479,9 +518,14 @@ def displacements(lat_0=None, long_0=None, displacement_data=None, projection='s
         j_displacement = j_displacement.reshape(shape)
         i_displacement = i_displacement.reshape(shape)
     if no_save is False:
-        _save_data({'j_displacement': DataArray(j_displacement, attrs={'units': None}),
-                    'i_displacement': DataArray(i_displacement, attrs={'units': None})}, displacement_data,
+        _save_data({'j_displacement': xarray.DataArray(j_displacement, attrs={'units': 'pixels'}),
+                    'i_displacement': xarray.DataArray(i_displacement, attrs={'units': 'pixels'})}, displacement_data,
                    hdf5_group_name='displacements')
+    save_data(displacement_data, 'displacements',
+              (xarray.DataArray(j_displacement, name='j_displacement', dims=['j', 'i'], attrs={'units': 'pixels'}),
+               xarray.DataArray(i_displacement, name='i_displacement', dims=['j', 'i'], attrs={'units': 'pixels'})))
+    # name, data, attrs, group
+
     return np.array((j_displacement, i_displacement))
 
 
@@ -538,8 +582,8 @@ def velocity(lat_0, long_0, delta_time, displacement_data=None, projection='ster
         speed = speed.reshape(shape)
         angle = angle.reshape(shape)
     if no_save is False:
-        _save_data({'speed': DataArray(speed, attrs={'units': 'meters/second'}),
-                    'angle': DataArray(angle, attrs={'units': 'degrees'})}, displacement_data,
+        _save_data({'speed': xarray.DataArray(speed, attrs={'units': 'meters/second'}),
+                    'angle': xarray.DataArray(angle, attrs={'units': 'degrees'})}, displacement_data,
                    hdf5_group_name='velocity')
     return np.array((speed, angle))
 
@@ -596,7 +640,7 @@ def vu(lat_0, long_0, delta_time, displacement_data=None, projection='stere', j=
         u = u.reshape(shape)
     if no_save is False:
         _save_data(
-            {'v': DataArray(v, attrs={'units': 'meters/second'}), 'u': DataArray(u, attrs={'units': 'meters/second'})},
+            {'v': xarray.DataArray(v, attrs={'units': 'meters/second'}), 'u': xarray.DataArray(u, attrs={'units': 'meters/second'})},
             displacement_data, hdf5_group_name='vu')
     return np.array((v, u))
 
@@ -656,10 +700,10 @@ def lat_long(lat_0, long_0, displacement_data=None, projection='stere', j=None, 
         if np.size(new_lat) != 1:
             new_lat = new_lat.reshape(shape)
             new_long = new_long.reshape(shape)
-        _save_data({'old_latitude': DataArray(old_lat, attrs={'units': 'degrees'}),
-                    'old_longitude': DataArray(old_long, attrs={'units': 'degrees'}),
-                    'new_latitude': DataArray(new_lat, attrs={'units': 'degrees'}),
-                    'new_longitude': DataArray(new_long, attrs={'units': 'degrees'})}, displacement_data,
+        _save_data({'old_latitude': xarray.DataArray(old_lat, attrs={'units': 'degrees'}),
+                    'old_longitude': xarray.DataArray(old_long, attrs={'units': 'degrees'}),
+                    'new_latitude': xarray.DataArray(new_lat, attrs={'units': 'degrees'}),
+                    'new_longitude': xarray.DataArray(new_long, attrs={'units': 'degrees'})}, displacement_data,
                    hdf5_group_name='lat_long')
     return np.array((old_lat, old_long))
 
@@ -727,7 +771,7 @@ def wind_info(lat_0, long_0, delta_time, displacement_data=None, projection='ste
     if no_save is False:
         description = ('new_lat ({0}), new_long ({0}), speed ({1}), angle ({0}),'
                        'v ({1}), u ({1})').format('degrees', 'meters/second')
-        _save_data({'wind_info': DataArray(winds, attrs={'description': description})}, displacement_data,
+        _save_data({'wind_info': xarray.DataArray(winds, attrs={'description': description})}, displacement_data,
                    txt_shape=txt_shape)
     # Columns: lat, long, speed, direction, v, u
     return winds

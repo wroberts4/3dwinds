@@ -31,14 +31,14 @@ Optional arguments:
 * **image_geod**: Spheroid of projection (WGS84, sphere, etc). Defaults to WGS84
 * **earth_geod**: Spheroid of Earth (WGS84, sphere, etc). Defaults to WGS84
 * **projection**: Name of projection that the image is in (stere, laea, merc, etc). Defaults to stere
-* **area_extent**: Area extent as a list (y_ll, x_ll, y_ur, x_ur)
+* **area_extent**: Area extent as a list (lat_ll, long_ll, lat_ur, long_ur)
 
 where
 
-* **y_ll**: projection y coordinate of the lower left corner of the lower left pixel in meters
-* **x_ll**: projection x coordinate of the lower left corner of the lower left pixel in meters
-* **y_ur**: projection y coordinate of the upper right corner of the upper right pixel in meters
-* **x_ur**: projection x coordinate of the upper right corner of the upper right pixel in meters
+* **lat_ll**: projection y coordinate of the lower left corner of the lower left pixel in meters
+* **long_ll**: projection x coordinate of the lower left corner of the lower left pixel in meters
+* **lat_ur**: projection y coordinate of the upper right corner of the upper right pixel in meters
+* **long_ur**: projection x coordinate of the upper right corner of the upper right pixel in meters
 
 If j and i values are provided, then velocity is calculated at a single pixel:
 
@@ -105,14 +105,14 @@ Optional arguments:
 * **image_geod**: Spheroid of projection (WGS84, sphere, etc). Defaults to WGS84
 * **earth_geod**: Spheroid of Earth (WGS84, sphere, etc). Defaults to WGS84
 * **projection**: Name of projection that the image is in (stere, laea, merc, etc). Defaults to stere
-* **area_extent**: Area extent as a list (y_ll, x_ll, y_ur, x_ur)
+* **area_extent**: Area extent as a list (lat_ll, long_ll, lat_ur, long_ur)
 
 where
 
-* **y_ll**: projection y coordinate of the lower left corner of the lower left pixel in meters
-* **x_ll**: projection x coordinate of the lower left corner of the lower left pixel in meters
-* **y_ur**: projection y coordinate of the upper right corner of the upper right pixel in meters
-* **x_ur**: projection x coordinate of the upper right corner of the upper right pixel in meters
+* **lat_ll**: projection y coordinate of the lower left corner of the lower left pixel in meters
+* **long_ll**: projection x coordinate of the lower left corner of the lower left pixel in meters
+* **lat_ur**: projection y coordinate of the upper right corner of the upper right pixel in meters
+* **long_ur**: projection x coordinate of the upper right corner of the upper right pixel in meters
 
 If j and i values are provided, then velocity is calculated at a single pixel:
 
@@ -181,14 +181,14 @@ Optional arguments:
 * **image_geod**: Spheroid of projection (WGS84, sphere, etc). Defaults to WGS84
 * **earth_geod**: Spheroid of Earth (WGS84, sphere, etc). Defaults to WGS84
 * **projection**: Name of projection that the image is in (stere, laea, merc, etc). Defaults to stere
-* **area_extent**: Area extent as a list (y_ll, x_ll, y_ur, x_ur)
+* **area_extent**: Area extent as a list (lat_ll, long_ll, lat_ur, long_ur)
 
 where
 
-* **y_ll**: projection y coordinate of the lower left corner of the lower left pixel in meters
-* **x_ll**: projection x coordinate of the lower left corner of the lower left pixel in meters
-* **y_ur**: projection y coordinate of the upper right corner of the upper right pixel in meters
-* **x_ur**: projection x coordinate of the upper right corner of the upper right pixel in meters
+* **lat_ll**: projection y coordinate of the lower left corner of the lower left pixel in meters
+* **long_ll**: projection x coordinate of the lower left corner of the lower left pixel in meters
+* **lat_ur**: projection y coordinate of the upper right corner of the upper right pixel in meters
+* **long_ur**: projection x coordinate of the upper right corner of the upper right pixel in meters
 
 If j and i values are provided, then vu is calculated at a single pixel:
 
@@ -258,14 +258,14 @@ Optional arguments:
 
 * **image_geod**: Spheroid of projection (WGS84, sphere, etc). Defaults to WGS84
 * **projection**: Name of projection that the image is in (stere, laea, merc, etc). Defaults to stere
-* **area_extent**: Area extent as a list (y_ll, x_ll, y_ur, x_ur)
+* **area_extent**: Area extent as a list (lat_ll, long_ll, lat_ur, long_ur)
 
 where
 
-* **y_ll**: projection y coordinate of the lower left corner of the lower left pixel in meters
-* **x_ll**: projection x coordinate of the lower left corner of the lower left pixel in meters
-* **y_ur**: projection y coordinate of the upper right corner of the upper right pixel in meters
-* **x_ur**: projection x coordinate of the upper right corner of the upper right pixel in meters
+* **lat_ll**: projection y coordinate of the lower left corner of the lower left pixel in meters
+* **long_ll**: projection x coordinate of the lower left corner of the lower left pixel in meters
+* **lat_ur**: projection y coordinate of the upper right corner of the upper right pixel in meters
+* **long_ur**: projection x coordinate of the upper right corner of the upper right pixel in meters
 
 If j and i values are provided, then lat_long is calculated at a single pixel:
 
@@ -337,14 +337,14 @@ Optional arguments:
 
 * **image_geod**: Spheroid of projection (WGS84, sphere, etc). Defaults to WGS84
 * **projection**: Name of projection that the image is in (stere, laea, merc, etc). Defaults to stere
-* **area_extent**: Area extent as a list (y_ll, x_ll, y_ur, x_ur)
+* **area_extent**: Area extent as a list (lat_ll, long_ll, lat_ur, long_ur)
 
 where
 
-* **y_ll**: projection y coordinate of the lower left corner of the lower left pixel in meters
-* **x_ll**: projection x coordinate of the lower left corner of the lower left pixel in meters
-* **y_ur**: projection y coordinate of the upper right corner of the upper right pixel in meters
-* **x_ur**: projection x coordinate of the upper right corner of the upper right pixel in meters
+* **lat_ll**: projection y coordinate of the lower left corner of the lower left pixel in meters
+* **long_ll**: projection x coordinate of the lower left corner of the lower left pixel in meters
+* **lat_ur**: projection y coordinate of the upper right corner of the upper right pixel in meters
+* **long_ur**: projection x coordinate of the upper right corner of the upper right pixel in meters
 
 .. note::
 
@@ -410,14 +410,14 @@ Optional arguments:
 
 * **image_geod**: Spheroid of projection (WGS84, sphere, etc). Defaults to WGS84
 * **projection**: Name of projection that the image is in (stere, laea, merc, etc). Defaults to stere
-* **area_extent**: Area extent as a list (y_ll, x_ll, y_ur, x_ur)
+* **area_extent**: Area extent as a list (lat_ll, long_ll, lat_ur, long_ur)
 
 where
 
-* **y_ll**: projection y coordinate of the lower left corner of the lower left pixel in meters
-* **x_ll**: projection x coordinate of the lower left corner of the lower left pixel in meters
-* **y_ur**: projection y coordinate of the upper right corner of the upper right pixel in meters
-* **x_ur**: projection x coordinate of the upper right corner of the upper right pixel in meters
+* **lat_ll**: projection y coordinate of the lower left corner of the lower left pixel in meters
+* **long_ll**: projection x coordinate of the lower left corner of the lower left pixel in meters
+* **lat_ur**: projection y coordinate of the upper right corner of the upper right pixel in meters
+* **long_ur**: projection x coordinate of the upper right corner of the upper right pixel in meters
 
 .. note::
 
