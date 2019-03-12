@@ -1,1 +1,3 @@
-To read full documentation, run open_docs.sh (which opens docs/index.html)
+To read full documentation, go to https://www.ssec.wisc.edu/~wroberts/pywinds/
+
+Code: https://github.com/wroberts4/pywinds

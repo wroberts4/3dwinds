@@ -1,6 +1,7 @@
 import sys
 from datetime import datetime
 from pywinds.wind_functions import area, wind_info
+import xarray
 
 
 start = datetime.utcnow()
@@ -16,6 +17,8 @@ earth_geod = 'WGS84'
 image_geod = 'WGS84'
 no_save = False
 area_extent = tuple(reversed((2000000.0, 5429327.9172, -2000000.0, 1429327.9172)))
+
+
 
 # winds = wind_info(lat_0, lon_0, 100, shape=shape, displacement_data=file_name, i=j_in, j=i_in, pixel_size=pixel_size,
 #                   center=center, earth_geod=earth_geod, image_geod=image_geod, no_save=no_save).reshape((1000, 1000, 6))
