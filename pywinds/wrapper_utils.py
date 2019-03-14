@@ -7,7 +7,7 @@ from getopt import GetoptError, getopt
 from glob import glob
 from inspect import getfullargspec
 from xarray import DataArray
-
+ # TODO: USE ARGPARSE OVER GETOPT
 
 def area_to_string(area_dict):
     def _round(val, precision):
