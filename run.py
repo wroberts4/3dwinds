@@ -1,6 +1,6 @@
 import sys
 from datetime import datetime
-from pywinds.wind_functions import area, wind_info, velocity, displacements, lat_long
+from pywinds.wind_functions import area, wind_info, velocity, displacements, lat_long, vu
 import xarray
 import numpy as np
 import netCDF4
@@ -31,30 +31,22 @@ area_extent = tuple(reversed((2000000.0, 5429327.9172, -2000000.0, 1429327.9172)
 # lat_long = xarray.Dataset({'lat': lat, 'long': long})
 # lat_long.to_netcdf('C:/Users/William/Documents/pywinds/test.netcdf4', mode='a', group='lat_long', format='NETCDF4')
 # print(xarray.open_dataset('C:/Users/William/Documents/pywinds/test.netcdf4'))
-
-# winds = wind_info(lat_ts, lat_0, lon_0, 100, shape=shape, displacement_data=file_name, i=j_in, j=i_in,
-#                   pixel_size=pixel_size,
-#                   center=center, earth_geod=earth_geod, image_geod=image_geod, no_save=no_save).reshape((1000, 1000, 6))
+#
+# winds = wind_info(lat_ts, lat_0, lon_0, 100, shape=shape, displacement_data=file_name, i=i_in, j=j_in,
+#                   pixel_size=pixel_size, center=center, earth_geod=earth_geod, image_geod=image_geod,
+#                   no_save=no_save).reshape(list(shape) + [6])
 # print(winds[500, 500, :])
-
-# output_velocity = velocity(lat_0, lon_0, 100, displacement_data='in.flo', i=i_in, j=j_in, pixel_size=pixel_size,
+#
+# output_velocity = velocity(lat_ts, lat_0, lon_0, 100, displacement_data='in.flo', i=i_in, j=j_in, pixel_size=pixel_size,
 #                            center=center, earth_geod=earth_geod, image_geod=image_geod, no_save=no_save)
-# speed = xarray.DataArray(output_velocity[0], name='speed', dims=['j', 'i'], attrs={'units': 'meters/second'})
-# angle = xarray.DataArray(output_velocity[1], name='angle', dims=['j', 'i'])
-# xarray.Dataset({'speed': speed, 'angle': angle}).\
-#     to_netcdf('C:/Users/William/Documents/pywinds/test.netcdf4', group=None, mode='w', format='NETCDF4')
-# xarray.Dataset({}, attrs={'shape': (1000, 1000), 'lat_0': 0, 'long_0': 0}).\
-#     to_netcdf('C:/Users/William/Documents/pywinds/test.netcdf4', mode='a', format='NETCDF4')
-# print(xarray.open_dataset('C:/Users/William/Documents/pywinds/test.netcdf4'))
-
 # print('speed:', '{0} m/sec, {1}°'.format(*output_velocity[:, 0, 0]))
 #
-# output_vu = vu(lat_0, lon_0, 100, i=i_in, j=j_in, pixel_size=pixel_size, center=center, displacement_data=file_name,
-#                     shape=shape, earth_geod=earth_geod, image_geod=image_geod, no_save=no_save)
+# output_vu = vu(lat_ts, lat_0, lon_0, 100, i=i_in, j=j_in, pixel_size=pixel_size, center=center,
+#                displacement_data=file_name, shape=shape, earth_geod=earth_geod, image_geod=image_geod, no_save=no_save)
 # print('(v, u):', '({0} m/sec, {1} m/sec)'.format(*output_vu[:, 0, 0]))
 #
-area_def = area(lat_ts, lat_0, lon_0, displacement_data=file_name, pixel_size=pixel_size, center=center,
-                image_geod=image_geod, no_save=no_save)
+# area_def = area(lat_ts, lat_0, lon_0, displacement_data=file_name, pixel_size=pixel_size, center=center,
+#                 image_geod=image_geod, no_save=no_save)
 # print(xarray.open_dataset('./in.flo_output/wind_info.nc'))
 # print(area_def)
 #
@@ -66,7 +58,7 @@ area_def = area(lat_ts, lat_0, lon_0, displacement_data=file_name, pixel_size=pi
 #                         shape=(1000,1000), image_geod=image_geod, no_save=True)
 # print('new_lat, new_long:', *new_lat_long[:, 999, 0])
 #
-# old_lat_long = lat_long(lat_ts, lat_0, lon_0, displacement_data=file_name, i=i_in, j=j_in, pixel_size=pixel_size,
+# old_lat_long = lat_long(lat_ts, lat_0, lon_0, displacement_data=file_name, i=0, j=0, pixel_size=pixel_size,
 #                                 center=center, shape=(1000,1000), image_geod=image_geod, no_save=no_save)
 # print('old_lat, old_long:', *old_lat_long[:, 999, 0])
 #

@@ -127,13 +127,12 @@ class TestPywinds(unittest.TestCase):
             new_lat_ji, new_long_ji = lat_long(case.lat_ts, case.lat_0, case.long_0, projection=case.projection, i=case.i,
                                                j=case.j,
                                                shape=case.shape, pixel_size=case.pixel_size, center=case.center,
-                                               image_geod=case.image_geod, no_save=True)
+                                               image_geod=case.image_geod)
             old_lat, old_long = lat_long(case.lat_ts, case.lat_0, case.long_0, projection=case.projection,
                                          displacement_data=case.displacement_data, pixel_size=case.pixel_size,
                                          center=case.center, image_geod=case.image_geod)
             new_lat, new_long = lat_long(case.lat_ts, case.lat_0, case.long_0, projection=case.projection, shape=case.shape,
-                                         pixel_size=case.pixel_size, center=case.center, image_geod=case.image_geod,
-                                         no_save=True)
+                                         pixel_size=case.pixel_size, center=case.center, image_geod=case.image_geod)
             self.assertEqual(case.old_lat, round(old_lat_ji, 5))
             self.assertEqual(case.old_long, round(old_long_ji, 5))
             self.assertEqual(case.new_lat, round(new_lat_ji, 5))
@@ -146,7 +145,8 @@ class TestPywinds(unittest.TestCase):
     def test_pixel_to_pos(self):
         for case in self.test_cases:
             area_definition = _create_area(case.lat_ts, case.lat_0, case.long_0, projection=case.projection, shape=case.shape,
-                                           pixel_size=case.pixel_size, image_geod=case.image_geod, center=case.center)
+                                           pixel_size=case.pixel_size, image_geod=case.image_geod,
+                                           center=case.center)[1]
             j_new, i_new = _extrapolate_j_i(None, None, case.shape)
             j_old, i_old = j_new - case.j_displacements, i_new - case.i_displacements
             j_new_ji, i_new_ji = _extrapolate_j_i(case.j, case.i, case.shape)
