@@ -9,32 +9,24 @@ from inspect import getfullargspec
 from xarray import DataArray
  # TODO: USE ARGPARSE OVER GETOPT
 
+
 def area_to_string(area_dict):
     def _round(val, precision):
-        if val is None:
-            return None
-        if np.shape(val) == ():
-            return round(val, precision)
-        return list(np.round(val, precision).tolist())
+        try:
+            if np.shape(val) == ():
+                return str(round(val, precision))
+            return list(np.round(val, precision).tolist())
+        except (AttributeError, TypeError):
+            return str(val)
 
-    def _param_to_string(param, units, precision):
-        param = _round(param, precision)
-        return str(param) + ' ' + units if param is not None else None
-    precision = 2
-    projection = area_dict['projection']
-    lat_0 = _param_to_string(area_dict['lat_0'], 'degrees', precision)
-    long_0 = _param_to_string(area_dict['long_0'], 'degrees', precision)
-    equatorial_radius = _param_to_string(area_dict['equatorial radius'], 'meters', precision)
-    eccentricity = _round(area_dict['eccentricity'], 6)
-    shape = area_dict['shape']
-    area_extent = _param_to_string(area_dict['area_extent'], 'degrees', precision)
-    pixel_size = _param_to_string(area_dict['pixel_size'], 'meters', precision)
-    center = _param_to_string(area_dict['center'], 'degrees', precision)
-    return ('projection: {0}\nlat_0: {1}\nlong_0: {2}\nequatorial radius: {3}\neccentricity: {4}\n'
-            'area_extent: {5}\nshape: {6}\npixel_size: {7}\ncenter: {8}').format(projection, lat_0, long_0,
-                                                                                 equatorial_radius, eccentricity,
-                                                                                 area_extent, shape, pixel_size,
-                                                                                 center)
+    write_string = ''
+    for key, val in area_dict.items():
+        precision = 2
+        if key == 'eccentricity' or key == 'flattening':
+            precision = 6
+        val = _round(val, precision)
+        write_string = write_string + str(key) + ': ' + val + '\n'
+    return write_string
 
 
 def _arg_to_param(arg):
@@ -77,7 +69,7 @@ def print_usage(func, name):
     Other usage notes
     -----------------
 
-    * Use the -h or --help flags to print usage"
+    * Use the -h or --help flags to print usage
     """
     print(extra_info)
     print(func.__doc__)

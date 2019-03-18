@@ -1,17 +1,19 @@
 import ntpath
 import os
-import h5py
+
 import numpy as np
+import xarray
 from pyproj import Geod, Proj
 from pyresample.geometry import AreaDefinition, DynamicAreaDefinition
+from pyresample.area_config import create_area_def
 from pyresample.utils import proj4_str_to_dict
-import xarray
+
+from pywinds.wrapper_utils import area_to_string
 
 """Find wind info"""
 
 
-# TODO: UPDATE DOCS
-def save_data(displacement_filename, data_list, txt_shape=None, mode='a'):
+def save_data(displacement_filename, data_list, text_shape=None, mode='a'):
     if isinstance(displacement_filename, str):
         head, tail = ntpath.split(displacement_filename)
         extension = tail or ntpath.basename(head)
@@ -35,15 +37,10 @@ def save_data(displacement_filename, data_list, txt_shape=None, mode='a'):
             data = data.data
             if np.size(data) == 1:
                 data = np.ravel(data)
-            np.savetxt(text_path, data.reshape(txt_shape), fmt='%.2f', delimiter=',')
+            np.savetxt(text_path, data.reshape(text_shape), fmt='%.2f', delimiter=',')
         else:
-            write_string = ''
-            for key, val in data.attrs.items():
-                if data.attrs[key] is None:
-                    data.attrs[key] = 'None'
-                write_string = write_string + str(key) + ': ' + str(val) + '\n'
             with open(text_path, 'w') as file:
-                file.write(write_string)
+                file.write(area_to_string(data.attrs))
     xarray.Dataset(dataset_dict, attrs={'Conventions': 'CF-1.7'}).to_netcdf(netcdf4_path, mode=mode, format='NETCDF4',
                                                                             encoding=encoding)
 
@@ -118,16 +115,16 @@ def _delta_longitude(new_long, old_long):
     return delta_long
 
 
-def _lat_long_dist(lat, earth_geod):
+def _lat_long_dist(lat, earth_spheroid):
     """Calculates the distance between latitudes and longitudes given a latitude."""
-    if earth_geod is None:
-        earth_geod = Geod(ellps='WGS84')
-    elif isinstance(earth_geod, str):
-        earth_geod = Geod(ellps=earth_geod)
+    if earth_spheroid is None:
+        earth_spheroid = Geod(ellps='WGS84')
+    elif isinstance(earth_spheroid, str):
+        earth_spheroid = Geod(ellps=earth_spheroid)
     else:
         raise ValueError(
-            'earth_geod must be a string or Geod type, but instead was {0} {1}'.format(earth_geod, type(earth_geod)))
-    geod_info = proj4_str_to_dict(earth_geod.initstring)
+            'earth_spheroid must be a string or Geod type, but instead was {0} {1}'.format(earth_spheroid, type(earth_spheroid)))
+    geod_info = proj4_str_to_dict(earth_spheroid.initstring)
     e2 = (2 - 1 * geod_info['f']) * geod_info['f']
     lat = np.pi / 180 * lat
     # Credit: https://gis.stackexchange.com/questions/75528/understanding-terms-in-length-of-degree-formula/75535#75535
@@ -144,9 +141,10 @@ def _not_none(args):
     return False
 
 
-# TODO: USE CREATE_AREA WHEN RELEASES: from pyresample import create_area_def
-def _create_area(lat_ts, lat_0, long_0, projection='stere', area_extent=None, shape=None, center=None, pixel_size=None,
-                 image_geod=None, displacement_data=None, no_save=True):
+# TODO: FIX FOR NEW PYRESAMPLE. UPDATE DOCS WITH IT.
+def _create_area(lat_ts, lat_0, long_0, projection='stere', area_extent=None, shape=None, center=None,
+                 pixel_size=None, upper_left_extent=None, radius=None, projection_spheroid=None,
+                 units=None, displacement_data=None, no_save=True):
     """Creates area from given information."""
     save_data(displacement_data, [xarray.DataArray(None, name='polar_stereographic')], mode='w')
     if not isinstance(projection, str):
@@ -156,54 +154,34 @@ def _create_area(lat_ts, lat_0, long_0, projection='stere', area_extent=None, sh
         area_extent_ll, area_extent_ur = area_extent[0:2], area_extent[2:4]
     else:
         area_extent_ll, area_extent_ur = None, None
-    center, pixel_size, area_extent_ll, area_extent_ur = _reverse_params(
-        [center, pixel_size, area_extent_ll, area_extent_ur])
+    center, pixel_size, upper_left_extent, radius, area_extent_ll, area_extent_ur = _reverse_params(
+        [center, pixel_size, upper_left_extent, radius, area_extent_ll, area_extent_ur])
     if area_extent is not None:
         # Needs order [ll_x, ll_y, ur_x, ur_y].
         area_extent = area_extent_ll + area_extent_ur
     # if center is not None and not isinstance(center, xarray.DataArray):
     #     center = xarray.DataArray(center, attrs={'units': 'degrees'})
-    if image_geod is None:
-        image_geod = Geod(ellps='WGS84')
-    elif isinstance(image_geod, str):
-        image_geod = Geod(ellps=image_geod)
+    if projection_spheroid is None:
+        projection_spheroid = Geod(ellps='WGS84')
+    elif isinstance(projection_spheroid, str):
+        projection_spheroid = Geod(ellps=projection_spheroid)
     else:
         raise ValueError(
-            'image_geod must be a string or Geod type, but instead was {0} {1}'.format(image_geod, type(image_geod)))
+            'projection_spheroid must be a string or Geod type, but instead was {0} {1}'.format(projection_spheroid, type(projection_spheroid)))
     proj_dict = proj4_str_to_dict(
         '+lat_ts={0} +lat_0={1} +lon_0={2} +proj={3} {4}'.format(lat_ts, lat_0, long_0, projection,
-                                                                 image_geod.initstring))
-    # Temporary fix to allow sphere until proj4 6.0.0 releases.
-    if proj_dict['f'] == 0:
-        proj_dict.pop('f', None)
-        proj_dict['R'] = proj_dict.pop('a', None)
-    # proj_dict['b'] = proj_dict['a'] * (1 - proj_dict.pop('f'))
-    # TODO: REMOVE THIS WHEN PYRESAMPLE MAKES NEW RELEASE.
-    if center is None:
-        center = (long_0, lat_0)
-    if area_extent is None and center is not None and pixel_size is not None and shape is not None:
-        center = Proj(proj_dict)(*center, error_check=True)
-        area_extent = [center[0] - pixel_size * shape[1] / 2, center[1] - pixel_size * shape[0] / 2,
-                       center[0] + pixel_size * shape[1] / 2, center[1] + pixel_size * shape[0] / 2]
-    if shape is None and pixel_size is not None and area_extent is not None:
-        shape = (area_extent[3] - area_extent[1]) / pixel_size, (area_extent[2] - area_extent[0]) / pixel_size
-    if area_extent is not None and shape is not None:
-        area_definition = AreaDefinition('pywinds', 'pywinds', '', proj_dict, shape[1], shape[0], area_extent)
-    elif shape is not None:
-        area_definition = DynamicAreaDefinition(proj_dict=proj_dict, x_size=shape[1], y_size=shape[0])
-    elif area_extent is not None:
-        area_definition = DynamicAreaDefinition(proj_dict=proj_dict, area_extent=area_extent)
-    else:
-        raise ValueError('Not enough information provided to create an area definition')
-    # area_definition = create_area_def('pywinds', proj_dict, area_extent=area_extent, shape=shape,
-    #                         resolution=pixel_size,
-    #                        center=center,  units=units)
-    p = Proj(proj_dict)
+                                                                 projection_spheroid.initstring))
     a = proj_dict.get('a')
     f = proj_dict.get('f')
-    if a is None or f is None:
-        a = proj_dict['R']
-        f = 0.0
+    # Temporary fix to allow sphere until proj4 6.0.0 releases.
+    if proj_dict['f'] == 0:
+        f = proj_dict.pop('f', None)
+        a = proj_dict.pop('a', None)
+        proj_dict['R'] = a
+    # proj_dict['b'] = proj_dict['a'] * (1 - proj_dict.pop('f'))
+    area_definition = create_area_def('pywinds', proj_dict, area_extent=area_extent, shape=shape, resolution=pixel_size,
+                                      center=center, upper_left_extent=upper_left_extent, radius=radius)
+    p = Proj(proj_dict)
     if abs(f) > 0.0:
         i_f = 1 / f
     else:
@@ -217,22 +195,24 @@ def _create_area(lat_ts, lat_0, long_0, projection='stere', area_extent=None, sh
     else:
         center = None
         area_extent = None
-    if area_definition.y_size is None or area_definition.x_size is None:
+    if area_definition.height is None or area_definition.width is None:
         shape = None
     else:
-        shape = [area_definition.y_size, area_definition.x_size]
-    try:
+        shape = [area_definition.height, area_definition.width]
+    if isinstance(area_definition, AreaDefinition):
         pixel_size = [area_definition.pixel_size_y, area_definition.pixel_size_x]
-    except AttributeError:
+    elif isinstance(area_definition, DynamicAreaDefinition):
+        pixel_size = area_definition.resolution
+    else:
         pixel_size = None
+    b = a * (1 - f)
+    e = (1 - b ** 2 / a ** 2) ** .5
     if no_save is False:
         if displacement_data is None:
             raise ValueError('Cannot save data without displacement_data')
         up_longitude = p(0, 100, inverse=True)[0]
         if up_longitude == 180:
             up_longitude = -180.0
-        b = a * (1 - f)
-        e = (1 - b ** 2 / a ** 2) ** .5
         # http://earth-info.nga.mil/GandG/coordsys/polar_stereographic/Polar_Stereo_phi1_from_k0_memo.pdf
         k90 = ((1 + e) ** (1 + e) * (1 - e) ** (1 - e)) ** .5
         phi = np.pi * lat_ts / 180
@@ -247,8 +227,9 @@ def _create_area(lat_ts, lat_0, long_0, projection='stere', area_extent=None, sh
                                                               'false_easting': 0.0, 'false_northing': 0.0,
                                                               'semi_major_axis': a, 'semi_minor_axis': b,
                                                               'inverse_flattening': i_f})])
-    return {'projection': projection, 'lat_0': lat_0, 'long_0': long_0, 'equatorial radius': a, 'eccentricity': f,
-            'shape': shape, 'area_extent': area_extent, 'pixel_size': pixel_size, 'center': center}, area_definition
+    return {'projection': projection, 'lat_0': lat_0, 'long_0': long_0, 'equatorial_radius': a,
+            'eccentricity': e, 'inverse_flattening': i_f, 'shape': shape, 'area_extent': area_extent,
+            'pixel_size': pixel_size, 'center': center}, area_definition
 
 
 def _find_displacements(displacement_data=None, j=None, i=None, shape=None, no_save=True):
@@ -296,14 +277,14 @@ def _find_displacements(displacement_data=None, j=None, i=None, shape=None, no_s
         dims = ['y', 'x']
     if no_save is False:
         save_data(displacement_data,
-              (xarray.DataArray(_reshape(j_displacement, shape), name='j_displacement', dims=dims,
-                                attrs={'standard_name': 'divergence_of_wind',
-                                       'description': 'vertical pixel displacement at each pixel',
-                                       'grid_mapping': 'polar_stereographic'}),
-               xarray.DataArray(_reshape(i_displacement, shape), name='i_displacement', dims=dims,
-                                attrs={'standard_name': 'divergence_of_wind',
-                                       'description': 'horizontal pixel displacement at each pixel',
-                                       'grid_mapping': 'polar_stereographic'})))
+                  (xarray.DataArray(_reshape(j_displacement, shape), name='j_displacement', dims=dims,
+                                    attrs={'standard_name': 'divergence_of_wind',
+                                           'description': 'vertical pixel displacement at each pixel',
+                                           'grid_mapping': 'polar_stereographic'}),
+                   xarray.DataArray(_reshape(i_displacement, shape), name='i_displacement', dims=dims,
+                                    attrs={'standard_name': 'divergence_of_wind',
+                                           'description': 'horizontal pixel displacement at each pixel',
+                                           'grid_mapping': 'polar_stereographic'})))
     return shape, j_displacement, i_displacement
 
 
@@ -314,7 +295,7 @@ def _reshape(array, shape):
 
 
 def _compute_lat_long(lat_ts, lat_0, long_0, displacement_data=None, projection='stere', j=None, i=None,
-                      area_extent=None, shape=None, center=None, pixel_size=None, image_geod=None, no_save=True):
+                      area_extent=None, shape=None, center=None, pixel_size=None, projection_spheroid=None, no_save=True):
     """Computes the latitude and longitude given an area and (j, i) values."""
     if not isinstance(lat_0, (int, float)) or not isinstance(long_0, (int, float)):
         raise ValueError(
@@ -328,7 +309,7 @@ def _compute_lat_long(lat_ts, lat_0, long_0, displacement_data=None, projection=
                                                                                           shape=shape,
                                                                                           center=center,
                                                                                           pixel_size=pixel_size,
-                                                                                          image_geod=image_geod,
+                                                                                          projection_spheroid=projection_spheroid,
                                                                                           no_save=no_save)[:4]
     # Function that handles projection to lat/long transformation.
     p = Proj(area_definition.proj_dict, errcheck=True, preserve_units=True)
@@ -350,23 +331,23 @@ def _compute_lat_long(lat_ts, lat_0, long_0, displacement_data=None, projection=
         if displacement_data is None:
             raise ValueError('Cannot save data without displacement_data')
         save_data(displacement_data,
-              (xarray.DataArray(_reshape(new_lat, shape), name='new_latitude', dims=dims,
-                                attrs={'standard_name': 'latitude', 'grid_mapping': 'polar_stereographic',
-                                       'units': 'degrees'}),
-               xarray.DataArray(_reshape(new_long, shape), name='new_longitude', dims=dims,
-                                attrs={'standard_name': 'longitude', 'grid_mapping': 'polar_stereographic',
-                                       'units': 'degrees'}),
-               xarray.DataArray(_reshape(old_lat, shape), name='old_latitude', dims=dims,
-                                attrs={'standard_name': 'latitude', 'grid_mapping': 'polar_stereographic',
-                                       'units': 'degrees'}),
-               xarray.DataArray(_reshape(old_long, shape), name='old_longitude', dims=dims,
-                                attrs={'standard_name': 'longitude', 'grid_mapping': 'polar_stereographic',
-                                       'units': 'degrees'})))
+                  (xarray.DataArray(_reshape(new_lat, shape), name='new_latitude', dims=dims,
+                                    attrs={'standard_name': 'latitude', 'grid_mapping': 'polar_stereographic',
+                                           'units': 'degrees'}),
+                   xarray.DataArray(_reshape(new_long, shape), name='new_longitude', dims=dims,
+                                    attrs={'standard_name': 'longitude', 'grid_mapping': 'polar_stereographic',
+                                           'units': 'degrees'}),
+                   xarray.DataArray(_reshape(old_lat, shape), name='old_latitude', dims=dims,
+                                    attrs={'standard_name': 'latitude', 'grid_mapping': 'polar_stereographic',
+                                           'units': 'degrees'}),
+                   xarray.DataArray(_reshape(old_long, shape), name='old_longitude', dims=dims,
+                                    attrs={'standard_name': 'longitude', 'grid_mapping': 'polar_stereographic',
+                                           'units': 'degrees'})))
     return shape, new_lat, new_long, old_lat, old_long
 
 
 def _compute_vu(lat_ts, lat_0, long_0, delta_time, displacement_data=None, projection='stere', j=None, i=None,
-                area_extent=None, shape=None, center=None, pixel_size=None, image_geod=None, earth_geod=None,
+                area_extent=None, shape=None, center=None, pixel_size=None, projection_spheroid=None, earth_spheroid=None,
                 no_save=True):
     if displacement_data is None:
         raise ValueError('displacement_data is required to find v and u but was not provided.')
@@ -374,13 +355,13 @@ def _compute_vu(lat_ts, lat_0, long_0, delta_time, displacement_data=None, proje
                                                                     displacement_data=displacement_data,
                                                                     projection=projection, j=j, i=i,
                                                                     area_extent=area_extent, shape=shape, center=center,
-                                                                    pixel_size=pixel_size, image_geod=image_geod,
+                                                                    pixel_size=pixel_size, projection_spheroid=projection_spheroid,
                                                                     no_save=no_save)
-    lat_long_distance = _lat_long_dist((new_lat + old_lat) / 2, earth_geod)
+    lat_long_distance = _lat_long_dist((new_lat + old_lat) / 2, earth_spheroid)
     # u = (_delta_longitude(new_long, old_long) *
-    #      _lat_long_dist(old_lat, earth_geod)[1] / (delta_time * 60) +
+    #      _lat_long_dist(old_lat, earth_spheroid)[1] / (delta_time * 60) +
     #      _delta_longitude(new_long, old_long) *
-    #      _lat_long_dist(new_lat, earth_geod)[1] / (delta_time * 60)) / 2
+    #      _lat_long_dist(new_lat, earth_spheroid)[1] / (delta_time * 60)) / 2
     # meters/second. distance is in meters delta_time is in minutes.
     v = (new_lat - old_lat) * lat_long_distance[0] / (delta_time * 60)
     u = np.vectorize(_delta_longitude)(new_long, old_long) * lat_long_distance[1] / (delta_time * 60)
@@ -389,73 +370,88 @@ def _compute_vu(lat_ts, lat_0, long_0, delta_time, displacement_data=None, proje
         dims = ['y', 'x']
     if no_save is False:
         save_data(displacement_data,
-              (xarray.DataArray(_reshape(v, shape), name='v', dims=dims,
-                                attrs={'standard_name': 'northward_wind', 'grid_mapping': 'polar_stereographic',
-                                       'units': 'm/s'}),
-               xarray.DataArray(_reshape(u, shape), name='u', dims=dims,
-                                attrs={'standard_name': 'eastward_wind', 'grid_mapping': 'polar_stereographic',
-                                       'units': 'm/s'})))
+                  (xarray.DataArray(_reshape(v, shape), name='v', dims=dims,
+                                    attrs={'standard_name': 'northward_wind', 'grid_mapping': 'polar_stereographic',
+                                           'units': 'm/s'}),
+                   xarray.DataArray(_reshape(u, shape), name='u', dims=dims,
+                                    attrs={'standard_name': 'eastward_wind', 'grid_mapping': 'polar_stereographic',
+                                           'units': 'm/s'})))
     return shape, v, u, new_lat, new_long
 
 
 def _compute_velocity(lat_ts, lat_0, long_0, delta_time, displacement_data=None, projection='stere', j=None, i=None,
-                      area_extent=None, shape=None, center=None, pixel_size=None, image_geod=None, earth_geod=None,
+                      area_extent=None, shape=None, center=None, pixel_size=None, projection_spheroid=None, earth_spheroid=None,
                       no_save=True):
     shape, v, u, new_lat, new_long = _compute_vu(lat_ts, lat_0, long_0, delta_time, displacement_data=displacement_data,
                                                  projection=projection, j=j, i=i, area_extent=area_extent, shape=shape,
-                                                 center=center, pixel_size=pixel_size, image_geod=image_geod,
-                                                 earth_geod=earth_geod, no_save=no_save)
+                                                 center=center, pixel_size=pixel_size, projection_spheroid=projection_spheroid,
+                                                 earth_spheroid=earth_spheroid, no_save=no_save)
     speed, angle = (u ** 2 + v ** 2) ** .5, ((90 - np.arctan2(v, u) * 180 / np.pi) + 360) % 360
     dims = None
     if np.size(speed) != 1:
         dims = ['y', 'x']
     if no_save is False:
-         save_data(displacement_data,
-              (xarray.DataArray(_reshape(speed, shape), name='speed', dims=dims,
-                                attrs={'standard_name': 'wind_speed', 'grid_mapping': 'polar_stereographic',
-                                       'units': 'm/s'}),
-               xarray.DataArray(_reshape(angle, shape), name='angle', dims=dims,
-                                attrs={'standard_name': 'wind_from_direction', 'grid_mapping': 'polar_stereographic',
-                                       'units': 'degrees'})))
+        save_data(displacement_data,
+                  (xarray.DataArray(_reshape(speed, shape), name='speed', dims=dims,
+                                    attrs={'standard_name': 'wind_speed', 'grid_mapping': 'polar_stereographic',
+                                           'units': 'm/s'}),
+                   xarray.DataArray(_reshape(angle, shape), name='angle', dims=dims,
+                                    attrs={'standard_name': 'wind_from_direction',
+                                           'grid_mapping': 'polar_stereographic',
+                                           'units': 'degrees'})))
     # When wind vector azimuth is 0 degrees it points North (mathematically 90 degrees) and moves clockwise.
     return shape, speed, angle, v, u, new_lat, new_long
 
 
 def _find_displacements_and_area(lat_ts=None, lat_0=None, long_0=None, displacement_data=None, projection='stere',
                                  j=None, i=None, area_extent=None, shape=None, center=None, pixel_size=None,
-                                 image_geod=None, no_save=True):
+                                 projection_spheroid=None, no_save=True):
     """Dynamically finds displacements and area of projection"""
     area_definition = None
     area_data = None
     if lat_0 is not None or long_0 is not None:
         try:
             area_data, area_definition = _create_area(lat_ts, lat_0, long_0, projection=projection,
-                                                   area_extent=area_extent,
-                                           shape=shape, center=center, pixel_size=pixel_size, image_geod=image_geod,
-                                           displacement_data=displacement_data, no_save=no_save)
-            if area_definition.y_size is not None and area_definition.x_size is not None:
-                shape = (area_definition.y_size, area_definition.x_size)
+                                                      area_extent=area_extent,
+                                                      shape=shape, center=center, pixel_size=pixel_size,
+                                                      projection_spheroid=projection_spheroid,
+                                                      displacement_data=displacement_data, no_save=no_save)
+            if area_definition.height is not None and area_definition.width is not None:
+                shape = (area_definition.height, area_definition.width)
         except ValueError:
             pass
     shape, j_displacement, i_displacement = _find_displacements(displacement_data, shape=shape, j=j, i=i,
                                                                 no_save=no_save)
     if not isinstance(area_definition, AreaDefinition) and (lat_0 is not None or long_0 is not None):
-        area_data, area_definition = _create_area(lat_ts, lat_0, long_0, projection=projection, area_extent=area_extent,
-                                       shape=shape, center=center, pixel_size=pixel_size, image_geod=image_geod,
-                                       displacement_data=displacement_data, no_save=no_save)
+        try:
+            area_data, area_definition = _create_area(lat_ts, lat_0, long_0, projection=projection,
+                                                      area_extent=area_extent,
+                                                      shape=shape, center=center, pixel_size=pixel_size,
+                                                      projection_spheroid=projection_spheroid,
+                                                      displacement_data=displacement_data, no_save=no_save)
+        except ValueError:
+            if center is None:
+                center = (lat_0, long_0)
+            area_data, area_definition = _create_area(lat_ts, lat_0, long_0, projection=projection,
+                                                      area_extent=area_extent,
+                                                      shape=shape, center=center, pixel_size=pixel_size,
+                                                      projection_spheroid=projection_spheroid,
+                                                      displacement_data=displacement_data, no_save=no_save)
     return shape, j_displacement, i_displacement, area_definition, area_data
 
 
 def area(lat_ts, lat_0, long_0, displacement_data=None, projection='stere', area_extent=None, shape=None, center=None,
-         pixel_size=None, image_geod=None):
+         pixel_size=None, projection_spheroid=None):
     """Dynamically computes area of projection.
 
     Parameters
     ----------
+    lat_ts: float
+        Latitude  of true scale
     lat_0 : float
-        Normal latitude of projection
+        Latitude of origin
     long_0 : float
-        Normal longitude of projection
+        Central meridian
     displacement_data : str or list, optional
         File or list containing displacements: [tag, width, height, i_11, j_11, i_12, j_12, ..., i_nm, j_nm] or
         [[j_displacement], [i_displacement]] respectively
@@ -467,43 +463,41 @@ def area(lat_ts, lat_0, long_0, displacement_data=None, projection='stere', area
         Number of pixels in the y and x direction following row-major format (height, width).
         Note that shape can be found from the displacement file or the area provided.
     center : list, optional
-        Center of projection (lat, long)
+        Center of projection (lat, long). Defaults to [lat_0, long_0] if not provided
     pixel_size : list or float, optional
         Size of pixels: (dy, dx)
-    image_geod : string or Geod, optional
+    projection_spheroid : string or Geod, optional
         Spheroid of projection (WGS84, sphere, etc)
-    no_save : bool, optional
-        When False, saves area to area.txt and wind_info.hdf5 (under the group "area")
-        in a new directory by the name of the displacement file appended with "_output", which will be 
-        created where the script was ran.
 
         Returns
         -------
             area : dict
-                projection, lat_0 (degrees), long_0 (degrees), equatorial radius (meters),
-                eccentricity, shape, area_extent (degrees), pixel_size (projection meters), center (degrees)
+                projection, lat_0 (degrees), long_0 (degrees), equatorial radius (meters), eccentricity,
+                inverse_flattening, shape, area_extent (degrees), pixel_size (projection meters), center (degrees)
     """
     if not isinstance(lat_0, (int, float)) or not isinstance(long_0, (int, float)):
         raise ValueError(
             'lat_0 and long_0 must be ints or floats, but instead were ' + '{0} {1} and {2} {3} respectively'.format(
                 lat_0, type(lat_0), long_0, type(long_0)))
     area_data = _find_displacements_and_area(lat_ts=lat_ts, lat_0=lat_0, long_0=long_0,
-                                                   displacement_data=displacement_data,
-                                                   projection=projection, area_extent=area_extent, shape=shape,
-                                                   center=center, pixel_size=pixel_size, image_geod=image_geod)[4]
+                                             displacement_data=displacement_data,
+                                             projection=projection, area_extent=area_extent, shape=shape,
+                                             center=center, pixel_size=pixel_size, projection_spheroid=projection_spheroid)[4]
     return area_data
 
 
 def displacements(lat_ts=None, lat_0=None, long_0=None, displacement_data=None, projection='stere', j=None, i=None,
-                  area_extent=None, shape=None, center=None, pixel_size=None, image_geod=None):
+                  area_extent=None, shape=None, center=None, pixel_size=None, projection_spheroid=None):
     """Dynamically computes displacements.
 
     Parameters
     ----------
+    lat_ts: float, optional
+        Latitude  of true scale
     lat_0 : float, optional
-        Normal latitude of projection
+        Latitude of origin
     long_0 : float, optional
-        Normal longitude of projection
+        Central meridian
     displacement_data : str or list, optional
         File or list containing displacements: [tag, width, height, i_11, j_11, i_12, j_12, ..., i_nm, j_nm] or
         [[j_displacement], [i_displacement]] respectively
@@ -519,15 +513,11 @@ def displacements(lat_ts=None, lat_0=None, long_0=None, displacement_data=None, 
         Number of pixels in the y and x direction following row-major format (height, width).
         Note that shape can be found from the displacement file or the area provided.
     center : list, optional
-        Center of projection (lat, long)
+        Center of projection (lat, long). Defaults to [lat_0, long_0] if not provided
     pixel_size : list or float, optional
         Size of pixels: (dy, dx)
-    image_geod : string or Geod, optional
+    projection_spheroid : string or Geod, optional
         Spheroid of projection (WGS84, sphere, etc)
-    no_save : bool, optional
-        When False, saves displacements to j_displacement.txt, i_displacement.txt, and wind_info.hdf5
-        (under the group "displacements") in a new directory by the name of the displacement file appended with 
-        "_output", which will be created where the script was ran.
 
         Returns
         -------
@@ -537,7 +527,7 @@ def displacements(lat_ts=None, lat_0=None, long_0=None, displacement_data=None, 
     if displacement_data is None:
         raise ValueError('displacement_data is required to find displacements but was not provided.')
     if (not isinstance(lat_0, (int, float)) or not isinstance(long_0, (int, float))) and _not_none(
-            [lat_0, long_0, area_extent, center, pixel_size, image_geod]):
+            [lat_0, long_0, area_extent, center, pixel_size, projection_spheroid]):
         raise ValueError(
             'If lat_0 or long_0 were provided they both must be provided,'
             'but instead were {0} {1} and {2} {3}  respectively'.format(lat_0, type(lat_0), long_0, type(long_0)))
@@ -546,20 +536,22 @@ def displacements(lat_ts=None, lat_0=None, long_0=None, displacement_data=None, 
                                                                          projection=projection, j=j, i=i,
                                                                          area_extent=area_extent, shape=shape,
                                                                          center=center, pixel_size=pixel_size,
-                                                                         image_geod=image_geod)[:3]
+                                                                         projection_spheroid=projection_spheroid)[:3]
     return np.array((_reshape(j_displacement, shape), _reshape(i_displacement, shape)))
 
 
 def velocity(lat_ts, lat_0, long_0, delta_time, displacement_data=None, projection='stere', j=None, i=None,
-             area_extent=None, shape=None, center=None, pixel_size=None, image_geod=None, earth_geod=None):
+             area_extent=None, shape=None, center=None, pixel_size=None, projection_spheroid=None, earth_spheroid=None):
     """Computes the speed and angle of the wind given an area and pixel-displacement.
 
     Parameters
     ----------
+    lat_ts: float
+        Latitude  of true scale
     lat_0 : float
-        Normal latitude of projection
+        Latitude of origin
     long_0 : float
-        Normal longitude of projection
+        Central meridian
     delta_time : int
         Amount of time that separates both files in minutes.
     displacement_data : str or list, optional
@@ -577,17 +569,13 @@ def velocity(lat_ts, lat_0, long_0, delta_time, displacement_data=None, projecti
         Number of pixels in the y and x direction following row-major format (height, width).
         Note that shape can be found from the displacement file or the area provided.
     center : list, optional
-        Center of projection (lat, long)
+        Center of projection (lat, long). Defaults to [lat_0, long_0] if not provided
     pixel_size : list or float, optional
         Size of pixels: (dy, dx)
-    image_geod : string or Geod, optional
+    projection_spheroid : string or Geod, optional
         Spheroid of projection (WGS84, sphere, etc)
-    earth_geod : string or Geod, optional
+    earth_spheroid : string or Geod, optional
         Spheroid of Earth (WGS84, sphere, etc)
-    no_save : bool, optional
-        When false, saves velocity to speed.txt, angle.txt, and wind_info.hdf5 (under the group "velocity")
-        in a new directory by the name of the displacement file appended with "_output", which will be 
-        created where the script was ran.
 
     Returns
     -------
@@ -597,21 +585,23 @@ def velocity(lat_ts, lat_0, long_0, delta_time, displacement_data=None, projecti
     """
     shape, speed, angle = _compute_velocity(lat_ts, lat_0, long_0, delta_time, displacement_data=displacement_data,
                                             projection=projection, j=j, i=i, area_extent=area_extent, shape=shape,
-                                            center=center, pixel_size=pixel_size, image_geod=image_geod,
-                                            earth_geod=earth_geod)[:3]
+                                            center=center, pixel_size=pixel_size, projection_spheroid=projection_spheroid,
+                                            earth_spheroid=earth_spheroid)[:3]
     return np.array((_reshape(speed, shape), _reshape(angle, shape)))
 
 
 def vu(lat_ts, lat_0, long_0, delta_time, displacement_data=None, projection='stere', j=None, i=None, area_extent=None,
-       shape=None, center=None, pixel_size=None, image_geod=None, earth_geod=None):
+       shape=None, center=None, pixel_size=None, projection_spheroid=None, earth_spheroid=None):
     """Computes the v and u components of the wind given an area and pixel-displacement.
 
     Parameters
     ----------
+    lat_ts: float
+        Latitude  of true scale
     lat_0 : float
-        Normal latitude of projection
+        Latitude of origin
     long_0 : float
-        Normal longitude of projection
+        Central meridian
     delta_time : int
         Amount of time that separates both files in minutes.
     displacement_data : str or list, optional
@@ -629,17 +619,13 @@ def vu(lat_ts, lat_0, long_0, delta_time, displacement_data=None, projection='st
         Number of pixels in the y and x direction following row-major format (height, width).
         Note that shape can be found from the displacement file or the area provided.
     center : list, optional
-        Center of projection (lat, long)
+        Center of projection (lat, long). Defaults to [lat_0, long_0] if not provided
     pixel_size : list or float, optional
         Size of pixels: (dy, dx)
-    image_geod : string or Geod, optional
+    projection_spheroid : string or Geod, optional
         Spheroid of projection (WGS84, sphere, etc)
-    earth_geod : string or Geod, optional
+    earth_spheroid : string or Geod, optional
         Spheroid of Earth (WGS84, sphere, etc)
-    no_save : bool, optional
-        When False, saves vu to v.txt, u.txt, and wind_info.hdf5 (under the group "vu")
-        in a new directory by the name of the displacement file appended with "_output", which will be 
-        created where the script was ran.
 
     Returns
     -------
@@ -649,20 +635,22 @@ def vu(lat_ts, lat_0, long_0, delta_time, displacement_data=None, projection='st
     shape, v, u = _compute_vu(lat_ts, lat_0, long_0, delta_time, displacement_data=displacement_data,
                               projection=projection,
                               j=j, i=i, area_extent=area_extent, shape=shape, center=center, pixel_size=pixel_size,
-                              image_geod=image_geod, earth_geod=earth_geod)[:3]
+                              projection_spheroid=projection_spheroid, earth_spheroid=earth_spheroid)[:3]
     return np.array((_reshape(v, shape), _reshape(u, shape)))
 
 
 def lat_long(lat_ts, lat_0, long_0, displacement_data=None, projection='stere', j=None, i=None, area_extent=None,
-             shape=None, center=None, pixel_size=None, image_geod=None):
+             shape=None, center=None, pixel_size=None, projection_spheroid=None):
     """Computes the latitude and longitude given an area and (j, i) values.
 
     Parameters
     ----------
+    lat_ts: float
+        Latitude  of true scale
     lat_0 : float
-        Normal latitude of projection
+        Latitude of origin
     long_0 : float
-        Normal longitude of projection
+        Central meridian
     displacement_data : str or list, optional
         File or list containing displacements: [tag, width, height, i_11, j_11, i_12, j_12, ..., i_nm, j_nm] or
         [[j_displacement], [i_displacement]] respectively
@@ -678,16 +666,11 @@ def lat_long(lat_ts, lat_0, long_0, displacement_data=None, projection='stere', 
         Number of pixels in the y and x direction following row-major format (height, width).
         Note that shape can be found from the displacement file or the area provided.
     center : list, optional
-        Center of projection (lat, long)
+        Center of projection (lat, long). Defaults to [lat_0, long_0] if not provided
     pixel_size : list or float, optional
         Size of pixels: (dy, dx)
-    image_geod : string or Geod, optional
+    projection_spheroid : string or Geod, optional
         Spheroid of projection (WGS84, sphere, etc)
-    no_save : bool, optional
-        When False, saves lat_long to old_latitude.txt, old_longitude.txt, new_latitude.txt,
-        new_longitude.txt, and wind_info.hdf5 (under the group "lat_long")
-        in a new directory by the name of the displacement file appended with "_output", which will be 
-        created where the script was ran.
 
     Returns
     -------
@@ -699,22 +682,23 @@ def lat_long(lat_ts, lat_0, long_0, displacement_data=None, projection='stere', 
                                                                     displacement_data=displacement_data,
                                                                     projection=projection, j=j, i=i,
                                                                     area_extent=area_extent, shape=shape, center=center,
-                                                                    pixel_size=pixel_size, image_geod=image_geod)
+                                                                    pixel_size=pixel_size, projection_spheroid=projection_spheroid)
     return np.array((_reshape(old_lat, shape), _reshape(old_long, shape)))
 
 
-# TODO: indexing can go out of bounds.
 def wind_info(lat_ts, lat_0, long_0, delta_time, displacement_data=None, projection='stere', j=None, i=None,
               area_extent=None,
-              shape=None, center=None, pixel_size=None, image_geod=None, earth_geod=None, no_save=False):
+              shape=None, center=None, pixel_size=None, projection_spheroid=None, earth_spheroid=None, no_save=False):
     """Computes the latitude, longitude, velocity, angle, v, and u of the wind
 
     Parameters
     ----------
+    lat_ts: float
+        Latitude of true scale
     lat_0 : float
-        Normal latitude of projection
+        Latitude of origin
     long_0 : float
-        Normal longitude of projection
+        Central meridian
     delta_time : int
         Amount of time that separates both files in minutes.
     displacement_data : str or list, optional
@@ -732,17 +716,19 @@ def wind_info(lat_ts, lat_0, long_0, delta_time, displacement_data=None, project
         Number of pixels in the y and x direction following row-major format (height, width).
         Note that shape can be found from the displacement file or the area provided.
     center : list, optional
-        Center of projection (lat, long)
+        Center of projection (lat, long). Defaults to [lat_0, long_0] if not provided
     pixel_size : list or float, optional
         Size of pixels: (dy, dx)
-    image_geod : string or Geod, optional
+    projection_spheroid : string or Geod, optional
         Spheroid of projection (WGS84, sphere, etc)
-    earth_geod : string or Geod, optional
+    earth_spheroid : string or Geod, optional
         Spheroid of Earth (WGS84, sphere, etc)
     no_save : bool, optional
-        When False, saves wind_info to wind_info.txt and wind_info.hdf5 (under the group "wind_info")
-        in a new directory by the name of the displacement file appended with "_output", which will be 
-        created where the script was ran.
+        When False, saves wind_info to name_of_projection.txt, j_displacement.txt, i_displacement.txt,
+        new_latitude.txt, new_longitude.txt, old_latitude.txt, old_longitude.txt, v.txt, u.txt, speed.txt, angle.txt,
+        and wind_info.txt in that order (name_of_projection varies depending on the type of projection). Each of these
+        variables are saved to wind_info.hdf5 by the same name as their .txt counterparts in a new directory by the
+        name of the displacement file appended with "_output", which is created where the script was ran.
 
     Returns
     -------
@@ -752,8 +738,8 @@ def wind_info(lat_ts, lat_0, long_0, delta_time, displacement_data=None, project
     shape, speed, angle, v, u, lat, long = _compute_velocity(lat_ts, lat_0, long_0, displacement_data=displacement_data,
                                                              projection=projection, j=j, i=i, delta_time=delta_time,
                                                              area_extent=area_extent, shape=shape, center=center,
-                                                             pixel_size=pixel_size, image_geod=image_geod,
-                                                             earth_geod=earth_geod, no_save=no_save)
+                                                             pixel_size=pixel_size, projection_spheroid=projection_spheroid,
+                                                             earth_spheroid=earth_spheroid, no_save=no_save)
     # Make each variable its own column.
     winds = np.insert(np.expand_dims(np.ravel(lat), axis=1), 1, long, axis=1)
     winds = np.insert(winds, 2, speed, axis=1)
@@ -762,16 +748,16 @@ def wind_info(lat_ts, lat_0, long_0, delta_time, displacement_data=None, project
     winds = np.insert(winds, 5, u, axis=1)
     if np.shape(winds)[0] == 1:
         winds = winds[0]
-        txt_shape = [1, 6]
+        text_shape = [1, 6]
         dims = None
     else:
-        txt_shape = None
+        text_shape = None
         dims = ['yx', 'vars']
     if no_save is False:
         save_data(displacement_data,
-              [xarray.DataArray(winds, name='wind_info', dims=dims,
-                                attrs={'standard_name': 'wind_speed',
-                                       'description': 'new_lat, new_long, speed, angle, v, u',
-                                       'grid_mapping': 'polar_stereographic'})])
+                  [xarray.DataArray(winds, name='wind_info', dims=dims,
+                                    attrs={'standard_name': 'wind_speed',
+                                           'description': 'new_lat, new_long, speed, angle, v, u',
+                                           'grid_mapping': 'polar_stereographic'})], text_shape=text_shape)
     # Columns: lat, long, speed, direction, v, u
     return winds

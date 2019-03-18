@@ -5,31 +5,106 @@ Use the **-h** or **--help** flags on any of these scripts to print usage.
 
 wind_info.sh
 ------------
-Calculates latitude, longitude, velocity, angle, v, and u at pixel(s).
+Calculates area information, j and i displacement, new and old latitude/longitude, v, u, and velocity of the wind.
 
 Required arguments:
 
-* **lat_0**: Normal latitude of projection
-* **long_0**: Normal longitude of projection
+* **lat_ts**: Latitude of true scale
+* **lat_0**: Latitude of origin
+* **long_0**: Central meridian
 * **delta_time**: Amount of time that separates both files in minutes
 
 Optional arguments:
 
-* **center**: Projection y and x coordinate of the center of projection in degrees (lat, long)
+* **center**: Projection y and x coordinate of the center of projection in degrees (lat, long).
+  Defaults to [lat_0, long_0] if not provided
 * **pixel_size**: Size of pixels in the y and x direction in meters (dy, dx)
 * **shape**: Number of pixels in the y and x direction (height, width). If shape is not provided,
-  it attempts to be found from displacement_data.
+  it attempts to be found from displacement_data
 * **displacement_data**: Name of file or list containing displacements; wildcard ("*") syntax is accepted.
   If not provided, reads every file ending in ".flo" where the script is ran
 * **j**: Row to run calculations on
 * **i**: Column to run calculations on
 * **no_save**:
 
-  1. When not flagged (Default): saves velocity and does not print velocity to shell
-  2. When flagged: prints velocity to shell without saving
+  1. When not flagged (Default): saves data and does not print data to shell
+  2. When flagged: prints data to shell without saving
 
-* **image_geod**: Spheroid of projection (WGS84, sphere, etc). Defaults to WGS84
-* **earth_geod**: Spheroid of Earth (WGS84, sphere, etc). Defaults to WGS84
+.. note::
+
+    wind_info is saved to to name_of_projection.txt, j_displacement.txt, i_displacement.txt, new_latitude.txt,
+    new_longitude.txt, old_latitude.txt, old_longitude.txt, v.txt, u.txt, speed.txt, angle.txt, and wind_info.txt
+    in that order (name_of_projection varies depending on the type of projection). Each of these variables are
+    saved to wind_info.hdf5 by the same name as their .txt counterparts in a new directory by the name of the
+    displacement file appended with "_output", which will be created where the script is ran.
+
+Calculating wind_info::
+
+    $ pwd
+    /Desktop
+    $ ls
+    in.flo	    pywinds
+    $ pywinds/velocity.sh 60 90 0 100 --j 0 --i 0 --pixel_size 4000 --center 90,0 --no_save
+    [67.62, -137.17, 42.33, 317.58, 31.25, -28.55]
+    $ pywinds/wind_info.sh 60 0 100 --pixel_size 4000 --center 90,0
+    Saving data to the directory /Desktop/in.flo_output
+
+
+Print and Save Format
+---------------------
+
+If j and i values are provided, then data is calculated at a single pixel:
+
+::
+
+    wind_info: [new_latitude, new_longitude, velocity, angle, v, u]
+
+    velocity: [speed, direction]
+
+    lat_long: [latitude, longitude]
+
+    displacements: [j_displacement, i_displacement]
+
+If no j and i values are provided, then velocity is calculated at every pixel (n-rows, m-columns):
+
+::
+
+    wind_info:
+        [[latitude_11, longitude_11, velocity_11, angle_11, v_11, u_11],
+         ...,
+         [latitude_1m, longitude_1m, velocity_1m, angle_1m, v_1m, u_1m],
+         ...,
+         [latitude_nm, longitude_nm, velocity_nm, angle_nm, v_nm, u_nm]]
+
+    lat_long:
+        [[latitude_11, longitude_11, velocity_11, angle_11, v_11, u_11],
+         ...,
+         [latitude_1m, longitude_1m, velocity_1m, angle_1m, v_1m, u_1m],
+         ...,
+         [latitude_nm, longitude_nm, velocity_nm, angle_nm, v_nm, u_nm]]
+
+Area is saved and printed in different formats
+
+::
+
+    area:
+        projection:
+        lat_0:
+        long_0:
+        equatorial radius:
+        eccentricity:
+        flattening:
+        area_extent:
+        shape:
+        pixel_size:
+        center:
+
+
+Advanced arguments
+------------------
+
+* **projection_spheroid**: Spheroid of projection (WGS84, sphere, etc). Defaults to WGS84
+* **earth_spheroid**: Spheroid of Earth (WGS84, sphere, etc). Defaults to WGS84
 * **projection**: Name of projection that the image is in (stere, laea, merc, etc). Defaults to stere
 * **area_extent**: Area extent as a list (lat_ll, long_ll, lat_ur, long_ur)
 
@@ -39,42 +114,6 @@ where
 * **long_ll**: projection x coordinate of the lower left corner of the lower left pixel in meters
 * **lat_ur**: projection y coordinate of the upper right corner of the upper right pixel in meters
 * **long_ur**: projection x coordinate of the upper right corner of the upper right pixel in meters
-
-If j and i values are provided, then velocity is calculated at a single pixel:
-
-::
-
-    [latitude, longitude, velocity, angle, v, u]
-
-If no j and i values are provided, then velocity is calculated at every pixel (n-rows, m-columns):
-
-::
-
-    [[latitude_11, longitude_11, velocity_11, angle_11, v_11, u_11],
-     ...,
-     [latitude_1m, longitude_1m, velocity_1m, angle_1m, v_1m, u_1m],
-     ...,
-     [latitude_nm, longitude_nm, velocity_nm, angle_nm, v_nm, u_nm]]
-
-.. note::
-
-    wind_info is saved to to wind_info.txt and wind_info.hdf5 (under the group "wind_info")
-    in a new directory by the name of the displacement file appended with "_output", which will be
-    created where the script is ran
-
-Calculating wind_info::
-
-    $ pwd
-    /Desktop
-    $ ls
-    in.flo	    pywinds
-    $ pywinds/velocity.sh 60 0 100 --j 0 --i 0 --pixel_size 4000 --center 90,0 --no_save
-    [67.62, -137.17, 42.33, 317.58, 31.25, -28.55]
-    $ pywinds/wind_info.sh 60 0 100 --pixel_size 4000 --center 90,0
-    Saving wind_info to:
-    /Desktop/in.flo_output/wind_info.txt
-    /Desktop/in.flo_output/wind_info.hdf5
-
 
 velocity.sh
 -----------
@@ -102,8 +141,8 @@ Optional arguments:
   1. When not flagged (Default): saves velocity and does not print velocity to shell
   2. When flagged: prints velocity to shell without saving
 
-* **image_geod**: Spheroid of projection (WGS84, sphere, etc). Defaults to WGS84
-* **earth_geod**: Spheroid of Earth (WGS84, sphere, etc). Defaults to WGS84
+* **projection_spheroid**: Spheroid of projection (WGS84, sphere, etc). Defaults to WGS84
+* **earth_spheroid**: Spheroid of Earth (WGS84, sphere, etc). Defaults to WGS84
 * **projection**: Name of projection that the image is in (stere, laea, merc, etc). Defaults to stere
 * **area_extent**: Area extent as a list (lat_ll, long_ll, lat_ur, long_ur)
 
@@ -178,8 +217,8 @@ Optional arguments:
   1. When not flagged (Default): saves vu and does not print vu to shell
   2. When flagged: prints vu to shell without saving
 
-* **image_geod**: Spheroid of projection (WGS84, sphere, etc). Defaults to WGS84
-* **earth_geod**: Spheroid of Earth (WGS84, sphere, etc). Defaults to WGS84
+* **projection_spheroid**: Spheroid of projection (WGS84, sphere, etc). Defaults to WGS84
+* **earth_spheroid**: Spheroid of Earth (WGS84, sphere, etc). Defaults to WGS84
 * **projection**: Name of projection that the image is in (stere, laea, merc, etc). Defaults to stere
 * **area_extent**: Area extent as a list (lat_ll, long_ll, lat_ur, long_ur)
 
@@ -256,7 +295,7 @@ Optional arguments:
   1. When not flagged (Default): saves lat_long and does not print lat_long to shell
   2. When flagged: prints lat_long to shell without saving
 
-* **image_geod**: Spheroid of projection (WGS84, sphere, etc). Defaults to WGS84
+* **projection_spheroid**: Spheroid of projection (WGS84, sphere, etc). Defaults to WGS84
 * **projection**: Name of projection that the image is in (stere, laea, merc, etc). Defaults to stere
 * **area_extent**: Area extent as a list (lat_ll, long_ll, lat_ur, long_ur)
 
@@ -335,7 +374,7 @@ Optional arguments:
   1. When not flagged (Default): saves displacements and does not print displacements to shell
   2. When flagged: prints displacements to shell without saving
 
-* **image_geod**: Spheroid of projection (WGS84, sphere, etc). Defaults to WGS84
+* **projection_spheroid**: Spheroid of projection (WGS84, sphere, etc). Defaults to WGS84
 * **projection**: Name of projection that the image is in (stere, laea, merc, etc). Defaults to stere
 * **area_extent**: Area extent as a list (lat_ll, long_ll, lat_ur, long_ur)
 
@@ -408,7 +447,7 @@ Optional arguments:
   1. When not flagged (Default): saves lat_long and does not print lat_long to shell
   2. When flagged: prints lat_long to shell without saving
 
-* **image_geod**: Spheroid of projection (WGS84, sphere, etc). Defaults to WGS84
+* **projection_spheroid**: Spheroid of projection (WGS84, sphere, etc). Defaults to WGS84
 * **projection**: Name of projection that the image is in (stere, laea, merc, etc). Defaults to stere
 * **area_extent**: Area extent as a list (lat_ll, long_ll, lat_ur, long_ur)
 

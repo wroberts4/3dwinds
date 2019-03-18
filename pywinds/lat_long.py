@@ -7,17 +7,8 @@ from pywinds.wind_functions import lat_long
 from pywinds.wrapper_utils import run_script
 
 
-def output_format(output, kwargs):
-    if kwargs.get('no_save') is True:
-        return np.round(output, 2).tolist()
-    head, tail = ntpath.split(kwargs['displacement_data'])
-    extension = tail or ntpath.basename(head)
-    save_directory = os.path.join(os.getcwd(), extension + '_output')
-    return 'Saving lat_long to:\n{0}\n{1}\n{2}'.format(os.path.join(save_directory, 'old_latitude.txt'),
-                                                       os.path.join(save_directory, 'old_longitude.txt'),
-                                                       os.path.join(save_directory, 'new_latitude.txt'),
-                                                       os.path.join(save_directory, 'new_longitude.txt'),
-                                                       os.path.join(save_directory, 'wind_info.hdf5'))
+def output_format(output):
+    return np.round(output, 2).tolist()
 
 
 def main(argv):
