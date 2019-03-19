@@ -11,5 +11,6 @@ mkdir $PARENTDIR/pywinds
 cp $PARENTDIR/run_scripts/* $PARENTDIR/pywinds/.
 mkdir $PARENTDIR/pywinds/env
 tar -zxvf $PARENTDIR/new_pywinds.tar.gz -C $PARENTDIR/pywinds/env
+rm $PARENTDIR/new_pywinds.tar.gz
 tar -czvf $PARENTDIR/new_pywinds.tar.gz pywinds
 rm -rf $PARENTDIR/pywinds

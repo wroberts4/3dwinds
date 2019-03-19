@@ -35,7 +35,7 @@ def _save_data(displacement_filename, data_list, text_shape=None, mode='a'):
     for data in data_list:
         dataset_dict[data.name] = data
         encoding[data.name] = {'dtype': np.float32}
-        # Text file handling
+        # Text file handling. This takes A LOT of time.
         text_path = os.path.join(directory, data.name + '.txt')
         if None not in data.data:
             data = data.data
