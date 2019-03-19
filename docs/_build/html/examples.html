@@ -87,6 +87,7 @@
 <li class="toctree-l2"><a class="reference internal" href="#examples-of-wind-info-sh">Examples of wind_info.sh</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#content-of-wind-info-nc">Content of wind_info.nc</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#content-of-text-files">Content of text files</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#advanced-examples">Advanced examples</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="API.html">API</a></li>
@@ -411,6 +412,28 @@ variables:
 <span class="mf">89.95</span><span class="p">,</span><span class="o">-</span><span class="mf">45.00</span><span class="p">,</span><span class="mf">747.11</span><span class="p">,</span><span class="mf">37.87</span><span class="p">,</span><span class="mf">589.80</span><span class="p">,</span><span class="mf">458.61</span>
 <span class="mf">89.96</span><span class="p">,</span><span class="mf">0.00</span><span class="p">,</span><span class="mf">1044.90</span><span class="p">,</span><span class="mf">49.26</span><span class="p">,</span><span class="mf">681.97</span><span class="p">,</span><span class="mf">791.67</span>
 <span class="mf">89.95</span><span class="p">,</span><span class="mf">45.00</span><span class="p">,</span><span class="mf">1416.93</span><span class="p">,</span><span class="mf">57.03</span><span class="p">,</span><span class="mf">771.00</span><span class="p">,</span><span class="mf">1188.80</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="advanced-examples">
+<span id="id4"></span><h2>Advanced examples<a class="headerlink" href="#advanced-examples" title="Permalink to this headline">¶</a></h2>
+<p>Getting shape of displacement file using area.sh:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ pwd
+/Desktop
+$ ls
+in.flo        pywinds
+$ pywinds/area.py 60 90 0
+projection: stere
+lat_ts: 60
+lat_0: 90
+long_0: 0
+equatorial_radius: 6378137.0
+eccentricity: 0.081819
+inverse_flattening: 298.26
+shape: [1000, 1000]
+area_extent: None
+pixel_size: None
+center: None
 </pre></div>
 </div>
 </div>

@@ -154,7 +154,13 @@
             
   <div class="section" id="installing-pywinds">
 <h1>Installing pywinds<a class="headerlink" href="#installing-pywinds" title="Permalink to this headline">¶</a></h1>
-<p>pywinds depends on pyproj, numpy, xarray, pyresample, and netcdf4 (and sphinx_rtd_theme for the docs).</p>
+<p>pywinds depends on python=3.7.1, pyproj=2.1.1, numpy=1.16.1, xarray=0.12.0, pyresample=1.11.0, and netcdf4=1.4.3.2</p>
+<p>If you are making the docs, sphinx=1.8.5 and sphinx-rtd-theme=0.4.3</p>
+<p>If you are packing the environment, conda-pack=0.3.1</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">All versions were used at developement time and later or newer versions of each package may work.</p>
+</div>
 <div class="section" id="package-installation">
 <h2>Package installation<a class="headerlink" href="#package-installation" title="Permalink to this headline">¶</a></h2>
 <p>If using pywinds from a tarball, everything should already be setup and ready to go after you untar it
@@ -162,11 +168,9 @@
 <p>If installing the package, you will need to use <a class="reference external" href="https://www.anaconda.com/distribution/">anaconda</a>.
 Source code is available to clone on <a class="reference external" href="https://github.com/wroberts4/pywinds">https://github.com/wroberts4/pywinds</a>.</p>
 <p>Conda commands to install pywinds:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ conda install -y python numpy
-$ conda install -y -c conda-forge pyproj xarray pyresample netcdf4
-$ pwd
-/Desktop/pywinds
-$ pip install .
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ conda install -y -c conda-forge python=3.7.1 numpy=1.16.1 pyproj=2.1.1
+  xarray=0.12.0 pyresample=1.11.0 netcdf4=1.4.3.2
+$ pip install git+https://github.com/wroberts4/pywinds.git
 </pre></div>
 </div>
 </div>

@@ -1,7 +1,15 @@
 Installing pywinds
 ==================
 
-pywinds depends on pyproj, numpy, xarray, pyresample, and netcdf4 (and sphinx_rtd_theme for the docs).
+pywinds depends on python=3.7.1, pyproj=2.1.1, numpy=1.16.1, xarray=0.12.0, pyresample=1.11.0, and netcdf4=1.4.3.2
+
+If you are making the docs, sphinx=1.8.5 and sphinx-rtd-theme=0.4.3
+
+If you are packing the environment, conda-pack=0.3.1
+
+.. note::
+
+    All versions were used at developement time and later or newer versions of each package may work.
 
 Package installation
 --------------------
@@ -14,9 +22,7 @@ Source code is available to clone on https://github.com/wroberts4/pywinds.
 
 Conda commands to install pywinds::
 
-    $ conda install -y python numpy
-    $ conda install -y -c conda-forge pyproj xarray pyresample netcdf4
-    $ pwd
-    /Desktop/pywinds
-    $ pip install .
+    $ conda install -y -c conda-forge python=3.7.1 numpy=1.16.1 pyproj=2.1.1
+      xarray=0.12.0 pyresample=1.11.0 netcdf4=1.4.3.2
+    $ pip install git+https://github.com/wroberts4/pywinds.git
 

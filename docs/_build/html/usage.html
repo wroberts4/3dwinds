@@ -158,10 +158,11 @@
             
   <div class="section" id="usage">
 <h1>Usage<a class="headerlink" href="#usage" title="Permalink to this headline">¶</a></h1>
-<p>Use the <strong>-h</strong> or <strong>–help</strong> flags on any of these scripts to print a usage message.</p>
+<p>Use the <strong>-h</strong> or <strong>–help</strong> flags on any scripts to print a usage message.</p>
 <div class="section" id="wind-info-sh">
 <h2>wind_info.sh<a class="headerlink" href="#wind-info-sh" title="Permalink to this headline">¶</a></h2>
-<p>Calculates area information, j and i displacement, new and old latitude/longitude, v, u, and velocity of the wind.</p>
+<p>wind_info.sh calculates area information, j and i displacement, new and old latitude/longitude,
+v, u, and velocity of the wind. This is the primary function of pywinds.</p>
 <p>Required arguments:</p>
 <ul class="simple">
 <li><strong>lat_ts</strong>: Projection latitude of true scale</li>
@@ -196,7 +197,7 @@ Wildcard (“*”) syntax is accepted. If not provided, reads every file ending 
 /Desktop
 $ ls
 in.flo          pywinds
-$ pywinds/velocity.sh 60 90 0 100 --j 0 --i 0 --pixel_size 4000 --center 90,0 --no_save
+$ pywinds/wind_info.sh 60 90 0 100 --j 0 --i 0 --pixel_size 4000 --center 90,0 --no_save
 [63.36, -135.0, 51.8, 315.24, 36.78, -36.47]
 $ pywinds/wind_info.sh 60 0 100 --pixel_size 4000 --center 90,0
 Data saved to the directory /Desktop/in.flo_output
@@ -433,6 +434,8 @@ pixel_size: (4000.0, 4000.0)
 center: (90.0, 0.0)
 </pre></div>
 </div>
+<p>You can use area.sh on a file containing displacements to see what shape it is,
+even if the area is not completely defined, as shown in <a class="reference internal" href="examples.html#advanced-examples"><span class="std std-ref">Advanced examples</span></a>.</p>
 </div>
 </div>
 

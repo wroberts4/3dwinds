@@ -188,11 +188,6 @@ def _create_area(lat_ts, lat_0, long_0, projection='stere', area_extent=None, sh
                                                                  projection_spheroid.initstring))
     a = proj_dict.get('a')
     f = proj_dict.get('f')
-    # Temporary fix to allow sphere until pyproj 6.0.0 releases.
-    if proj_dict['f'] == 0:
-        f = proj_dict.pop('f', None)
-        a = proj_dict.pop('a', None)
-        proj_dict['R'] = a
     # Object that contains area information.
     area_definition = create_area_def('pywinds', proj_dict, area_extent=area_extent, shape=shape, resolution=pixel_size,
                                       center=center, upper_left_extent=upper_left_extent, radius=radius, units=units)
@@ -438,7 +433,6 @@ def _find_displacements_and_area(lat_ts=None, lat_0=None, long_0=None, displacem
                                  upper_left_extent=None, radius=None, units='m', projection_spheroid=None,
                                  no_save=True):
     """Dynamically finds displacements and area of projection"""
-    _save_data(displacement_data, [], mode='w')
     area_definition = None
     area_data = None
     # Allows just displacements to be called without raising an area not found axception.
@@ -863,6 +857,9 @@ def wind_info(lat_ts, lat_0, long_0, delta_time, displacement_data=None, project
         (latitude, longitude, velocity, angle, v, and u at each pixel) : numpy.array or list
             [latitude, longitude, velocity, angle, v, u] at each pixel in row-major format
     """
+    if no_save is False:
+        # Creates the file or writes over old data.
+        _save_data(displacement_data, [], mode='w')
     shape, speed, angle, v, u, lat, long = _compute_velocity(lat_ts, lat_0, long_0, displacement_data=displacement_data,
                                                              projection=projection, j=j, i=i, delta_time=delta_time,
                                                              area_extent=area_extent, shape=shape, center=center,
@@ -885,6 +882,7 @@ def wind_info(lat_ts, lat_0, long_0, delta_time, displacement_data=None, project
         text_shape = None
         dims = ['yx', 'vars']
     if no_save is False:
+        # Creates the file or writes over old data.
         _save_data(displacement_data, [xarray.DataArray(winds, name='wind_info', dims=dims,
                                                         attrs={'standard_name': 'wind_speed',
                                                                'description': 'new_lat, new_long, speed, angle, v, u',

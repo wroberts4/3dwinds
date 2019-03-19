@@ -1,11 +1,12 @@
 Usage
 =====
 
-Use the **-h** or **--help** flags on any of these scripts to print a usage message.
+Use the **-h** or **--help** flags on any scripts to print a usage message.
 
 wind_info.sh
 ------------
-Calculates area information, j and i displacement, new and old latitude/longitude, v, u, and velocity of the wind.
+wind_info.sh calculates area information, j and i displacement, new and old latitude/longitude,
+v, u, and velocity of the wind. This is the primary function of pywinds.
 
 Required arguments:
 
@@ -39,13 +40,13 @@ Calculating wind_info::
     /Desktop
     $ ls
     in.flo	    pywinds
-    $ pywinds/velocity.sh 60 90 0 100 --j 0 --i 0 --pixel_size 4000 --center 90,0 --no_save
+    $ pywinds/wind_info.sh 60 90 0 100 --j 0 --i 0 --pixel_size 4000 --center 90,0 --no_save
     [63.36, -135.0, 51.8, 315.24, 36.78, -36.47]
     $ pywinds/wind_info.sh 60 0 100 --pixel_size 4000 --center 90,0
     Data saved to the directory /Desktop/in.flo_output
 
 
-For more examples of using wind_info.sh, please see :ref:`Examples_of_wind_info.sh`.
+For more examples of using wind_info.sh, please see :ref:`examples_of_wind_info.sh`.
 
 Data format
 -------------
@@ -157,7 +158,7 @@ Text files:
     * Text files are saved as comma separated files (except for polar_stereographic.txt
       which is the same format as it is in wind_info.nc). Numbers are rounded to 2 decimal places.
 
-    * For examples of what the text files looks like, please see :ref:`Content_of_text_files`.
+    * For examples of what the text files looks like, please see :ref:`content_of_text_files`.
 
 wind_info.nc:
     * wind_info.nc is a netcdf4 file saved using 32-bit floats which follows
@@ -166,7 +167,7 @@ wind_info.nc:
     * Each variable listed under "Text files" at the top of this section is saved to wind_info.nc by the same
       name as their .txt counterparts.
 
-    * For an example of what wind_info.nc looks like, please see :ref:`Content_of_wind_info.nc`.
+    * For an example of what wind_info.nc looks like, please see :ref:`content_of_wind_info.nc`.
 
 .. _advanced_arguments:
 
@@ -186,7 +187,7 @@ Advanced arguments
     command. Units are determined in the following priority:
 
     1. units expressed with variables via @your_units (see 'Using units' under
-       :ref:`Examples_of_wind_info.sh` for examples)
+       :ref:`examples_of_wind_info.sh` for examples)
     2. units passed to ``--units`` (exluding center)
     3. meters (exluding center, which is degrees)
 * **area_extent**: Area extent as a list (lat_ll, long_ll, lat_ur, long_ur)
@@ -284,4 +285,8 @@ They have similar or identical arguments to wind_info.sh
     shape: (1000, 1000)
     pixel_size: (4000.0, 4000.0)
     center: (90.0, 0.0)
+
+
+You can use area.sh on a file containing displacements to see what shape it is,
+even if the area is not completely defined, as shown in :ref:`advanced_examples`.
 

@@ -1,7 +1,7 @@
 Examples
 ========
 
-.. _Examples_of_wind_info.sh:
+.. _examples_of_wind_info.sh:
 
 Examples of wind_info.sh
 ------------------------
@@ -87,7 +87,7 @@ Using units::
     [63.36, -135.0, 51.8, 315.24, 36.78, -36.47]
 
 
-.. _Content_of_wind_info.nc:
+.. _content_of_wind_info.nc:
 
 Content of wind_info.nc
 -----------------------
@@ -181,7 +181,7 @@ Content of wind_info.nc
     }
 
 
-.. _Content_of_text_files:
+.. _content_of_text_files:
 
 Content of text files
 ---------------------
@@ -284,3 +284,27 @@ wind_info.txt::
     89.96,0.00,1044.90,49.26,681.97,791.67
     89.95,45.00,1416.93,57.03,771.00,1188.80
 
+
+.. _advanced_examples:
+
+Advanced examples
+-----------------
+
+Getting shape of displacement file using area.sh::
+
+    $ pwd
+    /Desktop
+    $ ls
+    in.flo        pywinds
+    $ pywinds/area.py 60 90 0
+    projection: stere
+    lat_ts: 60
+    lat_0: 90
+    long_0: 0
+    equatorial_radius: 6378137.0
+    eccentricity: 0.081819
+    inverse_flattening: 298.26
+    shape: [1000, 1000]
+    area_extent: None
+    pixel_size: None
+    center: None
