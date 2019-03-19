@@ -14,6 +14,7 @@ from xarray import DataArray
 
 
 def area_to_string(area_dict):
+    """Rounds and converts area dict to string"""
     def _round(val, precision):
         try:
             if np.shape(val) == ():
@@ -33,7 +34,7 @@ def area_to_string(area_dict):
 
 
 def _arg_to_param(arg):
-    """Converts command line arguments (strings) to python data passed to function."""
+    """Converts command line arguments (strings) to python data."""
     units = None
     if len(arg.split('@')) == 2:
         arg, units = arg.split('@')

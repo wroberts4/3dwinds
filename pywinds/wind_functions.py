@@ -14,6 +14,8 @@ from pywinds.wrapper_utils import area_to_string
 
 
 def _save_data(displacement_filename, data_list, text_shape=None, mode='a'):
+    """Handles text and netcdf4 file saving"""
+    # Get name of displacement file (without path). If string is not a file, return and don't make a file.
     if isinstance(displacement_filename, str):
         if not os.path.isfile(displacement_filename):
             return
@@ -27,7 +29,7 @@ def _save_data(displacement_filename, data_list, text_shape=None, mode='a'):
         os.mkdir(directory)
     except OSError:
         pass
-
+    # Formulate all the datasets into a single dict of float32 to be passed to xarray.Dataset.
     dataset_dict = {}
     encoding = {}
     for data in data_list:
@@ -44,6 +46,7 @@ def _save_data(displacement_filename, data_list, text_shape=None, mode='a'):
             data = data.attrs
             with open(text_path, 'w') as file:
                 file.write(area_to_string(data))
+            #  Change any null data to a string or else an exception is raised.
             for key, val in data.items():
                 if val is None:
                     data[key] = 'None'
@@ -169,6 +172,7 @@ def _create_area(lat_ts, lat_0, long_0, projection='stere', area_extent=None, sh
             area_extent = xarray.DataArray(area_extent_ll + area_extent_ur, attrs=area_extent.attrs)
         else:
             area_extent = area_extent_ll + area_extent_ur
+    # Makes center defualt to degrees
     if center is not None and not isinstance(center, xarray.DataArray):
         center = xarray.DataArray(center, attrs={'units': 'degrees'})
     if projection_spheroid is None:
@@ -184,13 +188,16 @@ def _create_area(lat_ts, lat_0, long_0, projection='stere', area_extent=None, sh
                                                                  projection_spheroid.initstring))
     a = proj_dict.get('a')
     f = proj_dict.get('f')
-    # Temporary fix to allow sphere until proj4 6.0.0 releases.
+    # Temporary fix to allow sphere until pyproj 6.0.0 releases.
     if proj_dict['f'] == 0:
         f = proj_dict.pop('f', None)
         a = proj_dict.pop('a', None)
         proj_dict['R'] = a
+    # Object that contains area information.
     area_definition = create_area_def('pywinds', proj_dict, area_extent=area_extent, shape=shape, resolution=pixel_size,
                                       center=center, upper_left_extent=upper_left_extent, radius=radius, units=units)
+    # Below is logic for print and save data.
+    # Function that handles projection to lat/long transformation.
     p = Proj(proj_dict)
     if abs(f) > 0.0:
         i_f = 1 / f
@@ -199,7 +206,9 @@ def _create_area(lat_ts, lat_0, long_0, projection='stere', area_extent=None, sh
     area_extent = area_definition.area_extent
     if area_extent is not None:
         center = ((area_extent[1] + area_extent[3]) / 2, (area_extent[0] + area_extent[2]) / 2)
+        # Both in degrees
         center = _reverse_params([p(center[1], center[0], inverse=True)])[0]
+        # Needs order [ll_x, ll_y, ur_x, ur_y]
         area_extent = _reverse_params([p(area_extent[0], area_extent[1], inverse=True)])[0] + \
                       _reverse_params([p(area_extent[2], area_extent[3], inverse=True)])[0]
     else:
@@ -222,7 +231,7 @@ def _create_area(lat_ts, lat_0, long_0, projection='stere', area_extent=None, sh
         up_longitude = p(0, 100, inverse=True)[0]
         if up_longitude == 180:
             up_longitude = -180.0
-        # http://earth-info.nga.mil/GandG/coordsys/polar_stereographic/Polar_Stereo_phi1_from_k0_memo.pdf
+        # Credit: http://earth-info.nga.mil/GandG/coordsys/polar_stereographic/Polar_Stereo_phi1_from_k0_memo.pdf
         k90 = ((1 + e) ** (1 + e) * (1 - e) ** (1 - e)) ** .5
         phi = np.pi * lat_ts / 180
         k0 = (1 + np.sin(phi)) / 2 * k90 / ((1 + e * np.sin(phi)) ** (1 + e) * (1 - e * np.sin(phi)) ** (1 - e)) ** .5
@@ -237,9 +246,10 @@ def _create_area(lat_ts, lat_0, long_0, projection='stere', area_extent=None, sh
 
 
 def _find_displacements(displacement_data=None, j=None, i=None, shape=None, no_save=True):
-    """Retrieves pixel-displacements from a file or list."""
+    """Retrieves pixel-displacements from a 32-bit float binary file or list."""
     if isinstance(displacement_data, str):
         # Displacement: even index, odd index. Note: (0, 0) is in the top left, i=horizontal and j=vertical.
+        # Conver 32 float to 64 float to prevent rounding errors.
         displacement = np.array(np.fromfile(displacement_data, dtype=np.float32)[3:], dtype=np.float64)
         j_displacement = displacement[1::2]
         i_displacement = displacement[0::2]
@@ -248,6 +258,7 @@ def _find_displacements(displacement_data=None, j=None, i=None, shape=None, no_s
             if (shape[0] is 0 or shape[1] != np.size(j_displacement) / shape[0] or shape[1] != np.size(i_displacement) /
                     shape[0]):
                 shape = None
+    # List handling
     elif displacement_data is not None:
         if len(np.shape(displacement_data)) != 2 and len(np.shape(displacement_data)) != 3 or \
                 np.shape(displacement_data)[0] != 2:
@@ -258,14 +269,17 @@ def _find_displacements(displacement_data=None, j=None, i=None, shape=None, no_s
             displacement_data = np.reshape(displacement_data, (2, int(np.size(displacement_data) / 2)))
         j_displacement = np.array(displacement_data[0], dtype=np.float64)
         i_displacement = np.array(displacement_data[1], dtype=np.float64)
+    # Used for new lat/long
     else:
         return shape, 0.0, 0.0
+    # Try to find shape by "squaring" file.
     if shape is None:
         shape = [np.size(i_displacement) ** .5, np.size(j_displacement) ** .5]
         error = 'Shape was not provided and shape found from file was not comprised of integers: ' \
                 '{0} pixels made a shape of {1}'.format(np.size(j_displacement) + np.size(i_displacement),
                                                         tuple([2] + shape))
         shape = (_to_int(shape[0], ValueError(error)), _to_int(shape[1], ValueError(error)))
+    # Make sure shape matches the displacement shape.
     if shape[0] is 0 or shape[1] != np.size(j_displacement) / shape[0]:
         raise ValueError(
             'Could not reshape displacement data of size {0} to shape {1}'.format(np.size(j_displacement), shape))
@@ -275,7 +289,6 @@ def _find_displacements(displacement_data=None, j=None, i=None, shape=None, no_s
     if j is not None or i is not None:
         j, i = _extrapolate_j_i(j, i, shape)
         j_displacement, i_displacement = j_displacement[j * shape[0] + i], i_displacement[j * shape[0] + i]
-
     dims = None
     if np.size(j_displacement) != 1:
         dims = ['y', 'x']
@@ -293,6 +306,7 @@ def _find_displacements(displacement_data=None, j=None, i=None, shape=None, no_s
 
 
 def _reshape(array, shape):
+    """Easier way to handle list and number format in one method."""
     if np.size(array) == 1:
         return array
     return np.reshape(array, shape)
@@ -367,11 +381,14 @@ def _compute_vu(lat_ts, lat_0, long_0, delta_time, displacement_data=None, proje
                                                                     projection_spheroid=projection_spheroid,
                                                                     no_save=no_save)
     lat_long_distance = _lat_long_dist((new_lat + old_lat) / 2, earth_spheroid)
+    # Uses average of distances.
+
     # u = (_delta_longitude(new_long, old_long) *
     #      _lat_long_dist(old_lat, earth_spheroid)[1] / (delta_time * 60) +
     #      _delta_longitude(new_long, old_long) *
     #      _lat_long_dist(new_lat, earth_spheroid)[1] / (delta_time * 60)) / 2
-    # meters/second. distance is in meters delta_time is in minutes.
+
+    # Uses average of angles. units: meters/second. Distance is in meters, delta_time is in minutes.
     v = (new_lat - old_lat) * lat_long_distance[0] / (delta_time * 60)
     u = np.vectorize(_delta_longitude)(new_long, old_long) * lat_long_distance[1] / (delta_time * 60)
     dims = None
@@ -412,6 +429,7 @@ def _compute_velocity(lat_ts, lat_0, long_0, delta_time, displacement_data=None,
                                                                'grid_mapping_name': 'polar_stereographic',
                                                                'units': 'degrees'})))
     # When wind vector azimuth is 0 degrees it points North (mathematically 90 degrees) and moves clockwise.
+    # speed is in meters/second.
     return shape, speed, angle, v, u, new_lat, new_long
 
 
@@ -423,7 +441,10 @@ def _find_displacements_and_area(lat_ts=None, lat_0=None, long_0=None, displacem
     _save_data(displacement_data, [], mode='w')
     area_definition = None
     area_data = None
-    if lat_0 is not None or long_0 is not None:
+    # Allows just displacements to be called without raising an area not found axception.
+    has_area_args = lat_ts is not None or lat_0 is not None or long_0 is not None
+    # Try to get shape from area.
+    if has_area_args:
         try:
             area_data, area_definition = _create_area(lat_ts, lat_0, long_0, projection=projection,
                                                       area_extent=area_extent, shape=shape, center=center,
@@ -437,12 +458,14 @@ def _find_displacements_and_area(lat_ts=None, lat_0=None, long_0=None, displacem
             pass
     shape, j_displacement, i_displacement = _find_displacements(displacement_data, shape=shape, j=j, i=i,
                                                                 no_save=no_save)
-    if not isinstance(area_definition, AreaDefinition) and (lat_0 is not None or long_0 is not None):
+    # If area was not found before, use the shape from displacements to try and make an area.
+    if not isinstance(area_definition, AreaDefinition) and has_area_args:
         area_data, area_definition = _create_area(lat_ts, lat_0, long_0, projection=projection, area_extent=area_extent,
                                                   shape=shape, center=center, pixel_size=pixel_size,
                                                   upper_left_extent=upper_left_extent, radius=radius, units=units,
                                                   projection_spheroid=projection_spheroid,
                                                   displacement_data=displacement_data, no_save=no_save)
+    # list, list, list, AreaDefinition, dict
     return shape, j_displacement, i_displacement, area_definition, area_data
 
 
@@ -500,12 +523,10 @@ def area(lat_ts, lat_0, long_0, displacement_data=None, projection='stere', area
         raise ValueError(
             'lat_0 and long_0 must be ints or floats, but instead were ' + '{0} {1} and {2} {3} respectively'.format(
                 lat_0, type(lat_0), long_0, type(long_0)))
-    area_data = \
-        _find_displacements_and_area(lat_ts=lat_ts, lat_0=lat_0, long_0=long_0, displacement_data=displacement_data,
-                                     projection=projection, area_extent=area_extent, shape=shape, center=center,
-                                     pixel_size=pixel_size, upper_left_extent=upper_left_extent, radius=radius,
-                                     units=units, projection_spheroid=projection_spheroid)[4]
-    return area_data
+    return _find_displacements_and_area(lat_ts=lat_ts, lat_0=lat_0, long_0=long_0, displacement_data=displacement_data,
+                                        projection=projection, area_extent=area_extent, shape=shape, center=center,
+                                        pixel_size=pixel_size, upper_left_extent=upper_left_extent, radius=radius,
+                                        units=units, projection_spheroid=projection_spheroid)[4]
 
 
 def displacements(lat_ts=None, lat_0=None, long_0=None, displacement_data=None, projection='stere', j=None, i=None,
@@ -855,6 +876,7 @@ def wind_info(lat_ts, lat_0, long_0, delta_time, displacement_data=None, project
     winds = np.insert(winds, 3, angle, axis=1)
     winds = np.insert(winds, 4, v, axis=1)
     winds = np.insert(winds, 5, u, axis=1)
+    # Reshapes so that when one pixel is specified, each variable is its own row instead of its own column.
     if np.shape(winds)[0] == 1:
         winds = winds[0]
         text_shape = [1, 6]

@@ -2,33 +2,37 @@ import ast
 import subprocess
 import sys
 import unittest
+
 import numpy as np
+
 from pywinds.wind_functions import area, displacements
 
 
 class TestCase:
-    def __init__(self, displacement_data, projection='stere', i=None, j=None, shape=None, pixel_size=None, lat_0=None,
-                 long_0=None, image_geod=None, earth_geod=None, center=None, area_extent=None, speed=None, angle=None,
-                 u=None, v=None, old_lat=None, old_long=None, new_lat=None, new_long=None, delta_time=100):
+    def __init__(self, displacement_data, projection='stere', i=None, j=None, shape=None, pixel_size=None, lat_ts=None,
+                 lat_0=None, long_0=None, projection_spheroid=None, earth_spheroid=None, center=None, area_extent=None,
+                 speed=None, angle=None, u=None, v=None, old_lat=None, old_long=None, new_lat=None, new_long=None,
+                 delta_time=100):
         # Input data
         self.i = i
         self.j = j
+        self.lat_ts = str(lat_ts).replace(' ', '')
         self.lat_0 = str(lat_0).replace(' ', '')
         self.long_0 = str(long_0).replace(' ', '')
         self.delta_time = str(delta_time)
-        self.image_geod = str(image_geod).replace(' ', '')
-        self.earth_geod = str(earth_geod).replace(' ', '')
+        self.projection_spheroid = str(projection_spheroid).replace(' ', '')
+        self.earth_spheroid = str(earth_spheroid).replace(' ', '')
         self.pixel_size = str(pixel_size).replace(' ', '')
         self.projection = str(projection).replace(' ', '')
         self.displacement_data = str(displacement_data).replace(' ', '')
         self.center = str(center).replace(' ', '')
         self.area_extent = area_extent
-        j_displacements, i_displacements = displacements(lat_0, long_0, displacement_data=displacement_data,
-                                                         shape=shape, i=i, j=j, no_save=True)
+        j_displacements, i_displacements = displacements(lat_ts, lat_0, long_0, displacement_data=displacement_data,
+                                                         shape=shape, i=i, j=j)
         self.j_displacements = j_displacements
         self.i_displacements = i_displacements
-        area_data = area(lat_0, long_0, displacement_data=displacement_data, shape=shape, center=center,
-                         pixel_size=float(str(pixel_size).split(':')[0]), no_save=True)
+        area_data = area(lat_ts, lat_0, long_0, displacement_data=displacement_data, shape=shape, center=center,
+                         pixel_size=float(str(pixel_size).split(':')[0]))
         self.shape = list(area_data['shape'])
         # Output data
         self.speed = speed
@@ -45,27 +49,27 @@ class TestWrappers(unittest.TestCase):
     def setUp(self):
         self.test_cases = []
         self.test_cases.append(
-            TestCase('./test_files/test_data_three.flo', i=1, j=4, pixel_size=10000, lat_0=60, long_0=0,
-                     center=[90.0, 0.0], area_extent=[89.71, -45.03, 89.71, 135.03], speed=2820.83, angle=42.94,
-                     u=1921.49, v=2065.18, old_lat=-21.9, old_long=-151.31, new_lat=89.81, new_long=-26.58))
+            TestCase('./test_files/test_data_three.flo', i=1, j=4, pixel_size=10000, lat_ts=60, lat_0=90, long_0=0,
+                     center=[90.0, 0.0], area_extent=[89.66, -45.0, 89.66, 135.0], speed=3136.65, angle=36.62,
+                     u=1871.01, v=2517.52, old_lat=-46.64, old_long=-134.96, new_lat=89.79, new_long=-26.57))
         displacement_data = np.array(([x for x in range(25)], [x for x in range(25)])) * 10
         self.test_cases.append(
-            TestCase(displacement_data.tolist(), pixel_size=5000, lat_0=90, long_0=20, i=1, j=4, center=[40.0, 10.0],
-                     area_extent=[39.89, 9.9, 40.11, 10.1], speed=208.14, angle=118.39, u=183.1, v=-98.98,
-                     old_lat=45.27, old_long=-3.42, new_lat=39.92, new_long=9.97))
+            TestCase(displacement_data.tolist(), pixel_size=5000, lat_ts=-60, lat_0=-90, long_0=20, i=1, j=4,
+                     center=[-40.0, 0.0], area_extent=[-40.06, -0.17, -39.94, 0.17], speed=208.42, angle=157.72,
+                     u=79.03, v=-192.85, old_lat=-29.63, old_long=-5.27, new_lat=-40.06, new_long=-0.08))
 
     def test_wind_info(self):
         for case in self.test_cases:
             lat_ji, long_ji, speed_ji, angle_ji, v_ji, u_ji = args_to_data(
-                ['../wind_info.py', case.lat_0, case.long_0, case.delta_time, '--displacement_data',
+                ['../wind_info.py', case.lat_ts, case.lat_0, case.long_0, case.delta_time, '--displacement_data',
                  case.displacement_data, '--projection', case.projection, '--j', str(case.j), '--i', str(case.i),
-                 '--pixel_size', case.pixel_size, '--center', case.center, '--image_geod', case.image_geod,
-                 '--earth_geod', case.earth_geod, '--no_save']).transpose()
+                 '--pixel_size', case.pixel_size, '--center', case.center, '--projection_spheroid',
+                 case.projection_spheroid, '--earth_spheroid', case.earth_spheroid, '--no_save']).transpose()
             lat, long, speed, angle, v, u = args_to_data(
-                ['../wind_info.py', case.lat_0, case.long_0, case.delta_time, '--displacement_data',
+                ['../wind_info.py', case.lat_ts, case.lat_0, case.long_0, case.delta_time, '--displacement_data',
                  case.displacement_data, '--projection', case.projection, '--pixel_size', case.pixel_size, '--center',
-                 case.center, '--image_geod', case.image_geod, '--earth_geod', case.earth_geod,
-                 '--no_save']).transpose().reshape([6] + list(case.shape))
+                 case.center, '--projection_spheroid', case.projection_spheroid, '--earth_spheroid',
+                 case.earth_spheroid, '--no_save']).transpose().reshape([6] + list(case.shape))
             self.assertEqual(case.new_lat, lat_ji)
             self.assertEqual(case.new_long, long_ji)
             self.assertEqual(lat[case.j, case.i], lat_ji)
@@ -82,14 +86,15 @@ class TestWrappers(unittest.TestCase):
     def test_velocity(self):
         for case in self.test_cases:
             speed_ji, angle_ji = args_to_data(
-                ['../velocity.py', case.lat_0, case.long_0, case.delta_time, '--displacement_data',
+                ['../velocity.py', case.lat_ts, case.lat_0, case.long_0, case.delta_time, '--displacement_data',
                  case.displacement_data, '--projection', case.projection, '--j', str(case.j), '--i', str(case.i),
-                 '--pixel_size', case.pixel_size, '--center', case.center, '--image_geod', case.image_geod,
-                 '--earth_geod', case.earth_geod, '--no_save'])
+                 '--pixel_size', case.pixel_size, '--center', case.center, '--projection_spheroid',
+                 case.projection_spheroid, '--earth_spheroid', case.earth_spheroid])
             speed, angle = args_to_data(
-                ['../velocity.py', case.lat_0, case.long_0, case.delta_time, '--displacement_data',
+                ['../velocity.py', case.lat_ts, case.lat_0, case.long_0, case.delta_time, '--displacement_data',
                  case.displacement_data, '--projection', case.projection, '--pixel_size', case.pixel_size, '--center',
-                 case.center, '--image_geod', case.image_geod, '--earth_geod', case.earth_geod, '--no_save'])
+                 case.center, '--projection_spheroid', case.projection_spheroid, '--earth_spheroid',
+                 case.earth_spheroid])
             self.assertEqual(case.speed, speed_ji)
             self.assertEqual(case.angle, angle_ji)
             self.assertEqual(speed[case.j, case.i], speed_ji)
@@ -98,14 +103,15 @@ class TestWrappers(unittest.TestCase):
     def test_vu(self):
         for case in self.test_cases:
             v_ji, u_ji = args_to_data(
-                ['../vu.py', case.lat_0, case.long_0, case.delta_time, '--displacement_data', case.displacement_data,
-                 '--projection', case.projection, '--j', str(case.j), '--i', str(case.i), '--pixel_size',
-                 case.pixel_size, '--center', case.center, '--image_geod', case.image_geod, '--earth_geod',
-                 case.earth_geod, '--no_save'])
+                ['../vu.py', case.lat_ts, case.lat_0, case.long_0, case.delta_time, '--displacement_data',
+                 case.displacement_data, '--projection', case.projection, '--j', str(case.j), '--i', str(case.i),
+                 '--pixel_size', case.pixel_size, '--center', case.center, '--projection_spheroid',
+                 case.projection_spheroid, '--earth_spheroid', case.earth_spheroid])
             v, u = args_to_data(
-                ['../vu.py', case.lat_0, case.long_0, case.delta_time, '--displacement_data', case.displacement_data,
-                 '--projection', case.projection, '--pixel_size', case.pixel_size, '--center', case.center,
-                 '--image_geod', case.image_geod, '--earth_geod', case.earth_geod, '--no_save'])
+                ['../vu.py', case.lat_ts, case.lat_0, case.long_0, case.delta_time, '--displacement_data',
+                 case.displacement_data, '--projection', case.projection, '--pixel_size', case.pixel_size, '--center',
+                 case.center, '--projection_spheroid', case.projection_spheroid, '--earth_spheroid',
+                 case.earth_spheroid])
             self.assertEqual(case.v, v_ji)
             self.assertEqual(case.u, u_ji)
             self.assertEqual(v[case.j, case.i], v_ji)
@@ -114,21 +120,21 @@ class TestWrappers(unittest.TestCase):
     def test_lat_long(self):
         for case in self.test_cases:
             old_lat_ji, old_long_ji = args_to_data(
-                ['../lat_long.py', case.lat_0, case.long_0, '--displacement_data', case.displacement_data,
+                ['../lat_long.py', case.lat_ts, case.lat_0, case.long_0, '--displacement_data', case.displacement_data,
                  '--projection', case.projection, '--j', str(case.j), '--i', str(case.i), '--pixel_size',
-                 case.pixel_size, '--center', case.center, '--image_geod', case.image_geod, '--no_save'])
+                 case.pixel_size, '--center', case.center, '--projection_spheroid', case.projection_spheroid])
             new_lat_ji, new_long_ji = args_to_data(
-                ['../lat_long.py', case.lat_0, case.long_0, '--projection', case.projection, '--shape',
+                ['../lat_long.py', case.lat_ts, case.lat_0, case.long_0, '--projection', case.projection, '--shape',
                  str(case.shape).replace(' ', ''), '--j', str(case.j), '--i', str(case.i), '--pixel_size',
-                 case.pixel_size, '--center', case.center, '--image_geod', case.image_geod, '--no_save'])
+                 case.pixel_size, '--center', case.center, '--projection_spheroid', case.projection_spheroid])
             old_lat, old_long = args_to_data(
-                ['../lat_long.py', case.lat_0, case.long_0, '--displacement_data', case.displacement_data,
+                ['../lat_long.py', case.lat_ts, case.lat_0, case.long_0, '--displacement_data', case.displacement_data,
                  '--projection', case.projection, '--pixel_size', case.pixel_size, '--center', case.center,
-                 '--image_geod', case.image_geod, '--no_save'])
+                 '--projection_spheroid', case.projection_spheroid])
             new_lat, new_long = args_to_data(
-                ['../lat_long.py', case.lat_0, case.long_0, '--projection', case.projection, '--shape',
+                ['../lat_long.py', case.lat_ts, case.lat_0, case.long_0, '--projection', case.projection, '--shape',
                  str(case.shape).replace(' ', ''), '--pixel_size', case.pixel_size, '--center', case.center,
-                 '--image_geod', case.image_geod, '--no_save'])
+                 '--projection_spheroid', case.projection_spheroid])
             self.assertEqual(case.old_lat, old_lat_ji)
             self.assertEqual(case.old_long, old_long_ji)
             self.assertEqual(case.new_lat, new_lat_ji)
@@ -140,11 +146,10 @@ class TestWrappers(unittest.TestCase):
 
     def test_displacements(self):
         for case in self.test_cases:
-            displacement = args_to_data(
-                ['../displacements.py', '--displacement_data', case.displacement_data, '--no_save'])
+            displacement = args_to_data(['../displacements.py', '--displacement_data', case.displacement_data])
             displacements_ji = args_to_data(
                 ['../displacements.py', '--displacement_data', case.displacement_data, '--j', str(case.j), '--i',
-                 str(case.i), '--no_save'])
+                 str(case.i)])
             j_displacements, i_displacements = displacement
             j_displacements_ji, i_displacements_ji = displacements_ji
             self.assertEqual(case.j_displacements, j_displacements_ji)
@@ -155,8 +160,8 @@ class TestWrappers(unittest.TestCase):
     def test_area(self):
         for case in self.test_cases:
             area_data = args_to_data(
-                ['../area.py', case.lat_0, case.long_0, '--shape', str(case.shape).replace(' ', ''), '--center',
-                 case.center, '--pixel_size', case.pixel_size, '--no_save'])
+                ['../area.py', case.lat_ts, case.lat_0, case.long_0, '--shape', str(case.shape).replace(' ', ''),
+                 '--center', case.center, '--pixel_size', case.pixel_size])
             self.assertTrue('center: ' + case.center.split(',')[0] in area_data)
             self.assertTrue('shape: ' + str(case.shape) in area_data)
             self.assertTrue('lat_0: ' + case.lat_0.replace(',', ', ') in area_data)

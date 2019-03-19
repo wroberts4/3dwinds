@@ -7,7 +7,7 @@ import os
 
 
 start = datetime.utcnow()
-file_name = './pywinds/test/test_files/test_data_four.flo'
+file_name = 'in.flo'
 lat_ts = 60
 lat_0 = 90
 lon_0 = 0
@@ -33,7 +33,7 @@ area_extent = tuple(reversed((2000000.0, 5429327.9172, -2000000.0, 1429327.9172)
 # print(xarray.open_dataset('C:/Users/William/Documents/pywinds/test.netcdf4'))
 #
 winds = wind_info(lat_ts, lat_0, lon_0, 100, displacement_data=file_name, center=center,
-                  pixel_size=pixel_size)
+                  pixel_size=pixel_size, i=0, j=0)
 # print(winds[500, 500, :])
 #
 # output_velocity = velocity(lat_ts, lat_0, lon_0, 100, displacement_data='in.flo', i=i_in, j=j_in, pixel_size=pixel_size,
