@@ -3,7 +3,7 @@
 PARENTDIR="$( cd -P "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 . ~/anaconda3/etc/profile.d/conda.sh
 conda activate pywinds
-pip install git+https://github.com/wroberts4/pywinds.git
+pip install ../.
 rm $PARENTDIR/new_pywinds.tar.gz
 conda-pack -o $PARENTDIR/new_pywinds.tar.gz --exclude conda-pack --exclude sphinx
 rm -rf $PARENTDIR/pywinds
