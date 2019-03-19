@@ -1,13 +1,16 @@
 import ast
-import numpy as np
 import os
 import sys
 import traceback
 from getopt import GetoptError, getopt
 from glob import glob
 from inspect import getfullargspec
+
+import numpy as np
 from xarray import DataArray
- # TODO: USE ARGPARSE OVER GETOPT
+
+
+# TODO: USE ARGPARSE OVER GETOPT
 
 
 def area_to_string(area_dict):

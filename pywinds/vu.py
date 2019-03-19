@@ -1,9 +1,11 @@
 #!/usr/bin/env python
-from pywinds.wrapper_utils import run_script
-from pywinds.wind_functions import vu
 import sys
-import numpy as np
 import warnings
+
+import numpy as np
+
+from pywinds.wind_functions import vu
+from pywinds.wrapper_utils import run_script
 
 
 def output_format(output, kwargs):
