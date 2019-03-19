@@ -84,11 +84,10 @@
 <li class="toctree-l1"><a class="reference internal" href="installation.html">Installing pywinds</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Usage</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#wind-info-sh">wind_info.sh</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#velocity-sh">velocity.sh</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#vu-sh">vu.sh</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#lat-long-sh">lat_long.sh</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#displacements-sh">displacements.sh</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#area-sh">area.sh</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#data-format">Data format</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#save-format">Save format</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#advanced-arguments">Advanced arguments</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#additional-utility-methods">Additional utility methods</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="examples.html">Examples</a></li>
@@ -159,407 +158,272 @@
             
   <div class="section" id="usage">
 <h1>Usage<a class="headerlink" href="#usage" title="Permalink to this headline">¶</a></h1>
-<p>Use the <strong>-h</strong> or <strong>–help</strong> flags on any of these scripts to print usage.</p>
+<p>Use the <strong>-h</strong> or <strong>–help</strong> flags on any of these scripts to print a usage message.</p>
 <div class="section" id="wind-info-sh">
 <h2>wind_info.sh<a class="headerlink" href="#wind-info-sh" title="Permalink to this headline">¶</a></h2>
-<p>Calculates latitude, longitude, velocity, angle, v, and u at pixel(s).</p>
+<p>Calculates area information, j and i displacement, new and old latitude/longitude, v, u, and velocity of the wind.</p>
 <p>Required arguments:</p>
 <ul class="simple">
-<li><strong>lat_0</strong>: Normal latitude of projection</li>
-<li><strong>long_0</strong>: Normal longitude of projection</li>
+<li><strong>lat_ts</strong>: Projection latitude of true scale</li>
+<li><strong>lat_0</strong>: Projection latitude of origin</li>
+<li><strong>long_0</strong>: Projection central meridian</li>
 <li><strong>delta_time</strong>: Amount of time that separates both files in minutes</li>
 </ul>
 <p>Optional arguments:</p>
 <ul class="simple">
-<li><strong>center</strong>: Projection y and x coordinate of the center of projection in degrees (lat, long)</li>
-<li><strong>pixel_size</strong>: Size of pixels in the y and x direction in meters (dy, dx)</li>
-<li><strong>shape</strong>: Number of pixels in the y and x direction (height, width). If shape is not provided,
-it attempts to be found from displacement_data.</li>
-<li><strong>displacement_data</strong>: Name of file or list containing displacements; wildcard (“*”) syntax is accepted.
-If not provided, reads every file ending in “.flo” where the script is ran</li>
+<li><strong>center</strong>: Projection y and x coordinate of the center of area (lat, long)</li>
+<li><strong>pixel_size</strong>: Projection size of pixels in the y and x direction (dy, dx)</li>
+<li><strong>displacement_data</strong>: Name of binary file (32-bit float) containing pixels displacements; How far the
+pixels had to move in the y (positive is down) and x (positive is right) direction to get to their new position.
+Wildcard (“*”) syntax is accepted. If not provided, reads every file ending in “.flo” where the script is ran</li>
 <li><strong>j</strong>: Row to run calculations on</li>
 <li><strong>i</strong>: Column to run calculations on</li>
 <li><strong>no_save</strong>:<ol class="arabic">
-<li>When not flagged (Default): saves velocity and does not print velocity to shell</li>
-<li>When flagged: prints velocity to shell without saving</li>
+<li>When not flagged (Default): saves data without printing to shell</li>
+<li>When flagged: prints data to shell without saving</li>
 </ol>
 </li>
-<li><strong>image_geod</strong>: Spheroid of projection (WGS84, sphere, etc). Defaults to WGS84</li>
-<li><strong>earth_geod</strong>: Spheroid of Earth (WGS84, sphere, etc). Defaults to WGS84</li>
-<li><strong>projection</strong>: Name of projection that the image is in (stere, laea, merc, etc). Defaults to stere</li>
-<li><strong>area_extent</strong>: Area extent as a list (y_ll, x_ll, y_ur, x_ur)</li>
 </ul>
-<p>where</p>
-<ul class="simple">
-<li><strong>y_ll</strong>: projection y coordinate of the lower left corner of the lower left pixel in meters</li>
-<li><strong>x_ll</strong>: projection x coordinate of the lower left corner of the lower left pixel in meters</li>
-<li><strong>y_ur</strong>: projection y coordinate of the upper right corner of the upper right pixel in meters</li>
-<li><strong>x_ur</strong>: projection x coordinate of the upper right corner of the upper right pixel in meters</li>
+<p>Additional information:</p>
+<blockquote>
+<div><ul class="simple">
+<li>For more optional arguments, please see <a class="reference internal" href="#advanced-arguments"><span class="std std-ref">Advanced arguments</span></a>.</li>
+<li>For more information on save files and their formats, please see <a class="reference internal" href="#save-format"><span class="std std-ref">Save format</span></a></li>
 </ul>
-<p>If j and i values are provided, then velocity is calculated at a single pixel:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">[</span><span class="n">latitude</span><span class="p">,</span> <span class="n">longitude</span><span class="p">,</span> <span class="n">velocity</span><span class="p">,</span> <span class="n">angle</span><span class="p">,</span> <span class="n">v</span><span class="p">,</span> <span class="n">u</span><span class="p">]</span>
-</pre></div>
-</div>
-<p>If no j and i values are provided, then velocity is calculated at every pixel (n-rows, m-columns):</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">[[</span><span class="n">latitude_11</span><span class="p">,</span> <span class="n">longitude_11</span><span class="p">,</span> <span class="n">velocity_11</span><span class="p">,</span> <span class="n">angle_11</span><span class="p">,</span> <span class="n">v_11</span><span class="p">,</span> <span class="n">u_11</span><span class="p">],</span>
- <span class="o">...</span><span class="p">,</span>
- <span class="p">[</span><span class="n">latitude_1m</span><span class="p">,</span> <span class="n">longitude_1m</span><span class="p">,</span> <span class="n">velocity_1m</span><span class="p">,</span> <span class="n">angle_1m</span><span class="p">,</span> <span class="n">v_1m</span><span class="p">,</span> <span class="n">u_1m</span><span class="p">],</span>
- <span class="o">...</span><span class="p">,</span>
- <span class="p">[</span><span class="n">latitude_nm</span><span class="p">,</span> <span class="n">longitude_nm</span><span class="p">,</span> <span class="n">velocity_nm</span><span class="p">,</span> <span class="n">angle_nm</span><span class="p">,</span> <span class="n">v_nm</span><span class="p">,</span> <span class="n">u_nm</span><span class="p">]]</span>
-</pre></div>
-</div>
-<div class="admonition note">
-<p class="first admonition-title">Note</p>
-<p class="last">wind_info is saved to to wind_info.txt and wind_info.hdf5 (under the group “wind_info”)
-in a new directory by the name of the displacement file appended with “_output”, which will be
-created where the script is ran</p>
-</div>
+</div></blockquote>
 <p>Calculating wind_info:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ pwd
 /Desktop
 $ ls
 in.flo          pywinds
-$ pywinds/velocity.sh 60 0 100 --j 0 --i 0 --pixel_size 4000 --center 90,0 --no_save
-[67.62, -137.17, 42.33, 317.58, 31.25, -28.55]
+$ pywinds/velocity.sh 60 90 0 100 --j 0 --i 0 --pixel_size 4000 --center 90,0 --no_save
+[63.36, -135.0, 51.8, 315.24, 36.78, -36.47]
 $ pywinds/wind_info.sh 60 0 100 --pixel_size 4000 --center 90,0
-Saving wind_info to:
-/Desktop/in.flo_output/wind_info.txt
-/Desktop/in.flo_output/wind_info.hdf5
+Data saved to the directory /Desktop/in.flo_output
+</pre></div>
+</div>
+<p>For more examples of using wind_info.sh, please see <a class="reference internal" href="examples.html#examples-of-wind-info-sh"><span class="std std-ref">Examples of wind_info.sh</span></a>.</p>
+</div>
+<div class="section" id="data-format">
+<h2>Data format<a class="headerlink" href="#data-format" title="Permalink to this headline">¶</a></h2>
+<p>If j and i values are provided, then data is calculated at a single pixel:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">wind_info</span><span class="p">:</span> <span class="p">[</span><span class="n">new_latitude</span><span class="p">,</span> <span class="n">new_longitude</span><span class="p">,</span> <span class="n">velocity</span><span class="p">,</span> <span class="n">angle</span><span class="p">,</span> <span class="n">v</span><span class="p">,</span> <span class="n">u</span><span class="p">]</span>
+
+<span class="n">velocity</span><span class="p">:</span> <span class="p">[</span><span class="n">speed</span><span class="p">,</span> <span class="n">direction</span><span class="p">]</span>
+
+<span class="n">vu</span><span class="p">:</span> <span class="p">[</span><span class="n">v</span><span class="p">,</span> <span class="n">u</span><span class="p">]</span>
+
+<span class="n">lat_long</span><span class="p">:</span> <span class="p">[</span><span class="n">latitude</span><span class="p">,</span> <span class="n">longitude</span><span class="p">]</span>
+
+<span class="n">displacements</span><span class="p">:</span> <span class="p">[</span><span class="n">j_displacement</span><span class="p">,</span> <span class="n">i_displacement</span><span class="p">]</span>
+</pre></div>
+</div>
+<p>If no j and i values are provided, then data is calculated at every pixel (n-rows, m-columns):</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">wind_info</span><span class="p">:</span>
+    <span class="p">[[</span><span class="n">new_latitude_11</span><span class="p">,</span> <span class="n">new_longitude_11</span><span class="p">,</span> <span class="n">velocity_11</span><span class="p">,</span> <span class="n">angle_11</span><span class="p">,</span> <span class="n">v_11</span><span class="p">,</span> <span class="n">u_11</span><span class="p">],</span>
+     <span class="o">...</span><span class="p">,</span>
+     <span class="p">[</span><span class="n">new_latitude_1m</span><span class="p">,</span> <span class="n">new_longitude_1m</span><span class="p">,</span> <span class="n">velocity_1m</span><span class="p">,</span> <span class="n">angle_1m</span><span class="p">,</span> <span class="n">v_1m</span><span class="p">,</span> <span class="n">u_1m</span><span class="p">],</span>
+     <span class="o">...</span><span class="p">,</span>
+     <span class="p">[</span><span class="n">new_latitude_nm</span><span class="p">,</span> <span class="n">new_longitude_nm</span><span class="p">,</span> <span class="n">velocity_nm</span><span class="p">,</span> <span class="n">angle_nm</span><span class="p">,</span> <span class="n">v_nm</span><span class="p">,</span> <span class="n">u_nm</span><span class="p">]]</span>
+
+<span class="n">velocity</span><span class="p">:</span>
+    <span class="p">[[[</span><span class="n">speed_11</span><span class="p">,</span> <span class="o">...</span><span class="p">,</span> <span class="n">speed_1m</span><span class="p">],</span>
+      <span class="o">...</span><span class="p">,</span>
+      <span class="p">[</span><span class="n">speed_n1</span><span class="p">,</span> <span class="o">...</span><span class="p">,</span> <span class="n">speed_nm</span><span class="p">]],</span>
+     <span class="p">[[</span><span class="n">angle_11</span><span class="p">,</span> <span class="o">...</span><span class="p">,</span> <span class="n">angle_1m</span><span class="p">],</span>
+      <span class="o">...</span><span class="p">,</span>
+      <span class="p">[</span><span class="n">angle_n1</span><span class="p">,</span> <span class="o">...</span><span class="p">,</span> <span class="n">angle_nm</span><span class="p">]]]</span>
+
+<span class="n">vu</span><span class="p">:</span>
+    <span class="p">[[[</span><span class="n">v_11</span><span class="p">,</span> <span class="o">...</span><span class="p">,</span> <span class="n">v_1m</span><span class="p">],</span>
+      <span class="o">...</span><span class="p">,</span>
+      <span class="p">[</span><span class="n">v_n1</span><span class="p">,</span> <span class="o">...</span><span class="p">,</span> <span class="n">v_nm</span><span class="p">]],</span>
+     <span class="p">[[</span><span class="n">u_11</span><span class="p">,</span> <span class="o">...</span><span class="p">,</span> <span class="n">u_1m</span><span class="p">],</span>
+      <span class="o">...</span><span class="p">,</span>
+      <span class="p">[</span><span class="n">u_n1</span><span class="p">,</span> <span class="o">...</span><span class="p">,</span> <span class="n">u_nm</span><span class="p">]]]</span>
+
+<span class="n">lat_long</span><span class="p">:</span>
+    <span class="p">[[[</span><span class="n">latitude_11</span><span class="p">,</span> <span class="o">...</span><span class="p">,</span> <span class="n">latitude_1m</span><span class="p">],</span>
+      <span class="o">...</span><span class="p">,</span>
+      <span class="p">[</span><span class="n">latitude_n1</span><span class="p">,</span> <span class="o">...</span><span class="p">,</span> <span class="n">latitude_nm</span><span class="p">]],</span>
+     <span class="p">[[</span><span class="n">longitude_11</span><span class="p">,</span> <span class="o">...</span><span class="p">,</span> <span class="n">longitude_1m</span><span class="p">],</span>
+      <span class="o">...</span><span class="p">,</span>
+      <span class="p">[</span><span class="n">longitude_n1</span><span class="p">,</span> <span class="o">...</span><span class="p">,</span> <span class="n">longitude_nm</span><span class="p">]]]</span>
+
+<span class="n">displacements</span><span class="p">:</span>
+    <span class="p">[[[</span><span class="n">j_displacement_11</span><span class="p">,</span> <span class="o">...</span><span class="p">,</span> <span class="n">j_displacement_1m</span><span class="p">],</span>
+      <span class="o">...</span><span class="p">,</span>
+      <span class="p">[</span><span class="n">j_displacement_n1</span><span class="p">,</span> <span class="o">...</span><span class="p">,</span> <span class="n">j_displacement_nm</span><span class="p">]],</span>
+     <span class="p">[[</span><span class="n">i_displacement_11</span><span class="p">,</span> <span class="o">...</span><span class="p">,</span> <span class="n">i_displacement_1m</span><span class="p">],</span>
+      <span class="o">...</span><span class="p">,</span>
+      <span class="p">[</span><span class="n">i_displacement_n1</span><span class="p">,</span> <span class="o">...</span><span class="p">,</span> <span class="n">i_displacement_nm</span><span class="p">]]]</span>
+</pre></div>
+</div>
+<p>Area is printed in a different format than it’s saved:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">projection</span><span class="p">:</span>
+<span class="n">lat_ts</span> <span class="p">(</span><span class="n">degrees</span><span class="p">):</span>
+<span class="n">lat_0</span> <span class="p">(</span><span class="n">degrees</span><span class="p">):</span>
+<span class="n">long_0</span> <span class="p">(</span><span class="n">degrees</span><span class="p">):</span>
+<span class="n">equatorial_radius</span> <span class="p">(</span><span class="n">meters</span><span class="p">):</span>
+<span class="n">eccentricity</span><span class="p">:</span>
+<span class="n">inverse_flattening</span><span class="p">:</span>
+<span class="n">shape</span><span class="p">:</span>
+<span class="n">area_extent</span> <span class="p">(</span><span class="n">degrees</span><span class="p">):</span>
+<span class="n">pixel_size</span> <span class="p">(</span><span class="n">meters</span><span class="p">):</span>
+<span class="n">center</span> <span class="p">(</span><span class="n">degrees</span><span class="p">):</span>
 </pre></div>
 </div>
 </div>
-<div class="section" id="velocity-sh">
-<h2>velocity.sh<a class="headerlink" href="#velocity-sh" title="Permalink to this headline">¶</a></h2>
-<p>Calculates the speed and angle of wind given an area and displacements at pixel(s).</p>
-<p>Required arguments:</p>
-<ul class="simple">
-<li><strong>lat_0</strong>: Normal latitude of projection</li>
-<li><strong>long_0</strong>: Normal longitude of projection</li>
-<li><strong>delta_time</strong>: Amount of time that separates both files in minutes</li>
-</ul>
-<p>Optional arguments:</p>
-<ul class="simple">
-<li><strong>center</strong>: Projection y and x coordinate of the center of projection in degrees (lat, long)</li>
-<li><strong>pixel_size</strong>: Size of pixels in the y and x direction in meters (dy, dx)</li>
-<li><strong>shape</strong>: Number of pixels in the y and x direction (height, width). If shape is not provided,
-it attempts to be found from displacement_data.</li>
-<li><strong>displacement_data</strong>: Name of file or list containing displacements; wildcard (“*”) syntax is accepted.
-If not provided, reads every file ending in “.flo” where the script is ran</li>
-<li><strong>j</strong>: Row to run calculations on</li>
-<li><strong>i</strong>: Column to run calculations on</li>
-<li><strong>no_save</strong>:<ol class="arabic">
-<li>When not flagged (Default): saves velocity and does not print velocity to shell</li>
-<li>When flagged: prints velocity to shell without saving</li>
-</ol>
-</li>
-<li><strong>image_geod</strong>: Spheroid of projection (WGS84, sphere, etc). Defaults to WGS84</li>
-<li><strong>earth_geod</strong>: Spheroid of Earth (WGS84, sphere, etc). Defaults to WGS84</li>
-<li><strong>projection</strong>: Name of projection that the image is in (stere, laea, merc, etc). Defaults to stere</li>
-<li><strong>area_extent</strong>: Area extent as a list (y_ll, x_ll, y_ur, x_ur)</li>
-</ul>
-<p>where</p>
-<ul class="simple">
-<li><strong>y_ll</strong>: projection y coordinate of the lower left corner of the lower left pixel in meters</li>
-<li><strong>x_ll</strong>: projection x coordinate of the lower left corner of the lower left pixel in meters</li>
-<li><strong>y_ur</strong>: projection y coordinate of the upper right corner of the upper right pixel in meters</li>
-<li><strong>x_ur</strong>: projection x coordinate of the upper right corner of the upper right pixel in meters</li>
-</ul>
-<p>If j and i values are provided, then velocity is calculated at a single pixel:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">[</span><span class="n">speed</span><span class="p">,</span> <span class="n">direction</span><span class="p">]</span>
-</pre></div>
-</div>
-<p>If no j and i values are provided, then velocity is calculated at every pixel (n-rows, m-columns):</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">[[[</span><span class="n">speed_11</span><span class="p">,</span> <span class="o">...</span><span class="p">,</span> <span class="n">speed_1m</span><span class="p">],</span>
-  <span class="o">...</span><span class="p">,</span>
-  <span class="p">[</span><span class="n">speed_n1</span><span class="p">,</span> <span class="o">...</span><span class="p">,</span> <span class="n">speed_nm</span><span class="p">]],</span>
- <span class="p">[[</span><span class="n">angle_11</span><span class="p">,</span> <span class="o">...</span><span class="p">,</span> <span class="n">angle_1m</span><span class="p">],</span>
-  <span class="o">...</span><span class="p">,</span>
-  <span class="p">[</span><span class="n">angle_n1</span><span class="p">,</span> <span class="o">...</span><span class="p">,</span> <span class="n">angle_nm</span><span class="p">]]]</span>
-</pre></div>
-</div>
-<div class="admonition note">
-<p class="first admonition-title">Note</p>
-<p class="last">velocity is saved to to speed.txt, angle.txt, and wind_info.hdf5 (under the group “velocity”)
-in a new directory by the name of the displacement file appended with “_output”, which will be
-created where the script is ran</p>
-</div>
-<p>Calculating velocity:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ pwd
-/Desktop
-$ ls
-in.flo          pywinds
-$ pywinds/velocity.sh 60 0 100 --j 0 --i 0 --pixel_size 4000 --center 90,0 --no_save
-[42.33, 317.58]
-$ pywinds/velocity.sh 60 0 100 --pixel_size 4000 --center 90,0
-Saving velocity to:
-/Desktop/in.flo_output/speed.txt
-/Desktop/in.flo_output/angle.txt
-/Desktop/in.flo_output/wind_info.hdf5
-</pre></div>
-</div>
-</div>
-<div class="section" id="vu-sh">
-<h2>vu.sh<a class="headerlink" href="#vu-sh" title="Permalink to this headline">¶</a></h2>
-<p>Calculates the v and u component of wind at pixel(s).</p>
-<p>Required arguments:</p>
-<ul class="simple">
-<li><strong>lat_0</strong>: Normal latitude of projection</li>
-<li><strong>long_0</strong>: Normal longitude of projection</li>
-<li><strong>delta_time</strong>: Amount of time that separates both files in minutes</li>
-</ul>
-<p>Optional arguments:</p>
-<ul class="simple">
-<li><strong>center</strong>: Projection y and x coordinate of the center of projection in degrees (lat, long)</li>
-<li><strong>pixel_size</strong>: Size of pixels in the y and x direction in meters (dy, dx)</li>
-<li><strong>shape</strong>: Number of pixels in the y and x direction (height, width). If shape is not provided,
-it attempts to be found from displacement_data.</li>
-<li><strong>displacement_data</strong>: Name of file or list containing displacements; wildcard (“*”) syntax is accepted.
-If not provided, reads every file ending in “.flo” where the script is ran</li>
-<li><strong>j</strong>: Row to run calculations on</li>
-<li><strong>i</strong>: Column to run calculations on</li>
-<li><strong>no_save</strong>:<ol class="arabic">
-<li>When not flagged (Default): saves vu and does not print vu to shell</li>
-<li>When flagged: prints vu to shell without saving</li>
-</ol>
-</li>
-<li><strong>image_geod</strong>: Spheroid of projection (WGS84, sphere, etc). Defaults to WGS84</li>
-<li><strong>earth_geod</strong>: Spheroid of Earth (WGS84, sphere, etc). Defaults to WGS84</li>
-<li><strong>projection</strong>: Name of projection that the image is in (stere, laea, merc, etc). Defaults to stere</li>
-<li><strong>area_extent</strong>: Area extent as a list (y_ll, x_ll, y_ur, x_ur)</li>
-</ul>
-<p>where</p>
-<ul class="simple">
-<li><strong>y_ll</strong>: projection y coordinate of the lower left corner of the lower left pixel in meters</li>
-<li><strong>x_ll</strong>: projection x coordinate of the lower left corner of the lower left pixel in meters</li>
-<li><strong>y_ur</strong>: projection y coordinate of the upper right corner of the upper right pixel in meters</li>
-<li><strong>x_ur</strong>: projection x coordinate of the upper right corner of the upper right pixel in meters</li>
-</ul>
-<p>If j and i values are provided, then vu is calculated at a single pixel:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">[</span><span class="n">v</span><span class="p">,</span> <span class="n">u</span><span class="p">]</span>
-</pre></div>
-</div>
-<p>If no j and i values are provided, then vu is calculated at every pixel (n-rows, m-columns):</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">[[[</span><span class="n">v_11</span><span class="p">,</span> <span class="o">...</span><span class="p">,</span> <span class="n">v_1m</span><span class="p">],</span>
-  <span class="o">...</span><span class="p">,</span>
-  <span class="p">[</span><span class="n">v_n1</span><span class="p">,</span> <span class="o">...</span><span class="p">,</span> <span class="n">v_nm</span><span class="p">]],</span>
- <span class="p">[[</span><span class="n">u_11</span><span class="p">,</span> <span class="o">...</span><span class="p">,</span> <span class="n">u_1m</span><span class="p">],</span>
-  <span class="o">...</span><span class="p">,</span>
-  <span class="p">[</span><span class="n">u_n1</span><span class="p">,</span> <span class="o">...</span><span class="p">,</span> <span class="n">u_nm</span><span class="p">]]]</span>
+<div class="section" id="save-format">
+<span id="id1"></span><h2>Save format<a class="headerlink" href="#save-format" title="Permalink to this headline">¶</a></h2>
+<p>wind_info.sh saves data to</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Text</span> <span class="n">files</span><span class="p">:</span> <span class="n">polar_stereographic</span><span class="o">.</span><span class="n">txt</span><span class="p">,</span> <span class="n">j_displacement</span><span class="o">.</span><span class="n">txt</span><span class="p">,</span> <span class="n">i_displacement</span><span class="o">.</span><span class="n">txt</span><span class="p">,</span>
+            <span class="n">new_latitude</span><span class="o">.</span><span class="n">txt</span><span class="p">,</span> <span class="n">new_longitude</span><span class="o">.</span><span class="n">txt</span><span class="p">,</span> <span class="n">old_latitude</span><span class="o">.</span><span class="n">txt</span><span class="p">,</span> <span class="n">old_longitude</span><span class="o">.</span><span class="n">txt</span><span class="p">,</span>
+            <span class="n">v</span><span class="o">.</span><span class="n">txt</span><span class="p">,</span> <span class="n">u</span><span class="o">.</span><span class="n">txt</span><span class="p">,</span> <span class="n">speed</span><span class="o">.</span><span class="n">txt</span><span class="p">,</span> <span class="n">angle</span><span class="o">.</span><span class="n">txt</span><span class="p">,</span> <span class="n">wind_info</span><span class="o">.</span><span class="n">txt</span>
+
+<span class="n">netcdf4</span> <span class="n">file</span><span class="p">:</span> <span class="n">wind_info</span><span class="o">.</span><span class="n">nc</span>
 </pre></div>
 </div>
 <div class="admonition note">
 <p class="first admonition-title">Note</p>
-<p class="last">vu is saved to to v.txt, u.txt, and wind_info.hdf5 (under the group “vu”)
-in a new directory by the name of the displacement file appended with “_output”,
-which will be created where the script is ran</p>
-</div>
-<p>Calculating vu:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ pwd
-/Desktop
-$ ls
-in.flo          pywinds
-$ pywinds/vu.sh 60 0 100 --j 0 --i 0
-  --pixel_size 4000 --center 90,0 --no_save
-[31.25, -28.55]
-$ pywinds/vu.sh 60 0 100
-  --pixel_size 4000 --center 90,0
-Saving vu to:
-/Desktop/in.flo_output/v.txt
-/Desktop/in.flo_output/u.txt
-/Desktop/in.flo_output/wind_info.hdf5
-</pre></div>
-</div>
-</div>
-<div class="section" id="lat-long-sh">
-<h2>lat_long.sh<a class="headerlink" href="#lat-long-sh" title="Permalink to this headline">¶</a></h2>
-<p>Calculates the latitude and longitude of pixel(s).</p>
-<p>Required arguments:</p>
-<ul class="simple">
-<li><strong>lat_0</strong>: Normal latitude of projection</li>
-<li><strong>long_0</strong>: Normal longitude of projection</li>
-</ul>
-<p>Optional arguments:</p>
-<ul class="simple">
-<li><strong>center</strong>: Projection y and x coordinate of the center of projection in degrees (lat, long)</li>
-<li><strong>pixel_size</strong>: Size of pixels in the y and x direction in meters (dy, dx)</li>
-<li><strong>shape</strong>: Number of pixels in the y and x direction (height, width). If shape is not provided,
-it attempts to be found from displacement_data.</li>
-<li><strong>displacement_data</strong>: Name of file or list containing displacements; wildcard (“*”) syntax is accepted.
-If not provided, then old lats/longs will be calculated. If provided, new lats/longs will be calculated.
-Thus does <strong>NOT</strong> default to searching for displacement files.</li>
-<li><strong>j</strong>: Row to run calculations on</li>
-<li><strong>i</strong>: Column to run calculations on</li>
-<li><strong>no_save</strong>:<ol class="arabic">
-<li>When not flagged (Default): saves lat_long and does not print lat_long to shell</li>
-<li>When flagged: prints lat_long to shell without saving</li>
-</ol>
-</li>
-<li><strong>image_geod</strong>: Spheroid of projection (WGS84, sphere, etc). Defaults to WGS84</li>
-<li><strong>projection</strong>: Name of projection that the image is in (stere, laea, merc, etc). Defaults to stere</li>
-<li><strong>area_extent</strong>: Area extent as a list (y_ll, x_ll, y_ur, x_ur)</li>
-</ul>
-<p>where</p>
-<ul class="simple">
-<li><strong>y_ll</strong>: projection y coordinate of the lower left corner of the lower left pixel in meters</li>
-<li><strong>x_ll</strong>: projection x coordinate of the lower left corner of the lower left pixel in meters</li>
-<li><strong>y_ur</strong>: projection y coordinate of the upper right corner of the upper right pixel in meters</li>
-<li><strong>x_ur</strong>: projection x coordinate of the upper right corner of the upper right pixel in meters</li>
-</ul>
-<p>If j and i values are provided, then lat_long is calculated at a single pixel:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">[</span><span class="n">latitude</span><span class="p">,</span> <span class="n">longitude</span><span class="p">]</span>
-</pre></div>
-</div>
-<p>If no j and i values are provided, then lat_long is calculated at every pixel (n-rows, m-columns):</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">[[[</span><span class="n">latitude_11</span><span class="p">,</span> <span class="o">...</span><span class="p">,</span> <span class="n">latitude_1m</span><span class="p">],</span>
-  <span class="o">...</span><span class="p">,</span>
-  <span class="p">[</span><span class="n">latitude_n1</span><span class="p">,</span> <span class="o">...</span><span class="p">,</span> <span class="n">latitude_nm</span><span class="p">]],</span>
- <span class="p">[[</span><span class="n">longitude_11</span><span class="p">,</span> <span class="o">...</span><span class="p">,</span> <span class="n">longitude_1m</span><span class="p">],</span>
-  <span class="o">...</span><span class="p">,</span>
-  <span class="p">[</span><span class="n">longitude_n1</span><span class="p">,</span> <span class="o">...</span><span class="p">,</span> <span class="n">longitude_nm</span><span class="p">]]]</span>
-</pre></div>
+<p class="last">All files are saved in a new directory by the name of the displacement file appended with “_output”, which
+will be created where the script is ran.</p>
 </div>
 <div class="admonition note">
 <p class="first admonition-title">Note</p>
-<p class="last">lat_long is saved to to old_latitude.txt, old_longitude.txt, new_latitude.txt, new_longitude.txt,
-and wind_info.hdf5 (under the group “lat_long”) in a new directory by the name of the displacement
-file appended with “_output”, which will be created where the script is ran. Thus displacement_data must be
-provided in order to save lat_long to a file.</p>
+<p class="last">Data is saved in the order given by “Text files” above, which means that if not enough information
+was provided or an error occurs, data up to that point will be saved.</p>
 </div>
-<p>Calculating lat_long:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ pwd
-/Desktop
-$ ls
-in.flo          pywinds
-$ pywinds/lat_long.sh 60 0 --j 0 --i 0
-  --pixel_size 4000 --center 90,0 --shape 1000,1000 --no_save
-[67.62, -137.17]
-$ pywinds/lat_long.sh 60 0 --j 0 --i 0 --pixel_size 4000
-  --center 90,0 --displacement_data &quot;&#39;in.flo&#39;&quot; --no_save
-[65.94, -133.28]
-$ pywinds/lat_long.sh 60 0 --pixel_size 4000
-  --center 90,0 --displacement_data &quot;&#39;in.flo&#39;&quot;
-Saving lat_long to:
-/Desktop/in.flo_output/old_latitude.txt
-/Desktop/in.flo_output/old_longitude.txt
-/Desktop/in.flo_output/new_latitude.txt
-/Desktop/in.flo_output/new_longitude.txt
-/Desktop/in.flo_output/wind_info.hdf5
-</pre></div>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">If re-saving data or saving data with the same <strong>displacement_data</strong> name, it is best to manually
+delete or rename the directory that old data was saved to. This ensures that the directory only
+contains that file’s data (in conjunction with the above note).</p>
 </div>
+<p>Text files:</p>
+<blockquote>
+<div><ul class="simple">
+<li>Text files are saved as comma separated files (except for polar_stereographic.txt
+which is the same format as it is in wind_info.nc). Numbers are rounded to 2 decimal places.</li>
+<li>For examples of what the text files looks like, please see <a class="reference internal" href="examples.html#content-of-text-files"><span class="std std-ref">Content of text files</span></a>.</li>
+</ul>
+</div></blockquote>
+<dl class="docutils">
+<dt>wind_info.nc:</dt>
+<dd><ul class="first last simple">
+<li>wind_info.nc is a netcdf4 file saved using 32-bit floats which follows
+<a class="reference external" href="http://cfconventions.org/Data/cf-conventions/cf-conventions-1.7/build/apf.html">CF-1.7 conventions</a>.</li>
+<li>Each variable listed under “Text files” at the top of this section is saved to wind_info.nc by the same
+name as their .txt counterparts.</li>
+<li>For an example of what wind_info.nc looks like, please see <a class="reference internal" href="examples.html#content-of-wind-info-nc"><span class="std std-ref">Content of wind_info.nc</span></a>.</li>
+</ul>
+</dd>
+</dl>
 </div>
-<div class="section" id="displacements-sh">
-<h2>displacements.sh<a class="headerlink" href="#displacements-sh" title="Permalink to this headline">¶</a></h2>
-<p>Finds displacements of pixel(s).</p>
-<p>Optional arguments:</p>
+<div class="section" id="advanced-arguments">
+<span id="id2"></span><h2>Advanced arguments<a class="headerlink" href="#advanced-arguments" title="Permalink to this headline">¶</a></h2>
 <ul class="simple">
-<li><strong>displacement_data</strong>: Name of file or list containing displacements; wildcard (“*”) syntax is accepted.
-If not provided, reads every file ending in “.flo” where the script is ran</li>
-<li><strong>shape</strong>: Number of pixels in the y and x direction (height, width). If shape is not provided,
-it attempts to be found from displacement_data.</li>
-<li><strong>j</strong>: Row to run calculations on</li>
-<li><strong>i</strong>: Column to run calculations on</li>
-<li><strong>lat_0</strong>: Normal latitude of projection</li>
-<li><strong>long_0</strong>: Normal longitude of projection</li>
-<li><strong>center</strong>: Projection y and x coordinate of the center of projection in degrees (lat, long)</li>
-<li><strong>pixel_size</strong>: Size of pixels in the y and x direction in meters (dy, dx)</li>
-<li><strong>no_save</strong>:<ol class="arabic">
-<li>When not flagged (Default): saves displacements and does not print displacements to shell</li>
-<li>When flagged: prints displacements to shell without saving</li>
-</ol>
-</li>
-<li><strong>image_geod</strong>: Spheroid of projection (WGS84, sphere, etc). Defaults to WGS84</li>
 <li><strong>projection</strong>: Name of projection that the image is in (stere, laea, merc, etc). Defaults to stere</li>
-<li><strong>area_extent</strong>: Area extent as a list (y_ll, x_ll, y_ur, x_ur)</li>
+<li><strong>projection_spheroid</strong>: Spheroid of projection (WGS84, sphere, etc). Defaults to WGS84</li>
+<li><strong>earth_spheroid</strong>: Spheroid of Earth (WGS84, sphere, etc). Defaults to WGS84</li>
+<li><strong>shape</strong>: Number of pixels in the y and x direction (height, width). If shape is not provided,
+it attempts to be found from <strong>displacement_data</strong></li>
+<li><strong>upper_left_extent</strong>: Projection y and x coordinates of the upper left corner of the upper left pixel (y, x)</li>
+<li><strong>radius</strong>: Projection length from the center to the left/right and top/bottom outer edges (dy, dx)</li>
+<li><dl class="first docutils">
+<dt><strong>units</strong>: Units that provided arguments should be interpreted as. This can be</dt>
+<dd>one of ‘deg’, ‘degrees’, ‘rad’, ‘radians’, ‘meters’, ‘metres’, and any
+parameter supported by the <a class="reference external" href="https://proj4.org/apps/cs2cs.html#cmdoption-cs2cs-lu">cs2cs -lu</a>
+command. Units are determined in the following priority:<ol class="last arabic">
+<li>units expressed with variables via &#64;your_units (see ‘Using units’ under
+<a class="reference internal" href="examples.html#examples-of-wind-info-sh"><span class="std std-ref">Examples of wind_info.sh</span></a> for examples)</li>
+<li>units passed to <code class="docutils literal notranslate"><span class="pre">--units</span></code> (exluding center)</li>
+<li>meters (exluding center, which is degrees)</li>
+</ol>
+</dd>
+</dl>
+</li>
+<li><strong>area_extent</strong>: Area extent as a list (lat_ll, long_ll, lat_ur, long_ur)</li>
 </ul>
 <p>where</p>
 <ul class="simple">
-<li><strong>y_ll</strong>: projection y coordinate of the lower left corner of the lower left pixel in meters</li>
-<li><strong>x_ll</strong>: projection x coordinate of the lower left corner of the lower left pixel in meters</li>
-<li><strong>y_ur</strong>: projection y coordinate of the upper right corner of the upper right pixel in meters</li>
-<li><strong>x_ur</strong>: projection x coordinate of the upper right corner of the upper right pixel in meters</li>
+<li><strong>lat_ll</strong>: projection y coordinate of the lower left corner of the lower left pixel in meters</li>
+<li><strong>long_ll</strong>: projection x coordinate of the lower left corner of the lower left pixel in meters</li>
+<li><strong>lat_ur</strong>: projection y coordinate of the upper right corner of the upper right pixel in meters</li>
+<li><strong>long_ur</strong>: projection x coordinate of the upper right corner of the upper right pixel in meters</li>
 </ul>
-<div class="admonition note">
-<p class="first admonition-title">Note</p>
-<p class="last">displacements is saved to to j_displacement.txt, i_displacement.txt, and wind_info.hdf5
-(under the group “displacements”) in a new directory by the name of the displacement
-file appended with “_output”, which will be created where the script is ran. Thus
-displacement_data must be found in order to save displacements to a file.</p>
+<div class="admonition warning">
+<p class="first admonition-title">Warning</p>
+<p class="last">The shape provided or found can alter the native shape of <strong>displacement_data</strong>.</p>
 </div>
-<p>If j and i values are provided, then displacements is calculated at a single pixel:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">[</span><span class="n">j_displacement</span><span class="p">,</span> <span class="n">i_displacement</span><span class="p">]</span>
-</pre></div>
 </div>
-<p>If no j and i values are provided, then displacements is calculated at every pixel (n-rows, m-columns):</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">[[[</span><span class="n">j_displacement_11</span><span class="p">,</span> <span class="o">...</span><span class="p">,</span> <span class="n">j_displacement_1m</span><span class="p">],</span>
-  <span class="o">...</span><span class="p">,</span>
-  <span class="p">[</span><span class="n">j_displacement_n1</span><span class="p">,</span> <span class="o">...</span><span class="p">,</span> <span class="n">j_displacement_nm</span><span class="p">]],</span>
- <span class="p">[[</span><span class="n">i_displacement_11</span><span class="p">,</span> <span class="o">...</span><span class="p">,</span> <span class="n">i_displacement_1m</span><span class="p">],</span>
-  <span class="o">...</span><span class="p">,</span>
-  <span class="p">[</span><span class="n">i_displacement_n1</span><span class="p">,</span> <span class="o">...</span><span class="p">,</span> <span class="n">i_displacement_nm</span><span class="p">]]]</span>
-</pre></div>
-</div>
-<p>Calculating displacements:</p>
+<div class="section" id="additional-utility-methods">
+<h2>Additional utility methods<a class="headerlink" href="#additional-utility-methods" title="Permalink to this headline">¶</a></h2>
+<p>None of these functions can save data, thus they <strong>do not</strong> have the <strong>no_save</strong> argument.
+They have similar or identical arguments to wind_info.sh</p>
+<ul class="simple">
+<li><strong>velocity.sh</strong>: Prints just the velocity of the wind. Same arguments as wind_info.sh</li>
+</ul>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ pwd
 /Desktop
 $ ls
 in.flo          pywinds
-$ pywinds/displacements.sh --j 0 --i 0 --no_save
+$ pywinds/velocity.sh 60 90 0 100 --j 0 --i 0 --pixel_size 4000 --center 90,0
+[51.8, 315.24]
+</pre></div>
+</div>
+<ul class="simple">
+<li><strong>vu.sh</strong>: Prints just the v and u components of the wind. Same arguments as wind_info.sh</li>
+</ul>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ pwd
+/Desktop
+$ ls
+in.flo          pywinds
+$ pywinds/vu.sh 60 90 0 100 --j 0 --i 0 --pixel_size 4000 --center 90,0
+[36.78, -36.47]
+</pre></div>
+</div>
+<ul class="simple">
+<li><strong>lat_long.sh</strong>: Prints just the latitude and longitude of the pixels. If displacements data is provided,
+then old_latitude and old_longitude are calculated, else new_latitude and new_longitude are calculated.
+Same arguments as wind_info.sh but does not take <strong>delta_time</strong> as an argument.</li>
+</ul>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ pwd
+/Desktop
+$ ls
+in.flo          pywinds
+$ pywinds/lat_long.sh 60 90 0 --j 0 --i 0 --pixel_size 4000
+  --center 90,0 --shape 1000,1000
+[63.36, -135.0]
+$ pywinds/lat_long.sh 60 90 0 --j 0 --i 0 --pixel_size 4000
+  --center 90,0 --displacement_data in.flo
+[61.38, -130.77]
+</pre></div>
+</div>
+<ul class="simple">
+<li><strong>displacements.sh</strong>: Prints just the j and i displacements of the pixels. Does not take <strong>delta_time</strong>
+as an argument. All other required arguments for wind_info.sh are optional arguments.</li>
+</ul>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ pwd
+/Desktop
+$ ls
+in.flo          pywinds
+$ pywinds/displacements.sh --j 0 --i 0
 [-2.53, 76.8]
-$ pywinds/displacements.sh
-Saving displacements to:
-/Desktop/in.flo_output/j_displacement.txt
-/Desktop/in.flo_output/i_displacement.txt
-/Desktop/in.flo_output/wind_info.hdf5
 </pre></div>
 </div>
-</div>
-<div class="section" id="area-sh">
-<h2>area.sh<a class="headerlink" href="#area-sh" title="Permalink to this headline">¶</a></h2>
-<p>Calculates information about the area that images are describing.</p>
-<p>Required arguments:</p>
 <ul class="simple">
-<li><strong>lat_0</strong>: Normal latitude of projection</li>
-<li><strong>long_0</strong>: Normal longitude of projection</li>
+<li><strong>area.sh</strong>: Prints information about the projection given. Same arguments as
+wind_info.sh but does not take <strong>delta_time</strong> as an argument.</li>
 </ul>
-<p>Optional arguments:</p>
-<ul class="simple">
-<li><strong>center</strong>: Projection y and x coordinate of the center of projection in degrees (lat, long)</li>
-<li><strong>pixel_size</strong>: Size of pixels in the y and x direction in meters (dy, dx)</li>
-<li><strong>shape</strong>: Number of pixels in the y and x direction (height, width). If shape is not provided,
-it attempts to be found from displacement_data.</li>
-<li><strong>displacement_data</strong>: Name of file or list containing displacements; wildcard (“*”) syntax is accepted.
-If not provided, reads every file ending in “.flo” where the script is ran</li>
-<li><strong>no_save</strong>:<ol class="arabic">
-<li>When not flagged (Default): saves lat_long and does not print lat_long to shell</li>
-<li>When flagged: prints lat_long to shell without saving</li>
-</ol>
-</li>
-<li><strong>image_geod</strong>: Spheroid of projection (WGS84, sphere, etc). Defaults to WGS84</li>
-<li><strong>projection</strong>: Name of projection that the image is in (stere, laea, merc, etc). Defaults to stere</li>
-<li><strong>area_extent</strong>: Area extent as a list (y_ll, x_ll, y_ur, x_ur)</li>
-</ul>
-<p>where</p>
-<ul class="simple">
-<li><strong>y_ll</strong>: projection y coordinate of the lower left corner of the lower left pixel in meters</li>
-<li><strong>x_ll</strong>: projection x coordinate of the lower left corner of the lower left pixel in meters</li>
-<li><strong>y_ur</strong>: projection y coordinate of the upper right corner of the upper right pixel in meters</li>
-<li><strong>x_ur</strong>: projection x coordinate of the upper right corner of the upper right pixel in meters</li>
-</ul>
-<div class="admonition note">
-<p class="first admonition-title">Note</p>
-<p class="last">area is saved to to area.txt and wind_info.hdf5 (under the group “area”)
-in a new directory by the name of the displacement file appended with “_output”,
-which will be created where the script is ran. Thus displacement_data must be
-found in order to save area to a file.</p>
-</div>
-<p>Calculating area:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ pwd
 /Desktop
 $ ls
 in.flo          pywinds
-$ pywinds/area.sh 60 0 --pixel_size 4000 --center 90,0 --no_save
+$ pywinds/area.sh 60 90 0 --pixel_size 4000 --center 90,0
 projection: stere
-lat_0: 60
+lat_ts: 60
+lat_0: 90
 long_0: 0
 equatorial radius: 6378137.0
 eccentricity: 0.003353
@@ -567,10 +431,6 @@ area_extent: (65.81, -47.35, 67.6, 137.18)
 shape: (1000, 1000)
 pixel_size: (4000.0, 4000.0)
 center: (90.0, 0.0)
-$ pywinds/area.sh 60 0 --pixel_size 4000 --center 90,0
-Saving area to:
-/Desktop/in.flo_output/area.txt
-/Desktop/in.flo_output/wind_info.hdf5
 </pre></div>
 </div>
 </div>

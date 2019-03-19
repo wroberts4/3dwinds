@@ -5,7 +5,7 @@ from pywinds.wind_functions import _create_area, _extrapolate_j_i, _pixel_to_pos
 
 
 class TestCase:
-    def __init__(self, displacement_data, projection='stere', i=None, j=None, shape=None, pixel_size=None,
+    def __init__(self, displacement_data, projection='stere', i=None, j=None, shape=None, pixel_size=None, units='m',
                  lat_ts=None, lat_0=None, long_0=None, projection_spheroid=None, earth_spheroid=None, center=None, speed=None,
                  angle=None, u=None, v=None, old_lat=None, old_long=None, new_lat=None, new_long=None, old_x=None,
                  old_y=None, new_x=None, new_y=None, delta_time=100):
@@ -19,12 +19,11 @@ class TestCase:
         self.projection_spheroid = projection_spheroid
         self.earth_spheroid = earth_spheroid
         self.pixel_size = pixel_size
+        self.units = units
         self.projection = projection
         self.displacement_data = displacement_data
         self.center = center
-        j_displacements, i_displacements = displacements(lat_ts=lat_ts, lat_0=lat_0, long_0=long_0,
-                                                         displacement_data=displacement_data,
-                                                         shape=shape)[:, j, i]
+        j_displacements, i_displacements = displacements(displacement_data=displacement_data, shape=shape)[:, j, i]
         self.j_displacements = j_displacements
         self.i_displacements = i_displacements
         area_data = area(0, lat_0, long_0, displacement_data=displacement_data, shape=shape, pixel_size=pixel_size,
@@ -55,7 +54,8 @@ class TestPywinds(unittest.TestCase):
                      old_y=8065000.0, new_x=-35000.0, new_y=-35000.0))
         displacement_data = (np.array([x for x in range(100)]) * 10, np.array([x for x in range(100)]) * 20)
         self.test_cases.append(
-            TestCase(displacement_data, pixel_size=5000, lat_ts=60, lat_0=90, long_0=20, i=1, j=8, center=(40, 10),
+            TestCase(displacement_data, pixel_size=5, units='km', lat_ts=60, lat_0=90, long_0=20, i=1, j=8,
+                     center=(40, 10),
                      speed=1260.05741, angle=68.22699, u=1170.16575, v=467.3936, old_lat=14.53051, old_long=-60.99909,
                      new_lat=39.83916, new_long=9.85413, old_x=-9082207.47114, old_y=-1438627.9423,
                      new_x=-982207.47114, new_y=-5488627.9423))
@@ -63,14 +63,14 @@ class TestPywinds(unittest.TestCase):
     def test_wind_info(self):
         for case in self.test_cases:
             lat_ji, long_ji, speed_ji, angle_ji, v_ji, u_ji = wind_info(case.lat_ts, case.lat_0, case.long_0,
-                                                                        case.delta_time,
+                                                                        case.delta_time, units=case.units,
                                                                         displacement_data=case.displacement_data,
                                                                         projection=case.projection, i=case.i, j=case.j,
                                                                         shape=case.shape, pixel_size=case.pixel_size,
                                                                         center=case.center, projection_spheroid=case.projection_spheroid,
                                                                         earth_spheroid=case.earth_spheroid).transpose()
             lat, long, speed, angle, v, u = wind_info(case.lat_ts, case.lat_0, case.long_0, case.delta_time,
-                                                      displacement_data=case.displacement_data,
+                                                      displacement_data=case.displacement_data, units=case.units,
                                                       projection=case.projection, shape=case.shape,
                                                       pixel_size=case.pixel_size, center=case.center,
                                                       projection_spheroid=case.projection_spheroid,
@@ -91,11 +91,11 @@ class TestPywinds(unittest.TestCase):
 
     def test_velocity(self):
         for case in self.test_cases:
-            speed_ji, angle_ji = velocity(case.lat_ts, case.lat_0, case.long_0, case.delta_time,
+            speed_ji, angle_ji = velocity(case.lat_ts, case.lat_0, case.long_0, case.delta_time, units=case.units,
                                           displacement_data=case.displacement_data, projection=case.projection,
                                           i=case.i, j=case.j, shape=case.shape, pixel_size=case.pixel_size,
                                           center=case.center, projection_spheroid=case.projection_spheroid, earth_spheroid=case.earth_spheroid)
-            speed, angle = velocity(case.lat_ts, case.lat_0, case.long_0, case.delta_time,
+            speed, angle = velocity(case.lat_ts, case.lat_0, case.long_0, case.delta_time, units=case.units,
                                     displacement_data=case.displacement_data,
                                     projection=case.projection, shape=case.shape, pixel_size=case.pixel_size,
                                     center=case.center, projection_spheroid=case.projection_spheroid, earth_spheroid=case.earth_spheroid)
@@ -107,10 +107,11 @@ class TestPywinds(unittest.TestCase):
     def test_vu(self):
         for case in self.test_cases:
             v_ji, u_ji = vu(case.lat_ts, case.lat_0, case.long_0, case.delta_time, displacement_data=case.displacement_data,
-                            projection=case.projection, i=case.i, j=case.j, shape=case.shape,
+                            projection=case.projection, i=case.i, j=case.j, shape=case.shape, units=case.units,
                             pixel_size=case.pixel_size, center=case.center, projection_spheroid=case.projection_spheroid,
                             earth_spheroid=case.earth_spheroid)
-            v, u = vu(case.lat_ts, case.lat_0, case.long_0, case.delta_time, displacement_data=case.displacement_data,
+            v, u = vu(case.lat_ts, case.lat_0, case.long_0, case.delta_time, units=case.units,
+                      displacement_data=case.displacement_data,
                       projection=case.projection, shape=case.shape, pixel_size=case.pixel_size, center=case.center,
                       projection_spheroid=case.projection_spheroid, earth_spheroid=case.earth_spheroid)
             self.assertEqual(case.v, round(v_ji, 5))
@@ -121,17 +122,19 @@ class TestPywinds(unittest.TestCase):
     def test_lat_long(self):
         for case in self.test_cases:
             old_lat_ji, old_long_ji = lat_long(case.lat_ts, case.lat_0, case.long_0, projection=case.projection, i=case.i,
-                                               displacement_data=case.displacement_data, j=case.j,
+                                               displacement_data=case.displacement_data, j=case.j, units=case.units,
                                                pixel_size=case.pixel_size, center=case.center,
                                                projection_spheroid=case.projection_spheroid, )
             new_lat_ji, new_long_ji = lat_long(case.lat_ts, case.lat_0, case.long_0, projection=case.projection, i=case.i,
-                                               j=case.j,
+                                               j=case.j, units=case.units,
                                                shape=case.shape, pixel_size=case.pixel_size, center=case.center,
                                                projection_spheroid=case.projection_spheroid)
             old_lat, old_long = lat_long(case.lat_ts, case.lat_0, case.long_0, projection=case.projection,
+                                         units=case.units,
                                          displacement_data=case.displacement_data, pixel_size=case.pixel_size,
                                          center=case.center, projection_spheroid=case.projection_spheroid)
-            new_lat, new_long = lat_long(case.lat_ts, case.lat_0, case.long_0, projection=case.projection, shape=case.shape,
+            new_lat, new_long = lat_long(case.lat_ts, case.lat_0, case.long_0, projection=case.projection,
+                                         units=case.units, shape=case.shape,
                                          pixel_size=case.pixel_size, center=case.center, projection_spheroid=case.projection_spheroid)
             self.assertEqual(case.old_lat, round(old_lat_ji, 5))
             self.assertEqual(case.old_long, round(old_long_ji, 5))
@@ -146,7 +149,7 @@ class TestPywinds(unittest.TestCase):
         for case in self.test_cases:
             area_definition = _create_area(case.lat_ts, case.lat_0, case.long_0, projection=case.projection, shape=case.shape,
                                            pixel_size=case.pixel_size, projection_spheroid=case.projection_spheroid,
-                                           center=case.center)[1]
+                                           center=case.center, units=case.units,)[1]
             j_new, i_new = _extrapolate_j_i(None, None, case.shape)
             j_old, i_old = j_new - case.j_displacements, i_new - case.i_displacements
             j_new_ji, i_new_ji = _extrapolate_j_i(case.j, case.i, case.shape)

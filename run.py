@@ -3,11 +3,11 @@ from datetime import datetime
 from pywinds.wind_functions import area, wind_info, velocity, displacements, lat_long, vu
 import xarray
 import numpy as np
-from pywinds.wrapper_utils import area_to_string
+import os
 
 
 start = datetime.utcnow()
-file_name = 'in.flo'
+file_name = './pywinds/test/test_files/test_data_four.flo'
 lat_ts = 60
 lat_0 = 90
 lon_0 = 0
@@ -18,7 +18,7 @@ center = (90, 0)
 shape = (1000, 1000)
 earth_spheroid = 'WGS84'
 projection_spheroid = 'WGS84'
-no_save = True
+no_save = False
 area_extent = tuple(reversed((2000000.0, 5429327.9172, -2000000.0, 1429327.9172)))
 
 # speed = xarray.DataArray([5, 5], name='speed')
@@ -32,9 +32,8 @@ area_extent = tuple(reversed((2000000.0, 5429327.9172, -2000000.0, 1429327.9172)
 # lat_long.to_netcdf('C:/Users/William/Documents/pywinds/test.netcdf4', mode='a', group='lat_long', format='NETCDF4')
 # print(xarray.open_dataset('C:/Users/William/Documents/pywinds/test.netcdf4'))
 #
-winds = wind_info(lat_ts, lat_0, lon_0, 100, shape=shape, displacement_data=file_name, i=i_in, j=j_in,
-                  pixel_size=pixel_size, center=center, earth_spheroid=earth_spheroid, projection_spheroid=projection_spheroid,
-                  no_save=no_save).reshape(list(shape) + [6])
+winds = wind_info(lat_ts, lat_0, lon_0, 100, displacement_data=file_name, center=center,
+                  pixel_size=pixel_size)
 # print(winds[500, 500, :])
 #
 # output_velocity = velocity(lat_ts, lat_0, lon_0, 100, displacement_data='in.flo', i=i_in, j=j_in, pixel_size=pixel_size,
@@ -45,8 +44,7 @@ winds = wind_info(lat_ts, lat_0, lon_0, 100, shape=shape, displacement_data=file
 #                displacement_data=file_name, shape=shape, earth_spheroid=earth_spheroid, projection_spheroid=projection_spheroid, no_save=no_save)
 # print('(v, u):', '({0} m/sec, {1} m/sec)'.format(*output_vu[:, 0, 0]))
 #
-# area_def = area(lat_ts, lat_0, lon_0, displacement_data=file_name, pixel_size=pixel_size, center=center,
-#                 projection_spheroid=projection_spheroid)
+# area_def = area(lat_ts, lat_0, lon_0, displacement_data=file_name, pixel_size=pixel_size)
 # print(xarray.open_dataset('./in.flo_output/wind_info.nc'))
 # print(area_def)
 #

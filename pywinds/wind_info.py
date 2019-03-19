@@ -5,6 +5,7 @@ import sys
 import numpy as np
 import os
 import ntpath
+import warnings
 
 
 def output_format(output, kwargs):
@@ -13,7 +14,7 @@ def output_format(output, kwargs):
     head, tail = ntpath.split(kwargs['displacement_data'])
     extension = tail or ntpath.basename(head)
     save_directory = os.path.join(os.getcwd(), extension + '_output')
-    return 'Saving data to the directory {0}'.format(os.path.join(save_directory))
+    return 'Data saved to the directory {0}'.format(os.path.join(save_directory))
 
 
 def main(argv):
@@ -21,4 +22,5 @@ def main(argv):
 
 
 if __name__ == "__main__":
+    warnings.filterwarnings("ignore", category=UserWarning, module='pyproj')
     main(sys.argv)

@@ -83,7 +83,12 @@
               <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="installation.html">Installing pywinds</a></li>
 <li class="toctree-l1"><a class="reference internal" href="usage.html">Usage</a></li>
-<li class="toctree-l1 current"><a class="current reference internal" href="#">Examples</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Examples</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#examples-of-wind-info-sh">Examples of wind_info.sh</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#content-of-wind-info-nc">Content of wind_info.nc</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#content-of-text-files">Content of text files</a></li>
+</ul>
+</li>
 <li class="toctree-l1"><a class="reference internal" href="API.html">API</a></li>
 </ul>
 
@@ -151,32 +156,24 @@
             
   <div class="section" id="examples">
 <h1>Examples<a class="headerlink" href="#examples" title="Permalink to this headline">¶</a></h1>
-<p>Having multiple file in run directory:</p>
+<div class="section" id="examples-of-wind-info-sh">
+<span id="id1"></span><h2>Examples of wind_info.sh<a class="headerlink" href="#examples-of-wind-info-sh" title="Permalink to this headline">¶</a></h2>
+<p>Having multiple files in run directory:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ pwd
 /Desktop
 $ ls
 in.flo        test.flo        pywinds
-$ pywinds/velocity.sh 60 0 100 --j 0 --i 0 --pixel_size 4000
+$ pywinds/wind_info.sh 60 90 0 100 --j 0 --i 0 --pixel_size 4000
   --center 90,0 --no_save
 Reading displacements from: /Desktop/test.flo
-[67.62, -137.17, 42.33, 317.58, 31.25, -28.55]
+[63.36, -135.0, 51.8, 315.24, 36.78, -36.47]
 Reading displacements from: /Desktop/in.flo
-[67.62, -137.17, 42.33, 317.58, 31.25, -28.55]
-$ pywinds/velocity.sh 60 0 100 --j 0 --i 0 --shape 100,10000
-  --pixel_size 4000 --center 90,0 --no_save
+[63.36, -135.0, 51.8, 315.24, 36.78, -36.47]
+$ pywinds/wind_info.sh 60 90 0 100 --pixel_size 4000 --center 90,0
 Reading displacements from: /Desktop/test.flo
-[-17.39, -112.04, 14.3, 19.19, 13.51, 4.7]
+Data saved to the directory /Desktop/test.flo_output
 Reading displacements from: /Desktop/in.flo
-[-17.39, -112.04, 14.3, 19.19, 13.51, 4.7]
-$ pywinds/wind_info.sh 60 0 100 --pixel_size 4000 --center 90,0
-Reading displacements from: /Desktop/test.flo
-Saving wind_info to:
-/Desktop/test.flo_output/wind_info.txt
-/Desktop/test.flo_output/wind_info.hdf5
-Reading displacements from: /Desktop/test.flo
-Saving wind_info to:
-/Desktop/in.flo_output/wind_info.txt
-/Desktop/in.flo_output/wind_info.hdf5
+Data saved to the directory /Desktop/in.flo_output
 </pre></div>
 </div>
 <p>Specifying one file to run:</p>
@@ -184,16 +181,28 @@ Saving wind_info to:
 /Desktop
 $ ls
 in.flo        test.flo        pywinds
-$ pywinds/velocity.sh 60 0 100 --j 0 --i 0 --pixel_size 4000 --center 90,0
-  --displacement_data in.flo --no_save
-[67.62, -137.17, 42.33, 317.58, 31.25, -28.55]
+$ pywinds/wind_info.sh 60 90 0 100 --j 0 --i 0 --pixel_size 4000
+  --center 90,0 --displacement_data in.flo --no_save
+[63.36, -135.0, 51.8, 315.24, 36.78, -36.47]
 </pre></div>
 </div>
 <p>Specifying multiple files to run:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ pwd
 /Desktop
 $ ls
-in.flo        test.flo        pywinds
+in.flo        windtest.flo        windtest2.flo        pywinds
+$ pywinds/wind_info.sh 60 90 0 100 --j 0 --i 0 --pixel_size 4000
+  --center 90,0 --displacement_data *test*.flo --no_save
+Reading displacements from: /Desktop/windtest.flo
+[63.36, -135.0, 51.8, 315.24, 36.78, -36.47]
+Reading displacements from: /Desktop/windtest2.flo
+[63.36, -135.0, 51.8, 315.24, 36.78, -36.47]
+$ pywinds/wind_info.sh 60 90 0 100 --pixel_size 4000
+  --center 90,0 --displacement_data *test*.flo
+Reading displacements from: /Desktop/windtest.flo
+Data saved to the directory /Desktop/windtest.flo_output
+Reading displacements from: /Desktop/windtest2.flo
+Data saved to the directory /Desktop/windtest2.flo_output
 </pre></div>
 </div>
 <p>Altering spheroids:</p>
@@ -201,13 +210,209 @@ in.flo        test.flo        pywinds
 /Desktop
 $ ls
 in.flo        pywinds
-$ pywinds/velocity.sh 60 0 100 --j 0 --i 0 --pixel_size 4000 --center 90,0
-  --image_geod sphere --no_save
-[67.5, -137.16, 42.54, 317.54, 31.38, -28.72]
-$ pywinds/velocity.sh 60 0 100 --j 0 --i 0 --pixel_size 4000 --center 90,0
-  --image_geod sphere --earth_geod sphere --no_save
-[67.5, -137.16, 42.4, 317.57, 31.29, -28.61]
+$ pywinds/wind_info.sh 60 90 0 100 --j 0 --i 0 --pixel_size 4000
+  --center 90,0 --projection_spheroid sphere --no_save
+[63.26, -135.0, 51.93, 315.2, 36.85, -36.59]
+$ pywinds/wind_info.sh 60 90 0 100 --j 0 --i 0 --pixel_size 4000 --center 90,0
+  --projection_spheroid sphere --earth_spheroid sphere --no_save
+[63.26, -135.0, 51.77, 315.24, 36.76, -36.46]
 </pre></div>
+</div>
+<p>Using units:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ pwd
+/Desktop
+$ ls
+in.flo        pywinds
+$ pywinds/wind_info.sh 60 90 0 100 --j 0 --i 0
+  --pixel_size 4@km --center 90,0 --no_save
+[63.36, -135.0, 51.8, 315.24, 36.78, -36.47]
+$ pywinds/wind_info.sh 60 90 0 100 --j 0 --i 0
+  --pixel_size 4 --center 90,0 --units km --no_save
+[63.36, -135.0, 51.8, 315.24, 36.78, -36.47]
+$ pywinds/wind_info.sh 60 90 0 100 --j 0 --i 0
+  --pixel_size 4 --center 0,0@m --units km --no_save
+[63.36, -135.0, 51.8, 315.24, 36.78, -36.47]
+</pre></div>
+</div>
+</div>
+<div class="section" id="content-of-wind-info-nc">
+<span id="id2"></span><h2>Content of wind_info.nc<a class="headerlink" href="#content-of-wind-info-nc" title="Permalink to this headline">¶</a></h2>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ pwd
+/Desktop/pywinds/in.flo_output
+$ ls
+angle.txt               new_latitude.txt    old_longitude.txt           u.txt                          wind_info.txt
+i_displacement.txt  new_longitude.txt       polar_stereographic.txt v.txt
+j_displacement.txt  old_latitude.txt        speed.txt                       wind_info.nc
+$ ncdump -h wind_info.nc
+netcdf wind_info {
+dimensions:
+    y = 1000 ;
+    x = 1000 ;
+    yx = 1000000 ;
+    vars = 6 ;
+variables:
+    float polar_stereographic ;
+        polar_stereographic:_FillValue = NaNf ;
+        polar_stereographic:straight_vertical_longitude_from_pole = -180. ;
+        polar_stereographic:latitude_of_projection_origin = 90. ;
+        polar_stereographic:scale_factor_at_projection_origin = 0.933069071736357 ;
+        polar_stereographic:standard_parallel = 60. ;
+        polar_stereographic:resolution_at_standard_parallel = 4000. ;
+        polar_stereographic:false_easting = 0. ;
+        polar_stereographic:false_northing = 0. ;
+        polar_stereographic:semi_major_axis = 6378137. ;
+        polar_stereographic:semi_minor_axis = 6356752.31424518 ;
+        polar_stereographic:inverse_flattening = 298.257223563 ;
+    float j_displacement(y, x) ;
+        j_displacement:_FillValue = NaNf ;
+        j_displacement:standard_name = &quot;divergence_of_wind&quot; ;
+        j_displacement:description = &quot;vertical pixel displacement at each pixel&quot; ;
+        j_displacement:grid_mapping = &quot;polar_stereographic&quot; ;
+    float i_displacement(y, x) ;
+        i_displacement:_FillValue = NaNf ;
+        i_displacement:standard_name = &quot;divergence_of_wind&quot; ;
+        i_displacement:description = &quot;horizontal pixel displacement at each pixel&quot; ;
+        i_displacement:grid_mapping = &quot;polar_stereographic&quot; ;
+    float new_latitude(y, x) ;
+        new_latitude:_FillValue = NaNf ;
+        new_latitude:standard_name = &quot;latitude&quot; ;
+        new_latitude:grid_mapping = &quot;polar_stereographic&quot; ;
+        new_latitude:units = &quot;degrees&quot; ;
+    float new_longitude(y, x) ;
+        new_longitude:_FillValue = NaNf ;
+        new_longitude:standard_name = &quot;longitude&quot; ;
+        new_longitude:grid_mapping = &quot;polar_stereographic&quot; ;
+        new_longitude:units = &quot;degrees&quot; ;
+    float old_latitude(y, x) ;
+        old_latitude:_FillValue = NaNf ;
+        old_latitude:standard_name = &quot;latitude&quot; ;
+        old_latitude:grid_mapping = &quot;polar_stereographic&quot; ;
+        old_latitude:units = &quot;degrees&quot; ;
+    float old_longitude(y, x) ;
+        old_longitude:_FillValue = NaNf ;
+        old_longitude:standard_name = &quot;longitude&quot; ;
+        old_longitude:grid_mapping = &quot;polar_stereographic&quot; ;
+        old_longitude:units = &quot;degrees&quot; ;
+    float v(y, x) ;
+        v:_FillValue = NaNf ;
+        v:standard_name = &quot;northward_wind&quot; ;
+        v:grid_mapping = &quot;polar_stereographic&quot; ;
+        v:units = &quot;m/s&quot; ;
+    float u(y, x) ;
+        u:_FillValue = NaNf ;
+        u:standard_name = &quot;eastward_wind&quot; ;
+        u:grid_mapping = &quot;polar_stereographic&quot; ;
+        u:units = &quot;m/s&quot; ;
+    float speed(y, x) ;
+        speed:_FillValue = NaNf ;
+        speed:standard_name = &quot;wind_speed&quot; ;
+        speed:grid_mapping = &quot;polar_stereographic&quot; ;
+        speed:units = &quot;m/s&quot; ;
+    float angle(y, x) ;
+        angle:_FillValue = NaNf ;
+        angle:standard_name = &quot;wind_from_direction&quot; ;
+        angle:grid_mapping = &quot;polar_stereographic&quot; ;
+        angle:units = &quot;degrees&quot; ;
+    float wind_info(yx, vars) ;
+        wind_info:_FillValue = NaNf ;
+        wind_info:standard_name = &quot;wind_speed&quot; ;
+        wind_info:description = &quot;new_lat, new_long, speed, angle, v, u&quot; ;
+        wind_info:grid_mapping = &quot;polar_stereographic&quot; ;
+
+// global attributes:
+        :Conventions = &quot;CF-1.7&quot; ;
+}
+</pre></div>
+</div>
+</div>
+<div class="section" id="content-of-text-files">
+<span id="id3"></span><h2>Content of text files<a class="headerlink" href="#content-of-text-files" title="Permalink to this headline">¶</a></h2>
+<p>To reduce space, these examples are with a different (smaller) data set than the data used above.</p>
+<p>polar_stereographic.txt:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">straight_vertical_longitude_from_pole</span><span class="p">:</span> <span class="o">-</span><span class="mf">180.0</span>
+<span class="n">latitude_of_projection_origin</span><span class="p">:</span> <span class="mf">90.0</span>
+<span class="n">scale_factor_at_projection_origin</span><span class="p">:</span> <span class="mf">0.93</span>
+<span class="n">standard_parallel</span><span class="p">:</span> <span class="mf">60.0</span>
+<span class="n">resolution_at_standard_parallel</span><span class="p">:</span> <span class="mf">4000.0</span>
+<span class="n">false_easting</span><span class="p">:</span> <span class="mf">0.0</span>
+<span class="n">false_northing</span><span class="p">:</span> <span class="mf">0.0</span>
+<span class="n">semi_major_axis</span><span class="p">:</span> <span class="mf">6378137.0</span>
+<span class="n">semi_minor_axis</span><span class="p">:</span> <span class="mf">6356752.31</span>
+<span class="n">inverse_flattening</span><span class="p">:</span> <span class="mf">298.26</span>
+</pre></div>
+</div>
+<p>j_displacement.txt:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="mf">0.00</span><span class="p">,</span><span class="mf">100.00</span><span class="p">,</span><span class="mf">200.00</span>
+<span class="mf">300.00</span><span class="p">,</span><span class="mf">400.00</span><span class="p">,</span><span class="mf">500.00</span>
+<span class="mf">600.00</span><span class="p">,</span><span class="mf">700.00</span><span class="p">,</span><span class="mf">800.00</span>
+</pre></div>
+</div>
+<p>i_displacement.txt:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="mf">0.00</span><span class="p">,</span><span class="mf">100.00</span><span class="p">,</span><span class="mf">200.00</span>
+<span class="mf">300.00</span><span class="p">,</span><span class="mf">400.00</span><span class="p">,</span><span class="mf">500.00</span>
+<span class="mf">600.00</span><span class="p">,</span><span class="mf">700.00</span><span class="p">,</span><span class="mf">800.00</span>
+</pre></div>
+</div>
+<p>new_latitude.txt:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="mf">89.95</span><span class="p">,</span><span class="mf">89.96</span><span class="p">,</span><span class="mf">89.95</span>
+<span class="mf">89.96</span><span class="p">,</span><span class="mf">90.00</span><span class="p">,</span><span class="mf">89.96</span>
+<span class="mf">89.95</span><span class="p">,</span><span class="mf">89.96</span><span class="p">,</span><span class="mf">89.95</span>
+</pre></div>
+</div>
+<p>new_longitude.txt:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">-</span><span class="mf">135.00</span><span class="p">,</span><span class="mf">180.00</span><span class="p">,</span><span class="mf">135.00</span>
+<span class="o">-</span><span class="mf">90.00</span><span class="p">,</span><span class="mf">0.00</span><span class="p">,</span><span class="mf">90.00</span>
+<span class="o">-</span><span class="mf">45.00</span><span class="p">,</span><span class="mf">0.00</span><span class="p">,</span><span class="mf">45.00</span>
+</pre></div>
+</div>
+<p>old_latitude.txt:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="mf">89.95</span><span class="p">,</span><span class="mf">84.55</span><span class="p">,</span><span class="mf">79.18</span>
+<span class="mf">73.79</span><span class="p">,</span><span class="mf">68.53</span><span class="p">,</span><span class="mf">63.36</span>
+<span class="mf">58.24</span><span class="p">,</span><span class="mf">53.29</span><span class="p">,</span><span class="mf">48.48</span>
+</pre></div>
+</div>
+<p>old_longitude.txt:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">-</span><span class="mf">135.00</span><span class="p">,</span><span class="o">-</span><span class="mf">135.29</span><span class="p">,</span><span class="o">-</span><span class="mf">135.29</span>
+<span class="o">-</span><span class="mf">134.90</span><span class="p">,</span><span class="o">-</span><span class="mf">135.00</span><span class="p">,</span><span class="o">-</span><span class="mf">135.06</span>
+<span class="o">-</span><span class="mf">134.90</span><span class="p">,</span><span class="o">-</span><span class="mf">134.96</span><span class="p">,</span><span class="o">-</span><span class="mf">135.00</span>
+</pre></div>
+</div>
+<p>v.txt:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="mf">0.00</span><span class="p">,</span><span class="mf">100.76</span><span class="p">,</span><span class="mf">200.48</span>
+<span class="mf">300.92</span><span class="p">,</span><span class="mf">399.48</span><span class="p">,</span><span class="mf">494.96</span>
+<span class="mf">589.80</span><span class="p">,</span><span class="mf">681.97</span><span class="p">,</span><span class="mf">771.00</span>
+</pre></div>
+</div>
+<p>u.txt:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="mf">0.00</span><span class="p">,</span><span class="o">-</span><span class="mf">39.86</span><span class="p">,</span><span class="o">-</span><span class="mf">158.31</span>
+<span class="mf">118.10</span><span class="p">,</span><span class="mf">467.99</span><span class="p">,</span><span class="o">-</span><span class="mf">579.49</span>
+<span class="mf">458.61</span><span class="p">,</span><span class="mf">791.67</span><span class="p">,</span><span class="mf">1188.80</span>
+</pre></div>
+</div>
+<p>speed.txt:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="mf">0.00</span><span class="p">,</span><span class="mf">108.36</span><span class="p">,</span><span class="mf">255.45</span>
+<span class="mf">323.26</span><span class="p">,</span><span class="mf">615.31</span><span class="p">,</span><span class="mf">762.10</span>
+<span class="mf">747.11</span><span class="p">,</span><span class="mf">1044.90</span><span class="p">,</span><span class="mf">1416.93</span>
+</pre></div>
+</div>
+<p>angle.txt:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="mf">90.00</span><span class="p">,</span><span class="mf">338.42</span><span class="p">,</span><span class="mf">321.70</span>
+<span class="mf">21.43</span><span class="p">,</span><span class="mf">49.52</span><span class="p">,</span><span class="mf">310.50</span>
+<span class="mf">37.87</span><span class="p">,</span><span class="mf">49.26</span><span class="p">,</span><span class="mf">57.03</span>
+</pre></div>
+</div>
+<p>wind_info.txt:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="mf">89.95</span><span class="p">,</span><span class="o">-</span><span class="mf">135.00</span><span class="p">,</span><span class="mf">0.00</span><span class="p">,</span><span class="mf">90.00</span><span class="p">,</span><span class="mf">0.00</span><span class="p">,</span><span class="mf">0.00</span>
+<span class="mf">89.96</span><span class="p">,</span><span class="mf">180.00</span><span class="p">,</span><span class="mf">108.36</span><span class="p">,</span><span class="mf">338.42</span><span class="p">,</span><span class="mf">100.76</span><span class="p">,</span><span class="o">-</span><span class="mf">39.86</span>
+<span class="mf">89.95</span><span class="p">,</span><span class="mf">135.00</span><span class="p">,</span><span class="mf">255.45</span><span class="p">,</span><span class="mf">321.70</span><span class="p">,</span><span class="mf">200.48</span><span class="p">,</span><span class="o">-</span><span class="mf">158.31</span>
+<span class="mf">89.96</span><span class="p">,</span><span class="o">-</span><span class="mf">90.00</span><span class="p">,</span><span class="mf">323.26</span><span class="p">,</span><span class="mf">21.43</span><span class="p">,</span><span class="mf">300.92</span><span class="p">,</span><span class="mf">118.10</span>
+<span class="mf">90.00</span><span class="p">,</span><span class="mf">0.00</span><span class="p">,</span><span class="mf">615.31</span><span class="p">,</span><span class="mf">49.52</span><span class="p">,</span><span class="mf">399.48</span><span class="p">,</span><span class="mf">467.99</span>
+<span class="mf">89.96</span><span class="p">,</span><span class="mf">90.00</span><span class="p">,</span><span class="mf">762.10</span><span class="p">,</span><span class="mf">310.50</span><span class="p">,</span><span class="mf">494.96</span><span class="p">,</span><span class="o">-</span><span class="mf">579.49</span>
+<span class="mf">89.95</span><span class="p">,</span><span class="o">-</span><span class="mf">45.00</span><span class="p">,</span><span class="mf">747.11</span><span class="p">,</span><span class="mf">37.87</span><span class="p">,</span><span class="mf">589.80</span><span class="p">,</span><span class="mf">458.61</span>
+<span class="mf">89.96</span><span class="p">,</span><span class="mf">0.00</span><span class="p">,</span><span class="mf">1044.90</span><span class="p">,</span><span class="mf">49.26</span><span class="p">,</span><span class="mf">681.97</span><span class="p">,</span><span class="mf">791.67</span>
+<span class="mf">89.95</span><span class="p">,</span><span class="mf">45.00</span><span class="p">,</span><span class="mf">1416.93</span><span class="p">,</span><span class="mf">57.03</span><span class="p">,</span><span class="mf">771.00</span><span class="p">,</span><span class="mf">1188.80</span>
+</pre></div>
+</div>
 </div>
 </div>
 

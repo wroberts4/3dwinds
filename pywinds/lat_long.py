@@ -1,13 +1,12 @@
 #!/usr/bin/env python
-import ntpath
-import os
 import sys
 import numpy as np
 from pywinds.wind_functions import lat_long
 from pywinds.wrapper_utils import run_script
+import warnings
 
 
-def output_format(output):
+def output_format(output, kwargs):
     return np.round(output, 2).tolist()
 
 
@@ -16,4 +15,5 @@ def main(argv):
 
 
 if __name__ == "__main__":
+    warnings.filterwarnings("ignore", category=UserWarning, module='pyproj')
     main(sys.argv)

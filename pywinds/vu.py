@@ -3,11 +3,10 @@ from pywinds.wrapper_utils import run_script
 from pywinds.wind_functions import vu
 import sys
 import numpy as np
-import os
-import ntpath
+import warnings
 
 
-def output_format(output):
+def output_format(output, kwargs):
     return np.round(output, 2).tolist()
 
 
@@ -16,4 +15,5 @@ def main(argv):
 
 
 if __name__ == "__main__":
+    warnings.filterwarnings("ignore", category=UserWarning, module='pyproj')
     main(sys.argv)

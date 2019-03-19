@@ -15,7 +15,7 @@ def area_to_string(area_dict):
         try:
             if np.shape(val) == ():
                 return str(round(val, precision))
-            return list(np.round(val, precision).tolist())
+            return str(list(np.round(val, precision).tolist()))
         except (AttributeError, TypeError):
             return str(val)
 
@@ -32,8 +32,8 @@ def area_to_string(area_dict):
 def _arg_to_param(arg):
     """Converts command line arguments (strings) to python data passed to function."""
     units = None
-    if len(arg.split(';')) == 2:
-        arg, units = arg.split(';')
+    if len(arg.split('@')) == 2:
+        arg, units = arg.split('@')
     try:
         string = ast.literal_eval('%s' % arg)
     except (SyntaxError, ValueError):
@@ -43,7 +43,7 @@ def _arg_to_param(arg):
     return string
 
 
-def print_usage(func, name):
+def _print_usage(func, name):
     """Prints the functions doc_string plus extra command line info."""
     arg_spec = getfullargspec(func)
     num_args = len(arg_spec.args) - len(arg_spec.defaults)
@@ -70,15 +70,16 @@ def print_usage(func, name):
     -----------------
 
     * Use the -h or --help flags to print usage
+    * You can add units by appending your variable with @your_units. Example: --pixel_size 4@km
     """
     print(extra_info)
     print(func.__doc__)
 
 
-def get_args(func, argv, name):
+def _get_args(func, argv, name):
     """Reads command line arguments and handles logic behind them."""
     if '--help' in argv or '-h' in argv:
-        print_usage(func, name)
+        _print_usage(func, name)
         sys.exit(0)
     arg_spec = getfullargspec(func)
     num_args = len(arg_spec.args) - len(arg_spec.defaults)
@@ -96,7 +97,7 @@ def get_args(func, argv, name):
     except GetoptError as err:
         print(err)
         print()
-        print_usage(func, name)
+        _print_usage(func, name)
         sys.exit(1)
     kwargs = {}
     for arg in optlist:
@@ -109,7 +110,7 @@ def get_args(func, argv, name):
 
 def run_script(func, argv, output_format, name, is_area=False, is_lat_long=False):
     """Runs python function from wind_functions.py."""
-    args, kwargs = get_args(func, argv, name)
+    args, kwargs = _get_args(func, argv, name)
     try:
         displacement_data = kwargs.get('displacement_data')
         if displacement_data is None and is_lat_long is False:
@@ -136,5 +137,5 @@ def run_script(func, argv, output_format, name, is_area=False, is_lat_long=False
     except (TypeError, ValueError, OSError, RuntimeError, IndexError):
         print(traceback.format_exc())
         print()
-        print_usage(func, name)
+        _print_usage(func, name)
         sys.exit(1)
