@@ -11,7 +11,7 @@ def output_format(output, kwargs):
 
 
 def main(argv):
-    run_script(area, argv, output_format, 'area', is_area=True)
+    run_script(area, output_format, 'area', is_area=True)
 
 
 if __name__ == "__main__":

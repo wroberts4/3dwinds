@@ -13,7 +13,7 @@ def output_format(output, kwargs):
 
 
 def main(argv):
-    run_script(displacements, argv, output_format, 'displacements')
+    run_script(displacements, output_format, 'displacements')
 
 
 if __name__ == "__main__":

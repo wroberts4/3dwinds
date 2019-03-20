@@ -497,7 +497,7 @@ def area(lat_ts, lat_0, long_0, displacement_data=None, projection='stere', area
         Number of pixels in the y and x direction following row-major format (height, width).
         Note that shape can be found from the displacement file or the area provided.
     center : list, optional
-        Center of projection (lat, long). Defaults to [lat_0, long_0] if not provided
+        Center of projection (lat, long)
     pixel_size : list or float, optional
         Size of pixels: (dy, dx)
     upper_left_extent : list, optional
@@ -562,7 +562,7 @@ def displacements(lat_ts=None, lat_0=None, long_0=None, displacement_data=None, 
         Number of pixels in the y and x direction following row-major format (height, width).
         Note that shape can be found from the displacement file or the area provided.
     center : list, optional
-        Center of projection (lat, long). Defaults to [lat_0, long_0] if not provided
+        Center of projection (lat, long)
     pixel_size : list or float, optional
         Size of pixels: (dy, dx)
     upper_left_extent : list, optional
@@ -636,7 +636,7 @@ def velocity(lat_ts, lat_0, long_0, delta_time, displacement_data=None, projecti
         Number of pixels in the y and x direction following row-major format (height, width).
         Note that shape can be found from the displacement file or the area provided.
     center : list, optional
-        Center of projection (lat, long). Defaults to [lat_0, long_0] if not provided
+        Center of projection (lat, long)
     pixel_size : list or float, optional
         Size of pixels: (dy, dx)
     upper_left_extent : list, optional
@@ -703,7 +703,7 @@ def vu(lat_ts, lat_0, long_0, delta_time, displacement_data=None, projection='st
         Number of pixels in the y and x direction following row-major format (height, width).
         Note that shape can be found from the displacement file or the area provided.
     center : list, optional
-        Center of projection (lat, long). Defaults to [lat_0, long_0] if not provided
+        Center of projection (lat, long)
     pixel_size : list or float, optional
         Size of pixels: (dy, dx)
     upper_left_extent : list, optional
@@ -766,7 +766,7 @@ def lat_long(lat_ts, lat_0, long_0, displacement_data=None, projection='stere', 
         Number of pixels in the y and x direction following row-major format (height, width).
         Note that shape can be found from the displacement file or the area provided.
     center : list, optional
-        Center of projection (lat, long). Defaults to [lat_0, long_0] if not provided
+        Center of projection (lat, long)
     pixel_size : list or float, optional
         Size of pixels: (dy, dx)
     upper_left_extent : list, optional
@@ -834,7 +834,7 @@ def wind_info(lat_ts, lat_0, long_0, delta_time, displacement_data=None, project
         Number of pixels in the y and x direction following row-major format (height, width).
         Note that shape can be found from the displacement file or the area provided.
     center : list, optional
-        Center of projection (lat, long). Defaults to [lat_0, long_0] if not provided
+        Center of projection (lat, long)
     pixel_size : list or float, optional
         Size of pixels: (dy, dx)
     upper_left_extent : list, optional

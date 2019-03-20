@@ -13,7 +13,7 @@ def output_format(output, kwargs):
 
 
 def main(argv):
-    run_script(vu, argv, output_format, 'vu')
+    run_script(vu, output_format, 'vu')
 
 
 if __name__ == "__main__":

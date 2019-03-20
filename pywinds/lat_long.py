@@ -13,7 +13,7 @@ def output_format(output, kwargs):
 
 
 def main(argv):
-    run_script(lat_long, argv, output_format, 'lat_long', is_lat_long=True)
+    run_script(lat_long, output_format, 'lat_long', is_lat_long=True)
 
 
 if __name__ == "__main__":

@@ -20,7 +20,7 @@ def output_format(output, kwargs):
 
 
 def main(argv):
-    run_script(wind_info, argv, output_format, 'wind_info')
+    run_script(wind_info, output_format, 'wind_info')
 
 
 if __name__ == "__main__":

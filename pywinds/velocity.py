@@ -13,7 +13,7 @@ def output_format(output, kwargs):
 
 
 def main(argv):
-    run_script(velocity, argv, output_format, 'velocity')
+    run_script(velocity, output_format, 'velocity')
 
 
 if __name__ == "__main__":

@@ -40,9 +40,9 @@ Calculating wind_info::
     /Desktop
     $ ls
     in.flo	    pywinds
-    $ pywinds/wind_info.sh 60 90 0 100 --j 0 --i 0 --pixel_size 4000 --center 90,0 --no_save
+    $ pywinds/wind_info.sh 60 90 0 100 --j 0 --i 0 --pixel_size 4000 4000 --center 90 0 --no_save
     [63.36, -135.0, 51.8, 315.24, 36.78, -36.47]
-    $ pywinds/wind_info.sh 60 0 100 --pixel_size 4000 --center 90,0
+    $ pywinds/wind_info.sh 60 90 0 100 --pixel_size 4000 4000 --center 90 0
     Data saved to the directory /Desktop/in.flo_output
 
 
@@ -190,7 +190,7 @@ Advanced arguments
        :ref:`examples_of_wind_info.sh` for examples)
     2. units passed to ``--units`` (exluding center)
     3. meters (exluding center, which is degrees)
-* **area_extent**: Area extent as a list (lat_ll, long_ll, lat_ur, long_ur)
+* **area_extent**: Area extent as a list (y_ll, x_ll, y_ur, x_ur)
 
 where
 
@@ -218,7 +218,7 @@ They have similar or identical arguments to wind_info.sh
     /Desktop
     $ ls
     in.flo	    pywinds
-    $ pywinds/velocity.sh 60 90 0 100 --j 0 --i 0 --pixel_size 4000 --center 90,0
+    $ pywinds/velocity.sh 60 90 0 100 --j 0 --i 0 --pixel_size 4000 4000 --center 90 0
     [51.8, 315.24]
 
 
@@ -230,7 +230,7 @@ They have similar or identical arguments to wind_info.sh
     /Desktop
     $ ls
     in.flo	    pywinds
-    $ pywinds/vu.sh 60 90 0 100 --j 0 --i 0 --pixel_size 4000 --center 90,0
+    $ pywinds/vu.sh 60 90 0 100 --j 0 --i 0 --pixel_size 4000 4000 --center 90 0
     [36.78, -36.47]
 
 
@@ -244,11 +244,11 @@ They have similar or identical arguments to wind_info.sh
     /Desktop
     $ ls
     in.flo	    pywinds
-    $ pywinds/lat_long.sh 60 90 0 --j 0 --i 0 --pixel_size 4000
-      --center 90,0 --shape 1000,1000
+    $ pywinds/lat_long.sh 60 90 0 --j 0 --i 0 --pixel_size 4000 4000
+      --center 90 0 --shape 1000 1000
     [63.36, -135.0]
-    $ pywinds/lat_long.sh 60 90 0 --j 0 --i 0 --pixel_size 4000
-      --center 90,0 --displacement_data in.flo
+    $ pywinds/lat_long.sh 60 90 0 --j 0 --i 0 --pixel_size 4000 4000
+      --center 90 0 --displacement_data in.flo
     [61.38, -130.77]
 
 
@@ -274,7 +274,7 @@ They have similar or identical arguments to wind_info.sh
     /Desktop
     $ ls
     in.flo	    pywinds
-    $ pywinds/area.sh 60 90 0 --pixel_size 4000 --center 90,0
+    $ pywinds/area.sh 60 90 0 --pixel_size 4000 4000 --center 90 0
     projection: stere
     lat_ts: 60
     lat_0: 90
