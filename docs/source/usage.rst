@@ -1,7 +1,9 @@
 Usage
 =====
 
-Use the **-h** or **--help** flags on any scripts to print a usage message.
+Use the **-h** or **--help** flags on any scripts to print a usage message. These scripts follow
+GNU command line style; order in which options are provided does not matter and positional arguments may be mixed
+in with options (as long as they are not interpreted as part of the option).
 
 wind_info.sh
 ------------
@@ -18,7 +20,8 @@ Required arguments:
 Optional arguments:
 
 * **center**: Projection y and x coordinate of the center of area (lat, long)
-* **pixel_size**: Projection size of pixels in the y and x direction (dy, dx)
+* **pixel_size**: Projection size of pixels in the y and x direction (dy, dx). If pixels are square, i.e. dy = dx,
+  then only one value needs to be entered.
 * **displacement_data**: Name of binary file (32-bit float) containing pixels displacements; How far the
   pixels had to move in the y (positive is down) and x (positive is right) direction to get to their new position.
   Wildcard ("*") syntax is accepted. If not provided, reads every file ending in ".flo" where the script is ran
@@ -40,9 +43,9 @@ Calculating wind_info::
     /Desktop
     $ ls
     in.flo	    pywinds
-    $ pywinds/wind_info.sh 60 90 0 100 --j 0 --i 0 --pixel_size 4000 4000 --center 90 0 --no_save
+    $ pywinds/wind_info.sh 60 90 0 100 --j 0 --i 0 --pixel_size 4000 --center 90 0 --no_save
     [63.36, -135.0, 51.8, 315.24, 36.78, -36.47]
-    $ pywinds/wind_info.sh 60 90 0 100 --pixel_size 4000 4000 --center 90 0
+    $ pywinds/wind_info.sh 60 90 0 100 --pixel_size 4000 --center 90 0
     Data saved to the directory /Desktop/in.flo_output
 
 
@@ -119,7 +122,7 @@ Area is printed in a different format than it's saved::
     inverse_flattening:
     shape:
     area_extent (degrees):
-    pixel_size (meters):
+    pixel_size (meters): (y_pixel_size, x_pixel_size)
     center (degrees):
 
 
@@ -135,12 +138,10 @@ wind_info.sh saves data to ::
                 v.txt, u.txt, speed.txt, angle.txt, wind_info.txt
 
     netcdf4 file: wind_info.nc
-    
 
-.. note::
 
-    All files are saved in a new directory by the name of the displacement file appended with "_output", which
-    will be created where the script is ran.
+**All files are saved in a new directory by the name of the displacement file appended with "_output", which**
+**will be created where the script is ran.**
 
 .. note::
 
@@ -203,7 +204,6 @@ where
 
     The shape provided or found can alter the native shape of **displacement_data**.
 
-
 Additional utility methods
 --------------------------
 
@@ -218,7 +218,7 @@ They have similar or identical arguments to wind_info.sh
     /Desktop
     $ ls
     in.flo	    pywinds
-    $ pywinds/velocity.sh 60 90 0 100 --j 0 --i 0 --pixel_size 4000 4000 --center 90 0
+    $ pywinds/velocity.sh 60 90 0 100 --j 0 --i 0 --pixel_size 4000 --center 90 0
     [51.8, 315.24]
 
 
@@ -230,7 +230,7 @@ They have similar or identical arguments to wind_info.sh
     /Desktop
     $ ls
     in.flo	    pywinds
-    $ pywinds/vu.sh 60 90 0 100 --j 0 --i 0 --pixel_size 4000 4000 --center 90 0
+    $ pywinds/vu.sh 60 90 0 100 --j 0 --i 0 --pixel_size 4000 --center 90 0
     [36.78, -36.47]
 
 
@@ -244,10 +244,10 @@ They have similar or identical arguments to wind_info.sh
     /Desktop
     $ ls
     in.flo	    pywinds
-    $ pywinds/lat_long.sh 60 90 0 --j 0 --i 0 --pixel_size 4000 4000
+    $ pywinds/lat_long.sh 60 90 0 --j 0 --i 0 --pixel_size 4000
       --center 90 0 --shape 1000 1000
     [63.36, -135.0]
-    $ pywinds/lat_long.sh 60 90 0 --j 0 --i 0 --pixel_size 4000 4000
+    $ pywinds/lat_long.sh 60 90 0 --j 0 --i 0 --pixel_size 4000
       --center 90 0 --displacement_data in.flo
     [61.38, -130.77]
 
@@ -274,7 +274,7 @@ They have similar or identical arguments to wind_info.sh
     /Desktop
     $ ls
     in.flo	    pywinds
-    $ pywinds/area.sh 60 90 0 --pixel_size 4000 4000 --center 90 0
+    $ pywinds/area.sh 60 90 0 --pixel_size 4000 --center 90 0
     projection: stere
     lat_ts: 60
     lat_0: 90
@@ -290,3 +290,14 @@ They have similar or identical arguments to wind_info.sh
 You can use area.sh on a file containing displacements to see what shape it is,
 even if the area is not completely defined, as shown in :ref:`advanced_examples`.
 
+Understanding usage text from scripts
+-------------------------------------
+
+All error messages follow this format::
+
+    traceback
+    error
+    usage
+    arguments/options
+
+Please see :ref:`error_messages` in Examples.

@@ -88,6 +88,7 @@
 <li class="toctree-l2"><a class="reference internal" href="#save-format">Save format</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#advanced-arguments">Advanced arguments</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#additional-utility-methods">Additional utility methods</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#understanding-usage-text-from-scripts">Understanding usage text from scripts</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="examples.html">Examples</a></li>
@@ -158,7 +159,9 @@
             
   <div class="section" id="usage">
 <h1>Usage<a class="headerlink" href="#usage" title="Permalink to this headline">¶</a></h1>
-<p>Use the <strong>-h</strong> or <strong>–help</strong> flags on any scripts to print a usage message.</p>
+<p>Use the <strong>-h</strong> or <strong>–help</strong> flags on any scripts to print a usage message. These scripts follow
+GNU command line style; order in which options are provided does not matter and positional arguments may be mixed
+in with options (as long as they are not interpreted as part of the option).</p>
 <div class="section" id="wind-info-sh">
 <h2>wind_info.sh<a class="headerlink" href="#wind-info-sh" title="Permalink to this headline">¶</a></h2>
 <p>wind_info.sh calculates area information, j and i displacement, new and old latitude/longitude,
@@ -173,7 +176,8 @@ v, u, and velocity of the wind. This is the primary function of pywinds.</p>
 <p>Optional arguments:</p>
 <ul class="simple">
 <li><strong>center</strong>: Projection y and x coordinate of the center of area (lat, long)</li>
-<li><strong>pixel_size</strong>: Projection size of pixels in the y and x direction (dy, dx)</li>
+<li><strong>pixel_size</strong>: Projection size of pixels in the y and x direction (dy, dx). If pixels are square, i.e. dy = dx,
+then only one value needs to be entered.</li>
 <li><strong>displacement_data</strong>: Name of binary file (32-bit float) containing pixels displacements; How far the
 pixels had to move in the y (positive is down) and x (positive is right) direction to get to their new position.
 Wildcard (“*”) syntax is accepted. If not provided, reads every file ending in “.flo” where the script is ran</li>
@@ -197,9 +201,9 @@ Wildcard (“*”) syntax is accepted. If not provided, reads every file ending 
 /Desktop
 $ ls
 in.flo          pywinds
-$ pywinds/wind_info.sh 60 90 0 100 --j 0 --i 0 --pixel_size 4000 4000 --center 90 0 --no_save
+$ pywinds/wind_info.sh 60 90 0 100 --j 0 --i 0 --pixel_size 4000 --center 90 0 --no_save
 [63.36, -135.0, 51.8, 315.24, 36.78, -36.47]
-$ pywinds/wind_info.sh 60 90 0 100 --pixel_size 4000 4000 --center 90 0
+$ pywinds/wind_info.sh 60 90 0 100 --pixel_size 4000 --center 90 0
 Data saved to the directory /Desktop/in.flo_output
 </pre></div>
 </div>
@@ -270,7 +274,7 @@ Data saved to the directory /Desktop/in.flo_output
 <span class="n">inverse_flattening</span><span class="p">:</span>
 <span class="n">shape</span><span class="p">:</span>
 <span class="n">area_extent</span> <span class="p">(</span><span class="n">degrees</span><span class="p">):</span>
-<span class="n">pixel_size</span> <span class="p">(</span><span class="n">meters</span><span class="p">):</span>
+<span class="n">pixel_size</span> <span class="p">(</span><span class="n">meters</span><span class="p">):</span> <span class="p">(</span><span class="n">y_pixel_size</span><span class="p">,</span> <span class="n">x_pixel_size</span><span class="p">)</span>
 <span class="n">center</span> <span class="p">(</span><span class="n">degrees</span><span class="p">):</span>
 </pre></div>
 </div>
@@ -285,11 +289,8 @@ Data saved to the directory /Desktop/in.flo_output
 <span class="n">netcdf4</span> <span class="n">file</span><span class="p">:</span> <span class="n">wind_info</span><span class="o">.</span><span class="n">nc</span>
 </pre></div>
 </div>
-<div class="admonition note">
-<p class="first admonition-title">Note</p>
-<p class="last">All files are saved in a new directory by the name of the displacement file appended with “_output”, which
-will be created where the script is ran.</p>
-</div>
+<p><strong>All files are saved in a new directory by the name of the displacement file appended with “_output”, which</strong>
+<strong>will be created where the script is ran.</strong></p>
 <div class="admonition note">
 <p class="first admonition-title">Note</p>
 <p class="last">Data is saved in the order given by “Text files” above, which means that if not enough information
@@ -344,7 +345,7 @@ command. Units are determined in the following priority:<ol class="last arabic">
 </dd>
 </dl>
 </li>
-<li><strong>area_extent</strong>: Area extent as a list (lat_ll, long_ll, lat_ur, long_ur)</li>
+<li><strong>area_extent</strong>: Area extent as a list (y_ll, x_ll, y_ur, x_ur)</li>
 </ul>
 <p>where</p>
 <ul class="simple">
@@ -369,7 +370,7 @@ They have similar or identical arguments to wind_info.sh</p>
 /Desktop
 $ ls
 in.flo          pywinds
-$ pywinds/velocity.sh 60 90 0 100 --j 0 --i 0 --pixel_size 4000 4000 --center 90 0
+$ pywinds/velocity.sh 60 90 0 100 --j 0 --i 0 --pixel_size 4000 --center 90 0
 [51.8, 315.24]
 </pre></div>
 </div>
@@ -380,7 +381,7 @@ $ pywinds/velocity.sh 60 90 0 100 --j 0 --i 0 --pixel_size 4000 4000 --center 90
 /Desktop
 $ ls
 in.flo          pywinds
-$ pywinds/vu.sh 60 90 0 100 --j 0 --i 0 --pixel_size 4000 4000 --center 90 0
+$ pywinds/vu.sh 60 90 0 100 --j 0 --i 0 --pixel_size 4000 --center 90 0
 [36.78, -36.47]
 </pre></div>
 </div>
@@ -393,10 +394,10 @@ Same arguments as wind_info.sh but does not take <strong>delta_time</strong> as 
 /Desktop
 $ ls
 in.flo          pywinds
-$ pywinds/lat_long.sh 60 90 0 --j 0 --i 0 --pixel_size 4000 4000
+$ pywinds/lat_long.sh 60 90 0 --j 0 --i 0 --pixel_size 4000
   --center 90 0 --shape 1000 1000
 [63.36, -135.0]
-$ pywinds/lat_long.sh 60 90 0 --j 0 --i 0 --pixel_size 4000 4000
+$ pywinds/lat_long.sh 60 90 0 --j 0 --i 0 --pixel_size 4000
   --center 90 0 --displacement_data in.flo
 [61.38, -130.77]
 </pre></div>
@@ -421,7 +422,7 @@ wind_info.sh but does not take <strong>delta_time</strong> as an argument.</li>
 /Desktop
 $ ls
 in.flo          pywinds
-$ pywinds/area.sh 60 90 0 --pixel_size 4000 4000 --center 90 0
+$ pywinds/area.sh 60 90 0 --pixel_size 4000 --center 90 0
 projection: stere
 lat_ts: 60
 lat_0: 90
@@ -436,6 +437,17 @@ center: (90.0, 0.0)
 </div>
 <p>You can use area.sh on a file containing displacements to see what shape it is,
 even if the area is not completely defined, as shown in <a class="reference internal" href="examples.html#advanced-examples"><span class="std std-ref">Advanced examples</span></a>.</p>
+</div>
+<div class="section" id="understanding-usage-text-from-scripts">
+<h2>Understanding usage text from scripts<a class="headerlink" href="#understanding-usage-text-from-scripts" title="Permalink to this headline">¶</a></h2>
+<p>All error messages follow this format:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">traceback</span>
+<span class="n">error</span>
+<span class="n">usage</span>
+<span class="n">arguments</span><span class="o">/</span><span class="n">options</span>
+</pre></div>
+</div>
+<p>Please see <a class="reference internal" href="examples.html#error-messages"><span class="std std-ref">Error messages</span></a> in Examples.</p>
 </div>
 </div>
 

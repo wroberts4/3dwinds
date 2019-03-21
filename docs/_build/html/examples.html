@@ -88,6 +88,7 @@
 <li class="toctree-l2"><a class="reference internal" href="#content-of-wind-info-nc">Content of wind_info.nc</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#content-of-text-files">Content of text files</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#advanced-examples">Advanced examples</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#error-messages">Error messages</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="API.html">API</a></li>
@@ -164,27 +165,39 @@
 /Desktop
 $ ls
 in.flo        test.flo        pywinds
-$ pywinds/wind_info.sh 60 90 0 100 --j 0 --i 0 --pixel_size 4000 4000
+$ pywinds/wind_info.sh 60 90 0 100 --j 0 --i 0 --pixel_size 4000
   --center 90 0 --no_save
 Reading displacements from: /Desktop/test.flo
 [63.36, -135.0, 51.8, 315.24, 36.78, -36.47]
 Reading displacements from: /Desktop/in.flo
 [63.36, -135.0, 51.8, 315.24, 36.78, -36.47]
-$ pywinds/wind_info.sh 60 90 0 100 --pixel_size 4000 4000 --center 90 0
+$ pywinds/wind_info.sh 60 90 0 100 --pixel_size 4000 --center 90 0
 Reading displacements from: /Desktop/test.flo
 Data saved to the directory /Desktop/test.flo_output
 Reading displacements from: /Desktop/in.flo
 Data saved to the directory /Desktop/in.flo_output
 </pre></div>
 </div>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">If <strong>displacement_data</strong> is not provided, then every file ending in “.flo” where the script is read.</p>
+</div>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">In this case, <strong>wind_info.sh</strong> saves all files mentioned in <a class="reference internal" href="usage.html#save-format"><span class="std std-ref">Save format</span></a>
+to /Desktop/test.flo_output and /Desktop/in.flo_output.</p>
+</div>
 <p>Specifying one file to run:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ pwd
 /Desktop
 $ ls
 in.flo        test.flo        pywinds
-$ pywinds/wind_info.sh 60 90 0 100 --j 0 --i 0 --pixel_size 4000 4000
+$ pywinds/wind_info.sh 60 90 0 100 --j 0 --i 0 --pixel_size 4000
   --center 90 0 --displacement_data in.flo --no_save
 [63.36, -135.0, 51.8, 315.24, 36.78, -36.47]
+
+$ pywinds/wind_info.sh 60 90 0 100 --j 0 --i 0 --pixel_size 4000
+  --center 90 0 --displacement_data path_to_other_directory/in.flo --no_save
 </pre></div>
 </div>
 <p>Specifying multiple files to run:</p>
@@ -192,13 +205,13 @@ $ pywinds/wind_info.sh 60 90 0 100 --j 0 --i 0 --pixel_size 4000 4000
 /Desktop
 $ ls
 in.flo        windtest.flo        windtest2.flo        pywinds
-$ pywinds/wind_info.sh 60 90 0 100 --j 0 --i 0 --pixel_size 4000 4000
+$ pywinds/wind_info.sh 60 90 0 100 --j 0 --i 0 --pixel_size 4000
   --center 90 0 --displacement_data *test*.flo --no_save
 Reading displacements from: /Desktop/windtest.flo
 [63.36, -135.0, 51.8, 315.24, 36.78, -36.47]
 Reading displacements from: /Desktop/windtest2.flo
 [63.36, -135.0, 51.8, 315.24, 36.78, -36.47]
-$ pywinds/wind_info.sh 60 90 0 100 --pixel_size 4000 4000
+$ pywinds/wind_info.sh 60 90 0 100 --pixel_size 4000
   --center 90 0 --displacement_data *test*.flo
 Reading displacements from: /Desktop/windtest.flo
 Data saved to the directory /Desktop/windtest.flo_output
@@ -211,45 +224,103 @@ Data saved to the directory /Desktop/windtest2.flo_output
 /Desktop
 $ ls
 in.flo        pywinds
-$ pywinds/wind_info.sh 60 90 0 100 --j 0 --i 0 --pixel_size 4000 4000
+$ pywinds/wind_info.sh 60 90 0 100 --j 0 --i 0 --pixel_size 4000
   --center 90 0 --projection_spheroid sphere --no_save
 [63.26, -135.0, 51.93, 315.2, 36.85, -36.59]
-$ pywinds/wind_info.sh 60 90 0 100 --j 0 --i 0 --pixel_size 4000 4000 --center 90 0
+$ pywinds/wind_info.sh 60 90 0 100 --j 0 --i 0 --pixel_size 4000 --center 90 0
   --projection_spheroid sphere --earth_spheroid sphere --no_save
 [63.26, -135.0, 51.77, 315.24, 36.76, -36.46]
+</pre></div>
+</div>
+<p>Using other advanced args:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ pywinds/wind_info.sh 60 90 0 100 --j 0 --i 0
+  --radius 2000000 2000000 --center 90 0 --no_save
+[63.36, -135.0, 51.8, 315.24, 36.78, -36.47]
+
+$ pywinds/wind_info.sh 60 90 0 100 --j 0 --i 0
+  --upper_left_extent 2000000 -2000000 --center 90 0 --no_save
+[63.36, -135.0, 51.8, 315.24, 36.78, -36.47]
+
+$ pywinds/wind_info.sh 60 90 0 100 --j 0 --i 0
+  --area_extent -2000000 -2000000 2000000 2000000 --no_save
+[63.36, -135.0, 51.8, 315.24, 36.78, -36.47]
+
+$ pywinds/wind_info.sh 60 90 0 100 --j 0 --i 0
+  --upper_left_extent 2000000 -2000000
+  --radius 2000000 2000000 --no_save
+[63.36, -135.0, 51.8, 315.24, 36.78, -36.47]
 </pre></div>
 </div>
 <p>Using units:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ pwd
 /Desktop
-
 $ ls
 in.flo        pywinds
 
 $ pywinds/wind_info.sh 60 90 0 100 --j 0 --i 0
-  --pixel_size 4 4 --center 90 0 --units km --no_save
+  --pixel_size 4000 --center 90 0 --no_save
 [63.36, -135.0, 51.8, 315.24, 36.78, -36.47]
 
 $ pywinds/wind_info.sh 60 90 0 100 --j 0 --i 0
-  --pixel_size 4km 4km --center 90 0 --units km --no_save
+  --pixel_size 4 --center 90 0 --units km --no_save
 [63.36, -135.0, 51.8, 315.24, 36.78, -36.47]
 
 $ pywinds/wind_info.sh 60 90 0 100 --j 0 --i 0
-  --pixel_size 4km 4km --center 0m 0m --units km --no_save
+  --pixel_size 4 km --center 90 0 --no_save
 [63.36, -135.0, 51.8, 315.24, 36.78, -36.47]
 
 $ pywinds/wind_info.sh 60 90 0 100 --j 0 --i 0
-  --pixel_size 4km 4km --center 0m 0m --no_save
+  --pixel_size 4 --center 0 0 m  --units km --no_save
 [63.36, -135.0, 51.8, 315.24, 36.78, -36.47]
 
 $ pywinds/wind_info.sh 60 90 0 100 --j 0 --i 0
-  --pixel_size 4km 4km --center 90 0 --no_save
+  --pixel_size 4 km --center 0 0 m --no_save
 [63.36, -135.0, 51.8, 315.24, 36.78, -36.47]
 
 $ pywinds/wind_info.sh 60 90 0 100 --j 0 --i 0
-  --pixel_size 4000 4000 --center 90 0 --no_save
+  --pixel_size 4000 m --center 90 0 --units km --no_save
+[63.36, -135.0, 51.8, 315.24, 36.78, -36.47]
+
+$ pywinds/wind_info.sh 60 90 0 100 --j 0 --i 0
+  --upper_left_extent 2000 -2000 km
+  --radius 2000 2000 km --no_save
+[63.36, -135.0, 51.8, 315.24, 36.78, -36.47]
+
+$ pywinds/wind_info.sh 60 90 0 100 --j 0 --i 0
+  --upper_left_extent 2000 -2000
+  --radius 2000 2000 --units km --no_save
+[63.36, -135.0, 51.8, 315.24, 36.78, -36.47]
+
+$ pywinds/wind_info.sh 60 90 0 100 --j 0 --i 0
+  --upper_left_extent 63.335 -135 deg
+  --radius 2000 2000 --units km --no_save
 [63.36, -135.0, 51.8, 315.24, 36.78, -36.47]
 </pre></div>
+</div>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last"><strong>center</strong>’s units default to degrees and are not affected by the <strong>units</strong> option.</p>
+</div>
+<p>Shuffling order of arguments/options:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ pwd
+/Desktop
+$ ls
+in.flo        pywinds
+
+$ pywinds/wind_info.sh --center 90 0 --j 0 --i 0
+  --no_save --pixel_size 4000 --i 0 60 90 0 100
+[63.36, -135.0, 51.8, 315.24, 36.78, -36.47]
+
+$ pywinds/wind_info.sh --center 90 0 60 --j 0 90 --i 0
+  0 --no_save --pixel_size 4000 4000 100 --i 0
+[63.36, -135.0, 51.8, 315.24, 36.78, -36.47]
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">For <strong>pixel_size</strong> to have positional arguments after it, it must be specified using two numbers
+(or else <strong>pixel_size</strong> would interpret the second, position, number as input since <strong>pixel_size</strong>
+can take one or two numbers as arguments).</p>
 </div>
 </div>
 <div class="section" id="content-of-wind-info-nc">
@@ -451,6 +522,81 @@ area_extent: None
 pixel_size: None
 center: None
 </pre></div>
+</div>
+</div>
+<div class="section" id="error-messages">
+<span id="id5"></span><h2>Error messages<a class="headerlink" href="#error-messages" title="Permalink to this headline">¶</a></h2>
+<p>If not enough information if provided to a script, this error will be displayed:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ pwd
+/Desktop
+$ ls
+in.flo        pywinds
+$ pywinds/wind_info.sh 60 90 0 100 --center 0 0 m --i 0 --j 0 --no_save
+Traceback (most recent call last):
+  File &quot;/Desktop/pywinds/env/lib/python3.7/site-packages/pywinds/wrapper_utils.py&quot;,
+line 167, in run_script
+    output = output_format(func(*args, **kwargs), kwargs)
+  File &quot;/Desktop/pywinds/env/lib/python3.7/site-packages/pywinds/wind_functions.py&quot;,
+line 869, in wind_info
+    earth_spheroid=earth_spheroid, no_save=no_save)
+  File &quot;/Desktop/pywinds/env/lib/python3.7/site-packages/pywinds/wind_functions.py&quot;,
+line 412, in _compute_velocity
+    no_save=no_save)
+  File &quot;/Desktop/pywinds/env/lib/python3.7/site-packages/pywinds/wind_functions.py&quot;,
+line 377, in _compute_vu
+    no_save=no_save)
+  File &quot;/Desktop/pywinds/env/lib/python3.7/site-packages/pywinds/wind_functions.py&quot;,
+line 325, in _compute_lat_long
+    raise ValueError(&#39;Not enough information provided to create an area for projection&#39;)
+ValueError: Not enough information provided to create an area for projection
+
+usage: wind_info.py [-h] [--units str] [--shape height width]
+                    [--displacement_data filename] [--j int] [--i int]
+                    [--no_save] [--projection str] [--projection_spheroid str]
+                    [--earth_spheroid str] [--upper_left_extent y x [units]]
+                    [--radius dy dx [units]]
+                    [--area_extent y_ll x_ll y_ur x_ur [units]]
+                    [--center lat long [units]] [--pixel_size dy [dx] [units]]
+                    lat_ts lat_0 long_0 delta_time
+
+positional arguments:
+  lat_ts                projection latitude of true scale
+  lat_0                 projection latitude of origin
+  long_0                projection central meridian
+  delta_time            amount of time that separates both files in minutes
+
+optional arguments:
+  -h, --help            show this help message and exit
+  --units str           units that all provided arguments that take units
+                        (except center) should be interpreted as
+  --shape height width  number of pixels in the y and x direction: height
+                        width
+  --displacement_data filename
+                        filename or list containing displacements
+  --j int               row to run calculations on
+  --i int               column to run calculations on
+  --no_save             print data to shell without saving
+  --projection str      name of projection that the image is in
+  --projection_spheroid str
+                        spheroid of projection
+  --earth_spheroid str  spheroid of Earth
+  --upper_left_extent y x [units]
+                        projection y and x coordinates of the upper left
+                        corner of the upper left pixel: y&lt;units&gt; x&lt;units&gt;
+  --radius dy dx [units]
+                        projection length from the center to the left/rightand
+                        top/bottom outer edges
+  --area_extent y_ll x_ll y_ur x_ur [units]
+                        area extent as a list
+  --center lat long [units]
+                        center of projection
+  --pixel_size dy [dx] [units]
+                        size of pixels
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">Brackets around an argument means that argument is optional.</p>
 </div>
 </div>
 </div>

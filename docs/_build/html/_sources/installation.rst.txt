@@ -22,7 +22,7 @@ Source code is available to clone on https://github.com/wroberts4/pywinds.
 
 Conda commands to install pywinds::
 
-    $ conda install -y -c conda-forge python=3.7.1 numpy=1.16.1 pyproj=2.1.1
+    $ conda install -y -c conda-forge python=3.7.2 numpy=1.16.1 pyproj=2.1.1
       xarray=0.12.0 pyresample=1.11.0 netcdf4=1.4.3.2
     $ pip install git+https://github.com/wroberts4/pywinds.git
 
