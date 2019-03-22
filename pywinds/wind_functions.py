@@ -10,6 +10,7 @@ from pyresample.utils import proj4_str_to_dict
 
 from pywinds.wrapper_utils import area_to_string
 
+# TODO: MAKE VERBOSE MODE!!
 """Calculates area information, j and i displacement, new and old latitude/longitude, v, u, and velocity of the wind."""
 
 
@@ -380,12 +381,11 @@ def _compute_vu(lat_ts, lat_0, long_0, delta_time, displacement_data=None, proje
                                                                     no_save=no_save)
     lat_long_distance = _lat_long_dist((new_lat + old_lat) / 2, earth_spheroid)
     # Uses average of distances.
-
-    # u = (_delta_longitude(new_long, old_long) *
-    #      _lat_long_dist(old_lat, earth_spheroid)[1] / (delta_time * 60) +
-    #      _delta_longitude(new_long, old_long) *
-    #      _lat_long_dist(new_lat, earth_spheroid)[1] / (delta_time * 60)) / 2
-
+    # v = (new_lat - old_lat) * (_lat_long_dist(old_lat, earth_spheroid)[0] +
+    #                            _lat_long_dist(new_lat, earth_spheroid)[0]) / (2 * (delta_time * 60))
+    # u = np.vectorize(_delta_longitude)(new_long, old_long) * (_lat_long_dist(old_lat, earth_spheroid)[1] +
+    #                                                           _lat_long_dist(new_lat, earth_spheroid)[1]) /\
+    #     (2 * (delta_time * 60))
     # Uses average of angles. units: meters/second. Distance is in meters, delta_time is in minutes.
     v = (new_lat - old_lat) * lat_long_distance[0] / (delta_time * 60)
     u = np.vectorize(_delta_longitude)(new_long, old_long) * lat_long_distance[1] / (delta_time * 60)

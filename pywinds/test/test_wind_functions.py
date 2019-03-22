@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 import unittest
 
 import numpy as np
@@ -178,3 +179,7 @@ def suite():
     mysuite = unittest.TestSuite()
     mysuite.addTest(loader.loadTestsFromTestCase(TestPywinds))
     return mysuite
+
+
+if __name__ == "__main__":
+    unittest.main()
