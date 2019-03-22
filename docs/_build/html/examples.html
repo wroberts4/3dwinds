@@ -180,7 +180,7 @@ Data saved to the directory /Desktop/in.flo_output
 </div>
 <div class="admonition note">
 <p class="first admonition-title">Note</p>
-<p class="last">If <strong>displacement_data</strong> is not provided, then every file ending in “.flo” where the script is read.</p>
+<p class="last">If <strong>displacement_data</strong> is not provided, then every file ending in “.flo” where the script was ran is read.</p>
 </div>
 <div class="admonition note">
 <p class="first admonition-title">Note</p>
@@ -206,13 +206,13 @@ $ pywinds/wind_info.sh 60 90 0 100 --j 0 --i 0 --pixel_size 4000
 $ ls
 in.flo        windtest.flo        windtest2.flo        pywinds
 $ pywinds/wind_info.sh 60 90 0 100 --j 0 --i 0 --pixel_size 4000
-  --center 90 0 --displacement_data *test*.flo --no_save
+  --center 90 0 --displacement_data \*test*.flo --no_save
 Reading displacements from: /Desktop/windtest.flo
 [63.36, -135.0, 51.8, 315.24, 36.78, -36.47]
 Reading displacements from: /Desktop/windtest2.flo
 [63.36, -135.0, 51.8, 315.24, 36.78, -36.47]
 $ pywinds/wind_info.sh 60 90 0 100 --pixel_size 4000
-  --center 90 0 --displacement_data *test*.flo
+  --center 90 0 --displacement_data \*test*.flo
 Reading displacements from: /Desktop/windtest.flo
 Data saved to the directory /Desktop/windtest.flo_output
 Reading displacements from: /Desktop/windtest2.flo
@@ -319,7 +319,7 @@ $ pywinds/wind_info.sh --center 90 0 60 --j 0 90 --i 0
 <div class="admonition note">
 <p class="first admonition-title">Note</p>
 <p class="last">For <strong>pixel_size</strong> to have positional arguments after it, it must be specified using two numbers
-(or else <strong>pixel_size</strong> would interpret the second, position, number as input since <strong>pixel_size</strong>
+(or else <strong>pixel_size</strong> would interpret the second number as input since <strong>pixel_size</strong>
 can take one or two numbers as arguments).</p>
 </div>
 </div>
@@ -526,7 +526,7 @@ center: None
 </div>
 <div class="section" id="error-messages">
 <span id="id5"></span><h2>Error messages<a class="headerlink" href="#error-messages" title="Permalink to this headline">¶</a></h2>
-<p>If not enough information if provided to a script, this error will be displayed:</p>
+<p>If not enough information is provided to a script, this kind of error will be displayed:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ pwd
 /Desktop
 $ ls
@@ -549,49 +549,81 @@ line 377, in _compute_vu
 line 325, in _compute_lat_long
     raise ValueError(&#39;Not enough information provided to create an area for projection&#39;)
 ValueError: Not enough information provided to create an area for projection
-
-usage: wind_info.py [-h] [--units str] [--shape height width]
+</pre></div>
+</div>
+<p>If incorrect commands were given:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>usage: wind_info.py [-h] [--center y x [units]]
+                    [--pixel_size dy [dx] [units]]
                     [--displacement_data filename] [--j int] [--i int]
-                    [--no_save] [--projection str] [--projection_spheroid str]
-                    [--earth_spheroid str] [--upper_left_extent y x [units]]
+                    [--no_save] [--units str]
+                    [--upper_left_extent y x [units]]
                     [--radius dy dx [units]]
                     [--area_extent y_ll x_ll y_ur x_ur [units]]
-                    [--center lat long [units]] [--pixel_size dy [dx] [units]]
+                    [--shape height width] [--projection str]
+                    [--projection_spheroid str] [--earth_spheroid str]
                     lat_ts lat_0 long_0 delta_time
+wind_info.py: error: unrecognized arguments: --no_sav
+(pywinds) ella:pywinds wroberts$ ./pywinds/wind_info.py 60 90 0 --pixel_size 400 --center 90 0
+usage: wind_info.py [-h] [--center y x [units]] [--pixel_size dy [dx] [units]]
+                    [--displacement_data filename] [--j int] [--i int]
+                    [--no_save] [--units str]
+                    [--upper_left_extent y x [units]]
+                    [--radius dy dx [units]]
+                    [--area_extent y_ll x_ll y_ur x_ur [units]]
+                    [--shape height width] [--projection str]
+                    [--projection_spheroid str] [--earth_spheroid str]
+                    lat_ts lat_0 long_0 delta_time
+wind_info.py: error: the following arguments are required: delta_time
+</pre></div>
+</div>
+<p>The help message for wind_info.py:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">usage</span><span class="p">:</span> <span class="n">wind_info</span><span class="o">.</span><span class="n">py</span> <span class="p">[</span><span class="o">-</span><span class="n">h</span><span class="p">]</span> <span class="p">[</span><span class="o">--</span><span class="n">center</span> <span class="n">y</span> <span class="n">x</span> <span class="p">[</span><span class="n">units</span><span class="p">]]</span> <span class="p">[</span><span class="o">--</span><span class="n">pixel_size</span> <span class="n">dy</span> <span class="p">[</span><span class="n">dx</span><span class="p">]</span> <span class="p">[</span><span class="n">units</span><span class="p">]]</span>
+                    <span class="p">[</span><span class="o">--</span><span class="n">displacement_data</span> <span class="n">filename</span><span class="p">]</span> <span class="p">[</span><span class="o">--</span><span class="n">j</span> <span class="nb">int</span><span class="p">]</span> <span class="p">[</span><span class="o">--</span><span class="n">i</span> <span class="nb">int</span><span class="p">]</span>
+                    <span class="p">[</span><span class="o">--</span><span class="n">no_save</span><span class="p">]</span> <span class="p">[</span><span class="o">--</span><span class="n">units</span> <span class="nb">str</span><span class="p">]</span>
+                    <span class="p">[</span><span class="o">--</span><span class="n">upper_left_extent</span> <span class="n">y</span> <span class="n">x</span> <span class="p">[</span><span class="n">units</span><span class="p">]]</span>
+                    <span class="p">[</span><span class="o">--</span><span class="n">radius</span> <span class="n">dy</span> <span class="n">dx</span> <span class="p">[</span><span class="n">units</span><span class="p">]]</span>
+                    <span class="p">[</span><span class="o">--</span><span class="n">area_extent</span> <span class="n">y_ll</span> <span class="n">x_ll</span> <span class="n">y_ur</span> <span class="n">x_ur</span> <span class="p">[</span><span class="n">units</span><span class="p">]]</span>
+                    <span class="p">[</span><span class="o">--</span><span class="n">shape</span> <span class="n">height</span> <span class="n">width</span><span class="p">]</span> <span class="p">[</span><span class="o">--</span><span class="n">projection</span> <span class="nb">str</span><span class="p">]</span>
+                    <span class="p">[</span><span class="o">--</span><span class="n">projection_spheroid</span> <span class="nb">str</span><span class="p">]</span> <span class="p">[</span><span class="o">--</span><span class="n">earth_spheroid</span> <span class="nb">str</span><span class="p">]</span>
+                    <span class="n">lat_ts</span> <span class="n">lat_0</span> <span class="n">long_0</span> <span class="n">delta_time</span>
 
-positional arguments:
-  lat_ts                projection latitude of true scale
-  lat_0                 projection latitude of origin
-  long_0                projection central meridian
-  delta_time            amount of time that separates both files in minutes
+<span class="n">positional</span> <span class="n">arguments</span><span class="p">:</span>
+  <span class="n">lat_ts</span>                <span class="n">projection</span> <span class="n">latitude</span> <span class="n">of</span> <span class="n">true</span> <span class="n">scale</span>
+  <span class="n">lat_0</span>                 <span class="n">projection</span> <span class="n">latitude</span> <span class="n">of</span> <span class="n">origin</span>
+  <span class="n">long_0</span>                <span class="n">projection</span> <span class="n">central</span> <span class="n">meridian</span>
+  <span class="n">delta_time</span>            <span class="n">amount</span> <span class="n">of</span> <span class="n">time</span> <span class="n">that</span> <span class="n">separates</span> <span class="n">both</span> <span class="n">files</span> <span class="ow">in</span> <span class="n">minutes</span>
 
-optional arguments:
-  -h, --help            show this help message and exit
-  --units str           units that all provided arguments that take units
-                        (except center) should be interpreted as
-  --shape height width  number of pixels in the y and x direction: height
-                        width
-  --displacement_data filename
-                        filename or list containing displacements
-  --j int               row to run calculations on
-  --i int               column to run calculations on
-  --no_save             print data to shell without saving
-  --projection str      name of projection that the image is in
-  --projection_spheroid str
-                        spheroid of projection
-  --earth_spheroid str  spheroid of Earth
-  --upper_left_extent y x [units]
-                        projection y and x coordinates of the upper left
-                        corner of the upper left pixel: y&lt;units&gt; x&lt;units&gt;
-  --radius dy dx [units]
-                        projection length from the center to the left/rightand
-                        top/bottom outer edges
-  --area_extent y_ll x_ll y_ur x_ur [units]
-                        area extent as a list
-  --center lat long [units]
-                        center of projection
-  --pixel_size dy [dx] [units]
-                        size of pixels
+<span class="n">optional</span> <span class="n">arguments</span><span class="p">:</span>
+  <span class="o">-</span><span class="n">h</span><span class="p">,</span> <span class="o">--</span><span class="n">help</span>            <span class="n">show</span> <span class="n">this</span> <span class="n">help</span> <span class="n">message</span> <span class="ow">and</span> <span class="n">exit</span>
+  <span class="o">--</span><span class="n">center</span> <span class="n">y</span> <span class="n">x</span> <span class="p">[</span><span class="n">units</span><span class="p">]</span>
+                        <span class="n">projection</span> <span class="n">y</span> <span class="ow">and</span> <span class="n">x</span> <span class="n">coordinate</span> <span class="n">of</span> <span class="n">the</span> <span class="n">center</span> <span class="n">of</span> <span class="n">area</span><span class="o">.</span>
+                        <span class="n">Default</span><span class="p">:</span> <span class="n">lat</span> <span class="n">long</span>
+  <span class="o">--</span><span class="n">pixel_size</span> <span class="n">dy</span> <span class="p">[</span><span class="n">dx</span><span class="p">]</span> <span class="p">[</span><span class="n">units</span><span class="p">]</span>
+                        <span class="n">projection</span> <span class="n">size</span> <span class="n">of</span> <span class="n">pixels</span> <span class="ow">in</span> <span class="n">the</span> <span class="n">y</span> <span class="ow">and</span> <span class="n">x</span> <span class="n">direction</span><span class="o">.</span><span class="n">If</span>
+                        <span class="n">pixels</span> <span class="n">are</span> <span class="n">square</span><span class="p">,</span> <span class="n">i</span><span class="o">.</span><span class="n">e</span><span class="o">.</span> <span class="n">dy</span> <span class="o">=</span> <span class="n">dx</span><span class="p">,</span> <span class="n">then</span> <span class="n">only</span> <span class="n">one</span> <span class="n">value</span>
+                        <span class="n">needs</span> <span class="n">to</span> <span class="n">be</span> <span class="n">entered</span>
+  <span class="o">--</span><span class="n">displacement_data</span> <span class="n">filename</span>
+                        <span class="n">filename</span> <span class="ow">or</span> <span class="nb">list</span> <span class="n">containing</span> <span class="n">displacements</span>
+  <span class="o">--</span><span class="n">j</span> <span class="nb">int</span>               <span class="n">row</span> <span class="n">to</span> <span class="n">run</span> <span class="n">calculations</span> <span class="n">on</span>
+  <span class="o">--</span><span class="n">i</span> <span class="nb">int</span>               <span class="n">column</span> <span class="n">to</span> <span class="n">run</span> <span class="n">calculations</span> <span class="n">on</span>
+  <span class="o">--</span><span class="n">no_save</span>             <span class="nb">print</span> <span class="n">data</span> <span class="n">to</span> <span class="n">shell</span> <span class="n">without</span> <span class="n">saving</span>
+  <span class="o">--</span><span class="n">units</span> <span class="nb">str</span>           <span class="n">units</span> <span class="n">that</span> <span class="nb">all</span> <span class="n">provided</span> <span class="n">arguments</span> <span class="n">that</span> <span class="n">take</span> <span class="n">units</span>
+                        <span class="p">(</span><span class="k">except</span> <span class="n">center</span><span class="p">)</span> <span class="n">should</span> <span class="n">be</span> <span class="n">interpreted</span> <span class="k">as</span>
+  <span class="o">--</span><span class="n">upper_left_extent</span> <span class="n">y</span> <span class="n">x</span> <span class="p">[</span><span class="n">units</span><span class="p">]</span>
+                        <span class="n">projection</span> <span class="n">y</span> <span class="ow">and</span> <span class="n">x</span> <span class="n">coordinates</span> <span class="n">of</span> <span class="n">the</span> <span class="n">upper</span> <span class="n">left</span>
+                        <span class="n">corner</span> <span class="n">of</span> <span class="n">the</span> <span class="n">upper</span> <span class="n">left</span> <span class="n">pixel</span>
+  <span class="o">--</span><span class="n">radius</span> <span class="n">dy</span> <span class="n">dx</span> <span class="p">[</span><span class="n">units</span><span class="p">]</span>
+                        <span class="n">projection</span> <span class="n">length</span> <span class="kn">from</span> <span class="nn">the</span> <span class="n">center</span> <span class="n">to</span> <span class="n">the</span> <span class="n">left</span><span class="o">/</span><span class="n">rightand</span>
+                        <span class="n">top</span><span class="o">/</span><span class="n">bottom</span> <span class="n">outer</span> <span class="n">edges</span>
+  <span class="o">--</span><span class="n">area_extent</span> <span class="n">y_ll</span> <span class="n">x_ll</span> <span class="n">y_ur</span> <span class="n">x_ur</span> <span class="p">[</span><span class="n">units</span><span class="p">]</span>
+                        <span class="n">area</span> <span class="n">extent</span> <span class="ow">in</span> <span class="n">projection</span> <span class="n">space</span><span class="p">:</span>
+                        <span class="n">lower_left_y</span><span class="p">,</span><span class="n">lower_left_x</span><span class="p">,</span> <span class="n">upper_right_y</span><span class="p">,</span>
+                        <span class="n">upper_right_x</span>
+  <span class="o">--</span><span class="n">shape</span> <span class="n">height</span> <span class="n">width</span>  <span class="n">number</span> <span class="n">of</span> <span class="n">pixels</span> <span class="ow">in</span> <span class="n">the</span> <span class="n">y</span> <span class="ow">and</span> <span class="n">x</span> <span class="n">direction</span>
+  <span class="o">--</span><span class="n">projection</span> <span class="nb">str</span>      <span class="n">name</span> <span class="n">of</span> <span class="n">projection</span> <span class="n">that</span> <span class="n">the</span> <span class="n">image</span> <span class="ow">is</span> <span class="ow">in</span>
+  <span class="o">--</span><span class="n">projection_spheroid</span> <span class="nb">str</span>
+                        <span class="n">spheroid</span> <span class="n">of</span> <span class="n">projection</span>
+  <span class="o">--</span><span class="n">earth_spheroid</span> <span class="nb">str</span>  <span class="n">spheroid</span> <span class="n">of</span> <span class="n">Earth</span>
 </pre></div>
 </div>
 <div class="admonition note">

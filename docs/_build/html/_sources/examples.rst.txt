@@ -27,7 +27,7 @@ Having multiple files in run directory::
 
 .. note::
 
-    If **displacement_data** is not provided, then every file ending in ".flo" where the script is read.
+    If **displacement_data** is not provided, then every file ending in ".flo" where the script was ran is read.
 
 .. note::
 
@@ -55,13 +55,13 @@ Specifying multiple files to run::
     $ ls
     in.flo        windtest.flo        windtest2.flo        pywinds
     $ pywinds/wind_info.sh 60 90 0 100 --j 0 --i 0 --pixel_size 4000
-      --center 90 0 --displacement_data *test*.flo --no_save
+      --center 90 0 --displacement_data \*test*.flo --no_save
     Reading displacements from: /Desktop/windtest.flo
     [63.36, -135.0, 51.8, 315.24, 36.78, -36.47]
     Reading displacements from: /Desktop/windtest2.flo
     [63.36, -135.0, 51.8, 315.24, 36.78, -36.47]
     $ pywinds/wind_info.sh 60 90 0 100 --pixel_size 4000
-      --center 90 0 --displacement_data *test*.flo
+      --center 90 0 --displacement_data \*test*.flo
     Reading displacements from: /Desktop/windtest.flo
     Data saved to the directory /Desktop/windtest.flo_output
     Reading displacements from: /Desktop/windtest2.flo
@@ -174,7 +174,7 @@ Shuffling order of arguments/options::
 .. note::
 
     For **pixel_size** to have positional arguments after it, it must be specified using two numbers
-    (or else **pixel_size** would interpret the second, position, number as input since **pixel_size**
+    (or else **pixel_size** would interpret the second number as input since **pixel_size**
     can take one or two numbers as arguments).
 
 .. _content_of_wind_info.nc:
@@ -405,7 +405,7 @@ Getting shape of displacement file using area.sh::
 Error messages
 --------------
 
-If not enough information if provided to a script, this error will be displayed::
+If not enough information is provided to a script, this kind of error will be displayed::
 
     $ pwd
     /Desktop
@@ -430,13 +430,43 @@ If not enough information if provided to a script, this error will be displayed:
         raise ValueError('Not enough information provided to create an area for projection')
     ValueError: Not enough information provided to create an area for projection
 
-    usage: wind_info.py [-h] [--units str] [--shape height width]
+
+If incorrect commands were given::
+
+    usage: wind_info.py [-h] [--center y x [units]]
+                        [--pixel_size dy [dx] [units]]
                         [--displacement_data filename] [--j int] [--i int]
-                        [--no_save] [--projection str] [--projection_spheroid str]
-                        [--earth_spheroid str] [--upper_left_extent y x [units]]
+                        [--no_save] [--units str]
+                        [--upper_left_extent y x [units]]
                         [--radius dy dx [units]]
                         [--area_extent y_ll x_ll y_ur x_ur [units]]
-                        [--center lat long [units]] [--pixel_size dy [dx] [units]]
+                        [--shape height width] [--projection str]
+                        [--projection_spheroid str] [--earth_spheroid str]
+                        lat_ts lat_0 long_0 delta_time
+    wind_info.py: error: unrecognized arguments: --no_sav
+    (pywinds) ella:pywinds wroberts$ ./pywinds/wind_info.py 60 90 0 --pixel_size 400 --center 90 0
+    usage: wind_info.py [-h] [--center y x [units]] [--pixel_size dy [dx] [units]]
+                        [--displacement_data filename] [--j int] [--i int]
+                        [--no_save] [--units str]
+                        [--upper_left_extent y x [units]]
+                        [--radius dy dx [units]]
+                        [--area_extent y_ll x_ll y_ur x_ur [units]]
+                        [--shape height width] [--projection str]
+                        [--projection_spheroid str] [--earth_spheroid str]
+                        lat_ts lat_0 long_0 delta_time
+    wind_info.py: error: the following arguments are required: delta_time
+
+
+The help message for wind_info.py::
+
+    usage: wind_info.py [-h] [--center y x [units]] [--pixel_size dy [dx] [units]]
+                        [--displacement_data filename] [--j int] [--i int]
+                        [--no_save] [--units str]
+                        [--upper_left_extent y x [units]]
+                        [--radius dy dx [units]]
+                        [--area_extent y_ll x_ll y_ur x_ur [units]]
+                        [--shape height width] [--projection str]
+                        [--projection_spheroid str] [--earth_spheroid str]
                         lat_ts lat_0 long_0 delta_time
 
     positional arguments:
@@ -447,31 +477,35 @@ If not enough information if provided to a script, this error will be displayed:
 
     optional arguments:
       -h, --help            show this help message and exit
-      --units str           units that all provided arguments that take units
-                            (except center) should be interpreted as
-      --shape height width  number of pixels in the y and x direction: height
-                            width
+      --center y x [units]
+                            projection y and x coordinate of the center of area.
+                            Default: lat long
+      --pixel_size dy [dx] [units]
+                            projection size of pixels in the y and x direction.If
+                            pixels are square, i.e. dy = dx, then only one value
+                            needs to be entered
       --displacement_data filename
                             filename or list containing displacements
       --j int               row to run calculations on
       --i int               column to run calculations on
       --no_save             print data to shell without saving
-      --projection str      name of projection that the image is in
-      --projection_spheroid str
-                            spheroid of projection
-      --earth_spheroid str  spheroid of Earth
+      --units str           units that all provided arguments that take units
+                            (except center) should be interpreted as
       --upper_left_extent y x [units]
                             projection y and x coordinates of the upper left
-                            corner of the upper left pixel: y<units> x<units>
+                            corner of the upper left pixel
       --radius dy dx [units]
                             projection length from the center to the left/rightand
                             top/bottom outer edges
       --area_extent y_ll x_ll y_ur x_ur [units]
-                            area extent as a list
-      --center lat long [units]
-                            center of projection
-      --pixel_size dy [dx] [units]
-                            size of pixels
+                            area extent in projection space:
+                            lower_left_y,lower_left_x, upper_right_y,
+                            upper_right_x
+      --shape height width  number of pixels in the y and x direction
+      --projection str      name of projection that the image is in
+      --projection_spheroid str
+                            spheroid of projection
+      --earth_spheroid str  spheroid of Earth
 
 
 .. note::

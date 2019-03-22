@@ -151,12 +151,22 @@ def _not_none(args):
     return False
 
 
-def _create_area(lat_ts, lat_0, long_0, projection='stere', area_extent=None, shape=None, center=None, pixel_size=None,
-                 upper_left_extent=None, radius=None, projection_spheroid=None, units='m', displacement_data=None,
+def _create_area(lat_ts, lat_0, long_0, projection=None, area_extent=None, shape=None, center=None, pixel_size=None,
+                 upper_left_extent=None, radius=None, projection_spheroid=None, units=None, displacement_data=None,
                  no_save=True):
     """Creates area from given information."""
-    if not isinstance(projection, str):
-        raise ValueError('projection must be a string, but instead was {0} {1}'.format(projection, type(projection)))
+    if projection is None:
+        projection = 'stere'
+    if units is None:
+        units = 'm'
+    if projection_spheroid is None:
+        projection_spheroid = Geod(ellps='WGS84')
+    elif isinstance(projection_spheroid, str):
+        projection_spheroid = Geod(ellps=projection_spheroid)
+    else:
+        raise ValueError(
+            'projection_spheroid must be a string or Geod type, but instead was {0} {1}'.format(projection_spheroid,
+                type(projection_spheroid)))
     # Center is given in (lat, long) order, but create_area_def needs it in (long, lat) order.
     if area_extent is not None:
         area_extent_ll, area_extent_ur = area_extent[0:2], area_extent[2:4]
@@ -175,30 +185,16 @@ def _create_area(lat_ts, lat_0, long_0, projection='stere', area_extent=None, sh
     # Makes center defualt to degrees
     if center is not None and not isinstance(center, xarray.DataArray):
         center = xarray.DataArray(center, attrs={'units': 'degrees'})
-    if projection_spheroid is None:
-        projection_spheroid = Geod(ellps='WGS84')
-    elif isinstance(projection_spheroid, str):
-        projection_spheroid = Geod(ellps=projection_spheroid)
-    else:
-        raise ValueError(
-            'projection_spheroid must be a string or Geod type, but instead was {0} {1}'.format(projection_spheroid,
-                type(projection_spheroid)))
     proj_dict = proj4_str_to_dict(
         '+lat_ts={0} +lat_0={1} +lon_0={2} +proj={3} {4}'.format(lat_ts, lat_0, long_0, projection,
                                                                  projection_spheroid.initstring))
-    a = proj_dict.get('a')
-    f = proj_dict.get('f')
     # Object that contains area information.
     area_definition = create_area_def('pywinds', proj_dict, area_extent=area_extent, shape=shape, resolution=pixel_size,
                                       center=center, upper_left_extent=upper_left_extent, radius=radius, units=units)
     # Below is logic for print and save data.
+    area_extent = area_definition.area_extent
     # Function that handles projection to lat/long transformation.
     p = Proj(proj_dict)
-    if abs(f) > 0.0:
-        i_f = 1 / f
-    else:
-        i_f = 0
-    area_extent = area_definition.area_extent
     if area_extent is not None:
         center = ((area_extent[1] + area_extent[3]) / 2, (area_extent[0] + area_extent[2]) / 2)
         # Both in degrees
@@ -218,8 +214,14 @@ def _create_area(lat_ts, lat_0, long_0, projection='stere', area_extent=None, sh
         pixel_size = area_definition.resolution
     else:
         pixel_size = None
+    a = proj_dict.get('a')
+    f = proj_dict.get('f')
     b = a * (1 - f)
     e = (1 - b ** 2 / a ** 2) ** .5
+    if abs(f) > 0.0:
+        i_f = 1 / f
+    else:
+        i_f = 0
     if no_save is False:
         if displacement_data is None:
             raise ValueError('Cannot save data without displacement_data')
@@ -284,10 +286,10 @@ def _find_displacements(displacement_data=None, j=None, i=None, shape=None, no_s
     if j is not None or i is not None:
         j, i = _extrapolate_j_i(j, i, shape)
         j_displacement, i_displacement = j_displacement[j * shape[0] + i], i_displacement[j * shape[0] + i]
-    dims = None
-    if np.size(j_displacement) != 1:
-        dims = ['y', 'x']
     if no_save is False:
+        dims = None
+        if np.size(j_displacement) != 1:
+            dims = ['y', 'x']
         _save_data(displacement_data, (
             xarray.DataArray(_reshape(j_displacement, shape), name='j_displacement', dims=dims,
                              attrs={'standard_name': 'divergence_of_wind',
@@ -307,9 +309,9 @@ def _reshape(array, shape):
     return np.reshape(array, shape)
 
 
-def _compute_lat_long(lat_ts, lat_0, long_0, displacement_data=None, projection='stere', j=None, i=None,
+def _compute_lat_long(lat_ts, lat_0, long_0, displacement_data=None, projection=None, j=None, i=None,
                       area_extent=None, shape=None, center=None, pixel_size=None, upper_left_extent=None, radius=None,
-                      units='m', projection_spheroid=None, no_save=True):
+                      units=None, projection_spheroid=None, no_save=True):
     """Computes the latitude and longitude given an area and (j, i) values."""
     if not isinstance(lat_0, (int, float)) or not isinstance(long_0, (int, float)):
         raise ValueError(
@@ -336,12 +338,12 @@ def _compute_lat_long(lat_ts, lat_0, long_0, displacement_data=None, projection=
     else:
         old_lat = new_lat
         old_long = new_long
-    dims = None
-    if np.size(old_lat) != 1:
-        dims = ['y', 'x']
     if no_save is False:
         if displacement_data is None:
             raise ValueError('Cannot save data without displacement_data')
+        dims = None
+        if np.size(old_lat) != 1:
+            dims = ['y', 'x']
         _save_data(displacement_data, (xarray.DataArray(_reshape(new_lat, shape), name='new_latitude', dims=dims,
                                                         attrs={'standard_name': 'latitude',
                                                                'grid_mapping_name': 'polar_stereographic',
@@ -361,9 +363,9 @@ def _compute_lat_long(lat_ts, lat_0, long_0, displacement_data=None, projection=
     return shape, new_lat, new_long, old_lat, old_long
 
 
-def _compute_vu(lat_ts, lat_0, long_0, delta_time, displacement_data=None, projection='stere', j=None, i=None,
+def _compute_vu(lat_ts, lat_0, long_0, delta_time, displacement_data=None, projection=None, j=None, i=None,
                 area_extent=None, shape=None, center=None, pixel_size=None, upper_left_extent=None, radius=None,
-                units='m', projection_spheroid=None, earth_spheroid=None, no_save=True):
+                units=None, projection_spheroid=None, earth_spheroid=None, no_save=True):
     if displacement_data is None:
         raise ValueError('displacement_data is required to find v and u but was not provided.')
     shape, new_lat, new_long, old_lat, old_long = _compute_lat_long(lat_ts, lat_0, long_0,
@@ -386,10 +388,10 @@ def _compute_vu(lat_ts, lat_0, long_0, delta_time, displacement_data=None, proje
     # Uses average of angles. units: meters/second. Distance is in meters, delta_time is in minutes.
     v = (new_lat - old_lat) * lat_long_distance[0] / (delta_time * 60)
     u = np.vectorize(_delta_longitude)(new_long, old_long) * lat_long_distance[1] / (delta_time * 60)
-    dims = None
-    if np.size(v) != 1:
-        dims = ['y', 'x']
     if no_save is False:
+        dims = None
+        if np.size(v) != 1:
+            dims = ['y', 'x']
         _save_data(displacement_data, (xarray.DataArray(_reshape(v, shape), name='v', dims=dims,
                                                         attrs={'standard_name': 'northward_wind',
                                                                'grid_mapping_name': 'polar_stereographic',
@@ -401,9 +403,9 @@ def _compute_vu(lat_ts, lat_0, long_0, delta_time, displacement_data=None, proje
     return shape, v, u, new_lat, new_long
 
 
-def _compute_velocity(lat_ts, lat_0, long_0, delta_time, displacement_data=None, projection='stere', j=None, i=None,
+def _compute_velocity(lat_ts, lat_0, long_0, delta_time, displacement_data=None, projection=None, j=None, i=None,
                       area_extent=None, shape=None, center=None, pixel_size=None, upper_left_extent=None, radius=None,
-                      units='m', projection_spheroid=None, earth_spheroid=None, no_save=True):
+                      units=None, projection_spheroid=None, earth_spheroid=None, no_save=True):
     shape, v, u, new_lat, new_long = _compute_vu(lat_ts, lat_0, long_0, delta_time, displacement_data=displacement_data,
                                                  projection=projection, j=j, i=i, area_extent=area_extent, shape=shape,
                                                  center=center, pixel_size=pixel_size,
@@ -411,10 +413,10 @@ def _compute_velocity(lat_ts, lat_0, long_0, delta_time, displacement_data=None,
                                                  projection_spheroid=projection_spheroid, earth_spheroid=earth_spheroid,
                                                  no_save=no_save)
     speed, angle = (u ** 2 + v ** 2) ** .5, ((90 - np.arctan2(v, u) * 180 / np.pi) + 360) % 360
-    dims = None
-    if np.size(speed) != 1:
-        dims = ['y', 'x']
     if no_save is False:
+        dims = None
+        if np.size(speed) != 1:
+            dims = ['y', 'x']
         _save_data(displacement_data, (xarray.DataArray(_reshape(speed, shape), name='speed', dims=dims,
                                                         attrs={'standard_name': 'wind_speed',
                                                                'grid_mapping_name': 'polar_stereographic',
@@ -428,15 +430,16 @@ def _compute_velocity(lat_ts, lat_0, long_0, delta_time, displacement_data=None,
     return shape, speed, angle, v, u, new_lat, new_long
 
 
-def _find_displacements_and_area(lat_ts=None, lat_0=None, long_0=None, displacement_data=None, projection='stere',
+def _find_displacements_and_area(lat_ts=None, lat_0=None, long_0=None, displacement_data=None, projection=None,
                                  j=None, i=None, area_extent=None, shape=None, center=None, pixel_size=None,
-                                 upper_left_extent=None, radius=None, units='m', projection_spheroid=None,
+                                 upper_left_extent=None, radius=None, units=None, projection_spheroid=None,
                                  no_save=True):
     """Dynamically finds displacements and area of projection"""
     area_definition = None
     area_data = None
     # Allows just displacements to be called without raising an area not found axception.
-    has_area_args = lat_ts is not None or lat_0 is not None or long_0 is not None
+    has_area_args = _not_none([lat_ts, lat_0, long_0, projection, area_extent, center, pixel_size,
+                               upper_left_extent, radius, units, projection_spheroid])
     # Try to get shape from area.
     if has_area_args:
         try:
@@ -463,8 +466,8 @@ def _find_displacements_and_area(lat_ts=None, lat_0=None, long_0=None, displacem
     return shape, j_displacement, i_displacement, area_definition, area_data
 
 
-def area(lat_ts, lat_0, long_0, displacement_data=None, projection='stere', area_extent=None, shape=None, center=None,
-         pixel_size=None, upper_left_extent=None, radius=None, units='m', projection_spheroid=None):
+def area(lat_ts, lat_0, long_0, displacement_data=None, projection=None, area_extent=None, shape=None, center=None,
+         pixel_size=None, upper_left_extent=None, radius=None, units=None, projection_spheroid=None):
     """Dynamically computes area of projection.
 
     Parameters
@@ -523,9 +526,9 @@ def area(lat_ts, lat_0, long_0, displacement_data=None, projection='stere', area
                                         units=units, projection_spheroid=projection_spheroid)[4]
 
 
-def displacements(lat_ts=None, lat_0=None, long_0=None, displacement_data=None, projection='stere', j=None, i=None,
+def displacements(lat_ts=None, lat_0=None, long_0=None, displacement_data=None, projection=None, j=None, i=None,
                   area_extent=None, shape=None, center=None, pixel_size=None, upper_left_extent=None, radius=None,
-                  units='m', projection_spheroid=None):
+                  units=None, projection_spheroid=None):
     """Dynamically computes displacements.
 
     Parameters
@@ -579,11 +582,6 @@ def displacements(lat_ts=None, lat_0=None, long_0=None, displacement_data=None, 
     """
     if displacement_data is None:
         raise ValueError('displacement_data is required to find displacements but was not provided.')
-    if (not isinstance(lat_0, (int, float)) or not isinstance(long_0, (int, float))) and _not_none(
-            [lat_0, long_0, area_extent, center, pixel_size, projection_spheroid]):
-        raise ValueError('If lat_0 or long_0 were provided they both must be provided,'
-                         'but instead were {0} {1} and {2} {3}  respectively'.format(lat_0, type(lat_0), long_0,
-                                                                                     type(long_0)))
     shape, j_displacement, i_displacement = _find_displacements_and_area(lat_ts=lat_ts, lat_0=lat_0, long_0=long_0,
                                                                          displacement_data=displacement_data,
                                                                          projection=projection, j=j, i=i,
@@ -595,8 +593,8 @@ def displacements(lat_ts=None, lat_0=None, long_0=None, displacement_data=None, 
     return np.array((_reshape(j_displacement, shape), _reshape(i_displacement, shape)))
 
 
-def velocity(lat_ts, lat_0, long_0, delta_time, displacement_data=None, projection='stere', j=None, i=None,
-             area_extent=None, shape=None, center=None, pixel_size=None, upper_left_extent=None, radius=None, units='m',
+def velocity(lat_ts, lat_0, long_0, delta_time, displacement_data=None, projection=None, j=None, i=None,
+             area_extent=None, shape=None, center=None, pixel_size=None, upper_left_extent=None, radius=None, units=None,
              projection_spheroid=None, earth_spheroid=None):
     """Computes the speed and angle of the wind given an area and pixel-displacement.
 
@@ -662,8 +660,8 @@ def velocity(lat_ts, lat_0, long_0, delta_time, displacement_data=None, projecti
     return np.array((_reshape(speed, shape), _reshape(angle, shape)))
 
 
-def vu(lat_ts, lat_0, long_0, delta_time, displacement_data=None, projection='stere', j=None, i=None, area_extent=None,
-       shape=None, center=None, pixel_size=None, upper_left_extent=None, radius=None, units='m',
+def vu(lat_ts, lat_0, long_0, delta_time, displacement_data=None, projection=None, j=None, i=None, area_extent=None,
+       shape=None, center=None, pixel_size=None, upper_left_extent=None, radius=None, units=None,
        projection_spheroid=None, earth_spheroid=None):
     """Computes the v and u components of the wind given an area and pixel-displacement.
 
@@ -727,8 +725,8 @@ def vu(lat_ts, lat_0, long_0, delta_time, displacement_data=None, projection='st
     return np.array((_reshape(v, shape), _reshape(u, shape)))
 
 
-def lat_long(lat_ts, lat_0, long_0, displacement_data=None, projection='stere', j=None, i=None, area_extent=None,
-             shape=None, center=None, pixel_size=None, upper_left_extent=None, radius=None, units='m',
+def lat_long(lat_ts, lat_0, long_0, displacement_data=None, projection=None, j=None, i=None, area_extent=None,
+             shape=None, center=None, pixel_size=None, upper_left_extent=None, radius=None, units=None,
              projection_spheroid=None):
     """Computes the latitude and longitude given an area and (j, i) values.
 
@@ -793,9 +791,9 @@ def lat_long(lat_ts, lat_0, long_0, displacement_data=None, projection='stere', 
     return np.array((_reshape(old_lat, shape), _reshape(old_long, shape)))
 
 
-def wind_info(lat_ts, lat_0, long_0, delta_time, displacement_data=None, projection='stere', j=None, i=None,
+def wind_info(lat_ts, lat_0, long_0, delta_time, displacement_data=None, projection=None, j=None, i=None,
               area_extent=None, shape=None, center=None, pixel_size=None, upper_left_extent=None, radius=None,
-              units='m', projection_spheroid=None, earth_spheroid=None, no_save=False):
+              units=None, projection_spheroid=None, earth_spheroid=None, no_save=False):
     """Computes the latitude, longitude, velocity, angle, v, and u of the wind
 
     Parameters

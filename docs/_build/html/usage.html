@@ -88,7 +88,7 @@
 <li class="toctree-l2"><a class="reference internal" href="#save-format">Save format</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#advanced-arguments">Advanced arguments</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#additional-utility-methods">Additional utility methods</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#understanding-usage-text-from-scripts">Understanding usage text from scripts</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#understanding-error-messages-from-scripts">Understanding error messages from scripts</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="examples.html">Examples</a></li>
@@ -336,7 +336,7 @@ it attempts to be found from <strong>displacement_data</strong></li>
 <dt><strong>units</strong>: Units that provided arguments should be interpreted as. This can be</dt>
 <dd>one of ‘deg’, ‘degrees’, ‘rad’, ‘radians’, ‘meters’, ‘metres’, and any
 parameter supported by the <a class="reference external" href="https://proj4.org/apps/cs2cs.html#cmdoption-cs2cs-lu">cs2cs -lu</a>
-command. Units are determined in the following priority:<ol class="last arabic">
+command (see <a class="reference external" href="_static/cs2cs_lu.png"><img alt="cs2cs_lu.png" src="cs2cs_lu" /></a>). Units are determined in the following priority:<ol class="last arabic">
 <li>units expressed with variables via &#64;your_units (see ‘Using units’ under
 <a class="reference internal" href="examples.html#examples-of-wind-info-sh"><span class="std std-ref">Examples of wind_info.sh</span></a> for examples)</li>
 <li>units passed to <code class="docutils literal notranslate"><span class="pre">--units</span></code> (exluding center)</li>
@@ -438,14 +438,23 @@ center: (90.0, 0.0)
 <p>You can use area.sh on a file containing displacements to see what shape it is,
 even if the area is not completely defined, as shown in <a class="reference internal" href="examples.html#advanced-examples"><span class="std std-ref">Advanced examples</span></a>.</p>
 </div>
-<div class="section" id="understanding-usage-text-from-scripts">
-<h2>Understanding usage text from scripts<a class="headerlink" href="#understanding-usage-text-from-scripts" title="Permalink to this headline">¶</a></h2>
-<p>All error messages follow this format:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">traceback</span>
-<span class="n">error</span>
-<span class="n">usage</span>
-<span class="n">arguments</span><span class="o">/</span><span class="n">options</span>
+<div class="section" id="understanding-error-messages-from-scripts">
+<h2>Understanding error messages from scripts<a class="headerlink" href="#understanding-error-messages-from-scripts" title="Permalink to this headline">¶</a></h2>
+<p>All error messages follow one of these two formats:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="mi">1</span><span class="p">)</span> <span class="n">traceback</span>
+   <span class="n">error</span>
+
+<span class="mi">2</span><span class="p">)</span> <span class="n">usage</span>
+   <span class="n">error</span>
 </pre></div>
+</div>
+<p>The first implies that the command line was understood, but an error occurred down the line due to incorrect
+data, not enough information provided, etc.</p>
+<p>The second implies that there was a problem reading the command line: not all positional arguments provided,
+incorrect formatting, etc.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">Remember that you can always enter <strong>-h</strong> or <strong>–help</strong> for more usage detail.</p>
 </div>
 <p>Please see <a class="reference internal" href="examples.html#error-messages"><span class="std std-ref">Error messages</span></a> in Examples.</p>
 </div>

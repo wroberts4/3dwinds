@@ -175,6 +175,9 @@ wind_info.nc:
 Advanced arguments
 ------------------
 
+.. |cs2cs_lu.png| image:: cs2cs_lu
+   :target: _static/cs2cs_lu.png
+
 * **projection**: Name of projection that the image is in (stere, laea, merc, etc). Defaults to stere
 * **projection_spheroid**: Spheroid of projection (WGS84, sphere, etc). Defaults to WGS84
 * **earth_spheroid**: Spheroid of Earth (WGS84, sphere, etc). Defaults to WGS84
@@ -185,7 +188,7 @@ Advanced arguments
 * **units**: Units that provided arguments should be interpreted as. This can be
     one of 'deg', 'degrees', 'rad', 'radians', 'meters', 'metres', and any
     parameter supported by the `cs2cs -lu <https://proj4.org/apps/cs2cs.html#cmdoption-cs2cs-lu>`_
-    command. Units are determined in the following priority:
+    command (see |cs2cs_lu.png|). Units are determined in the following priority:
 
     1. units expressed with variables via @your_units (see 'Using units' under
        :ref:`examples_of_wind_info.sh` for examples)
@@ -290,14 +293,28 @@ They have similar or identical arguments to wind_info.sh
 You can use area.sh on a file containing displacements to see what shape it is,
 even if the area is not completely defined, as shown in :ref:`advanced_examples`.
 
-Understanding usage text from scripts
--------------------------------------
+Understanding error messages from scripts
+-----------------------------------------
 
-All error messages follow this format::
+All error messages follow one of these two formats::
 
-    traceback
-    error
-    usage
-    arguments/options
+    1) traceback
+       error
+
+    2) usage
+       error
+
+
+The first implies that the command line was understood, but an error occurred down the line due to incorrect
+data, not enough information provided, etc.
+
+The second implies that there was a problem reading the command line: not all positional arguments provided,
+incorrect formatting, etc.
+
+.. note::
+
+    Remember that you can always enter **-h** or **--help** for more usage detail.
 
 Please see :ref:`error_messages` in Examples.
+
+
