@@ -42,6 +42,7 @@ def _save_data(displacement_filename, data_list, text_shape=None, mode='a'):
             if np.size(data) == 1:
                 data = np.ravel(data)
             np.savetxt(text_path, data.reshape(text_shape), fmt='%.2f', delimiter=',')
+        # Area definition.
         else:
             data = data.attrs
             with open(text_path, 'w') as file:
@@ -237,9 +238,9 @@ def _create_area(lat_ts, lat_0, long_0, projection=None, area_extent=None, shape
                  'resolution_at_standard_parallel': np.ravel(pixel_size)[0], 'false_easting': 0.0,
                  'false_northing': 0.0, 'semi_major_axis': a, 'semi_minor_axis': b, 'inverse_flattening': i_f}
         _save_data(displacement_data, [xarray.DataArray(None, name='polar_stereographic', attrs=attrs)])
-    return {'projection': projection, 'lat_ts': lat_ts, 'lat_0': lat_0, 'long_0': long_0, 'equatorial_radius': a,
-            'eccentricity': e, 'inverse_flattening': i_f, 'shape': shape, 'area_extent': area_extent,
-            'pixel_size': pixel_size, 'center': center}, area_definition
+    return {'projection': projection, 'lat-ts': lat_ts, 'lat-0': lat_0, 'long-0': long_0, 'equatorial-radius': a,
+            'eccentricity': e, 'inverse-flattening': i_f, 'shape': shape, 'area-extent': area_extent,
+            'pixel-size': pixel_size, 'center': center}, area_definition
 
 
 def _find_displacements(displacement_data=None, j=None, i=None, shape=None, no_save=True):

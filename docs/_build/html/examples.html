@@ -165,13 +165,13 @@
 /Desktop
 $ ls
 in.flo        test.flo        pywinds
-$ pywinds/wind_info.sh 60 90 0 100 --j 0 --i 0 --pixel_size 4000
-  --center 90 0 --no_save
+$ pywinds/wind_info.sh 60 90 0 100 --j 0 --i 0 --pixel-size 4000
+  --center 90 0 --no-save
 Reading displacements from: /Desktop/test.flo
 [63.36, -135.0, 51.8, 315.24, 36.78, -36.47]
 Reading displacements from: /Desktop/in.flo
 [63.36, -135.0, 51.8, 315.24, 36.78, -36.47]
-$ pywinds/wind_info.sh 60 90 0 100 --pixel_size 4000 --center 90 0
+$ pywinds/wind_info.sh 60 90 0 100 --pixel-size 4000 --center 90 0
 Reading displacements from: /Desktop/test.flo
 Data saved to the directory /Desktop/test.flo_output
 Reading displacements from: /Desktop/in.flo
@@ -180,7 +180,7 @@ Data saved to the directory /Desktop/in.flo_output
 </div>
 <div class="admonition note">
 <p class="first admonition-title">Note</p>
-<p class="last">If <strong>displacement_data</strong> is not provided, then every file ending in “.flo” where the script was ran is read.</p>
+<p class="last">If <strong>displacement-data</strong> is not provided, then every file ending in “.flo” where the script was ran is read.</p>
 </div>
 <div class="admonition note">
 <p class="first admonition-title">Note</p>
@@ -192,12 +192,12 @@ to /Desktop/test.flo_output and /Desktop/in.flo_output.</p>
 /Desktop
 $ ls
 in.flo        test.flo        pywinds
-$ pywinds/wind_info.sh 60 90 0 100 --j 0 --i 0 --pixel_size 4000
-  --center 90 0 --displacement_data in.flo --no_save
+$ pywinds/wind_info.sh 60 90 0 100 --j 0 --i 0 --pixel-size 4000
+  --center 90 0 --displacement-data in.flo --no-save
 [63.36, -135.0, 51.8, 315.24, 36.78, -36.47]
 
-$ pywinds/wind_info.sh 60 90 0 100 --j 0 --i 0 --pixel_size 4000
-  --center 90 0 --displacement_data path_to_other_directory/in.flo --no_save
+$ pywinds/wind_info.sh 60 90 0 100 --j 0 --i 0 --pixel-size 4000
+  --center 90 0 --displacement-data path_to_other_directory/in.flo --no-save
 </pre></div>
 </div>
 <p>Specifying multiple files to run:</p>
@@ -205,14 +205,14 @@ $ pywinds/wind_info.sh 60 90 0 100 --j 0 --i 0 --pixel_size 4000
 /Desktop
 $ ls
 in.flo        windtest.flo        windtest2.flo        pywinds
-$ pywinds/wind_info.sh 60 90 0 100 --j 0 --i 0 --pixel_size 4000
-  --center 90 0 --displacement_data \*test*.flo --no_save
+$ pywinds/wind_info.sh 60 90 0 100 --j 0 --i 0 --pixel-size 4000
+  --center 90 0 --displacement-data \*test*.flo --no-save
 Reading displacements from: /Desktop/windtest.flo
 [63.36, -135.0, 51.8, 315.24, 36.78, -36.47]
 Reading displacements from: /Desktop/windtest2.flo
 [63.36, -135.0, 51.8, 315.24, 36.78, -36.47]
-$ pywinds/wind_info.sh 60 90 0 100 --pixel_size 4000
-  --center 90 0 --displacement_data \*test*.flo
+$ pywinds/wind_info.sh 60 90 0 100 --pixel-size 4000
+  --center 90 0 --displacement-data \*test*.flo
 Reading displacements from: /Desktop/windtest.flo
 Data saved to the directory /Desktop/windtest.flo_output
 Reading displacements from: /Desktop/windtest2.flo
@@ -224,30 +224,30 @@ Data saved to the directory /Desktop/windtest2.flo_output
 /Desktop
 $ ls
 in.flo        pywinds
-$ pywinds/wind_info.sh 60 90 0 100 --j 0 --i 0 --pixel_size 4000
-  --center 90 0 --projection_spheroid sphere --no_save
+$ pywinds/wind_info.sh 60 90 0 100 --j 0 --i 0 --pixel-size 4000
+  --center 90 0 --projection-spheroid sphere --no-save
 [63.26, -135.0, 51.93, 315.2, 36.85, -36.59]
-$ pywinds/wind_info.sh 60 90 0 100 --j 0 --i 0 --pixel_size 4000 --center 90 0
-  --projection_spheroid sphere --earth_spheroid sphere --no_save
+$ pywinds/wind_info.sh 60 90 0 100 --j 0 --i 0 --pixel-size 4000 --center 90 0
+  --projection-spheroid sphere --earth-spheroid sphere --no-save
 [63.26, -135.0, 51.77, 315.24, 36.76, -36.46]
 </pre></div>
 </div>
 <p>Using other advanced args:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ pywinds/wind_info.sh 60 90 0 100 --j 0 --i 0
-  --radius 2000000 2000000 --center 90 0 --no_save
+  --radius 2000000 2000000 --center 90 0 --no-save
 [63.36, -135.0, 51.8, 315.24, 36.78, -36.47]
 
 $ pywinds/wind_info.sh 60 90 0 100 --j 0 --i 0
-  --upper_left_extent 2000000 -2000000 --center 90 0 --no_save
+  --upper-left-extent 2000000 -2000000 --center 90 0 --no-save
 [63.36, -135.0, 51.8, 315.24, 36.78, -36.47]
 
 $ pywinds/wind_info.sh 60 90 0 100 --j 0 --i 0
-  --area_extent -2000000 -2000000 2000000 2000000 --no_save
+  --area-extent -2000000 -2000000 2000000 2000000 --no-save
 [63.36, -135.0, 51.8, 315.24, 36.78, -36.47]
 
 $ pywinds/wind_info.sh 60 90 0 100 --j 0 --i 0
-  --upper_left_extent 2000000 -2000000
-  --radius 2000000 2000000 --no_save
+  --upper-left-extent 2000000 -2000000
+  --radius 2000000 2000000 --no-save
 [63.36, -135.0, 51.8, 315.24, 36.78, -36.47]
 </pre></div>
 </div>
@@ -258,42 +258,42 @@ $ ls
 in.flo        pywinds
 
 $ pywinds/wind_info.sh 60 90 0 100 --j 0 --i 0
-  --pixel_size 4000 --center 90 0 --no_save
+  --pixel-size 4000 --center 90 0 --no-save
 [63.36, -135.0, 51.8, 315.24, 36.78, -36.47]
 
 $ pywinds/wind_info.sh 60 90 0 100 --j 0 --i 0
-  --pixel_size 4 --center 90 0 --units km --no_save
+  --pixel-size 4 --center 90 0 --units km --no-save
 [63.36, -135.0, 51.8, 315.24, 36.78, -36.47]
 
 $ pywinds/wind_info.sh 60 90 0 100 --j 0 --i 0
-  --pixel_size 4 km --center 90 0 --no_save
+  --pixel-size 4 km --center 90 0 --no-save
 [63.36, -135.0, 51.8, 315.24, 36.78, -36.47]
 
 $ pywinds/wind_info.sh 60 90 0 100 --j 0 --i 0
-  --pixel_size 4 --center 0 0 m  --units km --no_save
+  --pixel-size 4 --center 0 0 m  --units km --no-save
 [63.36, -135.0, 51.8, 315.24, 36.78, -36.47]
 
 $ pywinds/wind_info.sh 60 90 0 100 --j 0 --i 0
-  --pixel_size 4 km --center 0 0 m --no_save
+  --pixel-size 4 km --center 0 0 m --no-save
 [63.36, -135.0, 51.8, 315.24, 36.78, -36.47]
 
 $ pywinds/wind_info.sh 60 90 0 100 --j 0 --i 0
-  --pixel_size 4000 m --center 90 0 --units km --no_save
+  --pixel-size 4000 m --center 90 0 --units km --no-save
 [63.36, -135.0, 51.8, 315.24, 36.78, -36.47]
 
 $ pywinds/wind_info.sh 60 90 0 100 --j 0 --i 0
-  --upper_left_extent 2000 -2000 km
-  --radius 2000 2000 km --no_save
+  --upper-left-extent 2000 -2000 km
+  --radius 2000 2000 km --no-save
 [63.36, -135.0, 51.8, 315.24, 36.78, -36.47]
 
 $ pywinds/wind_info.sh 60 90 0 100 --j 0 --i 0
-  --upper_left_extent 2000 -2000
-  --radius 2000 2000 --units km --no_save
+  --upper-left-extent 2000 -2000
+  --radius 2000 2000 --units km --no-save
 [63.36, -135.0, 51.8, 315.24, 36.78, -36.47]
 
 $ pywinds/wind_info.sh 60 90 0 100 --j 0 --i 0
-  --upper_left_extent 63.335 -135 deg
-  --radius 2000 2000 --units km --no_save
+  --upper-left-extent 63.335 -135 deg
+  --radius 2000 2000 --units km --no-save
 [63.36, -135.0, 51.8, 315.24, 36.78, -36.47]
 </pre></div>
 </div>
@@ -308,18 +308,18 @@ $ ls
 in.flo        pywinds
 
 $ pywinds/wind_info.sh --center 90 0 --j 0 --i 0
-  --no_save --pixel_size 4000 --i 0 60 90 0 100
+  --no-save --pixel-size 4000 --i 0 60 90 0 100
 [63.36, -135.0, 51.8, 315.24, 36.78, -36.47]
 
 $ pywinds/wind_info.sh --center 90 0 60 --j 0 90 --i 0
-  0 --no_save --pixel_size 4000 4000 100 --i 0
+  0 --no-save --pixel-size 4000 4000 100 --i 0
 [63.36, -135.0, 51.8, 315.24, 36.78, -36.47]
 </pre></div>
 </div>
 <div class="admonition note">
 <p class="first admonition-title">Note</p>
-<p class="last">For <strong>pixel_size</strong> to have positional arguments after it, it must be specified using two numbers
-(or else <strong>pixel_size</strong> would interpret the second number as input since <strong>pixel_size</strong>
+<p class="last">For <strong>pixel-size</strong> to have positional arguments after it, it must be specified using two numbers
+(or else <strong>pixel-size</strong> would interpret the second number as input since <strong>pixel-size</strong>
 can take one or two numbers as arguments).</p>
 </div>
 </div>
@@ -511,15 +511,15 @@ $ ls
 in.flo        pywinds
 $ pywinds/area.py 60 90 0
 projection: stere
-lat_ts: 60
-lat_0: 90
-long_0: 0
-equatorial_radius: 6378137.0
+lat-ts: 60
+lat-0: 90
+long-0: 0
+equatorial-radius: 6378137.0
 eccentricity: 0.081819
-inverse_flattening: 298.26
+inverse-flattening: 298.26
 shape: [1000, 1000]
-area_extent: None
-pixel_size: None
+area-extent: None
+pixel-size: None
 center: None
 </pre></div>
 </div>
@@ -531,99 +531,90 @@ center: None
 /Desktop
 $ ls
 in.flo        pywinds
-$ pywinds/wind_info.sh 60 90 0 100 --center 0 0 m --i 0 --j 0 --no_save
+$ pywinds/wind_info.sh 60 90 0 100 --center 90 0 --i 0 --j 0 --no-save
+
 Traceback (most recent call last):
-  File &quot;/Desktop/pywinds/env/lib/python3.7/site-packages/pywinds/wrapper_utils.py&quot;,
-line 167, in run_script
+  File &quot;pywinds/env/lib/python3.7/site-packages/pywinds/wrapper_utils.py&quot;,
+line 184, in run_script
     output = output_format(func(*args, **kwargs), kwargs)
-  File &quot;/Desktop/pywinds/env/lib/python3.7/site-packages/pywinds/wind_functions.py&quot;,
-line 869, in wind_info
+  File &quot;pywinds/env/lib/python3.7/site-packages/pywinds/wind_functions.py&quot;,
+line 867, in wind_info
     earth_spheroid=earth_spheroid, no_save=no_save)
-  File &quot;/Desktop/pywinds/env/lib/python3.7/site-packages/pywinds/wind_functions.py&quot;,
-line 412, in _compute_velocity
+  File &quot;pywinds/env/lib/python3.7/site-packages/pywinds/wind_functions.py&quot;,
+line 414, in _compute_velocity
     no_save=no_save)
-  File &quot;/Desktop/pywinds/env/lib/python3.7/site-packages/pywinds/wind_functions.py&quot;,
-line 377, in _compute_vu
+  File &quot;pywinds/env/lib/python3.7/site-packages/pywinds/wind_functions.py&quot;,
+line 379, in _compute_vu
     no_save=no_save)
-  File &quot;/Desktop/pywinds/env/lib/python3.7/site-packages/pywinds/wind_functions.py&quot;,
-line 325, in _compute_lat_long
+  File &quot;pywinds/env/lib/python3.7/site-packages/pywinds/wind_functions.py&quot;,
+line 327, in _compute_lat_long
     raise ValueError(&#39;Not enough information provided to create an area for projection&#39;)
 ValueError: Not enough information provided to create an area for projection
 </pre></div>
 </div>
 <p>If incorrect commands were given:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>usage: wind_info.py [-h] [--center y x [units]]
-                    [--pixel_size dy [dx] [units]]
-                    [--displacement_data filename] [--j int] [--i int]
-                    [--no_save] [--units str]
-                    [--upper_left_extent y x [units]]
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ pywinds/wind_info.sh 60 90 0 --pixel-size 4000 --center 90 0
+usage: wind_info.py [-h] [--center y x [units]] [--pixel-size dy [dx] [units]]
+                    [--displacement-data filename] [--j int] [--i int]
+                    [--no-save] [--units str]
+                    [--upper-left-extent y x [units]]
                     [--radius dy dx [units]]
-                    [--area_extent y_ll x_ll y_ur x_ur [units]]
+                    [--area-extent y_ll x_ll y_ur x_ur [units]]
                     [--shape height width] [--projection str]
-                    [--projection_spheroid str] [--earth_spheroid str]
-                    lat_ts lat_0 long_0 delta_time
-wind_info.py: error: unrecognized arguments: --no_sav
-(pywinds) ella:pywinds wroberts$ ./pywinds/wind_info.py 60 90 0 --pixel_size 400 --center 90 0
-usage: wind_info.py [-h] [--center y x [units]] [--pixel_size dy [dx] [units]]
-                    [--displacement_data filename] [--j int] [--i int]
-                    [--no_save] [--units str]
-                    [--upper_left_extent y x [units]]
-                    [--radius dy dx [units]]
-                    [--area_extent y_ll x_ll y_ur x_ur [units]]
-                    [--shape height width] [--projection str]
-                    [--projection_spheroid str] [--earth_spheroid str]
-                    lat_ts lat_0 long_0 delta_time
-wind_info.py: error: the following arguments are required: delta_time
+                    [--projection-spheroid str] [--earth-spheroid str]
+                    lat-ts lat-0 long-0 delta-time
+wind_info.py: error: the following arguments are required: delta-time
 </pre></div>
 </div>
-<p>The help message for wind_info.py:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">usage</span><span class="p">:</span> <span class="n">wind_info</span><span class="o">.</span><span class="n">py</span> <span class="p">[</span><span class="o">-</span><span class="n">h</span><span class="p">]</span> <span class="p">[</span><span class="o">--</span><span class="n">center</span> <span class="n">y</span> <span class="n">x</span> <span class="p">[</span><span class="n">units</span><span class="p">]]</span> <span class="p">[</span><span class="o">--</span><span class="n">pixel_size</span> <span class="n">dy</span> <span class="p">[</span><span class="n">dx</span><span class="p">]</span> <span class="p">[</span><span class="n">units</span><span class="p">]]</span>
-                    <span class="p">[</span><span class="o">--</span><span class="n">displacement_data</span> <span class="n">filename</span><span class="p">]</span> <span class="p">[</span><span class="o">--</span><span class="n">j</span> <span class="nb">int</span><span class="p">]</span> <span class="p">[</span><span class="o">--</span><span class="n">i</span> <span class="nb">int</span><span class="p">]</span>
-                    <span class="p">[</span><span class="o">--</span><span class="n">no_save</span><span class="p">]</span> <span class="p">[</span><span class="o">--</span><span class="n">units</span> <span class="nb">str</span><span class="p">]</span>
-                    <span class="p">[</span><span class="o">--</span><span class="n">upper_left_extent</span> <span class="n">y</span> <span class="n">x</span> <span class="p">[</span><span class="n">units</span><span class="p">]]</span>
-                    <span class="p">[</span><span class="o">--</span><span class="n">radius</span> <span class="n">dy</span> <span class="n">dx</span> <span class="p">[</span><span class="n">units</span><span class="p">]]</span>
-                    <span class="p">[</span><span class="o">--</span><span class="n">area_extent</span> <span class="n">y_ll</span> <span class="n">x_ll</span> <span class="n">y_ur</span> <span class="n">x_ur</span> <span class="p">[</span><span class="n">units</span><span class="p">]]</span>
-                    <span class="p">[</span><span class="o">--</span><span class="n">shape</span> <span class="n">height</span> <span class="n">width</span><span class="p">]</span> <span class="p">[</span><span class="o">--</span><span class="n">projection</span> <span class="nb">str</span><span class="p">]</span>
-                    <span class="p">[</span><span class="o">--</span><span class="n">projection_spheroid</span> <span class="nb">str</span><span class="p">]</span> <span class="p">[</span><span class="o">--</span><span class="n">earth_spheroid</span> <span class="nb">str</span><span class="p">]</span>
-                    <span class="n">lat_ts</span> <span class="n">lat_0</span> <span class="n">long_0</span> <span class="n">delta_time</span>
+<p>The help message for wind_info.sh:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ pywinds/wind_info.sh -h
+usage: wind_info.py [-h] [--center y x [units]] [--pixel-size dy [dx] [units]]
+                    [--displacement-data filename] [--j int] [--i int]
+                    [--no-save] [--units str]
+                    [--upper-left-extent y x [units]]
+                    [--radius dy dx [units]]
+                    [--area-extent y_ll x_ll y_ur x_ur [units]]
+                    [--shape height width] [--projection str]
+                    [--projection-spheroid str] [--earth-spheroid str]
+                    lat-ts lat-0 long-0 delta-time
 
-<span class="n">positional</span> <span class="n">arguments</span><span class="p">:</span>
-  <span class="n">lat_ts</span>                <span class="n">projection</span> <span class="n">latitude</span> <span class="n">of</span> <span class="n">true</span> <span class="n">scale</span>
-  <span class="n">lat_0</span>                 <span class="n">projection</span> <span class="n">latitude</span> <span class="n">of</span> <span class="n">origin</span>
-  <span class="n">long_0</span>                <span class="n">projection</span> <span class="n">central</span> <span class="n">meridian</span>
-  <span class="n">delta_time</span>            <span class="n">amount</span> <span class="n">of</span> <span class="n">time</span> <span class="n">that</span> <span class="n">separates</span> <span class="n">both</span> <span class="n">files</span> <span class="ow">in</span> <span class="n">minutes</span>
+positional arguments:
+  lat-ts                projection latitude of true scale
+  lat-0                 projection latitude of origin
+  long-0                projection central meridian
+  delta-time            amount of time that separates both files in minutes
 
-<span class="n">optional</span> <span class="n">arguments</span><span class="p">:</span>
-  <span class="o">-</span><span class="n">h</span><span class="p">,</span> <span class="o">--</span><span class="n">help</span>            <span class="n">show</span> <span class="n">this</span> <span class="n">help</span> <span class="n">message</span> <span class="ow">and</span> <span class="n">exit</span>
-  <span class="o">--</span><span class="n">center</span> <span class="n">y</span> <span class="n">x</span> <span class="p">[</span><span class="n">units</span><span class="p">]</span>
-                        <span class="n">projection</span> <span class="n">y</span> <span class="ow">and</span> <span class="n">x</span> <span class="n">coordinate</span> <span class="n">of</span> <span class="n">the</span> <span class="n">center</span> <span class="n">of</span> <span class="n">area</span><span class="o">.</span>
-                        <span class="n">Default</span><span class="p">:</span> <span class="n">lat</span> <span class="n">long</span>
-  <span class="o">--</span><span class="n">pixel_size</span> <span class="n">dy</span> <span class="p">[</span><span class="n">dx</span><span class="p">]</span> <span class="p">[</span><span class="n">units</span><span class="p">]</span>
-                        <span class="n">projection</span> <span class="n">size</span> <span class="n">of</span> <span class="n">pixels</span> <span class="ow">in</span> <span class="n">the</span> <span class="n">y</span> <span class="ow">and</span> <span class="n">x</span> <span class="n">direction</span><span class="o">.</span><span class="n">If</span>
-                        <span class="n">pixels</span> <span class="n">are</span> <span class="n">square</span><span class="p">,</span> <span class="n">i</span><span class="o">.</span><span class="n">e</span><span class="o">.</span> <span class="n">dy</span> <span class="o">=</span> <span class="n">dx</span><span class="p">,</span> <span class="n">then</span> <span class="n">only</span> <span class="n">one</span> <span class="n">value</span>
-                        <span class="n">needs</span> <span class="n">to</span> <span class="n">be</span> <span class="n">entered</span>
-  <span class="o">--</span><span class="n">displacement_data</span> <span class="n">filename</span>
-                        <span class="n">filename</span> <span class="ow">or</span> <span class="nb">list</span> <span class="n">containing</span> <span class="n">displacements</span>
-  <span class="o">--</span><span class="n">j</span> <span class="nb">int</span>               <span class="n">row</span> <span class="n">to</span> <span class="n">run</span> <span class="n">calculations</span> <span class="n">on</span>
-  <span class="o">--</span><span class="n">i</span> <span class="nb">int</span>               <span class="n">column</span> <span class="n">to</span> <span class="n">run</span> <span class="n">calculations</span> <span class="n">on</span>
-  <span class="o">--</span><span class="n">no_save</span>             <span class="nb">print</span> <span class="n">data</span> <span class="n">to</span> <span class="n">shell</span> <span class="n">without</span> <span class="n">saving</span>
-  <span class="o">--</span><span class="n">units</span> <span class="nb">str</span>           <span class="n">units</span> <span class="n">that</span> <span class="nb">all</span> <span class="n">provided</span> <span class="n">arguments</span> <span class="n">that</span> <span class="n">take</span> <span class="n">units</span>
-                        <span class="p">(</span><span class="k">except</span> <span class="n">center</span><span class="p">)</span> <span class="n">should</span> <span class="n">be</span> <span class="n">interpreted</span> <span class="k">as</span>
-  <span class="o">--</span><span class="n">upper_left_extent</span> <span class="n">y</span> <span class="n">x</span> <span class="p">[</span><span class="n">units</span><span class="p">]</span>
-                        <span class="n">projection</span> <span class="n">y</span> <span class="ow">and</span> <span class="n">x</span> <span class="n">coordinates</span> <span class="n">of</span> <span class="n">the</span> <span class="n">upper</span> <span class="n">left</span>
-                        <span class="n">corner</span> <span class="n">of</span> <span class="n">the</span> <span class="n">upper</span> <span class="n">left</span> <span class="n">pixel</span>
-  <span class="o">--</span><span class="n">radius</span> <span class="n">dy</span> <span class="n">dx</span> <span class="p">[</span><span class="n">units</span><span class="p">]</span>
-                        <span class="n">projection</span> <span class="n">length</span> <span class="kn">from</span> <span class="nn">the</span> <span class="n">center</span> <span class="n">to</span> <span class="n">the</span> <span class="n">left</span><span class="o">/</span><span class="n">rightand</span>
-                        <span class="n">top</span><span class="o">/</span><span class="n">bottom</span> <span class="n">outer</span> <span class="n">edges</span>
-  <span class="o">--</span><span class="n">area_extent</span> <span class="n">y_ll</span> <span class="n">x_ll</span> <span class="n">y_ur</span> <span class="n">x_ur</span> <span class="p">[</span><span class="n">units</span><span class="p">]</span>
-                        <span class="n">area</span> <span class="n">extent</span> <span class="ow">in</span> <span class="n">projection</span> <span class="n">space</span><span class="p">:</span>
-                        <span class="n">lower_left_y</span><span class="p">,</span><span class="n">lower_left_x</span><span class="p">,</span> <span class="n">upper_right_y</span><span class="p">,</span>
-                        <span class="n">upper_right_x</span>
-  <span class="o">--</span><span class="n">shape</span> <span class="n">height</span> <span class="n">width</span>  <span class="n">number</span> <span class="n">of</span> <span class="n">pixels</span> <span class="ow">in</span> <span class="n">the</span> <span class="n">y</span> <span class="ow">and</span> <span class="n">x</span> <span class="n">direction</span>
-  <span class="o">--</span><span class="n">projection</span> <span class="nb">str</span>      <span class="n">name</span> <span class="n">of</span> <span class="n">projection</span> <span class="n">that</span> <span class="n">the</span> <span class="n">image</span> <span class="ow">is</span> <span class="ow">in</span>
-  <span class="o">--</span><span class="n">projection_spheroid</span> <span class="nb">str</span>
-                        <span class="n">spheroid</span> <span class="n">of</span> <span class="n">projection</span>
-  <span class="o">--</span><span class="n">earth_spheroid</span> <span class="nb">str</span>  <span class="n">spheroid</span> <span class="n">of</span> <span class="n">Earth</span>
+optional arguments:
+  -h, --help            show this help message and exit
+  --center y x [units]
+                        projection y and x coordinate of the center of area.
+                        Default: lat long
+  --pixel-size dy [dx] [units]
+                        projection size of pixels in the y and x direction.If
+                        pixels are square, i.e. dy = dx, then only one value
+                        needs to be entered
+  --displacement-data filename
+                        filename or list containing displacements
+  --j int               row to run calculations on
+  --i int               column to run calculations on
+  --no-save             print data to shell without saving
+  --units str           units that all provided arguments that take units
+                        (except center) should be interpreted as
+  --upper-left-extent y x [units]
+                        projection y and x coordinates of the upper left
+                        corner of the upper left pixel
+  --radius dy dx [units]
+                        projection length from the center to the left/rightand
+                        top/bottom outer edges
+  --area-extent y_ll x_ll y_ur x_ur [units]
+                        area extent in projection space:
+                        lower_left_y,lower_left_x, upper_right_y,
+                        upper_right_x
+  --shape height width  number of pixels in the y and x direction
+  --projection str      name of projection that the image is in
+  --projection-spheroid str
+                        spheroid of projection
+  --earth-spheroid str  spheroid of Earth
 </pre></div>
 </div>
 <div class="admonition note">

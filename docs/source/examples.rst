@@ -12,13 +12,13 @@ Having multiple files in run directory::
     /Desktop
     $ ls
     in.flo        test.flo        pywinds
-    $ pywinds/wind_info.sh 60 90 0 100 --j 0 --i 0 --pixel_size 4000
-      --center 90 0 --no_save
+    $ pywinds/wind_info.sh 60 90 0 100 --j 0 --i 0 --pixel-size 4000
+      --center 90 0 --no-save
     Reading displacements from: /Desktop/test.flo
     [63.36, -135.0, 51.8, 315.24, 36.78, -36.47]
     Reading displacements from: /Desktop/in.flo
     [63.36, -135.0, 51.8, 315.24, 36.78, -36.47]
-    $ pywinds/wind_info.sh 60 90 0 100 --pixel_size 4000 --center 90 0
+    $ pywinds/wind_info.sh 60 90 0 100 --pixel-size 4000 --center 90 0
     Reading displacements from: /Desktop/test.flo
     Data saved to the directory /Desktop/test.flo_output
     Reading displacements from: /Desktop/in.flo
@@ -27,7 +27,7 @@ Having multiple files in run directory::
 
 .. note::
 
-    If **displacement_data** is not provided, then every file ending in ".flo" where the script was ran is read.
+    If **displacement-data** is not provided, then every file ending in ".flo" where the script was ran is read.
 
 .. note::
 
@@ -40,12 +40,12 @@ Specifying one file to run::
     /Desktop
     $ ls
     in.flo        test.flo        pywinds
-    $ pywinds/wind_info.sh 60 90 0 100 --j 0 --i 0 --pixel_size 4000
-      --center 90 0 --displacement_data in.flo --no_save
+    $ pywinds/wind_info.sh 60 90 0 100 --j 0 --i 0 --pixel-size 4000
+      --center 90 0 --displacement-data in.flo --no-save
     [63.36, -135.0, 51.8, 315.24, 36.78, -36.47]
 
-    $ pywinds/wind_info.sh 60 90 0 100 --j 0 --i 0 --pixel_size 4000
-      --center 90 0 --displacement_data path_to_other_directory/in.flo --no_save
+    $ pywinds/wind_info.sh 60 90 0 100 --j 0 --i 0 --pixel-size 4000
+      --center 90 0 --displacement-data path_to_other_directory/in.flo --no-save
 
 
 Specifying multiple files to run::
@@ -54,14 +54,14 @@ Specifying multiple files to run::
     /Desktop
     $ ls
     in.flo        windtest.flo        windtest2.flo        pywinds
-    $ pywinds/wind_info.sh 60 90 0 100 --j 0 --i 0 --pixel_size 4000
-      --center 90 0 --displacement_data \*test*.flo --no_save
+    $ pywinds/wind_info.sh 60 90 0 100 --j 0 --i 0 --pixel-size 4000
+      --center 90 0 --displacement-data \*test*.flo --no-save
     Reading displacements from: /Desktop/windtest.flo
     [63.36, -135.0, 51.8, 315.24, 36.78, -36.47]
     Reading displacements from: /Desktop/windtest2.flo
     [63.36, -135.0, 51.8, 315.24, 36.78, -36.47]
-    $ pywinds/wind_info.sh 60 90 0 100 --pixel_size 4000
-      --center 90 0 --displacement_data \*test*.flo
+    $ pywinds/wind_info.sh 60 90 0 100 --pixel-size 4000
+      --center 90 0 --displacement-data \*test*.flo
     Reading displacements from: /Desktop/windtest.flo
     Data saved to the directory /Desktop/windtest.flo_output
     Reading displacements from: /Desktop/windtest2.flo
@@ -74,31 +74,31 @@ Altering spheroids::
     /Desktop
     $ ls
     in.flo        pywinds
-    $ pywinds/wind_info.sh 60 90 0 100 --j 0 --i 0 --pixel_size 4000
-      --center 90 0 --projection_spheroid sphere --no_save
+    $ pywinds/wind_info.sh 60 90 0 100 --j 0 --i 0 --pixel-size 4000
+      --center 90 0 --projection-spheroid sphere --no-save
     [63.26, -135.0, 51.93, 315.2, 36.85, -36.59]
-    $ pywinds/wind_info.sh 60 90 0 100 --j 0 --i 0 --pixel_size 4000 --center 90 0
-      --projection_spheroid sphere --earth_spheroid sphere --no_save
+    $ pywinds/wind_info.sh 60 90 0 100 --j 0 --i 0 --pixel-size 4000 --center 90 0
+      --projection-spheroid sphere --earth-spheroid sphere --no-save
     [63.26, -135.0, 51.77, 315.24, 36.76, -36.46]
 
 
 Using other advanced args::
 
     $ pywinds/wind_info.sh 60 90 0 100 --j 0 --i 0
-      --radius 2000000 2000000 --center 90 0 --no_save
+      --radius 2000000 2000000 --center 90 0 --no-save
     [63.36, -135.0, 51.8, 315.24, 36.78, -36.47]
 
     $ pywinds/wind_info.sh 60 90 0 100 --j 0 --i 0
-      --upper_left_extent 2000000 -2000000 --center 90 0 --no_save
+      --upper-left-extent 2000000 -2000000 --center 90 0 --no-save
     [63.36, -135.0, 51.8, 315.24, 36.78, -36.47]
 
     $ pywinds/wind_info.sh 60 90 0 100 --j 0 --i 0
-      --area_extent -2000000 -2000000 2000000 2000000 --no_save
+      --area-extent -2000000 -2000000 2000000 2000000 --no-save
     [63.36, -135.0, 51.8, 315.24, 36.78, -36.47]
 
     $ pywinds/wind_info.sh 60 90 0 100 --j 0 --i 0
-      --upper_left_extent 2000000 -2000000
-      --radius 2000000 2000000 --no_save
+      --upper-left-extent 2000000 -2000000
+      --radius 2000000 2000000 --no-save
     [63.36, -135.0, 51.8, 315.24, 36.78, -36.47]
 
 
@@ -110,42 +110,42 @@ Using units::
     in.flo        pywinds
 
     $ pywinds/wind_info.sh 60 90 0 100 --j 0 --i 0
-      --pixel_size 4000 --center 90 0 --no_save
+      --pixel-size 4000 --center 90 0 --no-save
     [63.36, -135.0, 51.8, 315.24, 36.78, -36.47]
 
     $ pywinds/wind_info.sh 60 90 0 100 --j 0 --i 0
-      --pixel_size 4 --center 90 0 --units km --no_save
+      --pixel-size 4 --center 90 0 --units km --no-save
     [63.36, -135.0, 51.8, 315.24, 36.78, -36.47]
 
     $ pywinds/wind_info.sh 60 90 0 100 --j 0 --i 0
-      --pixel_size 4 km --center 90 0 --no_save
+      --pixel-size 4 km --center 90 0 --no-save
     [63.36, -135.0, 51.8, 315.24, 36.78, -36.47]
 
     $ pywinds/wind_info.sh 60 90 0 100 --j 0 --i 0
-      --pixel_size 4 --center 0 0 m  --units km --no_save
+      --pixel-size 4 --center 0 0 m  --units km --no-save
     [63.36, -135.0, 51.8, 315.24, 36.78, -36.47]
 
     $ pywinds/wind_info.sh 60 90 0 100 --j 0 --i 0
-      --pixel_size 4 km --center 0 0 m --no_save
+      --pixel-size 4 km --center 0 0 m --no-save
     [63.36, -135.0, 51.8, 315.24, 36.78, -36.47]
 
     $ pywinds/wind_info.sh 60 90 0 100 --j 0 --i 0
-      --pixel_size 4000 m --center 90 0 --units km --no_save
+      --pixel-size 4000 m --center 90 0 --units km --no-save
     [63.36, -135.0, 51.8, 315.24, 36.78, -36.47]
 
     $ pywinds/wind_info.sh 60 90 0 100 --j 0 --i 0
-      --upper_left_extent 2000 -2000 km
-      --radius 2000 2000 km --no_save
+      --upper-left-extent 2000 -2000 km
+      --radius 2000 2000 km --no-save
     [63.36, -135.0, 51.8, 315.24, 36.78, -36.47]
 
     $ pywinds/wind_info.sh 60 90 0 100 --j 0 --i 0
-      --upper_left_extent 2000 -2000
-      --radius 2000 2000 --units km --no_save
+      --upper-left-extent 2000 -2000
+      --radius 2000 2000 --units km --no-save
     [63.36, -135.0, 51.8, 315.24, 36.78, -36.47]
 
     $ pywinds/wind_info.sh 60 90 0 100 --j 0 --i 0
-      --upper_left_extent 63.335 -135 deg
-      --radius 2000 2000 --units km --no_save
+      --upper-left-extent 63.335 -135 deg
+      --radius 2000 2000 --units km --no-save
     [63.36, -135.0, 51.8, 315.24, 36.78, -36.47]
 
 
@@ -163,18 +163,18 @@ Shuffling order of arguments/options::
     in.flo        pywinds
 
     $ pywinds/wind_info.sh --center 90 0 --j 0 --i 0
-      --no_save --pixel_size 4000 --i 0 60 90 0 100
+      --no-save --pixel-size 4000 --i 0 60 90 0 100
     [63.36, -135.0, 51.8, 315.24, 36.78, -36.47]
 
     $ pywinds/wind_info.sh --center 90 0 60 --j 0 90 --i 0
-      0 --no_save --pixel_size 4000 4000 100 --i 0
+      0 --no-save --pixel-size 4000 4000 100 --i 0
     [63.36, -135.0, 51.8, 315.24, 36.78, -36.47]
 
 
 .. note::
 
-    For **pixel_size** to have positional arguments after it, it must be specified using two numbers
-    (or else **pixel_size** would interpret the second number as input since **pixel_size**
+    For **pixel-size** to have positional arguments after it, it must be specified using two numbers
+    (or else **pixel-size** would interpret the second number as input since **pixel-size**
     can take one or two numbers as arguments).
 
 .. _content_of_wind_info.nc:
@@ -388,15 +388,15 @@ Getting shape of displacement file using area.sh::
     in.flo        pywinds
     $ pywinds/area.py 60 90 0
     projection: stere
-    lat_ts: 60
-    lat_0: 90
-    long_0: 0
-    equatorial_radius: 6378137.0
+    lat-ts: 60
+    lat-0: 90
+    long-0: 0
+    equatorial-radius: 6378137.0
     eccentricity: 0.081819
-    inverse_flattening: 298.26
+    inverse-flattening: 298.26
     shape: [1000, 1000]
-    area_extent: None
-    pixel_size: None
+    area-extent: None
+    pixel-size: None
     center: None
 
 
@@ -411,101 +411,92 @@ If not enough information is provided to a script, this kind of error will be di
     /Desktop
     $ ls
     in.flo        pywinds
-    $ pywinds/wind_info.sh 60 90 0 100 --center 0 0 m --i 0 --j 0 --no_save
+    $ pywinds/wind_info.sh 60 90 0 100 --center 90 0 --i 0 --j 0 --no-save
+
     Traceback (most recent call last):
-      File "/Desktop/pywinds/env/lib/python3.7/site-packages/pywinds/wrapper_utils.py",
-    line 167, in run_script
+      File "pywinds/env/lib/python3.7/site-packages/pywinds/wrapper_utils.py",
+    line 184, in run_script
         output = output_format(func(*args, **kwargs), kwargs)
-      File "/Desktop/pywinds/env/lib/python3.7/site-packages/pywinds/wind_functions.py",
-    line 869, in wind_info
+      File "pywinds/env/lib/python3.7/site-packages/pywinds/wind_functions.py",
+    line 867, in wind_info
         earth_spheroid=earth_spheroid, no_save=no_save)
-      File "/Desktop/pywinds/env/lib/python3.7/site-packages/pywinds/wind_functions.py",
-    line 412, in _compute_velocity
+      File "pywinds/env/lib/python3.7/site-packages/pywinds/wind_functions.py",
+    line 414, in _compute_velocity
         no_save=no_save)
-      File "/Desktop/pywinds/env/lib/python3.7/site-packages/pywinds/wind_functions.py",
-    line 377, in _compute_vu
+      File "pywinds/env/lib/python3.7/site-packages/pywinds/wind_functions.py",
+    line 379, in _compute_vu
         no_save=no_save)
-      File "/Desktop/pywinds/env/lib/python3.7/site-packages/pywinds/wind_functions.py",
-    line 325, in _compute_lat_long
+      File "pywinds/env/lib/python3.7/site-packages/pywinds/wind_functions.py",
+    line 327, in _compute_lat_long
         raise ValueError('Not enough information provided to create an area for projection')
     ValueError: Not enough information provided to create an area for projection
 
 
 If incorrect commands were given::
 
-    usage: wind_info.py [-h] [--center y x [units]]
-                        [--pixel_size dy [dx] [units]]
-                        [--displacement_data filename] [--j int] [--i int]
-                        [--no_save] [--units str]
-                        [--upper_left_extent y x [units]]
+    $ pywinds/wind_info.sh 60 90 0 --pixel-size 4000 --center 90 0
+    usage: wind_info.py [-h] [--center y x [units]] [--pixel-size dy [dx] [units]]
+                        [--displacement-data filename] [--j int] [--i int]
+                        [--no-save] [--units str]
+                        [--upper-left-extent y x [units]]
                         [--radius dy dx [units]]
-                        [--area_extent y_ll x_ll y_ur x_ur [units]]
+                        [--area-extent y_ll x_ll y_ur x_ur [units]]
                         [--shape height width] [--projection str]
-                        [--projection_spheroid str] [--earth_spheroid str]
-                        lat_ts lat_0 long_0 delta_time
-    wind_info.py: error: unrecognized arguments: --no_sav
-    (pywinds) ella:pywinds wroberts$ ./pywinds/wind_info.py 60 90 0 --pixel_size 400 --center 90 0
-    usage: wind_info.py [-h] [--center y x [units]] [--pixel_size dy [dx] [units]]
-                        [--displacement_data filename] [--j int] [--i int]
-                        [--no_save] [--units str]
-                        [--upper_left_extent y x [units]]
-                        [--radius dy dx [units]]
-                        [--area_extent y_ll x_ll y_ur x_ur [units]]
-                        [--shape height width] [--projection str]
-                        [--projection_spheroid str] [--earth_spheroid str]
-                        lat_ts lat_0 long_0 delta_time
-    wind_info.py: error: the following arguments are required: delta_time
+                        [--projection-spheroid str] [--earth-spheroid str]
+                        lat-ts lat-0 long-0 delta-time
+    wind_info.py: error: the following arguments are required: delta-time
 
 
-The help message for wind_info.py::
+The help message for wind_info.sh::
 
-    usage: wind_info.py [-h] [--center y x [units]] [--pixel_size dy [dx] [units]]
-                        [--displacement_data filename] [--j int] [--i int]
-                        [--no_save] [--units str]
-                        [--upper_left_extent y x [units]]
+    $ pywinds/wind_info.sh -h
+    usage: wind_info.py [-h] [--center y x [units]] [--pixel-size dy [dx] [units]]
+                        [--displacement-data filename] [--j int] [--i int]
+                        [--no-save] [--units str]
+                        [--upper-left-extent y x [units]]
                         [--radius dy dx [units]]
-                        [--area_extent y_ll x_ll y_ur x_ur [units]]
+                        [--area-extent y_ll x_ll y_ur x_ur [units]]
                         [--shape height width] [--projection str]
-                        [--projection_spheroid str] [--earth_spheroid str]
-                        lat_ts lat_0 long_0 delta_time
+                        [--projection-spheroid str] [--earth-spheroid str]
+                        lat-ts lat-0 long-0 delta-time
 
     positional arguments:
-      lat_ts                projection latitude of true scale
-      lat_0                 projection latitude of origin
-      long_0                projection central meridian
-      delta_time            amount of time that separates both files in minutes
+      lat-ts                projection latitude of true scale
+      lat-0                 projection latitude of origin
+      long-0                projection central meridian
+      delta-time            amount of time that separates both files in minutes
 
     optional arguments:
       -h, --help            show this help message and exit
       --center y x [units]
                             projection y and x coordinate of the center of area.
                             Default: lat long
-      --pixel_size dy [dx] [units]
+      --pixel-size dy [dx] [units]
                             projection size of pixels in the y and x direction.If
                             pixels are square, i.e. dy = dx, then only one value
                             needs to be entered
-      --displacement_data filename
+      --displacement-data filename
                             filename or list containing displacements
       --j int               row to run calculations on
       --i int               column to run calculations on
-      --no_save             print data to shell without saving
+      --no-save             print data to shell without saving
       --units str           units that all provided arguments that take units
                             (except center) should be interpreted as
-      --upper_left_extent y x [units]
+      --upper-left-extent y x [units]
                             projection y and x coordinates of the upper left
                             corner of the upper left pixel
       --radius dy dx [units]
                             projection length from the center to the left/rightand
                             top/bottom outer edges
-      --area_extent y_ll x_ll y_ur x_ur [units]
+      --area-extent y_ll x_ll y_ur x_ur [units]
                             area extent in projection space:
                             lower_left_y,lower_left_x, upper_right_y,
                             upper_right_x
       --shape height width  number of pixels in the y and x direction
       --projection str      name of projection that the image is in
-      --projection_spheroid str
+      --projection-spheroid str
                             spheroid of projection
-      --earth_spheroid str  spheroid of Earth
+      --earth-spheroid str  spheroid of Earth
 
 
 .. note::

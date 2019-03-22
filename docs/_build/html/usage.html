@@ -168,22 +168,22 @@ in with options (as long as they are not interpreted as part of the option).</p>
 v, u, and velocity of the wind. This is the primary function of pywinds.</p>
 <p>Required arguments:</p>
 <ul class="simple">
-<li><strong>lat_ts</strong>: Projection latitude of true scale</li>
-<li><strong>lat_0</strong>: Projection latitude of origin</li>
-<li><strong>long_0</strong>: Projection central meridian</li>
-<li><strong>delta_time</strong>: Amount of time that separates both files in minutes</li>
+<li><strong>lat-ts</strong>: Projection latitude of true scale</li>
+<li><strong>lat-0</strong>: Projection latitude of origin</li>
+<li><strong>long-0</strong>: Projection central meridian</li>
+<li><strong>delta-time</strong>: Amount of time that separates both files in minutes</li>
 </ul>
 <p>Optional arguments:</p>
 <ul class="simple">
 <li><strong>center</strong>: Projection y and x coordinate of the center of area (lat, long)</li>
-<li><strong>pixel_size</strong>: Projection size of pixels in the y and x direction (dy, dx). If pixels are square, i.e. dy = dx,
+<li><strong>pixel-size</strong>: Projection size of pixels in the y and x direction (dy, dx). If pixels are square, i.e. dy = dx,
 then only one value needs to be entered.</li>
-<li><strong>displacement_data</strong>: Name of binary file (32-bit float) containing pixels displacements; How far the
+<li><strong>displacement-data</strong>: Name of binary file (32-bit float) containing pixels displacements; How far the
 pixels had to move in the y (positive is down) and x (positive is right) direction to get to their new position.
 Wildcard (“*”) syntax is accepted. If not provided, reads every file ending in “.flo” where the script is ran</li>
 <li><strong>j</strong>: Row to run calculations on</li>
 <li><strong>i</strong>: Column to run calculations on</li>
-<li><strong>no_save</strong>:<ol class="arabic">
+<li><strong>no-save</strong>:<ol class="arabic">
 <li>When not flagged (Default): saves data without printing to shell</li>
 <li>When flagged: prints data to shell without saving</li>
 </ol>
@@ -201,9 +201,9 @@ Wildcard (“*”) syntax is accepted. If not provided, reads every file ending 
 /Desktop
 $ ls
 in.flo          pywinds
-$ pywinds/wind_info.sh 60 90 0 100 --j 0 --i 0 --pixel_size 4000 --center 90 0 --no_save
+$ pywinds/wind_info.sh 60 90 0 100 --j 0 --i 0 --pixel-size 4000 --center 90 0 --no-save
 [63.36, -135.0, 51.8, 315.24, 36.78, -36.47]
-$ pywinds/wind_info.sh 60 90 0 100 --pixel_size 4000 --center 90 0
+$ pywinds/wind_info.sh 60 90 0 100 --pixel-size 4000 --center 90 0
 Data saved to the directory /Desktop/in.flo_output
 </pre></div>
 </div>
@@ -266,15 +266,15 @@ Data saved to the directory /Desktop/in.flo_output
 </div>
 <p>Area is printed in a different format than it’s saved:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">projection</span><span class="p">:</span>
-<span class="n">lat_ts</span> <span class="p">(</span><span class="n">degrees</span><span class="p">):</span>
-<span class="n">lat_0</span> <span class="p">(</span><span class="n">degrees</span><span class="p">):</span>
-<span class="n">long_0</span> <span class="p">(</span><span class="n">degrees</span><span class="p">):</span>
-<span class="n">equatorial_radius</span> <span class="p">(</span><span class="n">meters</span><span class="p">):</span>
+<span class="n">lat</span><span class="o">-</span><span class="n">ts</span> <span class="p">(</span><span class="n">degrees</span><span class="p">):</span>
+<span class="n">lat</span><span class="o">-</span><span class="mi">0</span> <span class="p">(</span><span class="n">degrees</span><span class="p">):</span>
+<span class="n">long</span><span class="o">-</span><span class="mi">0</span> <span class="p">(</span><span class="n">degrees</span><span class="p">):</span>
+<span class="n">equatorial</span><span class="o">-</span><span class="n">radius</span> <span class="p">(</span><span class="n">meters</span><span class="p">):</span>
 <span class="n">eccentricity</span><span class="p">:</span>
-<span class="n">inverse_flattening</span><span class="p">:</span>
+<span class="n">inverse</span><span class="o">-</span><span class="n">flattening</span><span class="p">:</span>
 <span class="n">shape</span><span class="p">:</span>
-<span class="n">area_extent</span> <span class="p">(</span><span class="n">degrees</span><span class="p">):</span>
-<span class="n">pixel_size</span> <span class="p">(</span><span class="n">meters</span><span class="p">):</span> <span class="p">(</span><span class="n">y_pixel_size</span><span class="p">,</span> <span class="n">x_pixel_size</span><span class="p">)</span>
+<span class="n">area</span><span class="o">-</span><span class="n">extent</span> <span class="p">(</span><span class="n">degrees</span><span class="p">):</span>
+<span class="n">pixel</span><span class="o">-</span><span class="n">size</span> <span class="p">(</span><span class="n">meters</span><span class="p">):</span>
 <span class="n">center</span> <span class="p">(</span><span class="n">degrees</span><span class="p">):</span>
 </pre></div>
 </div>
@@ -298,14 +298,14 @@ was provided or an error occurs, data up to that point will be saved.</p>
 </div>
 <div class="admonition note">
 <p class="first admonition-title">Note</p>
-<p class="last">If re-saving data or saving data with the same <strong>displacement_data</strong> name, it is best to manually
+<p class="last">If re-saving data or saving data with the same <strong>displacement-data</strong> name, it is best to manually
 delete or rename the directory that old data was saved to. This ensures that the directory only
 contains that file’s data (in conjunction with the above note).</p>
 </div>
 <p>Text files:</p>
 <blockquote>
 <div><ul class="simple">
-<li>Text files are saved as comma separated files (except for polar_stereographic.txt
+<li>Text files are saved as comma separated files (except for polar-stereographic.txt
 which is the same format as it is in wind_info.nc). Numbers are rounded to 2 decimal places.</li>
 <li>For examples of what the text files looks like, please see <a class="reference internal" href="examples.html#content-of-text-files"><span class="std std-ref">Content of text files</span></a>.</li>
 </ul>
@@ -326,18 +326,18 @@ name as their .txt counterparts.</li>
 <span id="id2"></span><h2>Advanced arguments<a class="headerlink" href="#advanced-arguments" title="Permalink to this headline">¶</a></h2>
 <ul class="simple">
 <li><strong>projection</strong>: Name of projection that the image is in (stere, laea, merc, etc). Defaults to stere</li>
-<li><strong>projection_spheroid</strong>: Spheroid of projection (WGS84, sphere, etc). Defaults to WGS84</li>
-<li><strong>earth_spheroid</strong>: Spheroid of Earth (WGS84, sphere, etc). Defaults to WGS84</li>
+<li><strong>projection-spheroid</strong>: Spheroid of projection (WGS84, sphere, etc). Defaults to WGS84</li>
+<li><strong>earth-spheroid</strong>: Spheroid of Earth (WGS84, sphere, etc). Defaults to WGS84</li>
 <li><strong>shape</strong>: Number of pixels in the y and x direction (height, width). If shape is not provided,
-it attempts to be found from <strong>displacement_data</strong></li>
-<li><strong>upper_left_extent</strong>: Projection y and x coordinates of the upper left corner of the upper left pixel (y, x)</li>
+it attempts to be found from <strong>displacement-data</strong></li>
+<li><strong>upper-left-extent</strong>: Projection y and x coordinates of the upper left corner of the upper left pixel (y, x)</li>
 <li><strong>radius</strong>: Projection length from the center to the left/right and top/bottom outer edges (dy, dx)</li>
 <li><dl class="first docutils">
 <dt><strong>units</strong>: Units that provided arguments should be interpreted as. This can be</dt>
 <dd>one of ‘deg’, ‘degrees’, ‘rad’, ‘radians’, ‘meters’, ‘metres’, and any
 parameter supported by the <a class="reference external" href="https://proj4.org/apps/cs2cs.html#cmdoption-cs2cs-lu">cs2cs -lu</a>
 command (see <a class="reference external" href="_static/cs2cs_lu.png"><img alt="cs2cs_lu.png" src="cs2cs_lu" /></a>). Units are determined in the following priority:<ol class="last arabic">
-<li>units expressed with variables via &#64;your_units (see ‘Using units’ under
+<li>units expressed with variables via &#64;your-units (see ‘Using units’ under
 <a class="reference internal" href="examples.html#examples-of-wind-info-sh"><span class="std std-ref">Examples of wind_info.sh</span></a> for examples)</li>
 <li>units passed to <code class="docutils literal notranslate"><span class="pre">--units</span></code> (exluding center)</li>
 <li>meters (exluding center, which is degrees)</li>
@@ -345,23 +345,23 @@ command (see <a class="reference external" href="_static/cs2cs_lu.png"><img alt=
 </dd>
 </dl>
 </li>
-<li><strong>area_extent</strong>: Area extent as a list (y_ll, x_ll, y_ur, x_ur)</li>
+<li><strong>area-extent</strong>: Area extent as a list (y_ll, x_ll, y_ur, x_ur)</li>
 </ul>
 <p>where</p>
 <ul class="simple">
-<li><strong>lat_ll</strong>: projection y coordinate of the lower left corner of the lower left pixel in meters</li>
-<li><strong>long_ll</strong>: projection x coordinate of the lower left corner of the lower left pixel in meters</li>
-<li><strong>lat_ur</strong>: projection y coordinate of the upper right corner of the upper right pixel in meters</li>
-<li><strong>long_ur</strong>: projection x coordinate of the upper right corner of the upper right pixel in meters</li>
+<li><strong>y_ll</strong>: projection y coordinate of the lower left corner of the lower left pixel in meters</li>
+<li><strong>x_ll</strong>: projection x coordinate of the lower left corner of the lower left pixel in meters</li>
+<li><strong>y_ur</strong>: projection y coordinate of the upper right corner of the upper right pixel in meters</li>
+<li><strong>x_ur</strong>: projection x coordinate of the upper right corner of the upper right pixel in meters</li>
 </ul>
 <div class="admonition warning">
 <p class="first admonition-title">Warning</p>
-<p class="last">The shape provided or found can alter the native shape of <strong>displacement_data</strong>.</p>
+<p class="last">The shape provided or found can alter the native shape of <strong>displacement-data</strong>.</p>
 </div>
 </div>
 <div class="section" id="additional-utility-methods">
 <h2>Additional utility methods<a class="headerlink" href="#additional-utility-methods" title="Permalink to this headline">¶</a></h2>
-<p>None of these functions can save data, thus they <strong>do not</strong> have the <strong>no_save</strong> argument.
+<p>None of these functions can save data, thus they <strong>do not</strong> have the <strong>no-save</strong> argument.
 They have similar or identical arguments to wind_info.sh</p>
 <ul class="simple">
 <li><strong>velocity.sh</strong>: Prints just the velocity of the wind. Same arguments as wind_info.sh</li>
@@ -370,7 +370,7 @@ They have similar or identical arguments to wind_info.sh</p>
 /Desktop
 $ ls
 in.flo          pywinds
-$ pywinds/velocity.sh 60 90 0 100 --j 0 --i 0 --pixel_size 4000 --center 90 0
+$ pywinds/velocity.sh 60 90 0 100 --j 0 --i 0 --pixel-size 4000 --center 90 0
 [51.8, 315.24]
 </pre></div>
 </div>
@@ -381,29 +381,29 @@ $ pywinds/velocity.sh 60 90 0 100 --j 0 --i 0 --pixel_size 4000 --center 90 0
 /Desktop
 $ ls
 in.flo          pywinds
-$ pywinds/vu.sh 60 90 0 100 --j 0 --i 0 --pixel_size 4000 --center 90 0
+$ pywinds/vu.sh 60 90 0 100 --j 0 --i 0 --pixel-size 4000 --center 90 0
 [36.78, -36.47]
 </pre></div>
 </div>
 <ul class="simple">
 <li><strong>lat_long.sh</strong>: Prints just the latitude and longitude of the pixels. If displacements data is provided,
 then old_latitude and old_longitude are calculated, else new_latitude and new_longitude are calculated.
-Same arguments as wind_info.sh but does not take <strong>delta_time</strong> as an argument.</li>
+Same arguments as wind_info.sh but does not take <strong>delta-time</strong> as an argument.</li>
 </ul>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ pwd
 /Desktop
 $ ls
 in.flo          pywinds
-$ pywinds/lat_long.sh 60 90 0 --j 0 --i 0 --pixel_size 4000
+$ pywinds/lat_long.sh 60 90 0 --j 0 --i 0 --pixel-size 4000
   --center 90 0 --shape 1000 1000
 [63.36, -135.0]
-$ pywinds/lat_long.sh 60 90 0 --j 0 --i 0 --pixel_size 4000
-  --center 90 0 --displacement_data in.flo
+$ pywinds/lat_long.sh 60 90 0 --j 0 --i 0 --pixel-size 4000
+  --center 90 0 --displacement-data in.flo
 [61.38, -130.77]
 </pre></div>
 </div>
 <ul class="simple">
-<li><strong>displacements.sh</strong>: Prints just the j and i displacements of the pixels. Does not take <strong>delta_time</strong>
+<li><strong>displacements.sh</strong>: Prints just the j and i displacements of the pixels. Does not take <strong>delta-time</strong>
 as an argument. All other required arguments for wind_info.sh are optional arguments.</li>
 </ul>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ pwd
@@ -416,22 +416,22 @@ $ pywinds/displacements.sh --j 0 --i 0
 </div>
 <ul class="simple">
 <li><strong>area.sh</strong>: Prints information about the projection given. Same arguments as
-wind_info.sh but does not take <strong>delta_time</strong> as an argument.</li>
+wind_info.sh but does not take <strong>delta-time</strong> as an argument.</li>
 </ul>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ pwd
 /Desktop
 $ ls
 in.flo          pywinds
-$ pywinds/area.sh 60 90 0 --pixel_size 4000 --center 90 0
+$ pywinds/area.sh 60 90 0 --pixel-size 4000 --center 90 0
 projection: stere
-lat_ts: 60
-lat_0: 90
-long_0: 0
+lat-ts: 60
+lat-0: 90
+long-0: 0
 equatorial radius: 6378137.0
 eccentricity: 0.003353
-area_extent: (65.81, -47.35, 67.6, 137.18)
+area-extent: (65.81, -47.35, 67.6, 137.18)
 shape: (1000, 1000)
-pixel_size: (4000.0, 4000.0)
+pixel-size: (4000.0, 4000.0)
 center: (90.0, 0.0)
 </pre></div>
 </div>

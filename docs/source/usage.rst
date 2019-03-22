@@ -12,22 +12,22 @@ v, u, and velocity of the wind. This is the primary function of pywinds.
 
 Required arguments:
 
-* **lat_ts**: Projection latitude of true scale
-* **lat_0**: Projection latitude of origin
-* **long_0**: Projection central meridian
-* **delta_time**: Amount of time that separates both files in minutes
+* **lat-ts**: Projection latitude of true scale
+* **lat-0**: Projection latitude of origin
+* **long-0**: Projection central meridian
+* **delta-time**: Amount of time that separates both files in minutes
 
 Optional arguments:
 
 * **center**: Projection y and x coordinate of the center of area (lat, long)
-* **pixel_size**: Projection size of pixels in the y and x direction (dy, dx). If pixels are square, i.e. dy = dx,
+* **pixel-size**: Projection size of pixels in the y and x direction (dy, dx). If pixels are square, i.e. dy = dx,
   then only one value needs to be entered.
-* **displacement_data**: Name of binary file (32-bit float) containing pixels displacements; How far the
+* **displacement-data**: Name of binary file (32-bit float) containing pixels displacements; How far the
   pixels had to move in the y (positive is down) and x (positive is right) direction to get to their new position.
   Wildcard ("*") syntax is accepted. If not provided, reads every file ending in ".flo" where the script is ran
 * **j**: Row to run calculations on
 * **i**: Column to run calculations on
-* **no_save**:
+* **no-save**:
 
   1. When not flagged (Default): saves data without printing to shell
   2. When flagged: prints data to shell without saving
@@ -43,16 +43,16 @@ Calculating wind_info::
     /Desktop
     $ ls
     in.flo	    pywinds
-    $ pywinds/wind_info.sh 60 90 0 100 --j 0 --i 0 --pixel_size 4000 --center 90 0 --no_save
+    $ pywinds/wind_info.sh 60 90 0 100 --j 0 --i 0 --pixel-size 4000 --center 90 0 --no-save
     [63.36, -135.0, 51.8, 315.24, 36.78, -36.47]
-    $ pywinds/wind_info.sh 60 90 0 100 --pixel_size 4000 --center 90 0
+    $ pywinds/wind_info.sh 60 90 0 100 --pixel-size 4000 --center 90 0
     Data saved to the directory /Desktop/in.flo_output
 
 
 For more examples of using wind_info.sh, please see :ref:`examples_of_wind_info.sh`.
 
 Data format
--------------
+-----------
 
 If j and i values are provided, then data is calculated at a single pixel:
 
@@ -114,15 +114,15 @@ If no j and i values are provided, then data is calculated at every pixel (n-row
 Area is printed in a different format than it's saved::
 
     projection:
-    lat_ts (degrees):
-    lat_0 (degrees):
-    long_0 (degrees):
-    equatorial_radius (meters):
+    lat-ts (degrees):
+    lat-0 (degrees):
+    long-0 (degrees):
+    equatorial-radius (meters):
     eccentricity:
-    inverse_flattening:
+    inverse-flattening:
     shape:
-    area_extent (degrees):
-    pixel_size (meters): (y_pixel_size, x_pixel_size)
+    area-extent (degrees):
+    pixel-size (meters):
     center (degrees):
 
 
@@ -150,13 +150,13 @@ wind_info.sh saves data to ::
 
 .. note::
 
-    If re-saving data or saving data with the same **displacement_data** name, it is best to manually
+    If re-saving data or saving data with the same **displacement-data** name, it is best to manually
     delete or rename the directory that old data was saved to. This ensures that the directory only
     contains that file's data (in conjunction with the above note).
 
 Text files:
 
-    * Text files are saved as comma separated files (except for polar_stereographic.txt
+    * Text files are saved as comma separated files (except for polar-stereographic.txt
       which is the same format as it is in wind_info.nc). Numbers are rounded to 2 decimal places.
 
     * For examples of what the text files looks like, please see :ref:`content_of_text_files`.
@@ -179,38 +179,38 @@ Advanced arguments
    :target: _static/cs2cs_lu.png
 
 * **projection**: Name of projection that the image is in (stere, laea, merc, etc). Defaults to stere
-* **projection_spheroid**: Spheroid of projection (WGS84, sphere, etc). Defaults to WGS84
-* **earth_spheroid**: Spheroid of Earth (WGS84, sphere, etc). Defaults to WGS84
+* **projection-spheroid**: Spheroid of projection (WGS84, sphere, etc). Defaults to WGS84
+* **earth-spheroid**: Spheroid of Earth (WGS84, sphere, etc). Defaults to WGS84
 * **shape**: Number of pixels in the y and x direction (height, width). If shape is not provided,
-  it attempts to be found from **displacement_data**
-* **upper_left_extent**: Projection y and x coordinates of the upper left corner of the upper left pixel (y, x)
+  it attempts to be found from **displacement-data**
+* **upper-left-extent**: Projection y and x coordinates of the upper left corner of the upper left pixel (y, x)
 * **radius**: Projection length from the center to the left/right and top/bottom outer edges (dy, dx)
 * **units**: Units that provided arguments should be interpreted as. This can be
     one of 'deg', 'degrees', 'rad', 'radians', 'meters', 'metres', and any
     parameter supported by the `cs2cs -lu <https://proj4.org/apps/cs2cs.html#cmdoption-cs2cs-lu>`_
     command (see |cs2cs_lu.png|). Units are determined in the following priority:
 
-    1. units expressed with variables via @your_units (see 'Using units' under
+    1. units expressed with variables via @your-units (see 'Using units' under
        :ref:`examples_of_wind_info.sh` for examples)
     2. units passed to ``--units`` (exluding center)
     3. meters (exluding center, which is degrees)
-* **area_extent**: Area extent as a list (y_ll, x_ll, y_ur, x_ur)
+* **area-extent**: Area extent as a list (y_ll, x_ll, y_ur, x_ur)
 
 where
 
-* **lat_ll**: projection y coordinate of the lower left corner of the lower left pixel in meters
-* **long_ll**: projection x coordinate of the lower left corner of the lower left pixel in meters
-* **lat_ur**: projection y coordinate of the upper right corner of the upper right pixel in meters
-* **long_ur**: projection x coordinate of the upper right corner of the upper right pixel in meters
+* **y_ll**: projection y coordinate of the lower left corner of the lower left pixel in meters
+* **x_ll**: projection x coordinate of the lower left corner of the lower left pixel in meters
+* **y_ur**: projection y coordinate of the upper right corner of the upper right pixel in meters
+* **x_ur**: projection x coordinate of the upper right corner of the upper right pixel in meters
 
 .. warning::
 
-    The shape provided or found can alter the native shape of **displacement_data**.
+    The shape provided or found can alter the native shape of **displacement-data**.
 
 Additional utility methods
 --------------------------
 
-None of these functions can save data, thus they **do not** have the **no_save** argument.
+None of these functions can save data, thus they **do not** have the **no-save** argument.
 They have similar or identical arguments to wind_info.sh
 
 * **velocity.sh**: Prints just the velocity of the wind. Same arguments as wind_info.sh
@@ -221,7 +221,7 @@ They have similar or identical arguments to wind_info.sh
     /Desktop
     $ ls
     in.flo	    pywinds
-    $ pywinds/velocity.sh 60 90 0 100 --j 0 --i 0 --pixel_size 4000 --center 90 0
+    $ pywinds/velocity.sh 60 90 0 100 --j 0 --i 0 --pixel-size 4000 --center 90 0
     [51.8, 315.24]
 
 
@@ -233,13 +233,13 @@ They have similar or identical arguments to wind_info.sh
     /Desktop
     $ ls
     in.flo	    pywinds
-    $ pywinds/vu.sh 60 90 0 100 --j 0 --i 0 --pixel_size 4000 --center 90 0
+    $ pywinds/vu.sh 60 90 0 100 --j 0 --i 0 --pixel-size 4000 --center 90 0
     [36.78, -36.47]
 
 
 * **lat_long.sh**: Prints just the latitude and longitude of the pixels. If displacements data is provided,
   then old_latitude and old_longitude are calculated, else new_latitude and new_longitude are calculated.
-  Same arguments as wind_info.sh but does not take **delta_time** as an argument.
+  Same arguments as wind_info.sh but does not take **delta-time** as an argument.
 
 ::
 
@@ -247,15 +247,15 @@ They have similar or identical arguments to wind_info.sh
     /Desktop
     $ ls
     in.flo	    pywinds
-    $ pywinds/lat_long.sh 60 90 0 --j 0 --i 0 --pixel_size 4000
+    $ pywinds/lat_long.sh 60 90 0 --j 0 --i 0 --pixel-size 4000
       --center 90 0 --shape 1000 1000
     [63.36, -135.0]
-    $ pywinds/lat_long.sh 60 90 0 --j 0 --i 0 --pixel_size 4000
-      --center 90 0 --displacement_data in.flo
+    $ pywinds/lat_long.sh 60 90 0 --j 0 --i 0 --pixel-size 4000
+      --center 90 0 --displacement-data in.flo
     [61.38, -130.77]
 
 
-* **displacements.sh**: Prints just the j and i displacements of the pixels. Does not take **delta_time**
+* **displacements.sh**: Prints just the j and i displacements of the pixels. Does not take **delta-time**
   as an argument. All other required arguments for wind_info.sh are optional arguments.
 
 ::
@@ -269,7 +269,7 @@ They have similar or identical arguments to wind_info.sh
 
 
 * **area.sh**: Prints information about the projection given. Same arguments as
-  wind_info.sh but does not take **delta_time** as an argument.
+  wind_info.sh but does not take **delta-time** as an argument.
 
 ::
 
@@ -277,16 +277,16 @@ They have similar or identical arguments to wind_info.sh
     /Desktop
     $ ls
     in.flo	    pywinds
-    $ pywinds/area.sh 60 90 0 --pixel_size 4000 --center 90 0
+    $ pywinds/area.sh 60 90 0 --pixel-size 4000 --center 90 0
     projection: stere
-    lat_ts: 60
-    lat_0: 90
-    long_0: 0
+    lat-ts: 60
+    lat-0: 90
+    long-0: 0
     equatorial radius: 6378137.0
     eccentricity: 0.003353
-    area_extent: (65.81, -47.35, 67.6, 137.18)
+    area-extent: (65.81, -47.35, 67.6, 137.18)
     shape: (1000, 1000)
-    pixel_size: (4000.0, 4000.0)
+    pixel-size: (4000.0, 4000.0)
     center: (90.0, 0.0)
 
 

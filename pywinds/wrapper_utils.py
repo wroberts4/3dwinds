@@ -1,31 +1,18 @@
-import sys
-
 import argparse
 import ast
-import numpy as np
 import os
-import traceback
-import xarray
+import sys
 from glob import glob
+
+import numpy as np
+import xarray
 
 
 def area_to_string(area_dict):
     """Rounds and converts area dict to string"""
-    def _round(val, precision):
-        try:
-            if np.shape(val) == ():
-                return str(round(val, precision))
-            return str(list(np.round(val, precision).tolist()))
-        except (AttributeError, TypeError):
-            return str(val)
-
     write_string = ''
     for key, val in area_dict.items():
-        precision = 2
-        if key == 'eccentricity' or key == 'flattening':
-            precision = 6
-        val = _round(val, precision)
-        write_string = write_string + str(key) + ': ' + val + '\n'
+        write_string = write_string + str(key) + ': ' + str(val) + '\n'
     return write_string
 
 
@@ -113,51 +100,53 @@ class CustomAction(argparse.Action):
 
 def _get_args(name):
     """Reads command line arguments and handles logic behind them."""
-    arg_names = ['lat_ts', 'lat_0', 'long_0']
+    arg_names = ['lat-ts', 'lat-0', 'long-0']
     kwarg_names = ['center', 'pixel_size', 'units', 'shape', 'upper_left_extent', 'radius', 'area_extent',
                    'displacement_data', 'j', 'i', 'no_save', 'projection', 'projection_spheroid', 'earth_spheroid']
     my_parser = argparse.ArgumentParser(description='', allow_abbrev=False, formatter_class=MyFormatter)
 
-    if name not in ['displacements']:
-        my_parser.add_argument('lat_ts', type=float, help='projection latitude of true scale')
-        my_parser.add_argument('lat_0', type=float, help='projection latitude of origin')
-        my_parser.add_argument('long_0', type=float, help='projection central meridian')
+    if name != 'displacements':
+        my_parser.add_argument('lat-ts', type=float, help='projection latitude of true scale')
+        my_parser.add_argument('lat-0', type=float, help='projection latitude of origin')
+        my_parser.add_argument('long-0', type=float, help='projection central meridian')
     else:
         arg_names = []
     if name in ['wind_info', 'velocity', 'vu']:
-        my_parser.add_argument('delta_time', type=float, help='amount of time that separates both files in minutes')
-        arg_names.append('delta_time')
-    my_parser.add_argument('--center', action=CustomAction, type=_nums_or_string, narg_types=[[(float, int), (float, int), str], [(float, int), (float, int)]],
+        my_parser.add_argument('delta-time', type=float, help='amount of time that separates both files in minutes')
+        arg_names.append('delta-time')
+    my_parser.add_argument('--center', action=CustomAction, type=_nums_or_string,
+                           narg_types=[[(float, int), (float, int), str], [(float, int), (float, int)]],
                            help='projection y and x coordinate of the center of area. Default: lat long')
-    my_parser.add_argument('--pixel_size', action=CustomAction, type=_nums_or_string, narg_types=[[(float, int), (float, int), str], [(float, int), (float, int)],
-                                  [(float, int), str], [(float, int)]],
+    my_parser.add_argument('--pixel-size', action=CustomAction, type=_nums_or_string,
+                           narg_types=[[(float, int), (float, int), str], [(float, int), (float, int)],
+                                       [(float, int), str], [(float, int)]],
                            help='projection size of pixels in the y and x direction.'
                                 'If pixels are square, i.e. dy = dx, then only one value needs to be entered')
-    my_parser.add_argument('--displacement_data', type=_nums_or_string, metavar=('filename'),
+    my_parser.add_argument('--displacement-data', type=_nums_or_string, metavar='filename',
                            help='filename or list containing displacements')
     if name != 'area':
         my_parser.add_argument('--j', type=int, metavar='int', help='row to run calculations on')
         my_parser.add_argument('--i', type=int, metavar='int', help='column to run calculations on')
     if name == 'wind_info':
-        my_parser.add_argument('--no_save', action="store_true", help="print data to shell without saving")
-    my_parser.add_argument('--units', metavar='str',
-                           help='units that all provided arguments that take units '
-                                '(except center) should be interpreted as')
-    my_parser.add_argument('--upper_left_extent', action=CustomAction, type=_nums_or_string, narg_types=[[(float, int), (float, int), str], [(float, int), (float, int)]],
+        my_parser.add_argument('--no-save', action="store_true", help="print data to shell without saving")
+    my_parser.add_argument('--units', metavar='str', help='units that all provided arguments that take units '
+                                                          '(except center) should be interpreted as')
+    my_parser.add_argument('--upper-left-extent', action=CustomAction, type=_nums_or_string,
+                           narg_types=[[(float, int), (float, int), str], [(float, int), (float, int)]],
                            help='projection y and x coordinates of the upper left corner of the upper left pixel')
-    my_parser.add_argument('--radius', action=CustomAction, type=_nums_or_string, narg_types=[[(float, int), (float, int), str], [(float, int), (float, int)]],
+    my_parser.add_argument('--radius', action=CustomAction, type=_nums_or_string,
+                           narg_types=[[(float, int), (float, int), str], [(float, int), (float, int)]],
                            help='projection length from the center to the left/rightand top/bottom outer edges')
-    my_parser.add_argument('--area_extent', action=CustomAction, type=_nums_or_string, narg_types=[[(float, int) for
-                                                                                                    i in range(4)] + [str], [(float, int) for i in range(4)]],
+    my_parser.add_argument('--area-extent', action=CustomAction, type=_nums_or_string,
+                           narg_types=[[(float, int) for i in range(4)] + [str], [(float, int) for i in range(4)]],
                            help='area extent in projection space: lower_left_y,'
                                 'lower_left_x, upper_right_y, upper_right_x')
     my_parser.add_argument('--shape', type=_nums_or_string, nargs=2, metavar=('height', 'width'),
                            help='number of pixels in the y and x direction')
-    my_parser.add_argument('--projection', metavar='str',
-                           help='name of projection that the image is in')
-    my_parser.add_argument('--projection_spheroid', metavar='str', help='spheroid of projection')
+    my_parser.add_argument('--projection', metavar='str', help='name of projection that the image is in')
+    my_parser.add_argument('--projection-spheroid', metavar='str', help='spheroid of projection')
     if name in ['wind_info', 'velocity', 'vu']:
-        my_parser.add_argument('--earth_spheroid', metavar='str', help='spheroid of Earth')
+        my_parser.add_argument('--earth-spheroid', metavar='str', help='spheroid of Earth')
     commands = my_parser.parse_args()
     args = [getattr(commands, arg) for arg in arg_names]
     kwargs = {}
