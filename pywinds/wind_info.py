@@ -1,13 +1,15 @@
 #!/usr/bin/env python
 import ntpath
 import os
-import sys
+import logging
 import warnings
 
 import numpy as np
 
 from pywinds.wind_functions import wind_info
 from pywinds.wrapper_utils import run_script
+
+logger = logging.getLogger('wind_info.py')
 
 
 def output_format(output, kwargs):
@@ -16,13 +18,10 @@ def output_format(output, kwargs):
     head, tail = ntpath.split(kwargs['displacement_data'])
     extension = tail or ntpath.basename(head)
     save_directory = os.path.join(os.getcwd(), extension + '_output')
-    return 'Data saved to the directory {0}'.format(os.path.join(save_directory))
-
-
-def main(argv):
-    run_script(wind_info, output_format, 'wind_info')
+    logger.info('Data saved to the directory {0}'.format(save_directory))
+    return ''
 
 
 if __name__ == "__main__":
     warnings.filterwarnings("ignore", category=UserWarning, module='pyproj')
-    main(sys.argv)
+    run_script(wind_info, output_format, 'wind_info')

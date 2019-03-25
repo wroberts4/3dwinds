@@ -1,11 +1,14 @@
 import argparse
 import ast
+import logging
 import os
 import sys
 from glob import glob
 
-import numpy as np
 import xarray
+
+
+logger = logging.getLogger(__name__)
 
 
 def area_to_string(area_dict):
@@ -103,7 +106,7 @@ def _get_args(name):
     arg_names = ['lat-ts', 'lat-0', 'long-0']
     kwarg_names = ['center', 'pixel_size', 'units', 'shape', 'upper_left_extent', 'radius', 'area_extent',
                    'displacement_data', 'j', 'i', 'no_save', 'projection', 'projection_spheroid', 'earth_spheroid']
-    my_parser = argparse.ArgumentParser(description='', allow_abbrev=False, formatter_class=MyFormatter)
+    my_parser = argparse.ArgumentParser(description='', formatter_class=MyFormatter)
 
     if name != 'displacements':
         my_parser.add_argument('lat-ts', type=float, help='projection latitude of true scale')
@@ -147,7 +150,14 @@ def _get_args(name):
     my_parser.add_argument('--projection-spheroid', metavar='str', help='spheroid of projection')
     if name in ['wind_info', 'velocity', 'vu']:
         my_parser.add_argument('--earth-spheroid', metavar='str', help='spheroid of Earth')
+    my_parser.add_argument('-v', '--verbose', action="count", default=0,
+                           help='each occurrence increases verbosity 1 level through ERROR-WARNING-INFO-DEBUG')
     commands = my_parser.parse_args()
+    # Logging setup.
+    levels = [logging.ERROR, logging.WARNING, logging.INFO, logging.DEBUG]
+    logging_format = '[%(levelname)s: %(asctime)s : %(name)s] %(message)s'
+    logging.basicConfig(level=levels[min(3, commands.verbose)], format=logging_format, datefmt='%Y-%m-%d %H:%M:%S')
+    # Gets args and kwargs from command line data.
     args = [getattr(commands, arg) for arg in arg_names]
     kwargs = {}
     for name in kwarg_names:
@@ -168,17 +178,14 @@ def run_script(func, output_format, name, is_area=False, is_lat_long=False):
         files = glob(displacement_data)
         if files:
             for file in files:
-                kwargs['displacement_data'] = file
+                kwargs['displacement_data'] = os.path.abspath(file)
                 output = output_format(func(*args, **kwargs), kwargs)
                 if output is not '':
-                    if len(files) > 1:
-                        print('Reading displacements from:', file)
                     print(output)
             return
-        # File not found error will be raised
+        # File not found error will be raised from trying to find *.flo.
         elif is_area is False:
-            output = func(*args, **kwargs)
-            print(output_format(output, kwargs))
+            func(*args, **kwargs)
         kwargs.pop('displacement_data')
     output = func(*args, **kwargs)
     print(output_format(output, kwargs))

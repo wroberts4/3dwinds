@@ -24,13 +24,23 @@ Optional arguments:
   then only one value needs to be entered.
 * **displacement-data**: Name of binary file (32-bit float) containing pixels displacements; How far the
   pixels had to move in the y (positive is down) and x (positive is right) direction to get to their new position.
-  Wildcard ("*") syntax is accepted. If not provided, reads every file ending in ".flo" where the script is ran
+  Wildcard ("*") syntax is accepted when past as a string. If not provided, reads every file ending in ".flo"
+  where the script is ran
 * **j**: Row to run calculations on
 * **i**: Column to run calculations on
 * **no-save**:
 
   1. When not flagged (Default): saves data without printing to shell
   2. When flagged: prints data to shell without saving
+* **verbose**: Provides 4 levels of information to users:
+
+  1. ERROR (Default): The only thing printed to the shell will be errors (and potentially data).
+  2. WARNING: Additionally to the above, instances that may cause faulty data will be displayed.
+     Specified using **-v**
+  3. INFO: Additionally to the above, information about where data is read from and saved to will be displayed.
+     Specified using **-vv**
+  4. DEBUG: Additionally to the above, information about the program's progress will be displayed.
+     Specified using **-vvv**
 
 Additional information:
 
@@ -46,7 +56,11 @@ Calculating wind_info::
     $ pywinds/wind_info.sh 60 90 0 100 --j 0 --i 0 --pixel-size 4000 --center 90 0 --no-save
     [63.36, -135.0, 51.8, 315.24, 36.78, -36.47]
     $ pywinds/wind_info.sh 60 90 0 100 --pixel-size 4000 --center 90 0
-    Data saved to the directory /Desktop/in.flo_output
+    $ pywinds/wind_info.sh 60 90 0 100 --pixel-size 4000 --center 90 0 -vv
+    [INFO: 2019-03-01 12:00:00 : pywinds.wind_functions] Reading displacements from
+    /Desktop/in.flo
+    [INFO: 2019-03-01 12:00:08 : wind_info.py] Data saved to the directory
+    /Desktop/in.flo_output
 
 
 For more examples of using wind_info.sh, please see :ref:`examples_of_wind_info.sh`.

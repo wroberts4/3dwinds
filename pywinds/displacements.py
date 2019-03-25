@@ -12,10 +12,6 @@ def output_format(output, kwargs):
     return np.round(output, 2).tolist()
 
 
-def main(argv):
-    run_script(displacements, output_format, 'displacements')
-
-
 if __name__ == "__main__":
     warnings.filterwarnings("ignore", category=UserWarning, module='pyproj')
-    main(sys.argv)
+    run_script(displacements, output_format, 'displacements')
