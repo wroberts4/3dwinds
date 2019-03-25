@@ -1,3 +1,4 @@
+"""Convert command line arguments to python arguments for wind_functions.py"""
 import argparse
 import ast
 import logging
@@ -101,19 +102,31 @@ class CustomAction(argparse.Action):
         setattr(args, self.dest, values)
 
 
+# TODO: CHANGE KWARGS AND ARGS FOR DISPLACEMENTS
 def _get_args(name):
     """Reads command line arguments and handles logic behind them."""
     arg_names = ['lat-ts', 'lat-0', 'long-0']
     kwarg_names = ['center', 'pixel_size', 'units', 'shape', 'upper_left_extent', 'radius', 'area_extent',
                    'displacement_data', 'j', 'i', 'no_save', 'projection', 'projection_spheroid', 'earth_spheroid']
-    my_parser = argparse.ArgumentParser(description='', formatter_class=MyFormatter)
+    my_parser = argparse.ArgumentParser(description=__doc__, formatter_class=MyFormatter)
 
     if name != 'displacements':
         my_parser.add_argument('lat-ts', type=float, help='projection latitude of true scale')
         my_parser.add_argument('lat-0', type=float, help='projection latitude of origin')
         my_parser.add_argument('long-0', type=float, help='projection central meridian')
+        my_parser.add_argument('--displacement-data', type=_nums_or_string, metavar='filename',
+                               help='filename or list containing displacements')
     else:
         arg_names = []
+        kwarg_names.insert(0, 'long_0')
+        kwarg_names.insert(0, 'lat_0')
+        kwarg_names.insert(0, 'lat_ts')
+        kwarg_names.remove('displacement_data')
+        my_parser.add_argument('--displacement-data', nargs='?', type=_nums_or_string, metavar='filename',
+                               help='filename or list containing displacements')
+        my_parser.add_argument('--lat-ts', type=float, metavar='float', help='projection latitude of true scale')
+        my_parser.add_argument('--lat-0', type=float, metavar='float', help='projection latitude of origin')
+        my_parser.add_argument('--long-0', type=float, metavar='float', help='projection central meridian')
     if name in ['wind_info', 'velocity', 'vu']:
         my_parser.add_argument('delta-time', type=float, help='amount of time that separates both files in minutes')
         arg_names.append('delta-time')
@@ -125,8 +138,6 @@ def _get_args(name):
                                        [(float, int), str], [(float, int)]],
                            help='projection size of pixels in the y and x direction.'
                                 'If pixels are square, i.e. dy = dx, then only one value needs to be entered')
-    my_parser.add_argument('--displacement-data', type=_nums_or_string, metavar='filename',
-                           help='filename or list containing displacements')
     if name != 'area':
         my_parser.add_argument('--j', type=int, metavar='int', help='row to run calculations on')
         my_parser.add_argument('--i', type=int, metavar='int', help='column to run calculations on')
@@ -162,20 +173,22 @@ def _get_args(name):
     kwargs = {}
     for name in kwarg_names:
         val = getattr(commands, name, None)
+        # Prevents variables not in function from being passed. ie no-save.
         if val is not None:
             kwargs[name] = val
-    return args, kwargs, my_parser
+    return args, kwargs
 
 
 def run_script(func, output_format, name, is_area=False, is_lat_long=False):
     """Runs python function from wind_functions.py."""
-    args, kwargs, parser = _get_args(name)
+    args, kwargs = _get_args(name)
     displacement_data = kwargs.get('displacement_data')
-    if displacement_data is None and is_lat_long is False:
+    if displacement_data is None and name != 'lat_long':
         displacement_data = os.path.join(os.getcwd(), '*.flo')
         kwargs['displacement_data'] = displacement_data
     if isinstance(displacement_data, str):
         files = glob(displacement_data)
+        # If there are files, return after reading. Else let area fall through or error.
         if files:
             for file in files:
                 kwargs['displacement_data'] = os.path.abspath(file)
@@ -183,9 +196,9 @@ def run_script(func, output_format, name, is_area=False, is_lat_long=False):
                 if output is not '':
                     print(output)
             return
-        # File not found error will be raised from trying to find *.flo.
-        elif is_area is False:
+        # File not found error will be raised from trying to find *.flo. Let area calculate as much as possible.
+        elif name != 'area':
             func(*args, **kwargs)
         kwargs.pop('displacement_data')
-    output = func(*args, **kwargs)
-    print(output_format(output, kwargs))
+    # Only happens with lat_long, area, or if non string is given to displacement-data.
+    print(output_format(func(*args, **kwargs), kwargs))

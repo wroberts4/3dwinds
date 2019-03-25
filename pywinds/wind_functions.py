@@ -11,8 +11,9 @@ from pyresample.utils import proj4_str_to_dict
 
 from pywinds.wrapper_utils import area_to_string
 
-# TODO: MAKE VERBOSE MODE!!
 """Calculates area information, j and i displacement, new and old latitude/longitude, v, u, and velocity of the wind."""
+
+
 logger = logging.getLogger(__name__)
 
 
@@ -249,23 +250,32 @@ def _create_area(lat_ts, lat_0, long_0, projection=None, area_extent=None, shape
 
 def _find_displacements(displacement_data=None, j=None, i=None, shape=None, no_save=True):
     """Retrieves pixel-displacements from a 32-bit float binary file or list."""
+    import struct
     if isinstance(displacement_data, str):
         # Displacement: even index, odd index. Note: (0, 0) is in the top left, i=horizontal and j=vertical.
         # Convert 32 float to 64 float to prevent rounding errors.
         displacement = np.array(np.fromfile(displacement_data, dtype=np.float32)[3:], dtype=np.float64)
+        with open(displacement_data, mode='rb') as file:
+            data = file.read()
+            file_shape = struct.unpack("ii", data[4:12])
+            tag = struct.unpack("cccc", data[:4])
+            # tag == 'PIEH'. Not used, but may be useful to others.
+            tag = ''.join([char.decode("utf-8") for char in tag])
         logger.info('Reading displacements from {0}'.format(displacement_data))
         j_displacement = displacement[1::2]
         i_displacement = displacement[0::2]
-        file_shape = tuple(np.fromfile(displacement_data, dtype=int)[1:3])
         if (file_shape[0] is not 0 and file_shape[1] == np.size(j_displacement) / file_shape[0] and
                 file_shape[1] == np.size(i_displacement) / file_shape[0]):
             if shape is not None and shape != file_shape:
                 logger.warning('Shape found\nfrom area or provided by user does not match the shape '
                                'of the file:\n{0} vs {1}'.format(shape, file_shape))
             elif shape is None:
+                logger.debug('Native shape of file found {0}'.format(file_shape))
                 shape = file_shape
     # List handling
     elif displacement_data is not None:
+        if shape is not None and shape[0] != shape[1]:
+            logger.warning('Shape given or found is not square {0}'.format(shape))
         logger.debug('Reading displacements from a list')
         if len(np.shape(displacement_data)) != 2 and len(np.shape(displacement_data)) != 3 or \
                 np.shape(displacement_data)[0] != 2:
