@@ -16,6 +16,7 @@ Having multiple files in run directory::
       --center 90 0 --no-save
     [63.36, -135.0, 51.8, 315.24, 36.78, -36.47]
     [63.36, -135.0, 51.8, 315.24, 36.78, -36.47]
+
     $ pywinds/wind_info.sh 60 90 0 100 --j 0 --i 0 --pixel-size 4000
       --center 90 0 -vv --no-save
     [INFO: 2019-03-01 12:00:00 : pywinds.wind_functions] Reading displacements from
@@ -24,6 +25,7 @@ Having multiple files in run directory::
     [INFO: 2019-03-01 12:00:00 : pywinds.wind_functions] Reading displacements from
     /Desktop/in.flo
     [63.36, -135.0, 51.8, 315.24, 36.78, -36.47]
+
     $ pywinds/wind_info.sh 60 90 0 100 --pixel-size 4000 --center 90 0
     [INFO: 2019-03-01 12:00:00 : pywinds.wind_functions] Reading displacements from
     /Desktop/test.flo
@@ -53,8 +55,10 @@ Specifying one file to run::
     $ pywinds/wind_info.sh 60 90 0 100 --j 0 --i 0 --pixel-size 4000
       --center 90 0 --displacement-data in.flo --no-save
     [63.36, -135.0, 51.8, 315.24, 36.78, -36.47]
+
     $ pywinds/wind_info.sh 60 90 0 100 --pixel-size 4000 --center 90 0
       --displacement-data path_to_other_directory/in.flo
+
     $ pywinds/wind_info.sh 60 90 0 100 --pixel-size 4000 --center 90 0
       --displacement-data path_to_other_directory/in.flo -vv
     [INFO: 2019-03-01 12:00:00 : pywinds.wind_functions] Reading displacements from
@@ -77,6 +81,7 @@ Specifying multiple files to run::
     [INFO: 2019-03-01 12:00:00 : pywinds.wind_functions] Reading displacements from
     /Desktop/windtest2.flo
     [63.36, -135.0, 51.8, 315.24, 36.78, -36.47]
+
     $ pywinds/wind_info.sh 60 90 0 100 --pixel-size 4000
       --center 90 0 --displacement-data \*test*.flo
     [INFO: 2019-03-01 12:00:00 : pywinds.wind_functions] Reading displacements from
@@ -98,6 +103,7 @@ Altering spheroids::
     $ pywinds/wind_info.sh 60 90 0 100 --j 0 --i 0 --pixel-size 4000
       --center 90 0 --projection-spheroid sphere --no-save
     [63.26, -135.0, 51.93, 315.2, 36.85, -36.59]
+
     $ pywinds/wind_info.sh 60 90 0 100 --j 0 --i 0 --pixel-size 4000 --center 90 0
       --projection-spheroid sphere --earth-spheroid sphere --no-save
     [63.26, -135.0, 51.77, 315.24, 36.76, -36.46]

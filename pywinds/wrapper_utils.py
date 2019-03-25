@@ -16,7 +16,7 @@ def area_to_string(area_dict):
     write_string = ''
     for key, val in area_dict.items():
         write_string = write_string + str(key) + ': ' + str(val) + '\n'
-    return write_string
+    return write_string[:-1]
 
 
 def _nums_or_string(var):
