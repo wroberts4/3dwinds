@@ -8,7 +8,6 @@ from glob import glob
 
 import xarray
 
-
 logger = logging.getLogger(__name__)
 
 
@@ -30,12 +29,14 @@ def _nums_or_string(var):
 
 class NullParser(argparse.ArgumentParser):
     """Used to nullify error output."""
+
     def error(self, message):
         return
 
 
 class MyFormatter(argparse.HelpFormatter):
     """Dynamically formats help message to be more informative."""
+
     def format_help(self):
         help = super(MyFormatter, self).format_help()
         formatter = ('{0} {0} {0} {0} {0}', '{0} {0} {0} {0}', '{0} {0} {0}', '{0} {0}', '{0}')
@@ -50,6 +51,7 @@ class MyFormatter(argparse.HelpFormatter):
 
 class CustomAction(argparse.Action):
     """Dynamically finds correct number of nargs to use, then converts those numbers to correct python objects."""
+
     def __init__(self, option_strings, dest, narg_types=None, type=None, help=None):
         narg_types.sort(key=len)
         # If an error occurs or number of args are too small, use the bare minimum nargs.
@@ -102,7 +104,6 @@ class CustomAction(argparse.Action):
         setattr(args, self.dest, values)
 
 
-# TODO: CHANGE KWARGS AND ARGS FOR DISPLACEMENTS
 def _get_args(name):
     """Reads command line arguments and handles logic behind them."""
     arg_names = ['lat-ts', 'lat-0', 'long-0']
@@ -114,16 +115,11 @@ def _get_args(name):
         my_parser.add_argument('lat-ts', type=float, help='projection latitude of true scale')
         my_parser.add_argument('lat-0', type=float, help='projection latitude of origin')
         my_parser.add_argument('long-0', type=float, help='projection central meridian')
-        my_parser.add_argument('--displacement-data', type=_nums_or_string, metavar='filename',
-                               help='filename or list containing displacements')
     else:
         arg_names = []
         kwarg_names.insert(0, 'long_0')
         kwarg_names.insert(0, 'lat_0')
         kwarg_names.insert(0, 'lat_ts')
-        kwarg_names.remove('displacement_data')
-        my_parser.add_argument('--displacement-data', nargs='?', type=_nums_or_string, metavar='filename',
-                               help='filename or list containing displacements')
         my_parser.add_argument('--lat-ts', type=float, metavar='float', help='projection latitude of true scale')
         my_parser.add_argument('--lat-0', type=float, metavar='float', help='projection latitude of origin')
         my_parser.add_argument('--long-0', type=float, metavar='float', help='projection central meridian')
@@ -138,6 +134,8 @@ def _get_args(name):
                                        [(float, int), str], [(float, int)]],
                            help='projection size of pixels in the y and x direction.'
                                 'If pixels are square, i.e. dy = dx, then only one value needs to be entered')
+    my_parser.add_argument('--displacement-data', type=_nums_or_string, metavar='filename',
+                           help='filename or list containing displacements')
     if name != 'area':
         my_parser.add_argument('--j', type=int, metavar='int', help='row to run calculations on')
         my_parser.add_argument('--i', type=int, metavar='int', help='column to run calculations on')
@@ -179,7 +177,7 @@ def _get_args(name):
     return args, kwargs
 
 
-def run_script(func, output_format, name, is_area=False, is_lat_long=False):
+def run_script(func, output_format, name):
     """Runs python function from wind_functions.py."""
     args, kwargs = _get_args(name)
     displacement_data = kwargs.get('displacement_data')

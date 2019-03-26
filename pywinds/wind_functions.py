@@ -1,6 +1,8 @@
+"""Calculates area information, j and i displacement, new and old latitude/longitude, v, u, and velocity of the wind."""
+import logging
 import ntpath
 import os
-import logging
+import struct
 
 import numpy as np
 import xarray
@@ -10,9 +12,6 @@ from pyresample.geometry import AreaDefinition, DynamicAreaDefinition
 from pyresample.utils import proj4_str_to_dict
 
 from pywinds.wrapper_utils import area_to_string
-
-"""Calculates area information, j and i displacement, new and old latitude/longitude, v, u, and velocity of the wind."""
-
 
 logger = logging.getLogger(__name__)
 
@@ -138,7 +137,8 @@ def _lat_long_dist(lat, earth_spheroid):
         earth_spheroid = Geod(ellps=earth_spheroid)
     else:
         raise ValueError('earth_spheroid must be a string or Geod type, but instead was {0} {1}'.format(earth_spheroid,
-            type(earth_spheroid)))
+                                                                                                        type(
+                                                                                                            earth_spheroid)))
     geod_info = proj4_str_to_dict(earth_spheroid.initstring)
     e2 = (2 - 1 * geod_info['f']) * geod_info['f']
     lat = np.pi / 180 * lat
@@ -171,7 +171,8 @@ def _create_area(lat_ts, lat_0, long_0, projection=None, area_extent=None, shape
     else:
         raise ValueError(
             'projection_spheroid must be a string or Geod type, but instead was {0} {1}'.format(projection_spheroid,
-                type(projection_spheroid)))
+                                                                                                type(
+                                                                                                    projection_spheroid)))
     # Center is given in (lat, long) order, but create_area_def needs it in (long, lat) order.
     if area_extent is not None:
         area_extent_ll, area_extent_ur = area_extent[0:2], area_extent[2:4]
@@ -250,7 +251,6 @@ def _create_area(lat_ts, lat_0, long_0, projection=None, area_extent=None, shape
 
 def _find_displacements(displacement_data=None, j=None, i=None, shape=None, no_save=True):
     """Retrieves pixel-displacements from a 32-bit float binary file or list."""
-    import struct
     if isinstance(displacement_data, str):
         # Displacement: even index, odd index. Note: (0, 0) is in the top left, i=horizontal and j=vertical.
         # Convert 32 float to 64 float to prevent rounding errors.
@@ -274,8 +274,6 @@ def _find_displacements(displacement_data=None, j=None, i=None, shape=None, no_s
                 shape = file_shape
     # List handling
     elif displacement_data is not None:
-        if shape is not None and shape[0] != shape[1]:
-            logger.warning('Shape given or found is not square {0}'.format(shape))
         logger.debug('Reading displacements from a list')
         if len(np.shape(displacement_data)) != 2 and len(np.shape(displacement_data)) != 3 or \
                 np.shape(displacement_data)[0] != 2:
@@ -297,6 +295,8 @@ def _find_displacements(displacement_data=None, j=None, i=None, shape=None, no_s
                 '{0} pixels made a shape of {1}'.format(np.size(j_displacement) + np.size(i_displacement),
                                                         tuple([2] + shape))
         shape = (_to_int(shape[0], ValueError(error)), _to_int(shape[1], ValueError(error)))
+    if shape is not None and shape[0] != shape[1]:
+        logger.debug('Shape given or found is not square {0}'.format(shape))
     # Make sure shape matches the displacement shape.
     if shape[0] is 0 or shape[1] != np.size(j_displacement) / shape[0]:
         raise ValueError(
@@ -339,7 +339,7 @@ def _compute_lat_long(lat_ts, lat_0, long_0, displacement_data=None, projection=
         raise ValueError(
             'lat_0 and long_0 must be ints or floats, but instead were ' + '{0} {1} and {2} {3} respectively'.format(
                 lat_0, type(lat_0), long_0, type(long_0)))
-    shape, j_displacement, i_displacement, area_definition =\
+    shape, j_displacement, i_displacement, area_definition = \
         _find_displacements_and_area(lat_ts=lat_ts, lat_0=lat_0, long_0=long_0, displacement_data=displacement_data,
                                      projection=projection, j=j, i=i, area_extent=area_extent, shape=shape,
                                      center=center, pixel_size=pixel_size, upper_left_extent=upper_left_extent,
@@ -470,6 +470,8 @@ def _find_displacements_and_area(lat_ts=None, lat_0=None, long_0=None, displacem
                                upper_left_extent, radius, units, projection_spheroid])
     # Try to get shape from area.
     if has_area_args:
+        if None in [lat_ts, lat_0, long_0]:
+            logger.warning('Area information provided but atleast one of lat_ts, lat_0, or long_0 was not defined')
         try:
             logger.debug('Finding area information before reading displacements')
             area_data, area_definition = _create_area(lat_ts, lat_0, long_0, projection=projection,
@@ -611,6 +613,7 @@ def displacements(lat_ts=None, lat_0=None, long_0=None, displacement_data=None, 
             (j_displacements, i_displacements) : numpy.array or list
                 j_displacements and i_displacements found in displacement file or list in row-major format
     """
+    # Easier to treat as other functions.
     if displacement_data is None:
         raise ValueError('displacement_data is required to find displacements but was not provided.')
     shape, j_displacement, i_displacement = _find_displacements_and_area(lat_ts=lat_ts, lat_0=lat_0, long_0=long_0,
@@ -625,7 +628,8 @@ def displacements(lat_ts=None, lat_0=None, long_0=None, displacement_data=None, 
 
 
 def velocity(lat_ts, lat_0, long_0, delta_time, displacement_data=None, projection=None, j=None, i=None,
-             area_extent=None, shape=None, center=None, pixel_size=None, upper_left_extent=None, radius=None, units=None,
+             area_extent=None, shape=None, center=None, pixel_size=None, upper_left_extent=None, radius=None,
+             units=None,
              projection_spheroid=None, earth_spheroid=None):
     """Computes the speed and angle of the wind given an area and pixel-displacement.
 
