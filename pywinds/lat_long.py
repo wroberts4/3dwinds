@@ -13,5 +13,4 @@ def output_format(output, kwargs):
 
 
 if __name__ == "__main__":
-    warnings.filterwarnings("ignore", category=UserWarning, module='pyproj')
     run_script(lat_long, output_format, 'lat_long')

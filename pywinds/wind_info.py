@@ -23,5 +23,4 @@ def output_format(output, kwargs):
 
 
 if __name__ == "__main__":
-    warnings.filterwarnings("ignore", category=UserWarning, module='pyproj')
     run_script(wind_info, output_format, 'wind_info')
