@@ -212,9 +212,11 @@ Content of wind_info.nc
     $ pwd
     /Desktop/pywinds/in.flo_output
     $ ls
-    angle.txt		    new_latitude.txt	old_longitude.txt	    u.txt			   wind_info.txt
-    i_displacement.txt	new_longitude.txt	polar_stereographic.txt	v.txt
-    j_displacement.txt	old_latitude.txt	speed.txt		        wind_info.nc
+    angle.txt		old_latitude.txt	v.txt
+    i_displacement.txt	old_longitude.txt	wind_info.nc
+    j_displacement.txt	polar_stereographic.txt	wind_info.txt
+    new_latitude.txt	speed.txt
+    new_longitude.txt	u.txt
     $ ncdump -h wind_info.nc
     netcdf wind_info {
     dimensions:

@@ -352,9 +352,11 @@ $ pywinds/wind_info.sh 60 90 0 100 --j 0 --i 0 --pixel-size 4000
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ pwd
 /Desktop/pywinds/in.flo_output
 $ ls
-angle.txt               new_latitude.txt    old_longitude.txt           u.txt                          wind_info.txt
-i_displacement.txt  new_longitude.txt       polar_stereographic.txt v.txt
-j_displacement.txt  old_latitude.txt        speed.txt                       wind_info.nc
+angle.txt           old_latitude.txt        v.txt
+i_displacement.txt  old_longitude.txt       wind_info.nc
+j_displacement.txt  polar_stereographic.txt wind_info.txt
+new_latitude.txt    speed.txt
+new_longitude.txt   u.txt
 $ ncdump -h wind_info.nc
 netcdf wind_info {
 dimensions:
