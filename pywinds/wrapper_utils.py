@@ -38,15 +38,15 @@ class MyFormatter(argparse.HelpFormatter):
     """Dynamically formats help message to be more informative."""
 
     def format_help(self):
-        help = super(MyFormatter, self).format_help()
+        help_string = super(MyFormatter, self).format_help()
         formatter = ('{0} {0} {0} {0} {0}', '{0} {0} {0} {0}', '{0} {0} {0}', '{0} {0}', '{0}')
         for form in formatter:
-            help = help.replace(form.format('UPPER_LEFT_EXTENT'), 'y x [units]')
-            help = help.replace(form.format('RADIUS'), 'dy dx [units]')
-            help = help.replace(form.format('AREA_EXTENT'), 'y_ll x_ll y_ur x_ur [units]')
-            help = help.replace(form.format('CENTER'), 'y x [units]')
-            help = help.replace(form.format('PIXEL_SIZE'), 'dy [dx] [units]')
-        return help
+            help_string = help_string.replace(form.format('UPPER_LEFT_EXTENT'), 'y x [units]')
+            help_string = help_string.replace(form.format('RADIUS'), 'dy dx [units]')
+            help_string = help_string.replace(form.format('AREA_EXTENT'), 'y_ll x_ll y_ur x_ur [units]')
+            help_string = help_string.replace(form.format('CENTER'), 'y x [units]')
+            help_string = help_string.replace(form.format('PIXEL_SIZE'), 'dy [dx] [units]')
+        return help_string
 
 
 class CustomAction(argparse.Action):
