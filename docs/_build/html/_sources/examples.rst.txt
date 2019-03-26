@@ -188,10 +188,10 @@ Shuffling order of arguments/options::
 .. note::
 
     For **pixel-size** to have positional arguments after it, it must be specified using two numbers
-    (or else **pixel-size** would interpret the second number as input since **pixel-size**
-    can take one or two numbers as arguments).
+    or with units. This is because **pixel-size** would interpret the second number as input since
+    **pixel-size** can take one or two numbers as arguments).
 
-**displacement-data** can also be a list::
+**displacement-data** can also be a list ([j_displacement,i_displacement] in row-major format)::
 
 
     $ pwd
@@ -199,7 +199,7 @@ Shuffling order of arguments/options::
     $ ls
     in.flo        test.flo        pywinds
     $ pywinds/wind_info.sh 60 90 0 100 --j 0 --i 0 --pixel-size 4000
-      --center 90 0 --displacement-data [[[1,2],[3,4]],[[5,6],[7,8]]] --no-save
+      --center 90 0 --displacement-data [[1,2,3,4],[5,6,7,8]] --no-save
     [89.97, -135.0, 3.76, 341.58, 3.57, -1.19]
 
 .. _content_of_wind_info.nc:
@@ -467,7 +467,7 @@ If incorrect commands were given::
                         [--radius dy dx [units]]
                         [--area-extent y_ll x_ll y_ur x_ur [units]]
                         [--shape height width] [--projection str]
-                        [--projection-spheroid str] [--earth-spheroid str]
+                        [--projection-spheroid str] [--earth-spheroid str] [-v]
                         lat-ts lat-0 long-0 delta-time
     wind_info.py: error: the following arguments are required: delta-time
 
@@ -482,8 +482,10 @@ The help message for wind_info.sh::
                         [--radius dy dx [units]]
                         [--area-extent y_ll x_ll y_ur x_ur [units]]
                         [--shape height width] [--projection str]
-                        [--projection-spheroid str] [--earth-spheroid str]
+                        [--projection-spheroid str] [--earth-spheroid str] [-v]
                         lat-ts lat-0 long-0 delta-time
+
+    Convert command line arguments to python arguments for wind_functions.py
 
     positional arguments:
       lat-ts                projection latitude of true scale
@@ -522,6 +524,8 @@ The help message for wind_info.sh::
       --projection-spheroid str
                             spheroid of projection
       --earth-spheroid str  spheroid of Earth
+      -v, --verbose         each occurrence increases verbosity 1 level through
+                            ERROR-WARNING-INFO-DEBUG
 
 
 .. note::
