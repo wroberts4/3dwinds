@@ -204,7 +204,7 @@ Advanced arguments
     parameter supported by the `cs2cs -lu <https://proj4.org/apps/cs2cs.html#cmdoption-cs2cs-lu>`_
     command (see |cs2cs_lu.png|). Units are determined in the following priority:
 
-    1. units expressed with variables via @your-units (see 'Using units' under
+    1. units expressed at the end of individual variables (see 'Using units' under
        :ref:`examples_of_wind_info.sh` for examples)
     2. units passed to ``--units`` (exluding center)
     3. meters (exluding center, which is degrees)
