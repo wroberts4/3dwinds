@@ -210,10 +210,8 @@ def _create_area(lat_ts, lat_0, long_0, projection=None, area_extent=None, shape
                       _reverse_params([p(area_extent[2], area_extent[3], inverse=True)])[0]
     else:
         center = None
-    if area_definition.height is None or area_definition.width is None:
-        shape = None
-    else:
-        shape = [area_definition.height, area_definition.width]
+    shape = [area_definition.height, area_definition.width]
+    shape = None if None in shape else shape
     if isinstance(area_definition, AreaDefinition):
         pixel_size = [area_definition.pixel_size_y, area_definition.pixel_size_x]
     elif isinstance(area_definition, DynamicAreaDefinition):
@@ -403,7 +401,6 @@ def _compute_vu(lat_ts, lat_0, long_0, delta_time, displacement_data=None, proje
                                                                     projection_spheroid=projection_spheroid,
                                                                     no_save=no_save)
     logger.debug('Finding v and u components')
-    lat_long_distance = _lat_long_dist((new_lat + old_lat) / 2, earth_spheroid)
     # Uses average of distances.
     # v = (new_lat - old_lat) * (_lat_long_dist(old_lat, earth_spheroid)[0] +
     #                            _lat_long_dist(new_lat, earth_spheroid)[0]) / (2 * (delta_time * 60))
@@ -411,8 +408,10 @@ def _compute_vu(lat_ts, lat_0, long_0, delta_time, displacement_data=None, proje
     #                                                           _lat_long_dist(new_lat, earth_spheroid)[1]) /\
     #     (2 * (delta_time * 60))
     # Uses average of angles. units: meters/second. Distance is in meters, delta_time is in minutes.
+    lat_long_distance = _lat_long_dist((new_lat + old_lat) / 2, earth_spheroid)
     v = (new_lat - old_lat) * lat_long_distance[0] / (delta_time * 60)
     u = np.vectorize(_delta_longitude)(new_long, old_long) * lat_long_distance[1] / (delta_time * 60)
+
     if no_save is False:
         dims = None
         if np.size(v) != 1:
@@ -438,7 +437,7 @@ def _compute_velocity(lat_ts, lat_0, long_0, delta_time, displacement_data=None,
                                                  upper_left_extent=upper_left_extent, radius=radius, units=units,
                                                  projection_spheroid=projection_spheroid, earth_spheroid=earth_spheroid,
                                                  no_save=no_save)
-    logger.debug('Finding velocity')
+    logger.debug('Calculating velocity and angle')
     speed, angle = (u ** 2 + v ** 2) ** .5, ((90 - np.arctan2(v, u) * 180 / np.pi) + 360) % 360
     if no_save is False:
         dims = None
@@ -824,6 +823,26 @@ def lat_long(lat_ts, lat_0, long_0, displacement_data=None, projection=None, j=N
                                                                     units=units,
                                                                     projection_spheroid=projection_spheroid)
     return np.array((_reshape(old_lat, shape), _reshape(old_long, shape)))
+
+
+def euclidean(old_lat, old_long, new_lat, new_long, earth_spheroid=None):
+    lat_long_distance = _lat_long_dist((new_lat + old_lat) / 2, earth_spheroid)
+    y = (new_lat - old_lat) * lat_long_distance[0]
+    x = np.vectorize(_delta_longitude)(new_long, old_long) * lat_long_distance[1]
+    return (x ** 2 + y ** 2) ** .5, (90 - np.arctan2(y, x) * 180 / np.pi) % 360
+
+
+def greatcircle(old_lat, old_long, new_lat, new_long, earth_spheroid=None):
+    if earth_spheroid is None:
+        earth_spheroid = Geod(ellps='WGS84')
+    elif isinstance(earth_spheroid, str):
+        earth_spheroid = Geod(ellps=earth_spheroid)
+    else:
+        raise ValueError(
+            'earth_spheroid must be a string or Geod type, but instead was {0} {1}'.format(earth_spheroid,
+                                                                                                type(earth_spheroid)))
+    fwd_azimuth, bwd_azimuth, distance = earth_spheroid.inv(old_long, old_lat, new_long, new_lat)
+    return distance, fwd_azimuth % 360, bwd_azimuth % 360
 
 
 def wind_info(lat_ts, lat_0, long_0, delta_time, displacement_data=None, projection=None, j=None, i=None,
