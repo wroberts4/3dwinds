@@ -1,9 +1,11 @@
 Usage
 =====
 
-Use the **-h** or **--help** flags on any scripts to print a usage message. These scripts follow
+Use the **-h** or **------help** flags on any scripts to print a usage message. These scripts follow
 GNU command line style; order in which options are provided does not matter and positional arguments may be mixed
 in with options (as long as they are not interpreted as part of the option).
+
+.. _wind_info.sh:
 
 wind_info.sh
 ------------
@@ -19,20 +21,20 @@ Required arguments:
 
 Optional arguments:
 
-* **center**: Projection y and x coordinate of the center of area (lat, long)
-* **pixel-size**: Projection size of pixels in the y and x direction (dy, dx). If pixels are square, i.e. dy = dx,
+* **------center**: Projection y and x coordinate of the center of area (lat, long)
+* **------pixel-size**: Projection size of pixels in the y and x direction (dy, dx). If pixels are square, i.e. dy = dx,
   then only one value needs to be entered.
-* **displacement-data**: Name of binary file (32-bit float) containing pixels displacements; How far the
+* **------displacement-data**: Name of binary file (32-bit float) containing pixels displacements; How far the
   pixels had to move in the y (positive is down) and x (positive is right) direction to get to their new position.
   Wildcard ("*") syntax is accepted when past as a string. If not provided, reads every file ending in ".flo"
   where the script is ran
-* **j**: Row to run calculations on
-* **i**: Column to run calculations on
-* **no-save**:
+* **-j**: Row to run calculations on
+* **-i**: Column to run calculations on
+* **------print** (**-p**):
 
   1. When not flagged (Default): saves data without printing to shell
   2. When flagged: prints data to shell without saving
-* **verbose**: Provides 4 levels of information to users:
+* **------verbose** (**-v**): Provides 4 levels of information to users:
 
   1. ERROR (Default): The only thing printed to the shell will be errors (and potentially data).
   2. WARNING: Additionally to the above, instances that may cause faulty data will be displayed.
@@ -46,6 +48,18 @@ Additional information:
 
     * For more optional arguments, please see :ref:`advanced_arguments`.
     * For more information on save files and their formats, please see :ref:`save_format`
+    * For information on the output units, please see :ref:`units`
+
+.. note::
+
+    Enough information must be provided to make an area. Some common combinations of parameters are:
+
+    1. **------center** and **------pixel-size**
+    2. **------center** and **------radius**
+    3. **------upper-left-extent** and **------pixel-size**
+    4. **------area-extent**
+
+    along with shape, which should automatically be found from **------displacement-data**.
 
 Calculating wind_info::
 
@@ -53,17 +67,78 @@ Calculating wind_info::
     /Desktop
     $ ls
     in.flo	    pywinds
-    $ pywinds/wind_info.sh 60 90 0 100 --j 0 --i 0 --pixel-size 4000 --center 90 0 --no-save
+    $ pywinds/wind_info.sh 60 90 0 100 -j 0 -i 0 --pixel-size 4000 --center 90 0 -p
     [63.36, -135.0, 51.8, 315.24, 36.78, -36.47]
     $ pywinds/wind_info.sh 60 90 0 100 --pixel-size 4000 --center 90 0
     $ pywinds/wind_info.sh 60 90 0 100 --pixel-size 4000 --center 90 0 -vv
     [INFO: 2019-03-01 12:00:00 : pywinds.wind_functions] Reading displacements from
     /Desktop/in.flo
     [INFO: 2019-03-01 12:00:08 : wind_info.py] Data saved to the directory
-    /Desktop/in.flo_output
+    /Desktop/in.flo_output_20190301_115959
 
 
 For more examples of using wind_info.sh, please see :ref:`examples_of_wind_info.sh`.
+
+.. _advanced_arguments:
+
+Advanced arguments
+------------------
+
+.. |cs2cs_lu.png| image:: cs2cs_lu
+   :target: _static/cs2cs_lu.png
+
+* **------save_directory** (**-s**): Directory in which to save the file containing data (also a directory) to.
+  If the directory provided does not exist, then it is created. Defaults to a new directory by the name of
+  the displacement file read appended with "_output_YYYYmmdd_HHMMSS" (the date and time when the script was ran),
+  created where the script is ran
+* **------projection**: Name of projection that the image is in (stere, laea, merc, etc). Defaults to stere
+* **------projection-spheroid**: Spheroid of projection (WGS84, sphere, etc). Defaults to WGS84
+* **------earth-spheroid**: Spheroid of Earth (WGS84, sphere, etc). Defaults to WGS84
+* **------shape**: Number of pixels in the y and x direction (height, width). If shape is not provided,
+  it attempts to be found from **------displacement-data**
+* **------upper-left-extent**: Projection y and x coordinates of the upper left corner of the upper left pixel (y, x)
+* **------radius**: Projection length from the center to the left/right and top/bottom outer edges (dy, dx)
+* **------units**: Units that provided arguments should be interpreted as. This can be
+  one of 'deg', 'degrees', 'rad', 'radians', 'meters', 'metres', and any
+  parameter supported by the `cs2cs -lu <https://proj4.org/apps/cs2cs.html#cmdoption-cs2cs-lu>`_
+  command (see |cs2cs_lu.png|). Units are determined in the following priority:
+
+  1. units expressed at the end of individual variables (see 'Using units' under
+     :ref:`examples_of_wind_info.sh` for examples)
+  2. units passed to ``--units`` (exluding center)
+  3. meters (exluding center, which is degrees)
+* **------area-extent**: Area extent as a list [y_ll, x_ll, y_ur, x_ur]
+
+where
+
+* **y_ll**: projection y coordinate of the lower left corner of the lower left pixel in meters
+* **x_ll**: projection x coordinate of the lower left corner of the lower left pixel in meters
+* **y_ur**: projection y coordinate of the upper right corner of the upper right pixel in meters
+* **x_ur**: projection x coordinate of the upper right corner of the upper right pixel in meters
+
+.. warning::
+
+    The shape provided or found can alter the native shape of **------displacement-data**.
+
+.. _units:
+
+Units
+-----
+
+These are the output units for pywinds (Note: output units **cannot** be changed by the user):
+
+    * area: See :ref:`content_of_wind_info.nc` or the bottom of :ref:`data_format`
+    * j: unitless
+    * i: unitless
+    * latitude: degrees
+    * longitude: degrees
+    * v: m/s
+    * u: m/s
+    * velocity speed: m/s
+    * velocity angle: degrees
+
+
+.. _data_format:
 
 Data format
 -----------
@@ -125,7 +200,7 @@ If no j and i values are provided, then data is calculated at every pixel (n-row
           ...,
           [i_displacement_n1, ..., i_displacement_nm]]]
 
-Area is printed in a different format than it's saved::
+Area is printed in a different format than it is saved::
 
     projection:
     lat-ts (degrees):
@@ -154,8 +229,7 @@ wind_info.sh saves data to ::
     netcdf4 file: wind_info.nc
 
 
-**All files are saved in a new directory by the name of the displacement file appended with "_output", which**
-**will be created where the script is ran.**
+**All files are saved to --save_directory (see :ref:`advanced_arguments`)**
 
 .. note::
 
@@ -184,47 +258,10 @@ wind_info.nc:
 
     * For an example of what wind_info.nc looks like, please see :ref:`content_of_wind_info.nc`.
 
-.. _advanced_arguments:
-
-Advanced arguments
-------------------
-
-.. |cs2cs_lu.png| image:: cs2cs_lu
-   :target: _static/cs2cs_lu.png
-
-* **projection**: Name of projection that the image is in (stere, laea, merc, etc). Defaults to stere
-* **projection-spheroid**: Spheroid of projection (WGS84, sphere, etc). Defaults to WGS84
-* **earth-spheroid**: Spheroid of Earth (WGS84, sphere, etc). Defaults to WGS84
-* **shape**: Number of pixels in the y and x direction (height, width). If shape is not provided,
-  it attempts to be found from **displacement-data**
-* **upper-left-extent**: Projection y and x coordinates of the upper left corner of the upper left pixel (y, x)
-* **radius**: Projection length from the center to the left/right and top/bottom outer edges (dy, dx)
-* **units**: Units that provided arguments should be interpreted as. This can be
-    one of 'deg', 'degrees', 'rad', 'radians', 'meters', 'metres', and any
-    parameter supported by the `cs2cs -lu <https://proj4.org/apps/cs2cs.html#cmdoption-cs2cs-lu>`_
-    command (see |cs2cs_lu.png|). Units are determined in the following priority:
-
-    1. units expressed at the end of individual variables (see 'Using units' under
-       :ref:`examples_of_wind_info.sh` for examples)
-    2. units passed to ``--units`` (exluding center)
-    3. meters (exluding center, which is degrees)
-* **area-extent**: Area extent as a list (y_ll, x_ll, y_ur, x_ur)
-
-where
-
-* **y_ll**: projection y coordinate of the lower left corner of the lower left pixel in meters
-* **x_ll**: projection x coordinate of the lower left corner of the lower left pixel in meters
-* **y_ur**: projection y coordinate of the upper right corner of the upper right pixel in meters
-* **x_ur**: projection x coordinate of the upper right corner of the upper right pixel in meters
-
-.. warning::
-
-    The shape provided or found can alter the native shape of **displacement-data**.
-
 Additional utility methods
 --------------------------
 
-None of these functions can save data, thus they **do not** have the **no-save** argument.
+None of these functions can save data, thus they **do not** have the **------print**/**-p** argument.
 They have similar or identical arguments to wind_info.sh
 
 * **velocity.sh**: Prints just the velocity of the wind. Same arguments as wind_info.sh
@@ -235,7 +272,7 @@ They have similar or identical arguments to wind_info.sh
     /Desktop
     $ ls
     in.flo	    pywinds
-    $ pywinds/velocity.sh 60 90 0 100 --j 0 --i 0 --pixel-size 4000 --center 90 0
+    $ pywinds/velocity.sh 60 90 0 100 -j 0 -i 0 --pixel-size 4000 --center 90 0
     [51.8, 315.24]
 
 
@@ -247,7 +284,7 @@ They have similar or identical arguments to wind_info.sh
     /Desktop
     $ ls
     in.flo	    pywinds
-    $ pywinds/vu.sh 60 90 0 100 --j 0 --i 0 --pixel-size 4000 --center 90 0
+    $ pywinds/vu.sh 60 90 0 100 -j 0 -i 0 --pixel-size 4000 --center 90 0
     [36.78, -36.47]
 
 
@@ -261,10 +298,10 @@ They have similar or identical arguments to wind_info.sh
     /Desktop
     $ ls
     in.flo	    pywinds
-    $ pywinds/lat_long.sh 60 90 0 --j 0 --i 0 --pixel-size 4000
+    $ pywinds/lat_long.sh 60 90 0 -j 0 -i 0 --pixel-size 4000
       --center 90 0 --shape 1000 1000
     [63.36, -135.0]
-    $ pywinds/lat_long.sh 60 90 0 --j 0 --i 0 --pixel-size 4000
+    $ pywinds/lat_long.sh 60 90 0 -j 0 -i 0 --pixel-size 4000
       --center 90 0 --displacement-data in.flo
     [61.38, -130.77]
 
@@ -278,7 +315,7 @@ They have similar or identical arguments to wind_info.sh
     /Desktop
     $ ls
     in.flo	    pywinds
-    $ pywinds/displacements.sh --j 0 --i 0
+    $ pywinds/displacements.sh -j 0 -i 0
     [-2.53, 76.8]
 
 
@@ -307,6 +344,30 @@ They have similar or identical arguments to wind_info.sh
 You can use area.sh on a file containing displacements to see what shape it is,
 even if the area is not completely defined, as shown in :ref:`advanced_examples`.
 
+* **euclidean.sh**: Prints the hypotenuse and angle of the triangle formed from the north/south and east/west distance
+  between two points on the earth provided in latitude and longitude.
+
+::
+
+    $ pwd
+    /Desktop
+    $ ls
+    in.flo	    pywinds
+    $ pywinds/euclidean.sh 60 130 61 131
+    [124236.58, 26.25]
+
+* **greatcircle.sh**: Prints the shortest distance, forward azimuth, and backwards azimuth between two points on the earth
+  provided in latitude and longitude (as calculated from the great circle arc).
+
+::
+
+    $ pwd
+    /Desktop
+    $ ls
+    in.flo	    pywinds
+    $ pywinds/greatcircle.sh 60 130 61 131
+    [124233.13, 25.82, 206.69]
+
 Understanding error messages from scripts
 -----------------------------------------
 
@@ -327,7 +388,7 @@ incorrect formatting, etc.
 
 .. note::
 
-    Remember that you can always enter **-h** or **--help** for more usage detail.
+    Remember that you can always enter **-h** or **------help** for more usage detail.
 
 Please see :ref:`error_messages` in Examples.
 

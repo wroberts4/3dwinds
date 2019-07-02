@@ -84,9 +84,10 @@
 <li class="toctree-l1"><a class="reference internal" href="installation.html">Installing pywinds</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Usage</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#wind-info-sh">wind_info.sh</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#advanced-arguments">Advanced arguments</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#units">Units</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#data-format">Data format</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#save-format">Save format</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#advanced-arguments">Advanced arguments</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#additional-utility-methods">Additional utility methods</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#understanding-error-messages-from-scripts">Understanding error messages from scripts</a></li>
 </ul>
@@ -159,11 +160,11 @@
             
   <div class="section" id="usage">
 <h1>Usage<a class="headerlink" href="#usage" title="Permalink to this headline">¶</a></h1>
-<p>Use the <strong>-h</strong> or <strong>–help</strong> flags on any scripts to print a usage message. These scripts follow
+<p>Use the <strong>-h</strong> or <strong>——help</strong> flags on any scripts to print a usage message. These scripts follow
 GNU command line style; order in which options are provided does not matter and positional arguments may be mixed
 in with options (as long as they are not interpreted as part of the option).</p>
 <div class="section" id="wind-info-sh">
-<h2>wind_info.sh<a class="headerlink" href="#wind-info-sh" title="Permalink to this headline">¶</a></h2>
+<span id="id1"></span><h2>wind_info.sh<a class="headerlink" href="#wind-info-sh" title="Permalink to this headline">¶</a></h2>
 <p>wind_info.sh calculates area information, j and i displacement, new and old latitude/longitude,
 v, u, and velocity of the wind. This is the primary function of pywinds.</p>
 <p>Required arguments:</p>
@@ -175,22 +176,22 @@ v, u, and velocity of the wind. This is the primary function of pywinds.</p>
 </ul>
 <p>Optional arguments:</p>
 <ul class="simple">
-<li><p><strong>center</strong>: Projection y and x coordinate of the center of area (lat, long)</p></li>
-<li><p><strong>pixel-size</strong>: Projection size of pixels in the y and x direction (dy, dx). If pixels are square, i.e. dy = dx,
+<li><p><strong>——center</strong>: Projection y and x coordinate of the center of area (lat, long)</p></li>
+<li><p><strong>——pixel-size</strong>: Projection size of pixels in the y and x direction (dy, dx). If pixels are square, i.e. dy = dx,
 then only one value needs to be entered.</p></li>
-<li><p><strong>displacement-data</strong>: Name of binary file (32-bit float) containing pixels displacements; How far the
+<li><p><strong>——displacement-data</strong>: Name of binary file (32-bit float) containing pixels displacements; How far the
 pixels had to move in the y (positive is down) and x (positive is right) direction to get to their new position.
 Wildcard (“*”) syntax is accepted when past as a string. If not provided, reads every file ending in “.flo”
 where the script is ran</p></li>
-<li><p><strong>j</strong>: Row to run calculations on</p></li>
-<li><p><strong>i</strong>: Column to run calculations on</p></li>
-<li><p><strong>no-save</strong>:</p>
+<li><p><strong>-j</strong>: Row to run calculations on</p></li>
+<li><p><strong>-i</strong>: Column to run calculations on</p></li>
+<li><p><strong>——print</strong> (<strong>-p</strong>):</p>
 <ol class="arabic simple">
 <li><p>When not flagged (Default): saves data without printing to shell</p></li>
 <li><p>When flagged: prints data to shell without saving</p></li>
 </ol>
 </li>
-<li><p><strong>verbose</strong>: Provides 4 levels of information to users:</p>
+<li><p><strong>——verbose</strong> (<strong>-v</strong>): Provides 4 levels of information to users:</p>
 <ol class="arabic simple">
 <li><p>ERROR (Default): The only thing printed to the shell will be errors (and potentially data).</p></li>
 <li><p>WARNING: Additionally to the above, instances that may cause faulty data will be displayed.
@@ -207,27 +208,95 @@ Specified using <strong>-vvv</strong></p></li>
 <div><ul class="simple">
 <li><p>For more optional arguments, please see <a class="reference internal" href="#advanced-arguments"><span class="std std-ref">Advanced arguments</span></a>.</p></li>
 <li><p>For more information on save files and their formats, please see <a class="reference internal" href="#save-format"><span class="std std-ref">Save format</span></a></p></li>
+<li><p>For information on the output units, please see <a class="reference internal" href="#units"><span class="std std-ref">Units</span></a></p></li>
 </ul>
 </div></blockquote>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Enough information must be provided to make an area. Some common combinations of parameters are:</p>
+<ol class="arabic simple">
+<li><p><strong>——center</strong> and <strong>——pixel-size</strong></p></li>
+<li><p><strong>——center</strong> and <strong>——radius</strong></p></li>
+<li><p><strong>——upper-left-extent</strong> and <strong>——pixel-size</strong></p></li>
+<li><p><strong>——area-extent</strong></p></li>
+</ol>
+<p>along with shape, which should automatically be found from <strong>——displacement-data</strong>.</p>
+</div>
 <p>Calculating wind_info:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ pwd
 /Desktop
 $ ls
 in.flo          pywinds
-$ pywinds/wind_info.sh 60 90 0 100 --j 0 --i 0 --pixel-size 4000 --center 90 0 --no-save
+$ pywinds/wind_info.sh 60 90 0 100 -j 0 -i 0 --pixel-size 4000 --center 90 0 -p
 [63.36, -135.0, 51.8, 315.24, 36.78, -36.47]
 $ pywinds/wind_info.sh 60 90 0 100 --pixel-size 4000 --center 90 0
 $ pywinds/wind_info.sh 60 90 0 100 --pixel-size 4000 --center 90 0 -vv
 [INFO: 2019-03-01 12:00:00 : pywinds.wind_functions] Reading displacements from
 /Desktop/in.flo
 [INFO: 2019-03-01 12:00:08 : wind_info.py] Data saved to the directory
-/Desktop/in.flo_output
+/Desktop/in.flo_output_20190301_115959
 </pre></div>
 </div>
 <p>For more examples of using wind_info.sh, please see <a class="reference internal" href="examples.html#examples-of-wind-info-sh"><span class="std std-ref">Examples of wind_info.sh</span></a>.</p>
 </div>
+<div class="section" id="advanced-arguments">
+<span id="id2"></span><h2>Advanced arguments<a class="headerlink" href="#advanced-arguments" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li><p><strong>——save_directory</strong> (<strong>-s</strong>): Directory in which to save the file containing data (also a directory) to.
+If the directory provided does not exist, then it is created. Defaults to a new directory by the name of
+the displacement file read appended with “_output_YYYYmmdd_HHMMSS” (the date and time when the script was ran),
+created where the script is ran</p></li>
+<li><p><strong>——projection</strong>: Name of projection that the image is in (stere, laea, merc, etc). Defaults to stere</p></li>
+<li><p><strong>——projection-spheroid</strong>: Spheroid of projection (WGS84, sphere, etc). Defaults to WGS84</p></li>
+<li><p><strong>——earth-spheroid</strong>: Spheroid of Earth (WGS84, sphere, etc). Defaults to WGS84</p></li>
+<li><p><strong>——shape</strong>: Number of pixels in the y and x direction (height, width). If shape is not provided,
+it attempts to be found from <strong>——displacement-data</strong></p></li>
+<li><p><strong>——upper-left-extent</strong>: Projection y and x coordinates of the upper left corner of the upper left pixel (y, x)</p></li>
+<li><p><strong>——radius</strong>: Projection length from the center to the left/right and top/bottom outer edges (dy, dx)</p></li>
+<li><p><strong>——units</strong>: Units that provided arguments should be interpreted as. This can be
+one of ‘deg’, ‘degrees’, ‘rad’, ‘radians’, ‘meters’, ‘metres’, and any
+parameter supported by the <a class="reference external" href="https://proj4.org/apps/cs2cs.html#cmdoption-cs2cs-lu">cs2cs -lu</a>
+command (see <a class="reference external" href="_static/cs2cs_lu.png"><img alt="cs2cs_lu.png" src="cs2cs_lu" /></a>). Units are determined in the following priority:</p>
+<ol class="arabic simple">
+<li><p>units expressed at the end of individual variables (see ‘Using units’ under
+<a class="reference internal" href="examples.html#examples-of-wind-info-sh"><span class="std std-ref">Examples of wind_info.sh</span></a> for examples)</p></li>
+<li><p>units passed to <code class="docutils literal notranslate"><span class="pre">--units</span></code> (exluding center)</p></li>
+<li><p>meters (exluding center, which is degrees)</p></li>
+</ol>
+</li>
+<li><p><strong>——area-extent</strong>: Area extent as a list [y_ll, x_ll, y_ur, x_ur]</p></li>
+</ul>
+<p>where</p>
+<ul class="simple">
+<li><p><strong>y_ll</strong>: projection y coordinate of the lower left corner of the lower left pixel in meters</p></li>
+<li><p><strong>x_ll</strong>: projection x coordinate of the lower left corner of the lower left pixel in meters</p></li>
+<li><p><strong>y_ur</strong>: projection y coordinate of the upper right corner of the upper right pixel in meters</p></li>
+<li><p><strong>x_ur</strong>: projection x coordinate of the upper right corner of the upper right pixel in meters</p></li>
+</ul>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>The shape provided or found can alter the native shape of <strong>——displacement-data</strong>.</p>
+</div>
+</div>
+<div class="section" id="units">
+<span id="id3"></span><h2>Units<a class="headerlink" href="#units" title="Permalink to this headline">¶</a></h2>
+<p>These are the output units for pywinds (Note: output units <strong>cannot</strong> be changed by the user):</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>area: See <a class="reference internal" href="examples.html#content-of-wind-info-nc"><span class="std std-ref">Content of wind_info.nc</span></a> or the bottom of <a class="reference internal" href="#data-format"><span class="std std-ref">Data format</span></a></p></li>
+<li><p>j: unitless</p></li>
+<li><p>i: unitless</p></li>
+<li><p>latitude: degrees</p></li>
+<li><p>longitude: degrees</p></li>
+<li><p>v: m/s</p></li>
+<li><p>u: m/s</p></li>
+<li><p>velocity speed: m/s</p></li>
+<li><p>velocity angle: degrees</p></li>
+</ul>
+</div></blockquote>
+</div>
 <div class="section" id="data-format">
-<h2>Data format<a class="headerlink" href="#data-format" title="Permalink to this headline">¶</a></h2>
+<span id="id4"></span><h2>Data format<a class="headerlink" href="#data-format" title="Permalink to this headline">¶</a></h2>
 <p>If j and i values are provided, then data is calculated at a single pixel:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">wind_info</span><span class="p">:</span> <span class="p">[</span><span class="n">new_latitude</span><span class="p">,</span> <span class="n">new_longitude</span><span class="p">,</span> <span class="n">velocity</span><span class="p">,</span> <span class="n">angle</span><span class="p">,</span> <span class="n">v</span><span class="p">,</span> <span class="n">u</span><span class="p">]</span>
 
@@ -281,7 +350,7 @@ $ pywinds/wind_info.sh 60 90 0 100 --pixel-size 4000 --center 90 0 -vv
       <span class="p">[</span><span class="n">i_displacement_n1</span><span class="p">,</span> <span class="o">...</span><span class="p">,</span> <span class="n">i_displacement_nm</span><span class="p">]]]</span>
 </pre></div>
 </div>
-<p>Area is printed in a different format than it’s saved:</p>
+<p>Area is printed in a different format than it is saved:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">projection</span><span class="p">:</span>
 <span class="n">lat</span><span class="o">-</span><span class="n">ts</span> <span class="p">(</span><span class="n">degrees</span><span class="p">):</span>
 <span class="n">lat</span><span class="o">-</span><span class="mi">0</span> <span class="p">(</span><span class="n">degrees</span><span class="p">):</span>
@@ -297,7 +366,7 @@ $ pywinds/wind_info.sh 60 90 0 100 --pixel-size 4000 --center 90 0 -vv
 </div>
 </div>
 <div class="section" id="save-format">
-<span id="id1"></span><h2>Save format<a class="headerlink" href="#save-format" title="Permalink to this headline">¶</a></h2>
+<span id="id5"></span><h2>Save format<a class="headerlink" href="#save-format" title="Permalink to this headline">¶</a></h2>
 <p>wind_info.sh saves data to</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Text</span> <span class="n">files</span><span class="p">:</span> <span class="n">polar_stereographic</span><span class="o">.</span><span class="n">txt</span><span class="p">,</span> <span class="n">j_displacement</span><span class="o">.</span><span class="n">txt</span><span class="p">,</span> <span class="n">i_displacement</span><span class="o">.</span><span class="n">txt</span><span class="p">,</span>
             <span class="n">new_latitude</span><span class="o">.</span><span class="n">txt</span><span class="p">,</span> <span class="n">new_longitude</span><span class="o">.</span><span class="n">txt</span><span class="p">,</span> <span class="n">old_latitude</span><span class="o">.</span><span class="n">txt</span><span class="p">,</span> <span class="n">old_longitude</span><span class="o">.</span><span class="n">txt</span><span class="p">,</span>
@@ -306,8 +375,7 @@ $ pywinds/wind_info.sh 60 90 0 100 --pixel-size 4000 --center 90 0 -vv
 <span class="n">netcdf4</span> <span class="n">file</span><span class="p">:</span> <span class="n">wind_info</span><span class="o">.</span><span class="n">nc</span>
 </pre></div>
 </div>
-<p><strong>All files are saved in a new directory by the name of the displacement file appended with “_output”, which</strong>
-<strong>will be created where the script is ran.</strong></p>
+<p><strong>All files are saved to –save_directory (see :ref:`advanced_arguments`)</strong></p>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
 <p>Data is saved in the order given by “Text files” above, which means that if not enough information
@@ -338,46 +406,9 @@ name as their .txt counterparts.</p></li>
 </dd>
 </dl>
 </div>
-<div class="section" id="advanced-arguments">
-<span id="id2"></span><h2>Advanced arguments<a class="headerlink" href="#advanced-arguments" title="Permalink to this headline">¶</a></h2>
-<ul class="simple">
-<li><p><strong>projection</strong>: Name of projection that the image is in (stere, laea, merc, etc). Defaults to stere</p></li>
-<li><p><strong>projection-spheroid</strong>: Spheroid of projection (WGS84, sphere, etc). Defaults to WGS84</p></li>
-<li><p><strong>earth-spheroid</strong>: Spheroid of Earth (WGS84, sphere, etc). Defaults to WGS84</p></li>
-<li><p><strong>shape</strong>: Number of pixels in the y and x direction (height, width). If shape is not provided,
-it attempts to be found from <strong>displacement-data</strong></p></li>
-<li><p><strong>upper-left-extent</strong>: Projection y and x coordinates of the upper left corner of the upper left pixel (y, x)</p></li>
-<li><p><strong>radius</strong>: Projection length from the center to the left/right and top/bottom outer edges (dy, dx)</p></li>
-<li><dl class="simple">
-<dt><strong>units</strong>: Units that provided arguments should be interpreted as. This can be</dt><dd><p>one of ‘deg’, ‘degrees’, ‘rad’, ‘radians’, ‘meters’, ‘metres’, and any
-parameter supported by the <a class="reference external" href="https://proj4.org/apps/cs2cs.html#cmdoption-cs2cs-lu">cs2cs -lu</a>
-command (see <a class="reference external" href="_static/cs2cs_lu.png"><img alt="cs2cs_lu.png" src="cs2cs_lu" /></a>). Units are determined in the following priority:</p>
-<ol class="arabic simple">
-<li><p>units expressed at the end of individual variables (see ‘Using units’ under
-<a class="reference internal" href="examples.html#examples-of-wind-info-sh"><span class="std std-ref">Examples of wind_info.sh</span></a> for examples)</p></li>
-<li><p>units passed to <code class="docutils literal notranslate"><span class="pre">--units</span></code> (exluding center)</p></li>
-<li><p>meters (exluding center, which is degrees)</p></li>
-</ol>
-</dd>
-</dl>
-</li>
-<li><p><strong>area-extent</strong>: Area extent as a list (y_ll, x_ll, y_ur, x_ur)</p></li>
-</ul>
-<p>where</p>
-<ul class="simple">
-<li><p><strong>y_ll</strong>: projection y coordinate of the lower left corner of the lower left pixel in meters</p></li>
-<li><p><strong>x_ll</strong>: projection x coordinate of the lower left corner of the lower left pixel in meters</p></li>
-<li><p><strong>y_ur</strong>: projection y coordinate of the upper right corner of the upper right pixel in meters</p></li>
-<li><p><strong>x_ur</strong>: projection x coordinate of the upper right corner of the upper right pixel in meters</p></li>
-</ul>
-<div class="admonition warning">
-<p class="admonition-title">Warning</p>
-<p>The shape provided or found can alter the native shape of <strong>displacement-data</strong>.</p>
-</div>
-</div>
 <div class="section" id="additional-utility-methods">
 <h2>Additional utility methods<a class="headerlink" href="#additional-utility-methods" title="Permalink to this headline">¶</a></h2>
-<p>None of these functions can save data, thus they <strong>do not</strong> have the <strong>no-save</strong> argument.
+<p>None of these functions can save data, thus they <strong>do not</strong> have the <strong>——print</strong>/<strong>-p</strong> argument.
 They have similar or identical arguments to wind_info.sh</p>
 <ul class="simple">
 <li><p><strong>velocity.sh</strong>: Prints just the velocity of the wind. Same arguments as wind_info.sh</p></li>
@@ -386,7 +417,7 @@ They have similar or identical arguments to wind_info.sh</p>
 /Desktop
 $ ls
 in.flo          pywinds
-$ pywinds/velocity.sh 60 90 0 100 --j 0 --i 0 --pixel-size 4000 --center 90 0
+$ pywinds/velocity.sh 60 90 0 100 -j 0 -i 0 --pixel-size 4000 --center 90 0
 [51.8, 315.24]
 </pre></div>
 </div>
@@ -397,7 +428,7 @@ $ pywinds/velocity.sh 60 90 0 100 --j 0 --i 0 --pixel-size 4000 --center 90 0
 /Desktop
 $ ls
 in.flo          pywinds
-$ pywinds/vu.sh 60 90 0 100 --j 0 --i 0 --pixel-size 4000 --center 90 0
+$ pywinds/vu.sh 60 90 0 100 -j 0 -i 0 --pixel-size 4000 --center 90 0
 [36.78, -36.47]
 </pre></div>
 </div>
@@ -410,10 +441,10 @@ Same arguments as wind_info.sh but does not take <strong>delta-time</strong> as 
 /Desktop
 $ ls
 in.flo          pywinds
-$ pywinds/lat_long.sh 60 90 0 --j 0 --i 0 --pixel-size 4000
+$ pywinds/lat_long.sh 60 90 0 -j 0 -i 0 --pixel-size 4000
   --center 90 0 --shape 1000 1000
 [63.36, -135.0]
-$ pywinds/lat_long.sh 60 90 0 --j 0 --i 0 --pixel-size 4000
+$ pywinds/lat_long.sh 60 90 0 -j 0 -i 0 --pixel-size 4000
   --center 90 0 --displacement-data in.flo
 [61.38, -130.77]
 </pre></div>
@@ -426,7 +457,7 @@ as an argument. All other required arguments for wind_info.sh are optional argum
 /Desktop
 $ ls
 in.flo          pywinds
-$ pywinds/displacements.sh --j 0 --i 0
+$ pywinds/displacements.sh -j 0 -i 0
 [-2.53, 76.8]
 </pre></div>
 </div>
@@ -453,6 +484,30 @@ center: (90.0, 0.0)
 </div>
 <p>You can use area.sh on a file containing displacements to see what shape it is,
 even if the area is not completely defined, as shown in <a class="reference internal" href="examples.html#advanced-examples"><span class="std std-ref">Advanced examples</span></a>.</p>
+<ul class="simple">
+<li><p><strong>euclidean.sh</strong>: Prints the hypotenuse and angle of the triangle formed from the north/south and east/west distance
+between two points on the earth provided in latitude and longitude.</p></li>
+</ul>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ pwd
+/Desktop
+$ ls
+in.flo          pywinds
+$ pywinds/euclidean.sh 60 130 61 131
+[124236.58, 26.25]
+</pre></div>
+</div>
+<ul class="simple">
+<li><p><strong>greatcircle.sh</strong>: Prints the shortest distance, forward azimuth, and backwards azimuth between two points on the earth
+provided in latitude and longitude (as calculated from the great circle arc).</p></li>
+</ul>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ pwd
+/Desktop
+$ ls
+in.flo          pywinds
+$ pywinds/greatcircle.sh 60 130 61 131
+[124233.13, 25.82, 206.69]
+</pre></div>
+</div>
 </div>
 <div class="section" id="understanding-error-messages-from-scripts">
 <h2>Understanding error messages from scripts<a class="headerlink" href="#understanding-error-messages-from-scripts" title="Permalink to this headline">¶</a></h2>
@@ -470,7 +525,7 @@ data, not enough information provided, etc.</p>
 incorrect formatting, etc.</p>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
-<p>Remember that you can always enter <strong>-h</strong> or <strong>–help</strong> for more usage detail.</p>
+<p>Remember that you can always enter <strong>-h</strong> or <strong>——help</strong> for more usage detail.</p>
 </div>
 <p>Please see <a class="reference internal" href="examples.html#error-messages"><span class="std std-ref">Error and usage messages</span></a> in Examples.</p>
 </div>

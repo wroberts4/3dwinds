@@ -154,8 +154,8 @@
             
   <div class="section" id="installing-pywinds">
 <h1>Installing pywinds<a class="headerlink" href="#installing-pywinds" title="Permalink to this headline">¶</a></h1>
-<p>pywinds depends on python=3.7.1, pyproj=1.9.6, numpy=1.16.1, xarray=0.12.0, pyresample=1.11.0, and netcdf4=1.4.3.2</p>
-<p>If you are making the docs, sphinx=1.8.5 and sphinx-rtd-theme=0.4.3</p>
+<p>pywinds depends on python=3.7.3, pyproj=2.2.1, numpy=1.16.4, xarray=0.12.2, pyresample=1.12.3, and netcdf4=1.5.1.2</p>
+<p>If you are making the docs, sphinx=2.1.2 and sphinx-rtd-theme=0.4.3</p>
 <p>If you are packing the environment, conda-pack=0.3.1</p>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
@@ -167,10 +167,15 @@
 (ie: tar -zxvf linux_pywinds.tar.gz). The tarball can be found on 3dwinds.ssec.wisc.edu:/home/wroberts.</p>
 <p>If installing the package, you will need to use <a class="reference external" href="https://www.anaconda.com/distribution/">anaconda</a>.
 Source code is available to clone on <a class="reference external" href="https://github.com/wroberts4/pywinds">https://github.com/wroberts4/pywinds</a>.</p>
-<p>Conda commands to install pywinds:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ conda install -y -c conda-forge python=3.7.2 numpy=1.16.1 pyproj=1.9.6
-  xarray=0.12.0 pyresample=1.11.0 netcdf4=1.4.3.2
+<p>Conda commands to install pywinds (if you do not have the git repository on your machine):</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ conda install -c conda-forge python=3.7.3 numpy pyproj xarray pyresample netcdf4
 $ pip install git+https://github.com/wroberts4/pywinds.git
+</pre></div>
+</div>
+<p>Or use the yaml (if you have the git repository on your machine):</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ ls
+pywinds
+$ conda env update -n pywinds -f pywinds/build_environment.yml
 </pre></div>
 </div>
 </div>

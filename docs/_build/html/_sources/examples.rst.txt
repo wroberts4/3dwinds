@@ -12,12 +12,12 @@ Having multiple files in run directory::
     /Desktop
     $ ls
     in.flo        test.flo        pywinds
-    $ pywinds/wind_info.sh 60 90 0 100 --j 0 --i 0 --pixel-size 4000
-      --center 90 0 --no-save
+    $ pywinds/wind_info.sh 60 90 0 100 -j 0 -i 0 --pixel-size 4000
+      --center 90 0 -p
     [63.36, -135.0, 51.8, 315.24, 36.78, -36.47]
     [63.36, -135.0, 51.8, 315.24, 36.78, -36.47]
-    $ pywinds/wind_info.sh 60 90 0 100 --j 0 --i 0 --pixel-size 4000
-      --center 90 0 -vv --no-save
+    $ pywinds/wind_info.sh 60 90 0 100 -j 0 -i 0 --pixel-size 4000
+      --center 90 0 -vv -p
     [INFO: 2019-03-01 12:00:00 : pywinds.wind_functions] Reading displacements from
     /Desktop/test.flo
     [63.36, -135.0, 51.8, 315.24, 36.78, -36.47]
@@ -28,11 +28,11 @@ Having multiple files in run directory::
     [INFO: 2019-03-01 12:00:00 : pywinds.wind_functions] Reading displacements from
     /Desktop/test.flo
     [INFO: 2019-03-01 12:00:08 : wind_info.py] Data saved to the directory
-    /Desktop/test.flo_output
+    /Desktop/test.flo_output_20190301_115959
     [INFO: 2019-03-01 12:00:08 : pywinds.wind_functions] Reading displacements from
     /Desktop/in.flo
     [INFO: 2019-03-01 12:00:16 : wind_info.py] Data saved to the directory
-    /Desktop/in.flo_output
+    /Desktop/in.flo_output_20190301_115959
 
 
 .. note::
@@ -42,16 +42,16 @@ Having multiple files in run directory::
 .. note::
 
     In this case, **wind_info.sh** saves all files mentioned in :ref:`save_format`
-    to /Desktop/test.flo_output and /Desktop/in.flo_output.
+    to /Desktop/test.flo_output_20190301_115959 and /Desktop/in.flo_output_20190301_115959.
 
-Specifying one file to run::
+Specifying a displacement file to read::
 
     $ pwd
     /Desktop
     $ ls
     in.flo        test.flo        pywinds
-    $ pywinds/wind_info.sh 60 90 0 100 --j 0 --i 0 --pixel-size 4000
-      --center 90 0 --displacement-data in.flo --no-save
+    $ pywinds/wind_info.sh 60 90 0 100 -j 0 -i 0 --pixel-size 4000
+      --center 90 0 --displacement-data in.flo -p
     [63.36, -135.0, 51.8, 315.24, 36.78, -36.47]
     $ pywinds/wind_info.sh 60 90 0 100 --pixel-size 4000 --center 90 0
       --displacement-data path_to_other_directory/in.flo
@@ -60,17 +60,17 @@ Specifying one file to run::
     [INFO: 2019-03-01 12:00:00 : pywinds.wind_functions] Reading displacements from
     path_to_other_directory/in.flo
     [INFO: 2019-03-01 12:00:08 : wind_info.py] Data saved to the directory
-    /Desktop/in.flo_output
+    /Desktop/in.flo_output_20190301_115959
 
 
-Specifying multiple files to run::
+Specifying multiple displacement files to read::
 
     $ pwd
     /Desktop
     $ ls
     in.flo        windtest.flo        windtest2.flo        pywinds
-    $ pywinds/wind_info.sh 60 90 0 100 --j 0 --i 0 --pixel-size 4000
-      --center 90 0 --displacement-data \*test*.flo -vv --no-save
+    $ pywinds/wind_info.sh 60 90 0 100 -j 0 -i 0 --pixel-size 4000
+      --center 90 0 --displacement-data \*test*.flo -vv -p
     [INFO: 2019-03-01 12:00:00 : pywinds.wind_functions] Reading displacements from
     /Desktop/windtest.flo
     [63.36, -135.0, 51.8, 315.24, 36.78, -36.47]
@@ -82,12 +82,28 @@ Specifying multiple files to run::
     [INFO: 2019-03-01 12:00:00 : pywinds.wind_functions] Reading displacements from
     /Desktop/windtest.flo
     [INFO: 2019-03-01 12:00:08 : wind_info.py] Data saved to the directory
-    /Desktop/windtest.flo_output
+    /Desktop/windtest.flo_output_20190301_115959
     [INFO: 2019-03-01 12:00:08 : pywinds.wind_functions] Reading displacements from
     /Desktop/windtest2.flo
     [INFO: 2019-03-01 12:00:16 : wind_info.py] Data saved to the directory
-    /Desktop/windtest2.flo_output
+    /Desktop/windtest2.flo_output_20190301_115959
 
+
+Specifying save directory::
+
+    $ pwd
+    /Desktop
+    $ ls
+    in.flo        test.flo        pywinds
+    $ pywinds/wind_info.sh 60 90 0 100 --pixel-size 4000 --center 90 0 -vv -s new_directory
+    [INFO: 2019-03-01 12:00:00 : pywinds.wind_functions] Reading displacements from
+    /Desktop/in.flo
+    [INFO: 2019-03-01 12:00:08 : wind_info.py] Data saved to the directory
+    /Desktop/new_directory/in.flo_output_20190301_115959
+    [INFO: 2019-03-01 12:00:08 : pywinds.wind_functions] Reading displacements from
+    /Desktop/test.flo
+    [INFO: 2019-03-01 12:00:16 : wind_info.py] Data saved to the directory
+    /Desktop/new_directory/test.flo_output_20190301_115959
 
 Altering spheroids::
 
@@ -95,35 +111,12 @@ Altering spheroids::
     /Desktop
     $ ls
     in.flo        pywinds
-    $ pywinds/wind_info.sh 60 90 0 100 --j 0 --i 0 --pixel-size 4000
-      --center 90 0 --projection-spheroid sphere --no-save
+    $ pywinds/wind_info.sh 60 90 0 100 -j 0 -i 0 --pixel-size 4000
+      --center 90 0 --projection-spheroid sphere -p
     [63.26, -135.0, 51.93, 315.2, 36.85, -36.59]
-    $ pywinds/wind_info.sh 60 90 0 100 --j 0 --i 0 --pixel-size 4000 --center 90 0
-      --projection-spheroid sphere --earth-spheroid sphere --no-save
+    $ pywinds/wind_info.sh 60 90 0 100 -j 0 -i 0 --pixel-size 4000 --center 90 0
+      --projection-spheroid sphere --earth-spheroid sphere -p
     [63.26, -135.0, 51.77, 315.24, 36.76, -36.46]
-
-
-Using other advanced args::
-
-    $ pywinds/wind_info.sh 60 90 0 100 --j 0 --i 0
-      --radius 2000000 2000000 --center 90 0 --no-save
-    [63.36, -135.0, 51.8, 315.24, 36.78, -36.47]
-    $ pywinds/wind_info.sh 60 90 0 100 --j 0 --i 0
-      --upper-left-extent 2000000 -2000000 --center 90 0 --no-save
-    [63.36, -135.0, 51.8, 315.24, 36.78, -36.47]
-    $ pywinds/wind_info.sh 60 90 0 100 --j 0 --i 0
-      --area-extent -2000000 -2000000 2000000 2000000 --no-save
-    [63.36, -135.0, 51.8, 315.24, 36.78, -36.47]
-    $ pywinds/wind_info.sh 60 90 0 100 --j 0 --i 0
-      --upper-left-extent 2000000 -2000000
-      --radius 2000000 2000000 --no-save
-    [63.36, -135.0, 51.8, 315.24, 36.78, -36.47]
-    $ pywinds/wind_info.sh 60 90 0 100 --j 0 --i 0 --center 90 0
-      --pixel-size 4000 --shape 10000 100 -v --no-save
-    [WARNING: 2019-03-01 12:00:00 : pywinds.wind_functions] Shape found
-    from area or provided by user does not match the shape of the file:
-    (10000, 100) vs (1000, 1000)
-    [63.36, -135.0, 51.8, 315.24, 36.78, -36.47]
 
 
 Using units::
@@ -132,41 +125,63 @@ Using units::
     /Desktop
     $ ls
     in.flo        pywinds
-    $ pywinds/wind_info.sh 60 90 0 100 --j 0 --i 0
-      --pixel-size 4000 --center 90 0 --no-save
+    $ pywinds/wind_info.sh 60 90 0 100 -j 0 -i 0
+      --pixel-size 4000 --center 90 0 -p
     [63.36, -135.0, 51.8, 315.24, 36.78, -36.47]
-    $ pywinds/wind_info.sh 60 90 0 100 --j 0 --i 0
-      --pixel-size 4 --center 90 0 --units km --no-save
+    $ pywinds/wind_info.sh 60 90 0 100 -j 0 -i 0
+      --pixel-size 4 --center 90 0 --units km -p
     [63.36, -135.0, 51.8, 315.24, 36.78, -36.47]
-    $ pywinds/wind_info.sh 60 90 0 100 --j 0 --i 0
-      --pixel-size 4 km --center 90 0 --no-save
+    $ pywinds/wind_info.sh 60 90 0 100 -j 0 -i 0
+      --pixel-size 4 km --center 90 0 -p
     [63.36, -135.0, 51.8, 315.24, 36.78, -36.47]
-    $ pywinds/wind_info.sh 60 90 0 100 --j 0 --i 0
-      --pixel-size 4 --center 0 0 m  --units km --no-save
+    $ pywinds/wind_info.sh 60 90 0 100 -j 0 -i 0
+      --pixel-size 4 --center 0 0 m  --units km -p
     [63.36, -135.0, 51.8, 315.24, 36.78, -36.47]
-    $ pywinds/wind_info.sh 60 90 0 100 --j 0 --i 0
-      --pixel-size 4 km --center 0 0 m --no-save
+    $ pywinds/wind_info.sh 60 90 0 100 -j 0 -i 0
+      --pixel-size 4 km --center 0 0 m -p
     [63.36, -135.0, 51.8, 315.24, 36.78, -36.47]
-    $ pywinds/wind_info.sh 60 90 0 100 --j 0 --i 0
-      --pixel-size 4000 m --center 90 0 --units km --no-save
+    $ pywinds/wind_info.sh 60 90 0 100 -j 0 -i 0
+      --pixel-size 4000 m --center 90 0 --units km -p
     [63.36, -135.0, 51.8, 315.24, 36.78, -36.47]
-    $ pywinds/wind_info.sh 60 90 0 100 --j 0 --i 0
+    $ pywinds/wind_info.sh 60 90 0 100 -j 0 -i 0
       --upper-left-extent 2000 -2000 km
-      --radius 2000 2000 km --no-save
+      --radius 2000 2000 km -p
     [63.36, -135.0, 51.8, 315.24, 36.78, -36.47]
-    $ pywinds/wind_info.sh 60 90 0 100 --j 0 --i 0
+    $ pywinds/wind_info.sh 60 90 0 100 -j 0 -i 0
       --upper-left-extent 2000 -2000
-      --radius 2000 2000 --units km --no-save
+      --radius 2000 2000 --units km -p
     [63.36, -135.0, 51.8, 315.24, 36.78, -36.47]
-    $ pywinds/wind_info.sh 60 90 0 100 --j 0 --i 0
+    $ pywinds/wind_info.sh 60 90 0 100 -j 0 -i 0
       --upper-left-extent 63.335 -135 deg
-      --radius 2000 2000 --units km --no-save
+      --radius 2000 2000 --units km -p
     [63.36, -135.0, 51.8, 315.24, 36.78, -36.47]
 
 
 .. note::
 
     **center**'s units default to degrees and are not affected by the **units** option.
+
+Using other advanced args::
+
+    $ pywinds/wind_info.sh 60 90 0 100 -j 0 -i 0
+      --radius 2000000 2000000 --center 90 0 -p
+    [63.36, -135.0, 51.8, 315.24, 36.78, -36.47]
+    $ pywinds/wind_info.sh 60 90 0 100 -j 0 -i 0
+      --upper-left-extent 2000000 -2000000 --center 90 0 -p
+    [63.36, -135.0, 51.8, 315.24, 36.78, -36.47]
+    $ pywinds/wind_info.sh 60 90 0 100 -j 0 -i 0
+      --area-extent -2000000 -2000000 2000000 2000000 -p
+    [63.36, -135.0, 51.8, 315.24, 36.78, -36.47]
+    $ pywinds/wind_info.sh 60 90 0 100 -j 0 -i 0
+      --upper-left-extent 2000000 -2000000
+      --radius 2000000 2000000 -p
+    [63.36, -135.0, 51.8, 315.24, 36.78, -36.47]
+    $ pywinds/wind_info.sh 60 90 0 100 -j 0 -i 0 --center 90 0
+      --pixel-size 4000 --shape 10000 100 -p
+    [WARNING: 2019-03-01 12:00:00 : pywinds.wind_functions] Shape found
+    from area or provided by user does not match the shape of the file:
+    (10000, 100) vs (1000, 1000)
+    [63.36, -135.0, 51.8, 315.24, 36.78, -36.47]
 
 
 Shuffling order of arguments/options::
@@ -177,11 +192,11 @@ Shuffling order of arguments/options::
     $ ls
     in.flo        pywinds
 
-    $ pywinds/wind_info.sh --center 90 0 --j 0 --i 0
-      --no-save --pixel-size 4000 --i 0 60 90 0 100
+    $ pywinds/wind_info.sh --center 90 0 -j 0 -i 0
+      -p --pixel-size 4000 -i 0 60 90 0 100
     [63.36, -135.0, 51.8, 315.24, 36.78, -36.47]
-    $ pywinds/wind_info.sh --center 90 0 60 --j 0 90 --i 0
-      0 --no-save --pixel-size 4000 4000 100 --i 0
+    $ pywinds/wind_info.sh --center 90 0 60 -j 0 90 -i 0
+      0 -p --pixel-size 4000 4000 100 -i 0
     [63.36, -135.0, 51.8, 315.24, 36.78, -36.47]
 
 
@@ -198,8 +213,8 @@ Shuffling order of arguments/options::
     /Desktop
     $ ls
     in.flo        test.flo        pywinds
-    $ pywinds/wind_info.sh 60 90 0 100 --j 0 --i 0 --pixel-size 4000
-      --center 90 0 --displacement-data [[1,2,3,4],[5,6,7,8]] --no-save
+    $ pywinds/wind_info.sh 60 90 0 100 -j 0 -i 0 --pixel-size 4000
+      --center 90 0 --displacement-data [[1,2,3,4],[5,6,7,8]] -p
     [89.97, -135.0, 3.76, 341.58, 3.57, -1.19]
 
 .. _content_of_wind_info.nc:
@@ -210,7 +225,7 @@ Content of wind_info.nc
 ::
 
     $ pwd
-    /Desktop/pywinds/in.flo_output
+    /Desktop/pywinds/in.flo_output_20190301_115959
     $ ls
     angle.txt		old_latitude.txt	v.txt
     i_displacement.txt	old_longitude.txt	wind_info.nc
@@ -432,13 +447,14 @@ Getting shape of displacement file using area.sh::
 Error and usage messages
 ------------------------
 
-If not enough information is provided to a script, this kind of error will be displayed::
+If not enough information is provided to a script, this kind of
+error will be displayed (see the note in :ref:`wind_info.sh`)::
 
     $ pwd
     /Desktop
     $ ls
     in.flo        pywinds
-    $ pywinds/wind_info.sh 60 90 0 100 --center 90 0 --i 0 --j 0 --no-save
+    $ pywinds/wind_info.sh 60 90 0 100 --center 90 0 -i 0 -j 0 -p
 
     Traceback (most recent call last):
       File "pywinds/env/lib/python3.7/site-packages/pywinds/wrapper_utils.py",
@@ -463,8 +479,8 @@ If incorrect commands were given::
 
     $ pywinds/wind_info.sh 60 90 0 --pixel-size 4000 --center 90 0
     usage: wind_info.py [-h] [--center y x [units]] [--pixel-size dy [dx] [units]]
-                        [--displacement-data filename] [--j int] [--i int]
-                        [--no-save] [--units str]
+                        [--displacement-data filename] [-j int] [-i int]
+                        [-p] [--units str]
                         [--upper-left-extent y x [units]]
                         [--radius dy dx [units]]
                         [--area-extent y_ll x_ll y_ur x_ur [units]]
@@ -478,8 +494,8 @@ The help message for wind_info.sh::
 
     $ pywinds/wind_info.sh -h
     usage: wind_info.py [-h] [--center y x [units]] [--pixel-size dy [dx] [units]]
-                        [--displacement-data filename] [--j int] [--i int]
-                        [--no-save] [--units str]
+                        [--displacement-data filename] [-j int] [-i int]
+                        [-p] [--units str]
                         [--upper-left-extent y x [units]]
                         [--radius dy dx [units]]
                         [--area-extent y_ll x_ll y_ur x_ur [units]]
@@ -506,9 +522,9 @@ The help message for wind_info.sh::
                             needs to be entered
       --displacement-data filename
                             filename or list containing displacements
-      --j int               row to run calculations on
-      --i int               column to run calculations on
-      --no-save             print data to shell without saving
+      -j int               row to run calculations on
+      -i int               column to run calculations on
+      -p             print data to shell without saving
       --units str           units that all provided arguments that take units
                             (except center) should be interpreted as
       --upper-left-extent y x [units]

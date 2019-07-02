@@ -153,7 +153,7 @@
 <p>Calculates area information, j and i displacement, new and old latitude/longitude, v, u, and velocity of the wind.</p>
 <dl class="function">
 <dt id="pywinds.wind_functions.area">
-<code class="descclassname">pywinds.wind_functions.</code><code class="descname">area</code><span class="sig-paren">(</span><em>lat_ts</em>, <em>lat_0</em>, <em>long_0</em>, <em>displacement_data=None</em>, <em>projection=None</em>, <em>area_extent=None</em>, <em>shape=None</em>, <em>center=None</em>, <em>pixel_size=None</em>, <em>upper_left_extent=None</em>, <em>radius=None</em>, <em>units=None</em>, <em>projection_spheroid=None</em><span class="sig-paren">)</span><a class="headerlink" href="#pywinds.wind_functions.area" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">pywinds.wind_functions.</code><code class="sig-name descname">area</code><span class="sig-paren">(</span><em class="sig-param">lat_ts</em>, <em class="sig-param">lat_0</em>, <em class="sig-param">long_0</em>, <em class="sig-param">displacement_data=None</em>, <em class="sig-param">projection=None</em>, <em class="sig-param">area_extent=None</em>, <em class="sig-param">shape=None</em>, <em class="sig-param">center=None</em>, <em class="sig-param">pixel_size=None</em>, <em class="sig-param">upper_left_extent=None</em>, <em class="sig-param">radius=None</em>, <em class="sig-param">units=None</em>, <em class="sig-param">projection_spheroid=None</em><span class="sig-paren">)</span><a class="headerlink" href="#pywinds.wind_functions.area" title="Permalink to this definition">¶</a></dt>
 <dd><p>Dynamically computes area of projection.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -200,7 +200,7 @@ inverse_flattening, shape, area_extent (degrees), pixel_size (projection meters)
 
 <dl class="function">
 <dt id="pywinds.wind_functions.displacements">
-<code class="descclassname">pywinds.wind_functions.</code><code class="descname">displacements</code><span class="sig-paren">(</span><em>lat_ts=None</em>, <em>lat_0=None</em>, <em>long_0=None</em>, <em>displacement_data=None</em>, <em>projection=None</em>, <em>j=None</em>, <em>i=None</em>, <em>area_extent=None</em>, <em>shape=None</em>, <em>center=None</em>, <em>pixel_size=None</em>, <em>upper_left_extent=None</em>, <em>radius=None</em>, <em>units=None</em>, <em>projection_spheroid=None</em><span class="sig-paren">)</span><a class="headerlink" href="#pywinds.wind_functions.displacements" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">pywinds.wind_functions.</code><code class="sig-name descname">displacements</code><span class="sig-paren">(</span><em class="sig-param">lat_ts=None</em>, <em class="sig-param">lat_0=None</em>, <em class="sig-param">long_0=None</em>, <em class="sig-param">displacement_data=None</em>, <em class="sig-param">projection=None</em>, <em class="sig-param">j=None</em>, <em class="sig-param">i=None</em>, <em class="sig-param">area_extent=None</em>, <em class="sig-param">shape=None</em>, <em class="sig-param">center=None</em>, <em class="sig-param">pixel_size=None</em>, <em class="sig-param">upper_left_extent=None</em>, <em class="sig-param">radius=None</em>, <em class="sig-param">units=None</em>, <em class="sig-param">projection_spheroid=None</em><span class="sig-paren">)</span><a class="headerlink" href="#pywinds.wind_functions.displacements" title="Permalink to this definition">¶</a></dt>
 <dd><p>Dynamically computes displacements.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -248,7 +248,7 @@ Note that shape can be found from the displacement file or the area provided.</p
 
 <dl class="function">
 <dt id="pywinds.wind_functions.lat_long">
-<code class="descclassname">pywinds.wind_functions.</code><code class="descname">lat_long</code><span class="sig-paren">(</span><em>lat_ts</em>, <em>lat_0</em>, <em>long_0</em>, <em>displacement_data=None</em>, <em>projection=None</em>, <em>j=None</em>, <em>i=None</em>, <em>area_extent=None</em>, <em>shape=None</em>, <em>center=None</em>, <em>pixel_size=None</em>, <em>upper_left_extent=None</em>, <em>radius=None</em>, <em>units=None</em>, <em>projection_spheroid=None</em><span class="sig-paren">)</span><a class="headerlink" href="#pywinds.wind_functions.lat_long" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">pywinds.wind_functions.</code><code class="sig-name descname">lat_long</code><span class="sig-paren">(</span><em class="sig-param">lat_ts</em>, <em class="sig-param">lat_0</em>, <em class="sig-param">long_0</em>, <em class="sig-param">displacement_data=None</em>, <em class="sig-param">projection=None</em>, <em class="sig-param">j=None</em>, <em class="sig-param">i=None</em>, <em class="sig-param">area_extent=None</em>, <em class="sig-param">shape=None</em>, <em class="sig-param">center=None</em>, <em class="sig-param">pixel_size=None</em>, <em class="sig-param">upper_left_extent=None</em>, <em class="sig-param">radius=None</em>, <em class="sig-param">units=None</em>, <em class="sig-param">projection_spheroid=None</em><span class="sig-paren">)</span><a class="headerlink" href="#pywinds.wind_functions.lat_long" title="Permalink to this definition">¶</a></dt>
 <dd><p>Computes the latitude and longitude given an area and (j, i) values.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -293,7 +293,7 @@ Note that shape can be found from the displacement file or the area provided.</p
 
 <dl class="function">
 <dt id="pywinds.wind_functions.velocity">
-<code class="descclassname">pywinds.wind_functions.</code><code class="descname">velocity</code><span class="sig-paren">(</span><em>lat_ts</em>, <em>lat_0</em>, <em>long_0</em>, <em>delta_time</em>, <em>displacement_data=None</em>, <em>projection=None</em>, <em>j=None</em>, <em>i=None</em>, <em>area_extent=None</em>, <em>shape=None</em>, <em>center=None</em>, <em>pixel_size=None</em>, <em>upper_left_extent=None</em>, <em>radius=None</em>, <em>units=None</em>, <em>projection_spheroid=None</em>, <em>earth_spheroid=None</em><span class="sig-paren">)</span><a class="headerlink" href="#pywinds.wind_functions.velocity" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">pywinds.wind_functions.</code><code class="sig-name descname">velocity</code><span class="sig-paren">(</span><em class="sig-param">lat_ts</em>, <em class="sig-param">lat_0</em>, <em class="sig-param">long_0</em>, <em class="sig-param">delta_time</em>, <em class="sig-param">displacement_data=None</em>, <em class="sig-param">projection=None</em>, <em class="sig-param">j=None</em>, <em class="sig-param">i=None</em>, <em class="sig-param">area_extent=None</em>, <em class="sig-param">shape=None</em>, <em class="sig-param">center=None</em>, <em class="sig-param">pixel_size=None</em>, <em class="sig-param">upper_left_extent=None</em>, <em class="sig-param">radius=None</em>, <em class="sig-param">units=None</em>, <em class="sig-param">projection_spheroid=None</em>, <em class="sig-param">earth_spheroid=None</em><span class="sig-paren">)</span><a class="headerlink" href="#pywinds.wind_functions.velocity" title="Permalink to this definition">¶</a></dt>
 <dd><p>Computes the speed and angle of the wind given an area and pixel-displacement.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -341,7 +341,7 @@ from area and pixel-displacement in row-major format</p>
 
 <dl class="function">
 <dt id="pywinds.wind_functions.vu">
-<code class="descclassname">pywinds.wind_functions.</code><code class="descname">vu</code><span class="sig-paren">(</span><em>lat_ts</em>, <em>lat_0</em>, <em>long_0</em>, <em>delta_time</em>, <em>displacement_data=None</em>, <em>projection=None</em>, <em>j=None</em>, <em>i=None</em>, <em>area_extent=None</em>, <em>shape=None</em>, <em>center=None</em>, <em>pixel_size=None</em>, <em>upper_left_extent=None</em>, <em>radius=None</em>, <em>units=None</em>, <em>projection_spheroid=None</em>, <em>earth_spheroid=None</em><span class="sig-paren">)</span><a class="headerlink" href="#pywinds.wind_functions.vu" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">pywinds.wind_functions.</code><code class="sig-name descname">vu</code><span class="sig-paren">(</span><em class="sig-param">lat_ts</em>, <em class="sig-param">lat_0</em>, <em class="sig-param">long_0</em>, <em class="sig-param">delta_time</em>, <em class="sig-param">displacement_data=None</em>, <em class="sig-param">projection=None</em>, <em class="sig-param">j=None</em>, <em class="sig-param">i=None</em>, <em class="sig-param">area_extent=None</em>, <em class="sig-param">shape=None</em>, <em class="sig-param">center=None</em>, <em class="sig-param">pixel_size=None</em>, <em class="sig-param">upper_left_extent=None</em>, <em class="sig-param">radius=None</em>, <em class="sig-param">units=None</em>, <em class="sig-param">projection_spheroid=None</em>, <em class="sig-param">earth_spheroid=None</em><span class="sig-paren">)</span><a class="headerlink" href="#pywinds.wind_functions.vu" title="Permalink to this definition">¶</a></dt>
 <dd><p>Computes the v and u components of the wind given an area and pixel-displacement.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -388,7 +388,7 @@ Note that shape can be found from the displacement file or the area provided.</p
 
 <dl class="function">
 <dt id="pywinds.wind_functions.wind_info">
-<code class="descclassname">pywinds.wind_functions.</code><code class="descname">wind_info</code><span class="sig-paren">(</span><em>lat_ts</em>, <em>lat_0</em>, <em>long_0</em>, <em>delta_time</em>, <em>displacement_data=None</em>, <em>projection=None</em>, <em>j=None</em>, <em>i=None</em>, <em>area_extent=None</em>, <em>shape=None</em>, <em>center=None</em>, <em>pixel_size=None</em>, <em>upper_left_extent=None</em>, <em>radius=None</em>, <em>units=None</em>, <em>projection_spheroid=None</em>, <em>earth_spheroid=None</em>, <em>no_save=False</em><span class="sig-paren">)</span><a class="headerlink" href="#pywinds.wind_functions.wind_info" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">pywinds.wind_functions.</code><code class="sig-name descname">wind_info</code><span class="sig-paren">(</span><em class="sig-param">lat_ts</em>, <em class="sig-param">lat_0</em>, <em class="sig-param">long_0</em>, <em class="sig-param">delta_time</em>, <em class="sig-param">displacement_data=None</em>, <em class="sig-param">projection=None</em>, <em class="sig-param">j=None</em>, <em class="sig-param">i=None</em>, <em class="sig-param">area_extent=None</em>, <em class="sig-param">shape=None</em>, <em class="sig-param">center=None</em>, <em class="sig-param">pixel_size=None</em>, <em class="sig-param">upper_left_extent=None</em>, <em class="sig-param">radius=None</em>, <em class="sig-param">units=None</em>, <em class="sig-param">projection_spheroid=None</em>, <em class="sig-param">earth_spheroid=None</em>, <em class="sig-param">no_save=False</em>, <em class="sig-param">save_directory=None</em>, <em class="sig-param">timestamp=None</em><span class="sig-paren">)</span><a class="headerlink" href="#pywinds.wind_functions.wind_info" title="Permalink to this definition">¶</a></dt>
 <dd><p>Computes the latitude, longitude, velocity, angle, v, and u of the wind</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -425,8 +425,13 @@ Note that shape can be found from the displacement file or the area provided.</p
 <li><p><strong>no_save</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><em>bool</em></a><em>, </em><em>optional</em>) – When False, saves wind_info to name_of_projection.txt, j_displacement.txt, i_displacement.txt,
 new_latitude.txt, new_longitude.txt, old_latitude.txt, old_longitude.txt, v.txt, u.txt, speed.txt, angle.txt,
 and wind_info.txt in that order (name_of_projection varies depending on the type of projection). Each of these
-variables are saved to wind_info.hdf5 by the same name as their .txt counterparts in a new directory by the
-name of the displacement file appended with “_output”, which is created where the script was ran.</p></li>
+variables are saved to wind_info.nc by the same name as their .txt counterparts in a new directory
+provided by the save_directory argument.</p></li>
+<li><p><strong>save_directory</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><em>str</em></a><em>, </em><em>optional</em>) – Directory in which to save the file containing data (also a directory) to. If the directory provided
+does not exist, then it is created. Defaults to a new directory by the name of the displacement file
+read appended with “_output_YYYYmmdd_HHMMSS” (the date and time when the script was ran), created
+where the script is ran</p></li>
+<li><p><strong>timestamp</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><em>str</em></a><em>, </em><em>optional</em>) – The time at which the script was ran. Defaults to the current time in not provided.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
