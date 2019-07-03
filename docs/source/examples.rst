@@ -457,22 +457,29 @@ error will be displayed (see :ref:`common combinations of area information<area_
     $ ls
     in.flo        pywinds
     $ pywinds/wind_info.sh 60 90 0 100 --center 90 0 -i 0 -j 0 -p
-
     Traceback (most recent call last):
-      File "pywinds/env/lib/python3.7/site-packages/pywinds/wrapper_utils.py",
-    line 184, in run_script
-        output = output_format(func(*args, **kwargs), kwargs)
-      File "pywinds/env/lib/python3.7/site-packages/pywinds/wind_functions.py",
-    line 867, in wind_info
-        earth_spheroid=earth_spheroid, no_save=no_save)
-      File "pywinds/env/lib/python3.7/site-packages/pywinds/wind_functions.py",
-    line 414, in _compute_velocity
-        no_save=no_save)
-      File "pywinds/env/lib/python3.7/site-packages/pywinds/wind_functions.py",
-    line 379, in _compute_vu
-        no_save=no_save)
-      File "pywinds/env/lib/python3.7/site-packages/pywinds/wind_functions.py",
-    line 327, in _compute_lat_long
+      File "/home/wroberts/pywinds/env/lib/python3.7/runpy.py",
+    line 193, in _run_module_as_main
+        "__main__", mod_spec)
+      File "/Desktop/pywinds/env/lib/python3.7/runpy.py", line 85, in _run_code
+        exec(code, run_globals)
+      File "/Desktop/pywinds/env/lib/python3.7/site-packages/pywinds/wind_info.py",
+    line 34, in <module>
+        run_script(wind_info, output_format, 'wind_info')
+      File "/Desktop/pywinds/env/lib/python3.7/site-packages/pywinds/wrapper_utils.py",
+    line 213, in run_script
+        output = output_format(func(*args, **kwargs), **kwargs)
+      File "/Desktop/pywinds/env/lib/python3.7/site-packages/pywinds/wind_functions.py",
+    line 991, in wind_info
+        save_directory=save_directory)
+      File "/Desktop/pywinds/env/lib/python3.7/site-packages/pywinds/wind_functions.py",
+    line 440, in _compute_velocity
+        save_directory=save_directory)
+      File "/Desktop/pywinds/env/lib/python3.7/site-packages/pywinds/wind_functions.py",
+    line 399, in _compute_vu
+        no_save=no_save, save_directory=save_directory)
+      File "/Desktop/pywinds/env/lib/python3.7/site-packages/pywinds/wind_functions.py",
+    line 346, in _compute_lat_long
         raise ValueError('Not enough information provided to create an area for projection')
     ValueError: Not enough information provided to create an area for projection
 
@@ -480,14 +487,15 @@ error will be displayed (see :ref:`common combinations of area information<area_
 If incorrect commands were given::
 
     $ pywinds/wind_info.sh 60 90 0 --pixel-size 4000 --center 90 0
-    usage: wind_info.py [-h] [--center y x [units]] [--pixel-size dy [dx] [units]]
-                        [--displacement-data filename] [-j int] [-i int]
-                        [-p] [--units str]
+    usage: wind_info.py [-h] [-j int] [-i int] [-p] [--save-directory path_name]
+                        [--earth-spheroid str] [--center y x [units]]
+                        [--pixel-size dy [dx] [units]] [--displacement-data filename]
+                        [--units str]
                         [--upper-left-extent y x [units]]
                         [--radius dy dx [units]]
                         [--area-extent y_ll x_ll y_ur x_ur [units]]
                         [--shape height width] [--projection str]
-                        [--projection-spheroid str] [--earth-spheroid str] [-v]
+                        [--projection-spheroid str] [-v]
                         lat-ts lat-0 long-0 delta-time
     wind_info.py: error: the following arguments are required: delta-time
 
@@ -495,17 +503,19 @@ If incorrect commands were given::
 The help message for wind_info.sh::
 
     $ pywinds/wind_info.sh -h
-    usage: wind_info.py [-h] [--center y x [units]] [--pixel-size dy [dx] [units]]
-                        [--displacement-data filename] [-j int] [-i int]
-                        [-p] [--units str]
+    usage: wind_info.py [-h] [-j int] [-i int] [-p] [--save-directory path_name]
+                        [--earth-spheroid str] [--center y x [units]]
+                        [--pixel-size dy [dx] [units]] [--displacement-data filename]
+                        [--units str]
                         [--upper-left-extent y x [units]]
                         [--radius dy dx [units]]
                         [--area-extent y_ll x_ll y_ur x_ur [units]]
                         [--shape height width] [--projection str]
-                        [--projection-spheroid str] [--earth-spheroid str] [-v]
+                        [--projection-spheroid str] [-v]
                         lat-ts lat-0 long-0 delta-time
 
-    Convert command line arguments to python arguments for wind_functions.py
+    Computes the latitude, longitude, velocity, angle, v, and u of the wind given
+    an area and pixel-displacement.
 
     positional arguments:
       lat-ts                projection latitude of true scale
@@ -515,6 +525,13 @@ The help message for wind_info.sh::
 
     optional arguments:
       -h, --help            show this help message and exit
+      -j int, --j int       row to run calculations on
+      -i int, --i int       column to run calculations on
+      -p, --print, --no-save
+                            print data to shell without saving
+      --save-directory path_name, -s path_name
+                            directory to save to. Defaults to where script was ran
+      --earth-spheroid str  spheroid of Earth
       --center y x [units]
                             projection y and x coordinate of the center of area.
                             Default: lat long
@@ -524,9 +541,6 @@ The help message for wind_info.sh::
                             needs to be entered
       --displacement-data filename
                             filename or list containing displacements
-      -j int               row to run calculations on
-      -i int               column to run calculations on
-      -p             print data to shell without saving
       --units str           units that all provided arguments that take units
                             (except center) should be interpreted as
       --upper-left-extent y x [units]
@@ -543,7 +557,6 @@ The help message for wind_info.sh::
       --projection str      name of projection that the image is in
       --projection-spheroid str
                             spheroid of projection
-      --earth-spheroid str  spheroid of Earth
       -v, --verbose         each occurrence increases verbosity 1 level through
                             ERROR-WARNING-INFO-DEBUG
 

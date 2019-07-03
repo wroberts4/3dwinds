@@ -8,9 +8,8 @@ in with options (as long as they are not interpreted as part of the option).
 .. note::
 
     Angle and distance are calculated using great circle arcs. This gives you the angle and speed in which you
-    would walk in a straight line to your destination. It will not be the tangent of the u and v component
-    (ie what :ref:`euclidean.sh <euclidean.sh>` calculates), which uses
-    the average latitude of two points to find the distance between the longitudes.
+    would walk in a straight line to your destination. It will not be the tangent and hypotenuse of the u and
+    v component (ie what :ref:`euclidean.sh <euclidean.sh>` calculates).
 
 .. _wind_info.sh:
 
@@ -145,6 +144,11 @@ These are the output units for pywinds (Note: output units **cannot** be changed
     * velocity speed: m/s
     * velocity angle: degrees
 
+.. note::
+
+    v is the distance between the two latitudes and u is the distance between the two longitudes using the average
+    latitude for the distance calculations; this averaging is more noticeable near the poles.
+    It is **not** the distance * sine and distance * cosine of the forward azimuth angle from the great circle arc.
 
 .. _data_format:
 
@@ -371,7 +375,7 @@ even if the area is not completely defined, as shown in :ref:`advanced_examples`
     $ ls
     in.flo	    pywinds
     $ pywinds/euclidean.sh 60 130 61 131
-    [124236.58, 26.25]
+    [124236.58, 26.25, 206.25]
 
 * **greatcircle.sh**: Prints the shortest distance, forward azimuth, and backwards azimuth between
   two points on the earth provided in latitude and longitude (as calculated from the great circle arc).

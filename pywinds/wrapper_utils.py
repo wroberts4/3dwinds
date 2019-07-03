@@ -123,6 +123,9 @@ def _get_args(name, description):
         my_parser.add_argument('new-long', type=float, help='Longitude of the second point')
         my_parser.add_argument('--earth-spheroid', metavar='str', help='spheroid of Earth')
     else:
+        if name != 'area':
+            my_parser.add_argument('-j', '--j', type=int, metavar='int', help='row to run calculations on')
+            my_parser.add_argument('-i', '--i', type=int, metavar='int', help='column to run calculations on')
         if name == 'displacements':
             arg_names = []
             kwarg_names.insert(0, 'long_0')
@@ -138,17 +141,14 @@ def _get_args(name, description):
             my_parser.add_argument('long-0', type=float, help='projection central meridian')
             if name in ['wind_info', 'velocity', 'vu']:
                 if name == 'wind_info':
-                    my_parser.add_argument('--no-save', '--print', '-p', action="store_true",
+                    my_parser.add_argument('-p', '--print', '--no-save', action="store_true", dest='no_save',
                                            help="print data to shell without saving")
-                    my_parser.add_argument('--save-directory', '-s', type=str, metavar='directory',
+                    my_parser.add_argument('--save-directory', '-s', type=str, metavar='path_name',
                                            help="directory to save to. Defaults to where script was ran")
                 my_parser.add_argument('delta-time', type=float,
                                        help='amount of time that separates both files in minutes')
                 my_parser.add_argument('--earth-spheroid', metavar='str', help='spheroid of Earth')
                 arg_names.append('delta-time')
-        if name != 'area':
-            my_parser.add_argument('-j', '--j', type=int, metavar='int', help='row to run calculations on')
-            my_parser.add_argument('-i', '--i', type=int, metavar='int', help='column to run calculations on')
 
         my_parser.add_argument('--center', action=CustomAction, type=_nums_or_string,
                                narg_types=[[(float, int), (float, int), str], [(float, int), (float, int)]],
