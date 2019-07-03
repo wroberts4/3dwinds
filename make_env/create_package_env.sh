@@ -3,8 +3,8 @@
 PARENTDIR="$( cd -P "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 
 # Remove names that are needed and may have been made in the past.
-rm $PARENTDIR/new_pywinds.tar.gz || true
-rm -r $PARENTDIR/pywinds || true
+rm $PARENTDIR/new_pywinds.tar.gz 2> /dev/null
+rm -r $PARENTDIR/pywinds 2> /dev/null
 
 . ~/anaconda3/etc/profile.d/conda.sh
 conda env update -n pywinds -f $PARENTDIR/../build_environment.yml
