@@ -182,7 +182,7 @@ Note that shape can be found from the displacement file or the area provided.</p
 <li><p><strong>pixel_size</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.7)"><em>list</em></a><em> or </em><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.7)"><em>float</em></a><em>, </em><em>optional</em>) – Size of pixels: (dy, dx)</p></li>
 <li><p><strong>upper_left_extent</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.7)"><em>list</em></a><em>, </em><em>optional</em>) – Projection y and x coordinates of the upper left corner of the upper left pixel (y, x)</p></li>
 <li><p><strong>radius</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.7)"><em>list</em></a><em> or </em><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.7)"><em>float</em></a><em>, </em><em>optional</em>) – Projection length from the center to the left/right and top/bottom outer edges (dy, dx)</p></li>
-<li><p><strong>projection_spheroid</strong> (<em>string</em><em> or </em><em>Geod</em><em>, </em><em>optional</em>) – <p>Spheroid of projection (WGS84, sphere, etc)</p>
+<li><p><strong>projection_spheroid</strong> (<em>string</em><em> or </em><em>Geod</em><em>, </em><em>optional</em>) – <p>Spheroid (ie reference coordinate system) of projection (WGS84, sphere, etc)</p>
 <dl class="field-list simple">
 <dt class="field-odd">returns</dt>
 <dd class="field-odd"><p><strong>area</strong> – projection, lat_0 (degrees), long_0 (degrees), equatorial radius (meters), eccentricity,
@@ -231,7 +231,7 @@ Note that shape can be found from the displacement file or the area provided.</p
 <li><p><strong>pixel_size</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.7)"><em>list</em></a><em> or </em><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.7)"><em>float</em></a><em>, </em><em>optional</em>) – Size of pixels: (dy, dx)</p></li>
 <li><p><strong>upper_left_extent</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.7)"><em>list</em></a><em>, </em><em>optional</em>) – Projection y and x coordinates of the upper left corner of the upper left pixel (y, x)</p></li>
 <li><p><strong>radius</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.7)"><em>list</em></a><em> or </em><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.7)"><em>float</em></a><em>, </em><em>optional</em>) – Projection length from the center to the left/right and top/bottom outer edges (dy, dx)</p></li>
-<li><p><strong>projection_spheroid</strong> (<em>string</em><em> or </em><em>Geod</em><em>, </em><em>optional</em>) – <p>Spheroid of projection (WGS84, sphere, etc)</p>
+<li><p><strong>projection_spheroid</strong> (<em>string</em><em> or </em><em>Geod</em><em>, </em><em>optional</em>) – <p>Spheroid (ie reference coordinate system) of projection (WGS84, sphere, etc)</p>
 <dl class="field-list simple">
 <dt class="field-odd">returns</dt>
 <dd class="field-odd"><p><strong>(j_displacements, i_displacements)</strong> – j_displacements and i_displacements found in displacement file or list in row-major format</p>
@@ -247,9 +247,55 @@ Note that shape can be found from the displacement file or the area provided.</p
 </dd></dl>
 
 <dl class="function">
+<dt id="pywinds.wind_functions.euclidean">
+<code class="sig-prename descclassname">pywinds.wind_functions.</code><code class="sig-name descname">euclidean</code><span class="sig-paren">(</span><em class="sig-param">old_lat</em>, <em class="sig-param">old_long</em>, <em class="sig-param">new_lat</em>, <em class="sig-param">new_long</em>, <em class="sig-param">earth_spheroid=None</em><span class="sig-paren">)</span><a class="headerlink" href="#pywinds.wind_functions.euclidean" title="Permalink to this definition">¶</a></dt>
+<dd><p>Computes the hypotenuse and forward/backward angle of the euclidean triangle formed between two lat-longs.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>old_lat</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.7)"><em>float</em></a>) – Starting point latitude</p></li>
+<li><p><strong>old_long</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.7)"><em>float</em></a>) – Starting point longitude</p></li>
+<li><p><strong>new_lat</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.7)"><em>float</em></a>) – Ending point latitude</p></li>
+<li><p><strong>new_long</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.7)"><em>float</em></a>) – Ending point longitude</p></li>
+<li><p><strong>earth_spheroid</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><em>str</em></a><em>, </em><em>optional</em>) – Spheroid (ie reference coordinate system) of Earth (WGS84, sphere, etc)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p></p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>(distance, forward angle, backward angle)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="pywinds.wind_functions.greatcircle">
+<code class="sig-prename descclassname">pywinds.wind_functions.</code><code class="sig-name descname">greatcircle</code><span class="sig-paren">(</span><em class="sig-param">old_lat</em>, <em class="sig-param">old_long</em>, <em class="sig-param">new_lat</em>, <em class="sig-param">new_long</em>, <em class="sig-param">earth_spheroid=None</em><span class="sig-paren">)</span><a class="headerlink" href="#pywinds.wind_functions.greatcircle" title="Permalink to this definition">¶</a></dt>
+<dd><p>Computes the shortest distance and forward/backwards azimuth between two two lat-longs.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>old_lat</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.7)"><em>float</em></a>) – Starting point latitude</p></li>
+<li><p><strong>old_long</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.7)"><em>float</em></a>) – Starting point longitude</p></li>
+<li><p><strong>new_lat</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.7)"><em>float</em></a>) – Ending point latitude</p></li>
+<li><p><strong>new_long</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.7)"><em>float</em></a>) – Ending point longitude</p></li>
+<li><p><strong>earth_spheroid</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><em>str</em></a><em>, </em><em>optional</em>) – Spheroid (ie reference coordinate system) of Earth (WGS84, sphere, etc)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p></p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>(distance, forward azimuth, backward azimuth)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
 <dt id="pywinds.wind_functions.lat_long">
 <code class="sig-prename descclassname">pywinds.wind_functions.</code><code class="sig-name descname">lat_long</code><span class="sig-paren">(</span><em class="sig-param">lat_ts</em>, <em class="sig-param">lat_0</em>, <em class="sig-param">long_0</em>, <em class="sig-param">displacement_data=None</em>, <em class="sig-param">projection=None</em>, <em class="sig-param">j=None</em>, <em class="sig-param">i=None</em>, <em class="sig-param">area_extent=None</em>, <em class="sig-param">shape=None</em>, <em class="sig-param">center=None</em>, <em class="sig-param">pixel_size=None</em>, <em class="sig-param">upper_left_extent=None</em>, <em class="sig-param">radius=None</em>, <em class="sig-param">units=None</em>, <em class="sig-param">projection_spheroid=None</em><span class="sig-paren">)</span><a class="headerlink" href="#pywinds.wind_functions.lat_long" title="Permalink to this definition">¶</a></dt>
-<dd><p>Computes the latitude and longitude given an area and (j, i) values.</p>
+<dd><p>Computes the latitude and longitude given an area and pixel-displacement.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
@@ -325,8 +371,8 @@ Note that shape can be found from the displacement file or the area provided.</p
 <li><p><strong>pixel_size</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.7)"><em>list</em></a><em> or </em><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.7)"><em>float</em></a><em>, </em><em>optional</em>) – Size of pixels: (dy, dx)</p></li>
 <li><p><strong>upper_left_extent</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.7)"><em>list</em></a><em>, </em><em>optional</em>) – Projection y and x coordinates of the upper left corner of the upper left pixel (y, x)</p></li>
 <li><p><strong>radius</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.7)"><em>list</em></a><em> or </em><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.7)"><em>float</em></a><em>, </em><em>optional</em>) – Projection length from the center to the left/right and top/bottom outer edges (dy, dx)</p></li>
-<li><p><strong>projection_spheroid</strong> (<em>string</em><em> or </em><em>Geod</em><em>, </em><em>optional</em>) – Spheroid of projection (WGS84, sphere, etc)</p></li>
-<li><p><strong>earth_spheroid</strong> (<em>string</em><em> or </em><em>Geod</em><em>, </em><em>optional</em>) – Spheroid of Earth (WGS84, sphere, etc)</p></li>
+<li><p><strong>projection_spheroid</strong> (<em>string</em><em> or </em><em>Geod</em><em>, </em><em>optional</em>) – Spheroid (ie reference coordinate system) of projection (WGS84, sphere, etc)</p></li>
+<li><p><strong>earth_spheroid</strong> (<em>string</em><em> or </em><em>Geod</em><em>, </em><em>optional</em>) – Spheroid (ie reference coordinate system) of Earth (WGS84, sphere, etc)</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
@@ -373,8 +419,8 @@ Note that shape can be found from the displacement file or the area provided.</p
 <li><p><strong>pixel_size</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.7)"><em>list</em></a><em> or </em><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.7)"><em>float</em></a><em>, </em><em>optional</em>) – Size of pixels: (dy, dx)</p></li>
 <li><p><strong>upper_left_extent</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.7)"><em>list</em></a><em>, </em><em>optional</em>) – Projection y and x coordinates of the upper left corner of the upper left pixel (y, x)</p></li>
 <li><p><strong>radius</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.7)"><em>list</em></a><em> or </em><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.7)"><em>float</em></a><em>, </em><em>optional</em>) – Projection length from the center to the left/right and top/bottom outer edges (dy, dx)</p></li>
-<li><p><strong>projection_spheroid</strong> (<em>string</em><em> or </em><em>Geod</em><em>, </em><em>optional</em>) – Spheroid of projection (WGS84, sphere, etc)</p></li>
-<li><p><strong>earth_spheroid</strong> (<em>string</em><em> or </em><em>Geod</em><em>, </em><em>optional</em>) – Spheroid of Earth (WGS84, sphere, etc)</p></li>
+<li><p><strong>projection_spheroid</strong> (<em>string</em><em> or </em><em>Geod</em><em>, </em><em>optional</em>) – Spheroid (ie reference coordinate system) of projection (WGS84, sphere, etc)</p></li>
+<li><p><strong>earth_spheroid</strong> (<em>string</em><em> or </em><em>Geod</em><em>, </em><em>optional</em>) – Spheroid (ie reference coordinate system) of Earth (WGS84, sphere, etc)</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
@@ -389,7 +435,7 @@ Note that shape can be found from the displacement file or the area provided.</p
 <dl class="function">
 <dt id="pywinds.wind_functions.wind_info">
 <code class="sig-prename descclassname">pywinds.wind_functions.</code><code class="sig-name descname">wind_info</code><span class="sig-paren">(</span><em class="sig-param">lat_ts</em>, <em class="sig-param">lat_0</em>, <em class="sig-param">long_0</em>, <em class="sig-param">delta_time</em>, <em class="sig-param">displacement_data=None</em>, <em class="sig-param">projection=None</em>, <em class="sig-param">j=None</em>, <em class="sig-param">i=None</em>, <em class="sig-param">area_extent=None</em>, <em class="sig-param">shape=None</em>, <em class="sig-param">center=None</em>, <em class="sig-param">pixel_size=None</em>, <em class="sig-param">upper_left_extent=None</em>, <em class="sig-param">radius=None</em>, <em class="sig-param">units=None</em>, <em class="sig-param">projection_spheroid=None</em>, <em class="sig-param">earth_spheroid=None</em>, <em class="sig-param">no_save=False</em>, <em class="sig-param">save_directory=None</em>, <em class="sig-param">timestamp=None</em><span class="sig-paren">)</span><a class="headerlink" href="#pywinds.wind_functions.wind_info" title="Permalink to this definition">¶</a></dt>
-<dd><p>Computes the latitude, longitude, velocity, angle, v, and u of the wind</p>
+<dd><p>Computes the latitude, longitude, velocity, angle, v, and u of the wind given an area and pixel-displacement.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
@@ -420,8 +466,8 @@ Note that shape can be found from the displacement file or the area provided.</p
 <li><p><strong>pixel_size</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.7)"><em>list</em></a><em> or </em><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.7)"><em>float</em></a><em>, </em><em>optional</em>) – Size of pixels: (dy, dx)</p></li>
 <li><p><strong>upper_left_extent</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.7)"><em>list</em></a><em>, </em><em>optional</em>) – Projection y and x coordinates of the upper left corner of the upper left pixel (y, x)</p></li>
 <li><p><strong>radius</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.7)"><em>list</em></a><em> or </em><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.7)"><em>float</em></a><em>, </em><em>optional</em>) – Projection length from the center to the left/right and top/bottom outer edges (dy, dx)</p></li>
-<li><p><strong>projection_spheroid</strong> (<em>string</em><em> or </em><em>Geod</em><em>, </em><em>optional</em>) – Spheroid of projection (WGS84, sphere, etc)</p></li>
-<li><p><strong>earth_spheroid</strong> (<em>string</em><em> or </em><em>Geod</em><em>, </em><em>optional</em>) – Spheroid of Earth (WGS84, sphere, etc)</p></li>
+<li><p><strong>projection_spheroid</strong> (<em>string</em><em> or </em><em>Geod</em><em>, </em><em>optional</em>) – Spheroid (ie reference coordinate system) of projection (WGS84, sphere, etc)</p></li>
+<li><p><strong>earth_spheroid</strong> (<em>string</em><em> or </em><em>Geod</em><em>, </em><em>optional</em>) – Spheroid (ie reference coordinate system) of Earth (WGS84, sphere, etc)</p></li>
 <li><p><strong>no_save</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><em>bool</em></a><em>, </em><em>optional</em>) – When False, saves wind_info to name_of_projection.txt, j_displacement.txt, i_displacement.txt,
 new_latitude.txt, new_longitude.txt, old_latitude.txt, old_longitude.txt, v.txt, u.txt, speed.txt, angle.txt,
 and wind_info.txt in that order (name_of_projection varies depending on the type of projection). Each of these

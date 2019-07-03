@@ -5,6 +5,13 @@ Use the **-h** or **------help** flags on any scripts to print a usage message. 
 GNU command line style; order in which options are provided does not matter and positional arguments may be mixed
 in with options (as long as they are not interpreted as part of the option).
 
+.. note::
+
+    Angle and distance are calculated using great circle arcs. This gives you the angle and speed in which you
+    would walk in a straight line to your destination. It will not be the tangent of the u and v component
+    (ie what :ref:`euclidean.sh <euclidean.sh>` calculates), which uses
+    the average latitude of two points to find the distance between the longitudes.
+
 .. _wind_info.sh:
 
 wind_info.sh
@@ -48,7 +55,9 @@ Additional information:
 
     * For more optional arguments, please see :ref:`advanced_arguments`.
     * For more information on save files and their formats, please see :ref:`save_format`
-    * For information on the output units, please see :ref:`units`
+    * For information on the output units, please see :ref:`output_units`
+
+.. _area_information_note:
 
 .. note::
 
@@ -68,7 +77,7 @@ Calculating wind_info::
     $ ls
     in.flo	    pywinds
     $ pywinds/wind_info.sh 60 90 0 100 -j 0 -i 0 --pixel-size 4000 --center 90 0 -p
-    [63.36, -135.0, 51.8, 315.24, 36.78, -36.47]
+    [63.36, -135.0, 51.78, 317.1, 36.78, -36.47]
     $ pywinds/wind_info.sh 60 90 0 100 --pixel-size 4000 --center 90 0
     $ pywinds/wind_info.sh 60 90 0 100 --pixel-size 4000 --center 90 0 -vv
     [INFO: 2019-03-01 12:00:00 : pywinds.wind_functions] Reading displacements from
@@ -103,8 +112,7 @@ Advanced arguments
   parameter supported by the `cs2cs -lu <https://proj4.org/apps/cs2cs.html#cmdoption-cs2cs-lu>`_
   command (see |cs2cs_lu.png|). Units are determined in the following priority:
 
-  1. units expressed at the end of individual variables (see 'Using units' under
-     :ref:`examples_of_wind_info.sh` for examples)
+  1. units expressed at the end of individual variables (see :ref:`Specifying input units<input_units>` for examples)
   2. units passed to ``--units`` (exluding center)
   3. meters (exluding center, which is degrees)
 * **------area-extent**: Area extent as a list [y_ll, x_ll, y_ur, x_ur]
@@ -120,14 +128,14 @@ where
 
     The shape provided or found can alter the native shape of **------displacement-data**.
 
-.. _units:
+.. _output_units:
 
-Units
------
+Output units
+------------
 
 These are the output units for pywinds (Note: output units **cannot** be changed by the user):
 
-    * area: See :ref:`content_of_wind_info.nc` or the bottom of :ref:`data_format`
+    * area: See :ref:`content_of_wind_info.nc` or  :ref:`area print format<area_print>`
     * j: unitless
     * i: unitless
     * latitude: degrees
@@ -199,6 +207,8 @@ If no j and i values are provided, then data is calculated at every pixel (n-row
          [[i_displacement_11, ..., i_displacement_1m],
           ...,
           [i_displacement_n1, ..., i_displacement_nm]]]
+
+.. _area_print:
 
 Area is printed in a different format than it is saved::
 
@@ -273,7 +283,7 @@ They have similar or identical arguments to wind_info.sh
     $ ls
     in.flo	    pywinds
     $ pywinds/velocity.sh 60 90 0 100 -j 0 -i 0 --pixel-size 4000 --center 90 0
-    [51.8, 315.24]
+    [51.78, 317.1]
 
 
 * **vu.sh**: Prints just the v and u components of the wind. Same arguments as wind_info.sh
@@ -344,8 +354,15 @@ They have similar or identical arguments to wind_info.sh
 You can use area.sh on a file containing displacements to see what shape it is,
 even if the area is not completely defined, as shown in :ref:`advanced_examples`.
 
-* **euclidean.sh**: Prints the hypotenuse and angle of the triangle formed from the north/south and east/west distance
-  between two points on the earth provided in latitude and longitude.
+.. _euclidean.sh:
+
+* **euclidean.sh**: Prints the hypotenuse, forward angle, and backward angle of the euclidean
+  (ie flat and 2-dimensional) triangle formed from the north/south and east/west distance between
+  two points on the earth provided in latitude and longitude.
+
+.. note::
+
+    This method takes the average of the latitudes to find distance between the longitudes.
 
 ::
 
@@ -356,8 +373,8 @@ even if the area is not completely defined, as shown in :ref:`advanced_examples`
     $ pywinds/euclidean.sh 60 130 61 131
     [124236.58, 26.25]
 
-* **greatcircle.sh**: Prints the shortest distance, forward azimuth, and backwards azimuth between two points on the earth
-  provided in latitude and longitude (as calculated from the great circle arc).
+* **greatcircle.sh**: Prints the shortest distance, forward azimuth, and backwards azimuth between
+  two points on the earth provided in latitude and longitude (as calculated from the great circle arc).
 
 ::
 

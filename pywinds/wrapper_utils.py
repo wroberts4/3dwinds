@@ -3,6 +3,7 @@ import argparse
 import ast
 import datetime
 import logging
+import numpy as np
 import os
 import sys
 from glob import glob
@@ -12,10 +13,12 @@ import xarray
 logger = logging.getLogger(__name__)
 
 
-def area_to_string(area_dict):
+def area_to_string(area_dict, round_nums=None):
     """Rounds and converts area dict to string"""
     write_string = ''
     for key, val in area_dict.items():
+        if val is not None and not isinstance(val, str) and isinstance(round_nums, int):
+            val = np.round(val, round_nums).tolist()
         write_string = write_string + str(key) + ': ' + str(val) + '\n'
     return write_string[:-1]
 
@@ -105,12 +108,12 @@ class CustomAction(argparse.Action):
         setattr(args, self.dest, values)
 
 
-def _get_args(name):
+def _get_args(name, description):
     """Reads command line arguments and handles logic behind them."""
     kwarg_names = ['center', 'pixel_size', 'units', 'shape', 'upper_left_extent', 'radius',
                    'area_extent', 'displacement_data', 'j', 'i', 'no_save', 'save_directory',
                    'projection', 'projection_spheroid', 'earth_spheroid']
-    my_parser = argparse.ArgumentParser(description=__doc__, formatter_class=MyFormatter)
+    my_parser = argparse.ArgumentParser(description=description, formatter_class=MyFormatter)
 
     if name in ['euclidean', 'greatcircle']:
         arg_names = ['old-lat', 'old-long', 'new-lat', 'new-long']
@@ -143,9 +146,9 @@ def _get_args(name):
                                        help='amount of time that separates both files in minutes')
                 my_parser.add_argument('--earth-spheroid', metavar='str', help='spheroid of Earth')
                 arg_names.append('delta-time')
-            if name != 'area':
-                my_parser.add_argument('-j', '--j', type=int, metavar='int', help='row to run calculations on')
-                my_parser.add_argument('-i', '--i', type=int, metavar='int', help='column to run calculations on')
+        if name != 'area':
+            my_parser.add_argument('-j', '--j', type=int, metavar='int', help='row to run calculations on')
+            my_parser.add_argument('-i', '--i', type=int, metavar='int', help='column to run calculations on')
 
         my_parser.add_argument('--center', action=CustomAction, type=_nums_or_string,
                                narg_types=[[(float, int), (float, int), str], [(float, int), (float, int)]],
@@ -193,7 +196,8 @@ def _get_args(name):
 
 def run_script(func, output_format, name):
     """Runs python function from wind_functions.py."""
-    args, kwargs = _get_args(name)
+    description = func.__doc__.splitlines()[0]
+    args, kwargs = _get_args(name, description)
     if name == 'wind_info':
         kwargs['timestamp'] = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
     displacement_data = kwargs.get('displacement_data')
@@ -215,4 +219,6 @@ def run_script(func, output_format, name):
             func(*args, **kwargs)
         kwargs.pop('displacement_data')
     # Only happens with lat_long, area, or if non string is given to displacement-data.
-    print(output_format(func(*args, **kwargs), **kwargs))
+    output = output_format(func(*args, **kwargs), **kwargs)
+    if output is not None:
+        print(output)

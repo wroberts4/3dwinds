@@ -167,16 +167,16 @@ $ ls
 in.flo        test.flo        pywinds
 $ pywinds/wind_info.sh 60 90 0 100 -j 0 -i 0 --pixel-size 4000
   --center 90 0 -p
-[63.36, -135.0, 51.8, 315.24, 36.78, -36.47]
-[63.36, -135.0, 51.8, 315.24, 36.78, -36.47]
+[63.36, -135.0, 51.78, 317.1, 36.78, -36.47]
+[63.36, -135.0, 51.78, 317.1, 36.78, -36.47]
 $ pywinds/wind_info.sh 60 90 0 100 -j 0 -i 0 --pixel-size 4000
   --center 90 0 -vv -p
 [INFO: 2019-03-01 12:00:00 : pywinds.wind_functions] Reading displacements from
 /Desktop/test.flo
-[63.36, -135.0, 51.8, 315.24, 36.78, -36.47]
+[63.36, -135.0, 51.78, 317.1, 36.78, -36.47]
 [INFO: 2019-03-01 12:00:00 : pywinds.wind_functions] Reading displacements from
 /Desktop/in.flo
-[63.36, -135.0, 51.8, 315.24, 36.78, -36.47]
+[63.36, -135.0, 51.78, 317.1, 36.78, -36.47]
 $ pywinds/wind_info.sh 60 90 0 100 --pixel-size 4000 --center 90 0 -vv
 [INFO: 2019-03-01 12:00:00 : pywinds.wind_functions] Reading displacements from
 /Desktop/test.flo
@@ -204,7 +204,7 @@ $ ls
 in.flo        test.flo        pywinds
 $ pywinds/wind_info.sh 60 90 0 100 -j 0 -i 0 --pixel-size 4000
   --center 90 0 --displacement-data in.flo -p
-[63.36, -135.0, 51.8, 315.24, 36.78, -36.47]
+[63.36, -135.0, 51.78, 317.1, 36.78, -36.47]
 $ pywinds/wind_info.sh 60 90 0 100 --pixel-size 4000 --center 90 0
   --displacement-data path_to_other_directory/in.flo
 $ pywinds/wind_info.sh 60 90 0 100 --pixel-size 4000 --center 90 0
@@ -224,10 +224,10 @@ $ pywinds/wind_info.sh 60 90 0 100 -j 0 -i 0 --pixel-size 4000
   --center 90 0 --displacement-data \*test*.flo -vv -p
 [INFO: 2019-03-01 12:00:00 : pywinds.wind_functions] Reading displacements from
 /Desktop/windtest.flo
-[63.36, -135.0, 51.8, 315.24, 36.78, -36.47]
+[63.36, -135.0, 51.78, 317.1, 36.78, -36.47]
 [INFO: 2019-03-01 12:00:00 : pywinds.wind_functions] Reading displacements from
 /Desktop/windtest2.flo
-[63.36, -135.0, 51.8, 315.24, 36.78, -36.47]
+[63.36, -135.0, 51.78, 317.1, 36.78, -36.47]
 $ pywinds/wind_info.sh 60 90 0 100 --pixel-size 4000
   --center 90 0 --displacement-data \*test*.flo -vv
 [INFO: 2019-03-01 12:00:00 : pywinds.wind_functions] Reading displacements from
@@ -266,44 +266,44 @@ $ pywinds/wind_info.sh 60 90 0 100 -j 0 -i 0 --pixel-size 4000
 [63.26, -135.0, 51.93, 315.2, 36.85, -36.59]
 $ pywinds/wind_info.sh 60 90 0 100 -j 0 -i 0 --pixel-size 4000 --center 90 0
   --projection-spheroid sphere --earth-spheroid sphere -p
-[63.26, -135.0, 51.77, 315.24, 36.76, -36.46]
+[63.26, -135.0, 51.77, 317.1, 36.76, -36.46]
 </pre></div>
 </div>
-<p>Using units:</p>
+<p id="input-units">Specifying input units:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ pwd
 /Desktop
 $ ls
 in.flo        pywinds
 $ pywinds/wind_info.sh 60 90 0 100 -j 0 -i 0
   --pixel-size 4000 --center 90 0 -p
-[63.36, -135.0, 51.8, 315.24, 36.78, -36.47]
+[63.36, -135.0, 51.78, 317.1, 36.78, -36.47]
 $ pywinds/wind_info.sh 60 90 0 100 -j 0 -i 0
   --pixel-size 4 --center 90 0 --units km -p
-[63.36, -135.0, 51.8, 315.24, 36.78, -36.47]
+[63.36, -135.0, 51.78, 317.1, 36.78, -36.47]
 $ pywinds/wind_info.sh 60 90 0 100 -j 0 -i 0
   --pixel-size 4 km --center 90 0 -p
-[63.36, -135.0, 51.8, 315.24, 36.78, -36.47]
+[63.36, -135.0, 51.78, 317.1, 36.78, -36.47]
 $ pywinds/wind_info.sh 60 90 0 100 -j 0 -i 0
   --pixel-size 4 --center 0 0 m  --units km -p
-[63.36, -135.0, 51.8, 315.24, 36.78, -36.47]
+[63.36, -135.0, 51.78, 317.1, 36.78, -36.47]
 $ pywinds/wind_info.sh 60 90 0 100 -j 0 -i 0
   --pixel-size 4 km --center 0 0 m -p
-[63.36, -135.0, 51.8, 315.24, 36.78, -36.47]
+[63.36, -135.0, 51.78, 317.1, 36.78, -36.47]
 $ pywinds/wind_info.sh 60 90 0 100 -j 0 -i 0
   --pixel-size 4000 m --center 90 0 --units km -p
-[63.36, -135.0, 51.8, 315.24, 36.78, -36.47]
+[63.36, -135.0, 51.78, 317.1, 36.78, -36.47]
 $ pywinds/wind_info.sh 60 90 0 100 -j 0 -i 0
   --upper-left-extent 2000 -2000 km
   --radius 2000 2000 km -p
-[63.36, -135.0, 51.8, 315.24, 36.78, -36.47]
+[63.36, -135.0, 51.78, 317.1, 36.78, -36.47]
 $ pywinds/wind_info.sh 60 90 0 100 -j 0 -i 0
   --upper-left-extent 2000 -2000
   --radius 2000 2000 --units km -p
-[63.36, -135.0, 51.8, 315.24, 36.78, -36.47]
+[63.36, -135.0, 51.78, 317.1, 36.78, -36.47]
 $ pywinds/wind_info.sh 60 90 0 100 -j 0 -i 0
   --upper-left-extent 63.335 -135 deg
   --radius 2000 2000 --units km -p
-[63.36, -135.0, 51.8, 315.24, 36.78, -36.47]
+[63.36, -135.0, 51.78, 317.1, 36.78, -36.47]
 </pre></div>
 </div>
 <div class="admonition note">
@@ -313,23 +313,23 @@ $ pywinds/wind_info.sh 60 90 0 100 -j 0 -i 0
 <p>Using other advanced args:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ pywinds/wind_info.sh 60 90 0 100 -j 0 -i 0
   --radius 2000000 2000000 --center 90 0 -p
-[63.36, -135.0, 51.8, 315.24, 36.78, -36.47]
+[63.36, -135.0, 51.78, 317.1, 36.78, -36.47]
 $ pywinds/wind_info.sh 60 90 0 100 -j 0 -i 0
   --upper-left-extent 2000000 -2000000 --center 90 0 -p
-[63.36, -135.0, 51.8, 315.24, 36.78, -36.47]
+[63.36, -135.0, 51.78, 317.1, 36.78, -36.47]
 $ pywinds/wind_info.sh 60 90 0 100 -j 0 -i 0
   --area-extent -2000000 -2000000 2000000 2000000 -p
-[63.36, -135.0, 51.8, 315.24, 36.78, -36.47]
+[63.36, -135.0, 51.78, 317.1, 36.78, -36.47]
 $ pywinds/wind_info.sh 60 90 0 100 -j 0 -i 0
   --upper-left-extent 2000000 -2000000
   --radius 2000000 2000000 -p
-[63.36, -135.0, 51.8, 315.24, 36.78, -36.47]
+[63.36, -135.0, 51.78, 317.1, 36.78, -36.47]
 $ pywinds/wind_info.sh 60 90 0 100 -j 0 -i 0 --center 90 0
   --pixel-size 4000 --shape 10000 100 -p
 [WARNING: 2019-03-01 12:00:00 : pywinds.wind_functions] Shape found
 from area or provided by user does not match the shape of the file:
 (10000, 100) vs (1000, 1000)
-[63.36, -135.0, 51.8, 315.24, 36.78, -36.47]
+[63.36, -135.0, 51.78, 317.1, 36.78, -36.47]
 </pre></div>
 </div>
 <p>Shuffling order of arguments/options:</p>
@@ -340,10 +340,10 @@ in.flo        pywinds
 
 $ pywinds/wind_info.sh --center 90 0 -j 0 -i 0
   -p --pixel-size 4000 -i 0 60 90 0 100
-[63.36, -135.0, 51.8, 315.24, 36.78, -36.47]
+[63.36, -135.0, 51.78, 317.1, 36.78, -36.47]
 $ pywinds/wind_info.sh --center 90 0 60 -j 0 90 -i 0
   0 -p --pixel-size 4000 4000 100 -i 0
-[63.36, -135.0, 51.8, 315.24, 36.78, -36.47]
+[63.36, -135.0, 51.78, 317.1, 36.78, -36.47]
 </pre></div>
 </div>
 <div class="admonition note">
@@ -520,15 +520,15 @@ variables:
 </pre></div>
 </div>
 <p>speed.txt:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="mf">0.00</span><span class="p">,</span><span class="mf">108.36</span><span class="p">,</span><span class="mf">255.45</span>
-<span class="mf">323.26</span><span class="p">,</span><span class="mf">615.31</span><span class="p">,</span><span class="mf">762.10</span>
-<span class="mf">747.11</span><span class="p">,</span><span class="mf">1044.90</span><span class="p">,</span><span class="mf">1416.93</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="mf">0.00</span><span class="p">,</span><span class="mf">100.97</span><span class="p">,</span><span class="mf">201.49</span>
+<span class="mf">301.11</span><span class="p">,</span><span class="mf">399.44</span><span class="p">,</span><span class="mf">496.10</span>
+<span class="mf">590.68</span><span class="p">,</span><span class="mf">683.00</span><span class="p">,</span><span class="mf">772.78</span>
 </pre></div>
 </div>
 <p>angle.txt:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="mf">90.00</span><span class="p">,</span><span class="mf">338.42</span><span class="p">,</span><span class="mf">321.70</span>
-<span class="mf">21.43</span><span class="p">,</span><span class="mf">49.52</span><span class="p">,</span><span class="mf">310.50</span>
-<span class="mf">37.87</span><span class="p">,</span><span class="mf">49.26</span><span class="p">,</span><span class="mf">57.03</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="mf">180.00</span><span class="p">,</span><span class="mf">359.71</span><span class="p">,</span><span class="mf">359.71</span>
+<span class="mf">0.10</span><span class="p">,</span><span class="mf">0.00</span><span class="p">,</span><span class="mf">359.94</span>
+<span class="mf">0.10</span><span class="p">,</span><span class="mf">0.05</span><span class="p">,</span><span class="mf">0.00</span>
 </pre></div>
 </div>
 <p>wind_info.txt:</p>
@@ -569,7 +569,7 @@ center: None
 <div class="section" id="error-and-usage-messages">
 <span id="error-messages"></span><h2>Error and usage messages<a class="headerlink" href="#error-and-usage-messages" title="Permalink to this headline">¶</a></h2>
 <p>If not enough information is provided to a script, this kind of
-error will be displayed (see the note in <a class="reference internal" href="usage.html#wind-info-sh"><span class="std std-ref">wind_info.sh</span></a>):</p>
+error will be displayed (see <a class="reference internal" href="usage.html#area-information-note"><span class="std std-ref">common combinations of area information</span></a>):</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ pwd
 /Desktop
 $ ls

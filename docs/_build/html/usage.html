@@ -85,7 +85,7 @@
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Usage</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#wind-info-sh">wind_info.sh</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#advanced-arguments">Advanced arguments</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#units">Units</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#output-units">Output units</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#data-format">Data format</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#save-format">Save format</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#additional-utility-methods">Additional utility methods</a></li>
@@ -163,6 +163,13 @@
 <p>Use the <strong>-h</strong> or <strong>——help</strong> flags on any scripts to print a usage message. These scripts follow
 GNU command line style; order in which options are provided does not matter and positional arguments may be mixed
 in with options (as long as they are not interpreted as part of the option).</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Angle and distance are calculated using great circle arcs. This gives you the angle and speed in which you
+would walk in a straight line to your destination. It will not be the tangent of the u and v component
+(ie what <a class="reference internal" href="#euclidean-sh"><span class="std std-ref">euclidean.sh</span></a> calculates), which uses
+the average latitude of two points to find the distance between the longitudes.</p>
+</div>
 <div class="section" id="wind-info-sh">
 <span id="id1"></span><h2>wind_info.sh<a class="headerlink" href="#wind-info-sh" title="Permalink to this headline">¶</a></h2>
 <p>wind_info.sh calculates area information, j and i displacement, new and old latitude/longitude,
@@ -208,10 +215,10 @@ Specified using <strong>-vvv</strong></p></li>
 <div><ul class="simple">
 <li><p>For more optional arguments, please see <a class="reference internal" href="#advanced-arguments"><span class="std std-ref">Advanced arguments</span></a>.</p></li>
 <li><p>For more information on save files and their formats, please see <a class="reference internal" href="#save-format"><span class="std std-ref">Save format</span></a></p></li>
-<li><p>For information on the output units, please see <a class="reference internal" href="#units"><span class="std std-ref">Units</span></a></p></li>
+<li><p>For information on the output units, please see <a class="reference internal" href="#output-units"><span class="std std-ref">Output units</span></a></p></li>
 </ul>
 </div></blockquote>
-<div class="admonition note">
+<div class="admonition note" id="area-information-note">
 <p class="admonition-title">Note</p>
 <p>Enough information must be provided to make an area. Some common combinations of parameters are:</p>
 <ol class="arabic simple">
@@ -228,7 +235,7 @@ Specified using <strong>-vvv</strong></p></li>
 $ ls
 in.flo          pywinds
 $ pywinds/wind_info.sh 60 90 0 100 -j 0 -i 0 --pixel-size 4000 --center 90 0 -p
-[63.36, -135.0, 51.8, 315.24, 36.78, -36.47]
+[63.36, -135.0, 51.78, 317.1, 36.78, -36.47]
 $ pywinds/wind_info.sh 60 90 0 100 --pixel-size 4000 --center 90 0
 $ pywinds/wind_info.sh 60 90 0 100 --pixel-size 4000 --center 90 0 -vv
 [INFO: 2019-03-01 12:00:00 : pywinds.wind_functions] Reading displacements from
@@ -258,8 +265,7 @@ one of ‘deg’, ‘degrees’, ‘rad’, ‘radians’, ‘meters’, ‘metr
 parameter supported by the <a class="reference external" href="https://proj4.org/apps/cs2cs.html#cmdoption-cs2cs-lu">cs2cs -lu</a>
 command (see <a class="reference external" href="_static/cs2cs_lu.png"><img alt="cs2cs_lu.png" src="cs2cs_lu" /></a>). Units are determined in the following priority:</p>
 <ol class="arabic simple">
-<li><p>units expressed at the end of individual variables (see ‘Using units’ under
-<a class="reference internal" href="examples.html#examples-of-wind-info-sh"><span class="std std-ref">Examples of wind_info.sh</span></a> for examples)</p></li>
+<li><p>units expressed at the end of individual variables (see <a class="reference internal" href="examples.html#input-units"><span class="std std-ref">Specifying input units</span></a> for examples)</p></li>
 <li><p>units passed to <code class="docutils literal notranslate"><span class="pre">--units</span></code> (exluding center)</p></li>
 <li><p>meters (exluding center, which is degrees)</p></li>
 </ol>
@@ -278,12 +284,12 @@ command (see <a class="reference external" href="_static/cs2cs_lu.png"><img alt=
 <p>The shape provided or found can alter the native shape of <strong>——displacement-data</strong>.</p>
 </div>
 </div>
-<div class="section" id="units">
-<span id="id3"></span><h2>Units<a class="headerlink" href="#units" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="output-units">
+<span id="id3"></span><h2>Output units<a class="headerlink" href="#output-units" title="Permalink to this headline">¶</a></h2>
 <p>These are the output units for pywinds (Note: output units <strong>cannot</strong> be changed by the user):</p>
 <blockquote>
 <div><ul class="simple">
-<li><p>area: See <a class="reference internal" href="examples.html#content-of-wind-info-nc"><span class="std std-ref">Content of wind_info.nc</span></a> or the bottom of <a class="reference internal" href="#data-format"><span class="std std-ref">Data format</span></a></p></li>
+<li><p>area: See <a class="reference internal" href="examples.html#content-of-wind-info-nc"><span class="std std-ref">Content of wind_info.nc</span></a> or  <a class="reference internal" href="#area-print"><span class="std std-ref">area print format</span></a></p></li>
 <li><p>j: unitless</p></li>
 <li><p>i: unitless</p></li>
 <li><p>latitude: degrees</p></li>
@@ -350,7 +356,7 @@ command (see <a class="reference external" href="_static/cs2cs_lu.png"><img alt=
       <span class="p">[</span><span class="n">i_displacement_n1</span><span class="p">,</span> <span class="o">...</span><span class="p">,</span> <span class="n">i_displacement_nm</span><span class="p">]]]</span>
 </pre></div>
 </div>
-<p>Area is printed in a different format than it is saved:</p>
+<p id="area-print">Area is printed in a different format than it is saved:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">projection</span><span class="p">:</span>
 <span class="n">lat</span><span class="o">-</span><span class="n">ts</span> <span class="p">(</span><span class="n">degrees</span><span class="p">):</span>
 <span class="n">lat</span><span class="o">-</span><span class="mi">0</span> <span class="p">(</span><span class="n">degrees</span><span class="p">):</span>
@@ -418,7 +424,7 @@ They have similar or identical arguments to wind_info.sh</p>
 $ ls
 in.flo          pywinds
 $ pywinds/velocity.sh 60 90 0 100 -j 0 -i 0 --pixel-size 4000 --center 90 0
-[51.8, 315.24]
+[51.78, 317.1]
 </pre></div>
 </div>
 <ul class="simple">
@@ -484,10 +490,15 @@ center: (90.0, 0.0)
 </div>
 <p>You can use area.sh on a file containing displacements to see what shape it is,
 even if the area is not completely defined, as shown in <a class="reference internal" href="examples.html#advanced-examples"><span class="std std-ref">Advanced examples</span></a>.</p>
-<ul class="simple">
-<li><p><strong>euclidean.sh</strong>: Prints the hypotenuse and angle of the triangle formed from the north/south and east/west distance
-between two points on the earth provided in latitude and longitude.</p></li>
+<ul class="simple" id="euclidean-sh">
+<li><p><strong>euclidean.sh</strong>: Prints the hypotenuse, forward angle, and backward angle of the euclidean
+(ie flat and 2-dimensional) triangle formed from the north/south and east/west distance between
+two points on the earth provided in latitude and longitude.</p></li>
 </ul>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>This method takes the average of the latitudes to find distance between the longitudes.</p>
+</div>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ pwd
 /Desktop
 $ ls
@@ -497,8 +508,8 @@ $ pywinds/euclidean.sh 60 130 61 131
 </pre></div>
 </div>
 <ul class="simple">
-<li><p><strong>greatcircle.sh</strong>: Prints the shortest distance, forward azimuth, and backwards azimuth between two points on the earth
-provided in latitude and longitude (as calculated from the great circle arc).</p></li>
+<li><p><strong>greatcircle.sh</strong>: Prints the shortest distance, forward azimuth, and backwards azimuth between
+two points on the earth provided in latitude and longitude (as calculated from the great circle arc).</p></li>
 </ul>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ pwd
 /Desktop
