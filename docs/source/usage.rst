@@ -11,6 +11,8 @@ in with options (as long as they are not interpreted as part of the option).
     would walk in a straight line to your destination. It will not be the tangent and hypotenuse of the u and
     v component (ie what :ref:`euclidean.sh <euclidean.sh>` calculates).
 
+    However, both are giving you the direction that the wind is moving in, not the direction it came from.
+
 .. _wind_info.sh:
 
 wind_info.sh
@@ -159,8 +161,8 @@ These are the output units for pywinds (Note: output units **cannot** be changed
 
 .. note::
 
-    v is the distance between the two latitudes and u is the distance between the two longitudes using the average
-    latitude for the distance calculations; this averaging is more noticeable near the poles.
+    v is the distance between the two latitudes over time and u is the distance between the two longitudes over time
+    using the average latitude for the distance calculations; this averaging is more noticeable near the poles.
     It is **not** the distance * sine and distance * cosine of the forward azimuth angle from the great circle arc.
 
 .. _data_format:

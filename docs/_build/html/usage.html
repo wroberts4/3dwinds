@@ -168,6 +168,7 @@ in with options (as long as they are not interpreted as part of the option).</p>
 <p>Angle and distance are calculated using great circle arcs. This gives you the angle and speed in which you
 would walk in a straight line to your destination. It will not be the tangent and hypotenuse of the u and
 v component (ie what <a class="reference internal" href="#euclidean-sh"><span class="std std-ref">euclidean.sh</span></a> calculates).</p>
+<p>However, both are giving you the direction that the wind is moving in, not the direction it came from.</p>
 </div>
 <div class="section" id="wind-info-sh">
 <span id="id1"></span><h2>wind_info.sh<a class="headerlink" href="#wind-info-sh" title="Permalink to this headline">¶</a></h2>
@@ -308,8 +309,8 @@ Units are determined in the following priority:</p>
 </div></blockquote>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
-<p>v is the distance between the two latitudes and u is the distance between the two longitudes using the average
-latitude for the distance calculations; this averaging is more noticeable near the poles.
+<p>v is the distance between the two latitudes over time and u is the distance between the two longitudes over time
+using the average latitude for the distance calculations; this averaging is more noticeable near the poles.
 It is <strong>not</strong> the distance * sine and distance * cosine of the forward azimuth angle from the great circle arc.</p>
 </div>
 </div>
