@@ -125,17 +125,17 @@ def _delta_longitude(new_long, old_long):
     return delta_long
 
 
-def _lat_long_dist(lat, earth_spheroid):
+def _lat_long_dist(lat, earth_ellipsoid):
     """Calculates the distance between latitudes and longitudes given a latitude."""
-    if earth_spheroid is None:
-        earth_spheroid = Geod(ellps='WGS84')
-    elif isinstance(earth_spheroid, str):
-        earth_spheroid = Geod(ellps=earth_spheroid)
+    if earth_ellipsoid is None:
+        earth_ellipsoid = Geod(ellps='WGS84')
+    elif isinstance(earth_ellipsoid, str):
+        earth_ellipsoid = Geod(ellps=earth_ellipsoid)
     else:
-        raise ValueError('earth_spheroid must be a string or Geod type, but instead was {0} {1}'.format(earth_spheroid,
+        raise ValueError('earth_ellipsoid must be a string or Geod type, but instead was {0} {1}'.format(earth_ellipsoid,
                                                                                                         type(
-                                                                                                            earth_spheroid)))
-    geod_info = proj4_str_to_dict(earth_spheroid.initstring)
+                                                                                                            earth_ellipsoid)))
+    geod_info = proj4_str_to_dict(earth_ellipsoid.initstring)
     e2 = (2 - 1 * geod_info['f']) * geod_info['f']
     lat = np.pi / 180 * lat
     # Credit: https://gis.stackexchange.com/questions/75528/understanding-terms-in-length-of-degree-formula/75535#75535
@@ -153,22 +153,22 @@ def _not_none(args):
 
 
 def _create_area(lat_ts, lat_0, long_0, projection=None, area_extent=None, shape=None, center=None, pixel_size=None,
-                 upper_left_extent=None, radius=None, projection_spheroid=None, units=None, displacement_data=None,
+                 upper_left_extent=None, radius=None, projection_ellipsoid=None, units=None, displacement_data=None,
                  no_save=True, save_directory=None):
     """Creates area from given information."""
     if projection is None:
         projection = 'stere'
     if units is None:
         units = 'm'
-    if projection_spheroid is None:
-        projection_spheroid = Geod(ellps='WGS84')
-    elif isinstance(projection_spheroid, str):
-        projection_spheroid = Geod(ellps=projection_spheroid)
+    if projection_ellipsoid is None:
+        projection_ellipsoid = Geod(ellps='WGS84')
+    elif isinstance(projection_ellipsoid, str):
+        projection_ellipsoid = Geod(ellps=projection_ellipsoid)
     else:
         raise ValueError(
-            'projection_spheroid must be a string or Geod type, but instead was {0} {1}'.format(projection_spheroid,
+            'projection_ellipsoid must be a string or Geod type, but instead was {0} {1}'.format(projection_ellipsoid,
                                                                                                 type(
-                                                                                                    projection_spheroid)))
+                                                                                                    projection_ellipsoid)))
     # Center is given in (lat, long) order, but create_area_def needs it in (long, lat) order.
     if area_extent is not None:
         area_extent_ll, area_extent_ur = area_extent[0:2], area_extent[2:4]
@@ -189,7 +189,7 @@ def _create_area(lat_ts, lat_0, long_0, projection=None, area_extent=None, shape
         center = xarray.DataArray(center, attrs={'units': 'degrees'})
     proj_dict = proj4_str_to_dict(
         '+lat_ts={0} +lat_0={1} +lon_0={2} +proj={3} {4}'.format(lat_ts, lat_0, long_0, projection,
-                                                                 projection_spheroid.initstring))
+                                                                 projection_ellipsoid.initstring))
     # Object that contains area information.
     area_definition = create_area_def('pywinds', proj_dict, area_extent=area_extent, shape=shape, resolution=pixel_size,
                                       center=center, upper_left_extent=upper_left_extent, radius=radius, units=units)
@@ -330,7 +330,7 @@ def _reshape(array, shape):
 
 def _compute_lat_long(lat_ts, lat_0, long_0, displacement_data=None, projection=None, j=None, i=None,
                       area_extent=None, shape=None, center=None, pixel_size=None, upper_left_extent=None, radius=None,
-                      units=None, projection_spheroid=None, no_save=True, save_directory=None):
+                      units=None, projection_ellipsoid=None, no_save=True, save_directory=None):
     """Computes the latitude and longitude given an area and (j, i) values."""
     if not isinstance(lat_0, (int, float)) or not isinstance(long_0, (int, float)):
         raise ValueError(
@@ -340,7 +340,7 @@ def _compute_lat_long(lat_ts, lat_0, long_0, displacement_data=None, projection=
         _find_displacements_and_area(lat_ts=lat_ts, lat_0=lat_0, long_0=long_0, displacement_data=displacement_data,
                                      projection=projection, j=j, i=i, area_extent=area_extent, shape=shape,
                                      center=center, pixel_size=pixel_size, upper_left_extent=upper_left_extent,
-                                     radius=radius, units=units, projection_spheroid=projection_spheroid,
+                                     radius=radius, units=units, projection_ellipsoid=projection_ellipsoid,
                                      no_save=no_save, save_directory=save_directory)[:4]
     if not isinstance(area_definition, AreaDefinition):
         raise ValueError('Not enough information provided to create an area for projection')
@@ -387,7 +387,7 @@ def _compute_lat_long(lat_ts, lat_0, long_0, displacement_data=None, projection=
 
 def _compute_vu(lat_ts, lat_0, long_0, delta_time, displacement_data=None, projection=None, j=None, i=None,
                 area_extent=None, shape=None, center=None, pixel_size=None, upper_left_extent=None, radius=None,
-                units=None, projection_spheroid=None, earth_spheroid=None, no_save=True, save_directory=None):
+                units=None, projection_ellipsoid=None, earth_ellipsoid=None, no_save=True, save_directory=None):
     shape, new_lat, new_long, old_lat, old_long = _compute_lat_long(lat_ts, lat_0, long_0,
                                                                     displacement_data=displacement_data,
                                                                     projection=projection, j=j, i=i,
@@ -395,17 +395,17 @@ def _compute_vu(lat_ts, lat_0, long_0, delta_time, displacement_data=None, proje
                                                                     pixel_size=pixel_size,
                                                                     upper_left_extent=upper_left_extent, radius=radius,
                                                                     units=units,
-                                                                    projection_spheroid=projection_spheroid,
+                                                                    projection_ellipsoid=projection_ellipsoid,
                                                                     no_save=no_save, save_directory=save_directory)
     logger.debug('Finding v and u components')
     # Uses average of distances.
-    # v = (new_lat - old_lat) * (_lat_long_dist(old_lat, earth_spheroid)[0] +
-    #                            _lat_long_dist(new_lat, earth_spheroid)[0]) / (2 * (delta_time * 60))
-    # u = np.vectorize(_delta_longitude)(new_long, old_long) * (_lat_long_dist(old_lat, earth_spheroid)[1] +
-    #                                                           _lat_long_dist(new_lat, earth_spheroid)[1]) /\
+    # v = (new_lat - old_lat) * (_lat_long_dist(old_lat, earth_ellipsoid)[0] +
+    #                            _lat_long_dist(new_lat, earth_ellipsoid)[0]) / (2 * (delta_time * 60))
+    # u = np.vectorize(_delta_longitude)(new_long, old_long) * (_lat_long_dist(old_lat, earth_ellipsoid)[1] +
+    #                                                           _lat_long_dist(new_lat, earth_ellipsoid)[1]) /\
     #     (2 * (delta_time * 60))
     # Uses average of angles. units: meters/second. Distance is in meters, delta_time is in minutes.
-    lat_long_distance = _lat_long_dist((new_lat + old_lat) / 2, earth_spheroid)
+    lat_long_distance = _lat_long_dist((new_lat + old_lat) / 2, earth_ellipsoid)
     v = (new_lat - old_lat) * lat_long_distance[0] / (delta_time * 60)
     u = np.vectorize(_delta_longitude)(new_long, old_long) * lat_long_distance[1] / (delta_time * 60)
 
@@ -427,7 +427,7 @@ def _compute_vu(lat_ts, lat_0, long_0, delta_time, displacement_data=None, proje
 
 def _compute_velocity(lat_ts, lat_0, long_0, delta_time, displacement_data=None, projection=None, j=None, i=None,
                       area_extent=None, shape=None, center=None, pixel_size=None, upper_left_extent=None, radius=None,
-                      units=None, projection_spheroid=None, earth_spheroid=None, no_save=True, save_directory=None):
+                      units=None, projection_ellipsoid=None, earth_ellipsoid=None, no_save=True, save_directory=None):
     shape, v, u, old_lat, old_long, new_lat, new_long = _compute_vu(lat_ts, lat_0, long_0, delta_time,
                                                                     displacement_data=displacement_data,
                                                                     projection=projection, j=j, i=i,
@@ -435,13 +435,13 @@ def _compute_velocity(lat_ts, lat_0, long_0, delta_time, displacement_data=None,
                                                                     center=center, pixel_size=pixel_size,
                                                                     upper_left_extent=upper_left_extent, radius=radius,
                                                                     units=units,
-                                                                    projection_spheroid=projection_spheroid,
-                                                                    earth_spheroid=earth_spheroid, no_save=no_save,
+                                                                    projection_ellipsoid=projection_ellipsoid,
+                                                                    earth_ellipsoid=earth_ellipsoid, no_save=no_save,
                                                                     save_directory=save_directory)
     logger.debug('Calculating velocity and angle')
     # speed, angle = (u ** 2 + v ** 2) ** .5, ((90 - np.arctan2(v, u) * 180 / np.pi) + 360) % 360
     # Uses great circle arcs instead of the triangle made of u and v.
-    distance, angle = greatcircle(old_lat, old_long, new_lat, new_long, earth_spheroid=None)[:2]
+    distance, angle = greatcircle(old_lat, old_long, new_lat, new_long, earth_ellipsoid=None)[:2]
     speed = distance / (delta_time * 60)
     if no_save is False:
         dims = None
@@ -463,14 +463,14 @@ def _compute_velocity(lat_ts, lat_0, long_0, delta_time, displacement_data=None,
 
 def _find_displacements_and_area(lat_ts=None, lat_0=None, long_0=None, displacement_data=None, projection=None,
                                  j=None, i=None, area_extent=None, shape=None, center=None, pixel_size=None,
-                                 upper_left_extent=None, radius=None, units=None, projection_spheroid=None,
+                                 upper_left_extent=None, radius=None, units=None, projection_ellipsoid=None,
                                  no_save=True, save_directory=None):
     """Dynamically finds displacements and area of projection"""
     area_definition = None
     area_data = None
     # Allows just displacements to be called without raising an area not found axception.
     has_area_args = _not_none([lat_ts, lat_0, long_0, projection, area_extent, center, pixel_size,
-                               upper_left_extent, radius, units, projection_spheroid])
+                               upper_left_extent, radius, units, projection_ellipsoid])
     # Try to get shape from area.
     if has_area_args:
         if None in [lat_ts, lat_0, long_0]:
@@ -481,7 +481,7 @@ def _find_displacements_and_area(lat_ts=None, lat_0=None, long_0=None, displacem
                                                       area_extent=area_extent, shape=shape, center=center,
                                                       pixel_size=pixel_size, upper_left_extent=upper_left_extent,
                                                       radius=radius, units=units,
-                                                      projection_spheroid=projection_spheroid,
+                                                      projection_ellipsoid=projection_ellipsoid,
                                                       displacement_data=displacement_data, no_save=no_save,
                                                       save_directory=save_directory)
             if area_definition.height is not None and area_definition.width is not None:
@@ -497,7 +497,7 @@ def _find_displacements_and_area(lat_ts=None, lat_0=None, long_0=None, displacem
         area_data, area_definition = _create_area(lat_ts, lat_0, long_0, projection=projection, area_extent=area_extent,
                                                   shape=shape, center=center, pixel_size=pixel_size,
                                                   upper_left_extent=upper_left_extent, radius=radius, units=units,
-                                                  projection_spheroid=projection_spheroid,
+                                                  projection_ellipsoid=projection_ellipsoid,
                                                   displacement_data=displacement_data, no_save=no_save,
                                                   save_directory=save_directory)
     # list, list, list, AreaDefinition, dict
@@ -505,7 +505,7 @@ def _find_displacements_and_area(lat_ts=None, lat_0=None, long_0=None, displacem
 
 
 def area(lat_ts, lat_0, long_0, displacement_data=None, projection=None, area_extent=None, shape=None, center=None,
-         pixel_size=None, upper_left_extent=None, radius=None, units=None, projection_spheroid=None):
+         pixel_size=None, upper_left_extent=None, radius=None, units=None, projection_ellipsoid=None):
     """Dynamically computes area of projection.
 
     Parameters
@@ -545,8 +545,8 @@ def area(lat_ts, lat_0, long_0, displacement_data=None, projection=None, area_ex
         Projection y and x coordinates of the upper left corner of the upper left pixel (y, x)
     radius : list or float, optional
         Projection length from the center to the left/right and top/bottom outer edges (dy, dx)
-    projection_spheroid : string or Geod, optional
-        Spheroid (ie reference coordinate system) of projection (WGS84, sphere, etc)
+    projection_ellipsoid : string or Geod, optional
+        ellipsoid of projection (WGS84, sphere, etc)
 
         Returns
         -------
@@ -561,12 +561,12 @@ def area(lat_ts, lat_0, long_0, displacement_data=None, projection=None, area_ex
     return _find_displacements_and_area(lat_ts=lat_ts, lat_0=lat_0, long_0=long_0, displacement_data=displacement_data,
                                         projection=projection, area_extent=area_extent, shape=shape, center=center,
                                         pixel_size=pixel_size, upper_left_extent=upper_left_extent, radius=radius,
-                                        units=units, projection_spheroid=projection_spheroid)[4]
+                                        units=units, projection_ellipsoid=projection_ellipsoid)[4]
 
 
 def displacements(lat_ts=None, lat_0=None, long_0=None, displacement_data=None, projection=None, j=None, i=None,
                   area_extent=None, shape=None, center=None, pixel_size=None, upper_left_extent=None, radius=None,
-                  units=None, projection_spheroid=None):
+                  units=None, projection_ellipsoid=None):
     """Dynamically computes displacements.
 
     Parameters
@@ -610,8 +610,8 @@ def displacements(lat_ts=None, lat_0=None, long_0=None, displacement_data=None, 
         Projection y and x coordinates of the upper left corner of the upper left pixel (y, x)
     radius : list or float, optional
         Projection length from the center to the left/right and top/bottom outer edges (dy, dx)
-    projection_spheroid : string or Geod, optional
-        Spheroid (ie reference coordinate system) of projection (WGS84, sphere, etc)
+    projection_ellipsoid : string or Geod, optional
+        ellipsoid of projection (WGS84, sphere, etc)
 
         Returns
         -------
@@ -628,14 +628,14 @@ def displacements(lat_ts=None, lat_0=None, long_0=None, displacement_data=None, 
                                                                          center=center, pixel_size=pixel_size,
                                                                          upper_left_extent=upper_left_extent,
                                                                          radius=radius, units=units,
-                                                                         projection_spheroid=projection_spheroid)[:3]
+                                                                         projection_ellipsoid=projection_ellipsoid)[:3]
     return np.array((_reshape(j_displacement, shape), _reshape(i_displacement, shape)))
 
 
 def velocity(lat_ts, lat_0, long_0, delta_time, displacement_data=None, projection=None, j=None, i=None,
              area_extent=None, shape=None, center=None, pixel_size=None, upper_left_extent=None, radius=None,
              units=None,
-             projection_spheroid=None, earth_spheroid=None):
+             projection_ellipsoid=None, earth_ellipsoid=None):
     """Computes the speed and angle of the wind given an area and pixel-displacement.
 
     Parameters
@@ -681,10 +681,10 @@ def velocity(lat_ts, lat_0, long_0, delta_time, displacement_data=None, projecti
         Projection y and x coordinates of the upper left corner of the upper left pixel (y, x)
     radius : list or float, optional
         Projection length from the center to the left/right and top/bottom outer edges (dy, dx)
-    projection_spheroid : string or Geod, optional
-        Spheroid (ie reference coordinate system) of projection (WGS84, sphere, etc)
-    earth_spheroid : string or Geod, optional
-        Spheroid (ie reference coordinate system) of Earth (WGS84, sphere, etc)
+    projection_ellipsoid : string or Geod, optional
+        ellipsoid of projection (WGS84, sphere, etc)
+    earth_ellipsoid : string or Geod, optional
+        ellipsoid of Earth (WGS84, sphere, etc)
 
     Returns
     -------
@@ -695,14 +695,14 @@ def velocity(lat_ts, lat_0, long_0, delta_time, displacement_data=None, projecti
     shape, speed, angle = _compute_velocity(lat_ts, lat_0, long_0, delta_time, displacement_data=displacement_data,
                                             projection=projection, j=j, i=i, area_extent=area_extent, shape=shape,
                                             center=center, pixel_size=pixel_size, upper_left_extent=upper_left_extent,
-                                            radius=radius, units=units, projection_spheroid=projection_spheroid,
-                                            earth_spheroid=earth_spheroid)[:3]
+                                            radius=radius, units=units, projection_ellipsoid=projection_ellipsoid,
+                                            earth_ellipsoid=earth_ellipsoid)[:3]
     return np.array((_reshape(speed, shape), _reshape(angle, shape)))
 
 
 def vu(lat_ts, lat_0, long_0, delta_time, displacement_data=None, projection=None, j=None, i=None, area_extent=None,
        shape=None, center=None, pixel_size=None, upper_left_extent=None, radius=None, units=None,
-       projection_spheroid=None, earth_spheroid=None):
+       projection_ellipsoid=None, earth_ellipsoid=None):
     """Computes the v and u components of the wind given an area and pixel-displacement.
 
     Parameters
@@ -748,10 +748,10 @@ def vu(lat_ts, lat_0, long_0, delta_time, displacement_data=None, projection=Non
         Projection y and x coordinates of the upper left corner of the upper left pixel (y, x)
     radius : list or float, optional
         Projection length from the center to the left/right and top/bottom outer edges (dy, dx)
-    projection_spheroid : string or Geod, optional
-        Spheroid (ie reference coordinate system) of projection (WGS84, sphere, etc)
-    earth_spheroid : string or Geod, optional
-        Spheroid (ie reference coordinate system) of Earth (WGS84, sphere, etc)
+    projection_ellipsoid : string or Geod, optional
+        ellipsoid of projection (WGS84, sphere, etc)
+    earth_ellipsoid : string or Geod, optional
+        ellipsoid of Earth (WGS84, sphere, etc)
 
     Returns
     -------
@@ -761,13 +761,13 @@ def vu(lat_ts, lat_0, long_0, delta_time, displacement_data=None, projection=Non
     shape, v, u = _compute_vu(lat_ts, lat_0, long_0, delta_time, displacement_data=displacement_data,
                               projection=projection, j=j, i=i, area_extent=area_extent, shape=shape, center=center,
                               pixel_size=pixel_size, upper_left_extent=upper_left_extent, radius=radius, units=units,
-                              projection_spheroid=projection_spheroid, earth_spheroid=earth_spheroid)[:3]
+                              projection_ellipsoid=projection_ellipsoid, earth_ellipsoid=earth_ellipsoid)[:3]
     return np.array((_reshape(v, shape), _reshape(u, shape)))
 
 
 def lat_long(lat_ts, lat_0, long_0, displacement_data=None, projection=None, j=None, i=None, area_extent=None,
              shape=None, center=None, pixel_size=None, upper_left_extent=None, radius=None, units=None,
-             projection_spheroid=None):
+             projection_ellipsoid=None):
     """Computes the latitude and longitude given an area and pixel-displacement.
 
     Parameters
@@ -811,8 +811,8 @@ def lat_long(lat_ts, lat_0, long_0, displacement_data=None, projection=None, j=N
         Projection y and x coordinates of the upper left corner of the upper left pixel (y, x)
     radius : list or float, optional
         Projection length from the center to the left/right and top/bottom outer edges (dy, dx)
-    projection_spheroid : string or Geod, optional
-        Spheroid of projection (WGS84, sphere, etc)
+    projection_ellipsoid : string or Geod, optional
+        ellipsoid of projection (WGS84, sphere, etc)
 
     Returns
     -------
@@ -827,11 +827,11 @@ def lat_long(lat_ts, lat_0, long_0, displacement_data=None, projection=None, j=N
                                                                     pixel_size=pixel_size,
                                                                     upper_left_extent=upper_left_extent, radius=radius,
                                                                     units=units,
-                                                                    projection_spheroid=projection_spheroid)
+                                                                    projection_ellipsoid=projection_ellipsoid)
     return np.array((_reshape(old_lat, shape), _reshape(old_long, shape)))
 
 
-def euclidean(old_lat, old_long, new_lat, new_long, earth_spheroid=None):
+def euclidean(old_lat, old_long, new_lat, new_long, earth_ellipsoid=None):
     """Computes the hypotenuse and forward/backward angle of the euclidean triangle formed between two lat-longs.
 
     Parameters
@@ -844,21 +844,21 @@ def euclidean(old_lat, old_long, new_lat, new_long, earth_spheroid=None):
         Ending point latitude
     new_long: float
         Ending point longitude
-    earth_spheroid: str, optional
-        Spheroid (ie reference coordinate system) of Earth (WGS84, sphere, etc)
+    earth_ellipsoid: str, optional
+        ellipsoid of Earth (WGS84, sphere, etc)
 
     Returns
     -------
     (distance, forward angle, backward angle)
     """
-    lat_long_distance = _lat_long_dist((new_lat + old_lat) / 2, earth_spheroid)
+    lat_long_distance = _lat_long_dist((new_lat + old_lat) / 2, earth_ellipsoid)
     y = (new_lat - old_lat) * lat_long_distance[0]
     x = np.vectorize(_delta_longitude)(new_long, old_long) * lat_long_distance[1]
     fwd_angle = (90 - np.arctan2(y, x) * 180 / np.pi) % 360
     return (x ** 2 + y ** 2) ** .5, fwd_angle, (fwd_angle - 180) % 360
 
 
-def greatcircle(old_lat, old_long, new_lat, new_long, earth_spheroid=None):
+def greatcircle(old_lat, old_long, new_lat, new_long, earth_ellipsoid=None):
     """Computes the shortest distance and forward/backwards azimuth between two two lat-longs.
 
     Parameters
@@ -871,28 +871,28 @@ def greatcircle(old_lat, old_long, new_lat, new_long, earth_spheroid=None):
         Ending point latitude
     new_long: float
         Ending point longitude
-    earth_spheroid: str, optional
-        Spheroid (ie reference coordinate system) of Earth (WGS84, sphere, etc)
+    earth_ellipsoid: str, optional
+        ellipsoid of Earth (WGS84, sphere, etc)
 
     Returns
     -------
     (distance, forward azimuth, backward azimuth)
     """
-    if earth_spheroid is None:
-        earth_spheroid = Geod(ellps='WGS84')
-    elif isinstance(earth_spheroid, str):
-        earth_spheroid = Geod(ellps=earth_spheroid)
+    if earth_ellipsoid is None:
+        earth_ellipsoid = Geod(ellps='WGS84')
+    elif isinstance(earth_ellipsoid, str):
+        earth_ellipsoid = Geod(ellps=earth_ellipsoid)
     else:
         raise ValueError(
-            'earth_spheroid must be a string or Geod type, but instead was {0} {1}'.format(earth_spheroid,
-                                                                                                type(earth_spheroid)))
-    fwd_azimuth, bwd_azimuth, distance = earth_spheroid.inv(old_long, old_lat, new_long, new_lat)
+            'earth_ellipsoid must be a string or Geod type, but instead was {0} {1}'.format(earth_ellipsoid,
+                                                                                                type(earth_ellipsoid)))
+    fwd_azimuth, bwd_azimuth, distance = earth_ellipsoid.inv(old_long, old_lat, new_long, new_lat)
     return distance, fwd_azimuth % 360, bwd_azimuth % 360
 
 
 def wind_info(lat_ts, lat_0, long_0, delta_time, displacement_data=None, projection=None, j=None, i=None,
               area_extent=None, shape=None, center=None, pixel_size=None, upper_left_extent=None, radius=None,
-              units=None, projection_spheroid=None, earth_spheroid=None, no_save=False, save_directory=None,
+              units=None, projection_ellipsoid=None, earth_ellipsoid=None, no_save=False, save_directory=None,
               timestamp=None):
     """Computes the latitude, longitude, velocity, angle, v, and u of the wind given an area and pixel-displacement.
 
@@ -939,10 +939,10 @@ def wind_info(lat_ts, lat_0, long_0, delta_time, displacement_data=None, project
         Projection y and x coordinates of the upper left corner of the upper left pixel (y, x)
     radius : list or float, optional
         Projection length from the center to the left/right and top/bottom outer edges (dy, dx)
-    projection_spheroid : string or Geod, optional
-        Spheroid (ie reference coordinate system) of projection (WGS84, sphere, etc)
-    earth_spheroid : string or Geod, optional
-        Spheroid (ie reference coordinate system) of Earth (WGS84, sphere, etc)
+    projection_ellipsoid : string or Geod, optional
+        ellipsoid of projection (WGS84, sphere, etc)
+    earth_ellipsoid : string or Geod, optional
+        ellipsoid of Earth (WGS84, sphere, etc)
     no_save : bool, optional
         When False, saves wind_info to name_of_projection.txt, j_displacement.txt, i_displacement.txt,
         new_latitude.txt, new_longitude.txt, old_latitude.txt, old_longitude.txt, v.txt, u.txt, speed.txt, angle.txt,
@@ -986,8 +986,8 @@ def wind_info(lat_ts, lat_0, long_0, delta_time, displacement_data=None, project
                                                              area_extent=area_extent, shape=shape, center=center,
                                                              pixel_size=pixel_size, upper_left_extent=upper_left_extent,
                                                              radius=radius, units=units,
-                                                             projection_spheroid=projection_spheroid,
-                                                             earth_spheroid=earth_spheroid, no_save=no_save,
+                                                             projection_ellipsoid=projection_ellipsoid,
+                                                             earth_ellipsoid=earth_ellipsoid, no_save=no_save,
                                                              save_directory=save_directory)
     logger.debug('Formatting wind_info')
     # Make each variable its own column.

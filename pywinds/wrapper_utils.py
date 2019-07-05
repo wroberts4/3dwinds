@@ -112,7 +112,7 @@ def _get_args(name, description):
     """Reads command line arguments and handles logic behind them."""
     kwarg_names = ['center', 'pixel_size', 'units', 'shape', 'upper_left_extent', 'radius',
                    'area_extent', 'displacement_data', 'j', 'i', 'no_save', 'save_directory',
-                   'projection', 'projection_spheroid', 'earth_spheroid']
+                   'projection', 'projection_ellipsoid', 'earth_ellipsoid']
     my_parser = argparse.ArgumentParser(description=description, formatter_class=MyFormatter)
 
     if name in ['euclidean', 'greatcircle']:
@@ -121,7 +121,7 @@ def _get_args(name, description):
         my_parser.add_argument('old-long', type=float, help='Longitude of the first point')
         my_parser.add_argument('new-lat', type=float, help='Latitude of the second point')
         my_parser.add_argument('new-long', type=float, help='Longitude of the second point')
-        my_parser.add_argument('--earth-spheroid', metavar='str', help='spheroid of Earth')
+        my_parser.add_argument('--earth-ellipsoid', '--earth-spheroid', metavar='str', help='ellipsoid of Earth')
     else:
         if name != 'area':
             my_parser.add_argument('-j', '--j', type=int, metavar='int', help='row to run calculations on')
@@ -147,7 +147,8 @@ def _get_args(name, description):
                                            help="directory to save to. Defaults to where script was ran")
                 my_parser.add_argument('delta-time', type=float,
                                        help='amount of time that separates both files in minutes')
-                my_parser.add_argument('--earth-spheroid', metavar='str', help='spheroid of Earth')
+                my_parser.add_argument('--earth-ellipsoid', '--earth-spheroid', metavar='str',
+                                       help='ellipsoid of Earth')
                 arg_names.append('delta-time')
 
         my_parser.add_argument('--center', action=CustomAction, type=_nums_or_string,
@@ -175,7 +176,7 @@ def _get_args(name, description):
         my_parser.add_argument('--shape', type=_nums_or_string, nargs=2, metavar=('height', 'width'),
                                help='number of pixels in the y and x direction')
         my_parser.add_argument('--projection', metavar='str', help='name of projection that the image is in')
-        my_parser.add_argument('--projection-spheroid', metavar='str', help='spheroid of projection')
+        my_parser.add_argument('--projection-ellipsoid', metavar='str', help='ellipsoid of projection')
     my_parser.add_argument('-v', '--verbose', action="count", default=0,
                            help='each occurrence increases verbosity 1 level through ERROR-WARNING-INFO-DEBUG')
     commands = my_parser.parse_args()

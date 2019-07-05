@@ -252,9 +252,15 @@ $ pywinds/wind_info.sh 60 90 0 100 --pixel-size 4000 --center 90 0 -vv
 If the directory provided does not exist, then it is created. Defaults to a new directory by the name of
 the displacement file read appended with “_output_YYYYmmdd_HHMMSS” (the date and time when the script was ran),
 created where the script is ran</p></li>
-<li><p><strong>——projection</strong>: Name of projection that the image is in (stere, laea, merc, etc). Defaults to stere</p></li>
-<li><p><strong>——projection-spheroid</strong>: Spheroid of projection (WGS84, sphere, etc). Defaults to WGS84</p></li>
-<li><p><strong>——earth-spheroid</strong>: Spheroid of Earth (WGS84, sphere, etc). Defaults to WGS84</p></li>
+<li><p><strong>——projection</strong>: Name of projection that the image is in
+(<a class="reference external" href="https://proj.org/apps/cs2cs.html?highlight=note#cmdoption-cs2cs-lp">cs2cs -lp</a>: <a class="reference external" href="_static/cs2cs_lp.png"><img alt="cs2cs_lp.png" src="cs2cs_lp" /></a>).
+Defaults to stere</p></li>
+<li><p><strong>——projection-ellipsoid</strong>: ellipsoid of projection
+(<a class="reference external" href="https://proj.org/apps/cs2cs.html?highlight=note#cmdoption-cs2cs-le">cs2cs -le</a>: <a class="reference external" href="_static/cs2cs_le.png"><img alt="cs2cs_le.png" src="cs2cs_le" /></a>).
+Defaults to WGS84</p></li>
+<li><p><strong>——earth-ellipsoid</strong>: ellipsoid of Earth
+(<a class="reference external" href="https://proj.org/apps/cs2cs.html?highlight=note#cmdoption-cs2cs-le">cs2cs -le</a>: <a class="reference external" href="_static/cs2cs_le.png"><img alt="cs2cs_le.png" src="cs2cs_le" /></a>).
+Defaults to WGS84</p></li>
 <li><p><strong>——shape</strong>: Number of pixels in the y and x direction (height, width). If shape is not provided,
 it attempts to be found from <strong>——displacement-data</strong></p></li>
 <li><p><strong>——upper-left-extent</strong>: Projection y and x coordinates of the upper left corner of the upper left pixel (y, x)</p></li>
@@ -262,7 +268,8 @@ it attempts to be found from <strong>——displacement-data</strong></p></li>
 <li><p><strong>——units</strong>: Units that provided arguments should be interpreted as. This can be
 one of ‘deg’, ‘degrees’, ‘rad’, ‘radians’, ‘meters’, ‘metres’, and any
 parameter supported by the <a class="reference external" href="https://proj4.org/apps/cs2cs.html#cmdoption-cs2cs-lu">cs2cs -lu</a>
-command (see <a class="reference external" href="_static/cs2cs_lu.png"><img alt="cs2cs_lu.png" src="cs2cs_lu" /></a>). Units are determined in the following priority:</p>
+command (<a class="reference external" href="https://proj.org/apps/cs2cs.html?highlight=note#cmdoption-cs2cs-lu">cs2cs -lu</a>: <a class="reference external" href="_static/cs2cs_lu.png"><img alt="cs2cs_lu.png" src="cs2cs_lu" /></a>).
+Units are determined in the following priority:</p>
 <ol class="arabic simple">
 <li><p>units expressed at the end of individual variables (see <a class="reference internal" href="examples.html#input-units"><span class="std std-ref">Specifying input units</span></a> for examples)</p></li>
 <li><p>units passed to <code class="docutils literal notranslate"><span class="pre">--units</span></code> (exluding center)</p></li>
@@ -284,7 +291,7 @@ command (see <a class="reference external" href="_static/cs2cs_lu.png"><img alt=
 </div>
 </div>
 <div class="section" id="output-units">
-<span id="id3"></span><h2>Output units<a class="headerlink" href="#output-units" title="Permalink to this headline">¶</a></h2>
+<span id="id5"></span><h2>Output units<a class="headerlink" href="#output-units" title="Permalink to this headline">¶</a></h2>
 <p>These are the output units for pywinds (Note: output units <strong>cannot</strong> be changed by the user):</p>
 <blockquote>
 <div><ul class="simple">
@@ -307,7 +314,7 @@ It is <strong>not</strong> the distance * sine and distance * cosine of the forw
 </div>
 </div>
 <div class="section" id="data-format">
-<span id="id4"></span><h2>Data format<a class="headerlink" href="#data-format" title="Permalink to this headline">¶</a></h2>
+<span id="id6"></span><h2>Data format<a class="headerlink" href="#data-format" title="Permalink to this headline">¶</a></h2>
 <p>If j and i values are provided, then data is calculated at a single pixel:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">wind_info</span><span class="p">:</span> <span class="p">[</span><span class="n">new_latitude</span><span class="p">,</span> <span class="n">new_longitude</span><span class="p">,</span> <span class="n">velocity</span><span class="p">,</span> <span class="n">angle</span><span class="p">,</span> <span class="n">v</span><span class="p">,</span> <span class="n">u</span><span class="p">]</span>
 
@@ -377,7 +384,7 @@ It is <strong>not</strong> the distance * sine and distance * cosine of the forw
 </div>
 </div>
 <div class="section" id="save-format">
-<span id="id5"></span><h2>Save format<a class="headerlink" href="#save-format" title="Permalink to this headline">¶</a></h2>
+<span id="id7"></span><h2>Save format<a class="headerlink" href="#save-format" title="Permalink to this headline">¶</a></h2>
 <p>wind_info.sh saves data to</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Text</span> <span class="n">files</span><span class="p">:</span> <span class="n">polar_stereographic</span><span class="o">.</span><span class="n">txt</span><span class="p">,</span> <span class="n">j_displacement</span><span class="o">.</span><span class="n">txt</span><span class="p">,</span> <span class="n">i_displacement</span><span class="o">.</span><span class="n">txt</span><span class="p">,</span>
             <span class="n">new_latitude</span><span class="o">.</span><span class="n">txt</span><span class="p">,</span> <span class="n">new_longitude</span><span class="o">.</span><span class="n">txt</span><span class="p">,</span> <span class="n">old_latitude</span><span class="o">.</span><span class="n">txt</span><span class="p">,</span> <span class="n">old_longitude</span><span class="o">.</span><span class="n">txt</span><span class="p">,</span>

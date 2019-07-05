@@ -105,17 +105,17 @@ Specifying save directory::
     [INFO: 2019-03-01 12:00:16 : wind_info.py] Data saved to the directory
     /Desktop/new_directory/test.flo_output_20190301_115959
 
-Altering spheroids::
+Altering ellipsoids::
 
     $ pwd
     /Desktop
     $ ls
     in.flo        pywinds
     $ pywinds/wind_info.sh 60 90 0 100 -j 0 -i 0 --pixel-size 4000
-      --center 90 0 --projection-spheroid sphere -p
+      --center 90 0 --projection-ellipsoid sphere -p
     [63.26, -135.0, 51.93, 315.2, 36.85, -36.59]
     $ pywinds/wind_info.sh 60 90 0 100 -j 0 -i 0 --pixel-size 4000 --center 90 0
-      --projection-spheroid sphere --earth-spheroid sphere -p
+      --projection-ellipsoid sphere --earth-ellipsoid sphere -p
     [63.26, -135.0, 51.77, 317.1, 36.76, -36.46]
 
 
@@ -488,14 +488,14 @@ If incorrect commands were given::
 
     $ pywinds/wind_info.sh 60 90 0 --pixel-size 4000 --center 90 0
     usage: wind_info.py [-h] [-j int] [-i int] [-p] [--save-directory path_name]
-                        [--earth-spheroid str] [--center y x [units]]
+                        [--earth-ellipsoid str] [--center y x [units]]
                         [--pixel-size dy [dx] [units]] [--displacement-data filename]
                         [--units str]
                         [--upper-left-extent y x [units]]
                         [--radius dy dx [units]]
                         [--area-extent y_ll x_ll y_ur x_ur [units]]
                         [--shape height width] [--projection str]
-                        [--projection-spheroid str] [-v]
+                        [--projection-ellipsoid str] [-v]
                         lat-ts lat-0 long-0 delta-time
     wind_info.py: error: the following arguments are required: delta-time
 
@@ -504,14 +504,14 @@ The help message for wind_info.sh::
 
     $ pywinds/wind_info.sh -h
     usage: wind_info.py [-h] [-j int] [-i int] [-p] [--save-directory path_name]
-                        [--earth-spheroid str] [--center y x [units]]
+                        [--earth-ellipsoid str] [--center y x [units]]
                         [--pixel-size dy [dx] [units]] [--displacement-data filename]
                         [--units str]
                         [--upper-left-extent y x [units]]
                         [--radius dy dx [units]]
                         [--area-extent y_ll x_ll y_ur x_ur [units]]
                         [--shape height width] [--projection str]
-                        [--projection-spheroid str] [-v]
+                        [--projection-ellipsoid str] [-v]
                         lat-ts lat-0 long-0 delta-time
 
     Computes the latitude, longitude, velocity, angle, v, and u of the wind given
@@ -531,7 +531,7 @@ The help message for wind_info.sh::
                             print data to shell without saving
       --save-directory path_name, -s path_name
                             directory to save to. Defaults to where script was ran
-      --earth-spheroid str  spheroid of Earth
+      --earth-ellipsoid str  ellipsoid of Earth
       --center y x [units]
                             projection y and x coordinate of the center of area.
                             Default: lat long
@@ -555,8 +555,8 @@ The help message for wind_info.sh::
                             upper_right_x
       --shape height width  number of pixels in the y and x direction
       --projection str      name of projection that the image is in
-      --projection-spheroid str
-                            spheroid of projection
+      --projection-ellipsoid str
+                            ellipsoid of projection
       -v, --verbose         each occurrence increases verbosity 1 level through
                             ERROR-WARNING-INFO-DEBUG
 

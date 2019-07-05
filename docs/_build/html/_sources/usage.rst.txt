@@ -95,13 +95,25 @@ Advanced arguments
 .. |cs2cs_lu.png| image:: cs2cs_lu
    :target: _static/cs2cs_lu.png
 
+.. |cs2cs_le.png| image:: cs2cs_le
+   :target: _static/cs2cs_le.png
+
+.. |cs2cs_lp.png| image:: cs2cs_lp
+   :target: _static/cs2cs_lp.png
+
 * **------save_directory** (**-s**): Directory in which to save the file containing data (also a directory) to.
   If the directory provided does not exist, then it is created. Defaults to a new directory by the name of
   the displacement file read appended with "_output_YYYYmmdd_HHMMSS" (the date and time when the script was ran),
   created where the script is ran
-* **------projection**: Name of projection that the image is in (stere, laea, merc, etc). Defaults to stere
-* **------projection-spheroid**: Spheroid of projection (WGS84, sphere, etc). Defaults to WGS84
-* **------earth-spheroid**: Spheroid of Earth (WGS84, sphere, etc). Defaults to WGS84
+* **------projection**: Name of projection that the image is in
+  (`cs2cs -lp <https://proj.org/apps/cs2cs.html?highlight=note#cmdoption-cs2cs-lp>`_: |cs2cs_lp.png|).
+  Defaults to stere
+* **------projection-ellipsoid**: ellipsoid of projection
+  (`cs2cs -le <https://proj.org/apps/cs2cs.html?highlight=note#cmdoption-cs2cs-le>`_: |cs2cs_le.png|).
+  Defaults to WGS84
+* **------earth-ellipsoid**: ellipsoid of Earth
+  (`cs2cs -le <https://proj.org/apps/cs2cs.html?highlight=note#cmdoption-cs2cs-le>`_: |cs2cs_le.png|).
+  Defaults to WGS84
 * **------shape**: Number of pixels in the y and x direction (height, width). If shape is not provided,
   it attempts to be found from **------displacement-data**
 * **------upper-left-extent**: Projection y and x coordinates of the upper left corner of the upper left pixel (y, x)
@@ -109,7 +121,8 @@ Advanced arguments
 * **------units**: Units that provided arguments should be interpreted as. This can be
   one of 'deg', 'degrees', 'rad', 'radians', 'meters', 'metres', and any
   parameter supported by the `cs2cs -lu <https://proj4.org/apps/cs2cs.html#cmdoption-cs2cs-lu>`_
-  command (see |cs2cs_lu.png|). Units are determined in the following priority:
+  command (`cs2cs -lu <https://proj.org/apps/cs2cs.html?highlight=note#cmdoption-cs2cs-lu>`_: |cs2cs_lu.png|).
+  Units are determined in the following priority:
 
   1. units expressed at the end of individual variables (see :ref:`Specifying input units<input_units>` for examples)
   2. units passed to ``--units`` (exluding center)
