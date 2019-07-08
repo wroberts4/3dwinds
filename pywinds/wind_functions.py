@@ -984,6 +984,8 @@ def wind_info(lat_ts, lat_0, long_0, delta_time, displacement_data=None, project
         (latitude, longitude, velocity, angle, v, and u at each pixel) : numpy.array or list
             [latitude, longitude, velocity, angle, v, u] at each pixel in row-major format
     """
+    if no_save == True and save_directory is not None:
+        logger.warning('Conflicting options: --print and --save_directory. Listening to --print')
     # Only lets wind_info save to make life easier.
     if no_save is False:
         # Get name of displacement file (without path). If string is not a file, return and don't make a file.
