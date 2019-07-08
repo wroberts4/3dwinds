@@ -474,7 +474,7 @@ def _find_displacements_and_area(lat_ts=None, lat_0=None, long_0=None, displacem
     # Try to get shape from area.
     if has_area_args:
         if None in [lat_ts, lat_0, long_0]:
-            logger.warning('Area information provided but atleast one of lat_ts, lat_0, or long_0 was not defined')
+            logger.warning('Area information provided but at least one of lat_ts, lat_0, or long_0 was not defined')
         try:
             logger.debug('Finding area information before reading displacements')
             area_data, area_definition = _create_area(lat_ts, lat_0, long_0, projection=projection,
@@ -491,11 +491,20 @@ def _find_displacements_and_area(lat_ts=None, lat_0=None, long_0=None, displacem
     shape, j_displacement, i_displacement = _find_displacements(displacement_data, shape=shape, j=j, i=i,
                                                                 no_save=no_save, save_directory=save_directory)
     # If area was not found before, use the shape from displacements to try and make an area.
-    if not isinstance(area_definition, AreaDefinition) and has_area_args:
+    if None in (area_definition.width, area_definition.height) and has_area_args:
         logger.debug('Incomplete area information provided')
-        logger.debug('Attempting to find area information again after reading displacements')
+        logger.debug('Using shape found from displacement_data to try to make an area definition')
         area_data, area_definition = _create_area(lat_ts, lat_0, long_0, projection=projection, area_extent=area_extent,
                                                   shape=shape, center=center, pixel_size=pixel_size,
+                                                  upper_left_extent=upper_left_extent, radius=radius, units=units,
+                                                  projection_ellipsoid=projection_ellipsoid,
+                                                  displacement_data=displacement_data, no_save=no_save,
+                                                  save_directory=save_directory)
+    if area_definition.area_extent is None and center is None:
+        logger.debug('Incomplete area information provided')
+        logger.debug('Using lat_0 and long_0 as center to try to make an area definition')
+        area_data, area_definition = _create_area(lat_ts, lat_0, long_0, projection=projection, area_extent=area_extent,
+                                                  shape=shape, center=(lat_0, long_0), pixel_size=pixel_size,
                                                   upper_left_extent=upper_left_extent, radius=radius, units=units,
                                                   projection_ellipsoid=projection_ellipsoid,
                                                   displacement_data=displacement_data, no_save=no_save,
