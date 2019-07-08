@@ -52,7 +52,10 @@ def _save_data(save_directory, data_list, text_shape=None, mode='a'):
     netcdf4_path = os.path.join(save_directory, 'wind_info.nc')
     xarray.Dataset(dataset_dict, attrs={'Conventions': 'CF-1.7'}).to_netcdf(netcdf4_path, mode=mode,
                                                                             encoding=encoding)
-    logger.debug('Data saved successfully')
+    if mode == 'w':
+        logger.debug('Save directory and wind_info.nc created successfully')
+    else:
+        logger.debug('Data saved successfully')
 
 
 def _extrapolate_j_i(j, i, shape):
