@@ -263,6 +263,7 @@ def _find_displacements(displacement_data=None, j=None, i=None, shape=None, no_s
             # tag == 'PIEH'. Not used, but may be useful to others.
             tag = ''.join([char.decode("utf-8") for char in tag])
         logger.info('Reading displacements from {0}'.format(displacement_data))
+        # displacement will be defined since open(displacement_data, mode='rb') will throw an error otherwise.
         j_displacement = displacement[1::2]
         i_displacement = displacement[0::2]
         if (file_shape[0] is not 0 and file_shape[1] == np.size(j_displacement) / file_shape[0] and
@@ -491,12 +492,16 @@ def _find_displacements_and_area(lat_ts=None, lat_0=None, long_0=None, displacem
                                                       save_directory=save_directory)
             if area_definition.height is not None and area_definition.width is not None:
                 shape = (area_definition.height, area_definition.width)
+        # Lets area fail after finding/saving displacements.
         except ValueError:
-            pass
+            logger.warning('Error in creating an area')
+            _find_displacements(displacement_data, shape=shape, j=j, i=i, no_save=no_save,
+                                save_directory=save_directory)
+            raise
     shape, j_displacement, i_displacement = _find_displacements(displacement_data, shape=shape, j=j, i=i,
                                                                 no_save=no_save, save_directory=save_directory)
-    # If area was not found before, use the shape from displacements to try and make an area.
-    if has_area_args and area_definition is not None and None in (area_definition.width, area_definition.height):
+    # Either tries to find area with shape found from file, or displays ValueError if excepted above.
+    if has_area_args and None in (area_definition.height, area_definition.width):
         logger.debug('Incomplete area information provided')
         logger.debug('Using shape found from displacement_data to try to make an area definition')
         area_data, area_definition = _create_area(lat_ts, lat_0, long_0, projection=projection, area_extent=area_extent,
@@ -505,6 +510,7 @@ def _find_displacements_and_area(lat_ts=None, lat_0=None, long_0=None, displacem
                                                   projection_ellipsoid=projection_ellipsoid,
                                                   displacement_data=displacement_data, no_save=no_save,
                                                   save_directory=save_directory)
+    # If area is still not defined, try to use projection center as area center.
     if has_area_args and area_definition.area_extent is None and center is None:
         logger.debug('Incomplete area information provided')
         logger.debug('Using lat_0 and long_0 as center to try to make an area definition')
