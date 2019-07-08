@@ -5,14 +5,6 @@ Use the **-h** or **------help** flags on any scripts to print a usage message. 
 GNU command line style; order in which options are provided does not matter and positional arguments may be mixed
 in with options (as long as they are not interpreted as part of the option).
 
-.. note::
-
-    Angle and distance are calculated using great circle arcs. This gives you the angle and speed in which you
-    would walk in a straight line to your destination. It will not be the tangent and hypotenuse of the u and
-    v component (ie what :ref:`euclidean.sh <euclidean.sh>` calculates).
-
-    However, both are giving you the direction that the wind is moving in, not the direction it came from.
-
 .. _wind_info.sh:
 
 wind_info.sh
@@ -29,7 +21,8 @@ Required arguments:
 
 Optional arguments:
 
-* **------center**: Projection y and x coordinate of the center of area (lat, long)
+* **------center**: Projection y and x coordinate of the center of area (lat, long). If center is not provided/found
+  and the area created is not complete, then center defaults to the projection center (**lat-0**, **long-0**)
 * **------pixel-size**: Projection size of pixels in the y and x direction (dy, dx). If pixels are square, i.e. dy = dx,
   then only one value needs to be entered.
 * **------displacement-data**: Name of binary file (32-bit float) containing pixels displacements; How far the
@@ -56,7 +49,7 @@ Additional information:
 
     * For more optional arguments, please see :ref:`advanced_arguments`.
     * For more information on save files and their formats, please see :ref:`save_format`
-    * For information on the output units, please see :ref:`output_units`
+    * For information on the output, please see :ref:`output_information`
 
 .. _area_information_note:
 
@@ -64,8 +57,8 @@ Additional information:
 
     Enough information must be provided to make an area. Some common combinations of parameters are:
 
-    1. **------center** and **------pixel-size**
-    2. **------center** and **------radius**
+    1. **------pixel-size** and **------center** (defaults to the projection center if not provided)
+    2. **------radius** and **------center** (defaults to the projection center if not provided)
     3. **------upper-left-extent** and **------pixel-size**
     4. **------area-extent**
 
@@ -78,6 +71,8 @@ Calculating wind_info::
     $ ls
     in.flo	    pywinds
     $ pywinds/wind_info.sh 60 90 0 100 -j 0 -i 0 --pixel-size 4000 --center 90 0 -p
+    [63.36, -135.0, 51.78, 317.1, 36.78, -36.47]
+    $ pywinds/wind_info.sh 60 90 0 100 -j 0 -i 0 --pixel-size 4000 -p
     [63.36, -135.0, 51.78, 317.1, 36.78, -36.47]
     $ pywinds/wind_info.sh 60 90 0 100 --pixel-size 4000 --center 90 0
     $ pywinds/wind_info.sh 60 90 0 100 --pixel-size 4000 --center 90 0 -vv
@@ -142,10 +137,10 @@ where
 
     The shape provided or found can alter the native shape of **------displacement-data**.
 
-.. _output_units:
+.. _output_information:
 
-Output units
-------------
+Output information
+------------------
 
 These are the output units for pywinds (Note: output units **cannot** be changed by the user):
 
@@ -163,7 +158,18 @@ These are the output units for pywinds (Note: output units **cannot** be changed
 
     v is the distance between the two latitudes over time and u is the distance between the two longitudes over time
     using the average latitude for the distance calculations; this averaging is more noticeable near the poles.
-    It is **not** the distance * sine and distance * cosine of the forward azimuth angle from the great circle arc.
+    It is **not** the distance * sine and distance * cosine of the initial bearing from the great circle arc.
+
+    Angle and distance are calculated using great circle arcs. This gives you the angle and speed in which you
+    would walk in a straight line to your destination. It will not be the tangent and hypotenuse of the u and
+    v component (ie what :ref:`euclidean.sh <euclidean.sh>` calculates).
+
+    However, both are giving you the direction that the wind is moving in, not the direction it came from.
+
+.. note::
+
+    velocity angle is the final bearing (back bearing minus 180 degrees). This gives the angle that
+    the wind is moving when it reaches its new location.
 
 .. _data_format:
 
@@ -375,7 +381,7 @@ even if the area is not completely defined, as shown in :ref:`advanced_examples`
 
 .. _euclidean.sh:
 
-* **euclidean.sh**: Prints the hypotenuse, forward angle, and backward angle of the euclidean
+* **euclidean.sh**: Prints the hypotenuse, initial bearing, and back bearing of the euclidean
   (ie flat and 2-dimensional) triangle formed from the north/south and east/west distance between
   two points on the earth provided in latitude and longitude.
 
@@ -392,7 +398,7 @@ even if the area is not completely defined, as shown in :ref:`advanced_examples`
     $ pywinds/euclidean.sh 60 130 61 131
     [124236.58, 26.25, 206.25]
 
-* **greatcircle.sh**: Prints the shortest distance, forward azimuth, and backwards azimuth between
+* **greatcircle.sh**: Prints the shortest distance, initial bearing, and back bearing between
   two points on the earth provided in latitude and longitude (as calculated from the great circle arc).
 
 ::

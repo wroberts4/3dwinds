@@ -193,7 +193,8 @@ def _create_area(lat_ts, lat_0, long_0, projection=None, area_extent=None, shape
     # Object that contains area information.
     area_definition = create_area_def('pywinds', proj_dict, area_extent=area_extent, shape=shape, resolution=pixel_size,
                                       center=center, upper_left_extent=upper_left_extent, radius=radius, units=units)
-    # Below is logic for print and save data.
+
+    # Below is logic for printing and saving data.
     area_extent = area_definition.area_extent
     # Function that handles projection to lat/long transformation.
     p = Proj(proj_dict)
@@ -204,6 +205,9 @@ def _create_area(lat_ts, lat_0, long_0, projection=None, area_extent=None, shape
         # Needs order [ll_x, ll_y, ur_x, ur_y]
         area_extent = _reverse_params([p(area_extent[0], area_extent[1], inverse=True)])[0] + \
                       _reverse_params([p(area_extent[2], area_extent[3], inverse=True)])[0]
+        if area_extent[2] - area_extent[0] < 0 or area_extent[3] - area_extent[1] < 0:
+            logger.warning('invalid area_extent. Lower left corner is above or to the right of the upper right corner:'
+                           '{0}'.format(area_extent))
     else:
         center = None
     shape = [area_definition.height, area_definition.width]
@@ -438,10 +442,11 @@ def _compute_velocity(lat_ts, lat_0, long_0, delta_time, displacement_data=None,
                                                                     projection_ellipsoid=projection_ellipsoid,
                                                                     earth_ellipsoid=earth_ellipsoid, no_save=no_save,
                                                                     save_directory=save_directory)
-    logger.debug('Calculating velocity and angle')
+    logger.debug('Calculating speed and angle (velocity)')
     # speed, angle = (u ** 2 + v ** 2) ** .5, ((90 - np.arctan2(v, u) * 180 / np.pi) + 360) % 360
     # Uses great circle arcs instead of the triangle made of u and v.
-    distance, angle = greatcircle(old_lat, old_long, new_lat, new_long, earth_ellipsoid=None)[:2]
+    distance, initial_bearing, back_bearing = greatcircle(old_lat, old_long, new_lat, new_long, earth_ellipsoid=None)
+    angle = (back_bearing - 180) % 360
     speed = distance / (delta_time * 60)
     if no_save is False:
         dims = None
@@ -456,7 +461,7 @@ def _compute_velocity(lat_ts, lat_0, long_0, delta_time, displacement_data=None,
                                                         attrs={'standard_name': 'wind_from_direction',
                                                                'grid_mapping_name': 'polar_stereographic',
                                                                'units': 'degrees'})))
-    # When wind vector azimuth is 0 degrees it points North (mathematically 90 degrees) and moves clockwise.
+    # When wind vector bearing is 0 degrees it points North (mathematically 90 degrees) and moves clockwise.
     # speed is in meters/second.
     return shape, speed, angle, v, u, new_lat, new_long
 
@@ -491,7 +496,7 @@ def _find_displacements_and_area(lat_ts=None, lat_0=None, long_0=None, displacem
     shape, j_displacement, i_displacement = _find_displacements(displacement_data, shape=shape, j=j, i=i,
                                                                 no_save=no_save, save_directory=save_directory)
     # If area was not found before, use the shape from displacements to try and make an area.
-    if None in (area_definition.width, area_definition.height) and has_area_args:
+    if has_area_args and area_definition is not None and None in (area_definition.width, area_definition.height):
         logger.debug('Incomplete area information provided')
         logger.debug('Using shape found from displacement_data to try to make an area definition')
         area_data, area_definition = _create_area(lat_ts, lat_0, long_0, projection=projection, area_extent=area_extent,
@@ -500,7 +505,7 @@ def _find_displacements_and_area(lat_ts=None, lat_0=None, long_0=None, displacem
                                                   projection_ellipsoid=projection_ellipsoid,
                                                   displacement_data=displacement_data, no_save=no_save,
                                                   save_directory=save_directory)
-    if area_definition.area_extent is None and center is None:
+    if has_area_args and area_definition.area_extent is None and center is None:
         logger.debug('Incomplete area information provided')
         logger.debug('Using lat_0 and long_0 as center to try to make an area definition')
         area_data, area_definition = _create_area(lat_ts, lat_0, long_0, projection=projection, area_extent=area_extent,
@@ -841,7 +846,7 @@ def lat_long(lat_ts, lat_0, long_0, displacement_data=None, projection=None, j=N
 
 
 def euclidean(old_lat, old_long, new_lat, new_long, earth_ellipsoid=None):
-    """Computes the hypotenuse and forward/backward angle of the euclidean triangle formed between two lat-longs.
+    """Computes the hypotenuse and initial/back bearing of the euclidean triangle formed between two lat-longs.
 
     Parameters
     ----------
@@ -868,7 +873,7 @@ def euclidean(old_lat, old_long, new_lat, new_long, earth_ellipsoid=None):
 
 
 def greatcircle(old_lat, old_long, new_lat, new_long, earth_ellipsoid=None):
-    """Computes the shortest distance and forward/backwards azimuth between two two lat-longs.
+    """Computes the shortest distance and initial/back bearing between two two lat-longs.
 
     Parameters
     ----------
@@ -885,7 +890,7 @@ def greatcircle(old_lat, old_long, new_lat, new_long, earth_ellipsoid=None):
 
     Returns
     -------
-    (distance, forward azimuth, backward azimuth)
+    (distance, initial bearing, back bearing)
     """
     if earth_ellipsoid is None:
         earth_ellipsoid = Geod(ellps='WGS84')
@@ -895,8 +900,8 @@ def greatcircle(old_lat, old_long, new_lat, new_long, earth_ellipsoid=None):
         raise ValueError(
             'earth_ellipsoid must be a string or Geod type, but instead was {0} {1}'.format(earth_ellipsoid,
                                                                                                 type(earth_ellipsoid)))
-    fwd_azimuth, bwd_azimuth, distance = earth_ellipsoid.inv(old_long, old_lat, new_long, new_lat)
-    return distance, fwd_azimuth % 360, bwd_azimuth % 360
+    initial_bearing, back_bearing, distance = earth_ellipsoid.inv(old_long, old_lat, new_long, new_lat)
+    return distance, initial_bearing % 360, back_bearing % 360
 
 
 def wind_info(lat_ts, lat_0, long_0, delta_time, displacement_data=None, projection=None, j=None, i=None,

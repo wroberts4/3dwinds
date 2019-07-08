@@ -85,7 +85,7 @@
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Usage</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#wind-info-sh">wind_info.sh</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#advanced-arguments">Advanced arguments</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#output-units">Output units</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#output-information">Output information</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#data-format">Data format</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#save-format">Save format</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#additional-utility-methods">Additional utility methods</a></li>
@@ -163,13 +163,6 @@
 <p>Use the <strong>-h</strong> or <strong>——help</strong> flags on any scripts to print a usage message. These scripts follow
 GNU command line style; order in which options are provided does not matter and positional arguments may be mixed
 in with options (as long as they are not interpreted as part of the option).</p>
-<div class="admonition note">
-<p class="admonition-title">Note</p>
-<p>Angle and distance are calculated using great circle arcs. This gives you the angle and speed in which you
-would walk in a straight line to your destination. It will not be the tangent and hypotenuse of the u and
-v component (ie what <a class="reference internal" href="#euclidean-sh"><span class="std std-ref">euclidean.sh</span></a> calculates).</p>
-<p>However, both are giving you the direction that the wind is moving in, not the direction it came from.</p>
-</div>
 <div class="section" id="wind-info-sh">
 <span id="id1"></span><h2>wind_info.sh<a class="headerlink" href="#wind-info-sh" title="Permalink to this headline">¶</a></h2>
 <p>wind_info.sh calculates area information, j and i displacement, new and old latitude/longitude,
@@ -183,7 +176,8 @@ v, u, and velocity of the wind. This is the primary function of pywinds.</p>
 </ul>
 <p>Optional arguments:</p>
 <ul class="simple">
-<li><p><strong>——center</strong>: Projection y and x coordinate of the center of area (lat, long)</p></li>
+<li><p><strong>——center</strong>: Projection y and x coordinate of the center of area (lat, long). If center is not provided/found
+and the area created is not complete, then center defaults to the projection center (<strong>lat-0</strong>, <strong>long-0</strong>)</p></li>
 <li><p><strong>——pixel-size</strong>: Projection size of pixels in the y and x direction (dy, dx). If pixels are square, i.e. dy = dx,
 then only one value needs to be entered.</p></li>
 <li><p><strong>——displacement-data</strong>: Name of binary file (32-bit float) containing pixels displacements; How far the
@@ -215,15 +209,15 @@ Specified using <strong>-vvv</strong></p></li>
 <div><ul class="simple">
 <li><p>For more optional arguments, please see <a class="reference internal" href="#advanced-arguments"><span class="std std-ref">Advanced arguments</span></a>.</p></li>
 <li><p>For more information on save files and their formats, please see <a class="reference internal" href="#save-format"><span class="std std-ref">Save format</span></a></p></li>
-<li><p>For information on the output units, please see <a class="reference internal" href="#output-units"><span class="std std-ref">Output units</span></a></p></li>
+<li><p>For information on the output, please see <a class="reference internal" href="#output-information"><span class="std std-ref">Output information</span></a></p></li>
 </ul>
 </div></blockquote>
 <div class="admonition note" id="area-information-note">
 <p class="admonition-title">Note</p>
 <p>Enough information must be provided to make an area. Some common combinations of parameters are:</p>
 <ol class="arabic simple">
-<li><p><strong>——center</strong> and <strong>——pixel-size</strong></p></li>
-<li><p><strong>——center</strong> and <strong>——radius</strong></p></li>
+<li><p><strong>——pixel-size</strong> and <strong>——center</strong> (defaults to the projection center if not provided)</p></li>
+<li><p><strong>——radius</strong> and <strong>——center</strong> (defaults to the projection center if not provided)</p></li>
 <li><p><strong>——upper-left-extent</strong> and <strong>——pixel-size</strong></p></li>
 <li><p><strong>——area-extent</strong></p></li>
 </ol>
@@ -235,6 +229,8 @@ Specified using <strong>-vvv</strong></p></li>
 $ ls
 in.flo          pywinds
 $ pywinds/wind_info.sh 60 90 0 100 -j 0 -i 0 --pixel-size 4000 --center 90 0 -p
+[63.36, -135.0, 51.78, 317.1, 36.78, -36.47]
+$ pywinds/wind_info.sh 60 90 0 100 -j 0 -i 0 --pixel-size 4000 -p
 [63.36, -135.0, 51.78, 317.1, 36.78, -36.47]
 $ pywinds/wind_info.sh 60 90 0 100 --pixel-size 4000 --center 90 0
 $ pywinds/wind_info.sh 60 90 0 100 --pixel-size 4000 --center 90 0 -vv
@@ -291,8 +287,8 @@ Units are determined in the following priority:</p>
 <p>The shape provided or found can alter the native shape of <strong>——displacement-data</strong>.</p>
 </div>
 </div>
-<div class="section" id="output-units">
-<span id="id5"></span><h2>Output units<a class="headerlink" href="#output-units" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="output-information">
+<span id="id5"></span><h2>Output information<a class="headerlink" href="#output-information" title="Permalink to this headline">¶</a></h2>
 <p>These are the output units for pywinds (Note: output units <strong>cannot</strong> be changed by the user):</p>
 <blockquote>
 <div><ul class="simple">
@@ -311,7 +307,16 @@ Units are determined in the following priority:</p>
 <p class="admonition-title">Note</p>
 <p>v is the distance between the two latitudes over time and u is the distance between the two longitudes over time
 using the average latitude for the distance calculations; this averaging is more noticeable near the poles.
-It is <strong>not</strong> the distance * sine and distance * cosine of the forward azimuth angle from the great circle arc.</p>
+It is <strong>not</strong> the distance * sine and distance * cosine of the initial bearing from the great circle arc.</p>
+<p>Angle and distance are calculated using great circle arcs. This gives you the angle and speed in which you
+would walk in a straight line to your destination. It will not be the tangent and hypotenuse of the u and
+v component (ie what <a class="reference internal" href="#euclidean-sh"><span class="std std-ref">euclidean.sh</span></a> calculates).</p>
+<p>However, both are giving you the direction that the wind is moving in, not the direction it came from.</p>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>velocity angle is the final bearing (back bearing minus 180 degrees). This gives the angle that
+the wind is moving when it reaches its new location.</p>
 </div>
 </div>
 <div class="section" id="data-format">
@@ -504,7 +509,7 @@ center: (90.0, 0.0)
 <p>You can use area.sh on a file containing displacements to see what shape it is,
 even if the area is not completely defined, as shown in <a class="reference internal" href="examples.html#advanced-examples"><span class="std std-ref">Advanced examples</span></a>.</p>
 <ul class="simple" id="euclidean-sh">
-<li><p><strong>euclidean.sh</strong>: Prints the hypotenuse, forward angle, and backward angle of the euclidean
+<li><p><strong>euclidean.sh</strong>: Prints the hypotenuse, initial bearing, and back bearing of the euclidean
 (ie flat and 2-dimensional) triangle formed from the north/south and east/west distance between
 two points on the earth provided in latitude and longitude.</p></li>
 </ul>
@@ -521,7 +526,7 @@ $ pywinds/euclidean.sh 60 130 61 131
 </pre></div>
 </div>
 <ul class="simple">
-<li><p><strong>greatcircle.sh</strong>: Prints the shortest distance, forward azimuth, and backwards azimuth between
+<li><p><strong>greatcircle.sh</strong>: Prints the shortest distance, initial bearing, and back bearing between
 two points on the earth provided in latitude and longitude (as calculated from the great circle arc).</p></li>
 </ul>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ pwd
