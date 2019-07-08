@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 import ast
 import subprocess
 import sys
