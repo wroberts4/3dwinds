@@ -20,8 +20,7 @@ logger = logging.getLogger(__name__)
 def _save_data(save_directory, data_list, text_shape=None, mode='a'):
     """Handles text and netcdf4 file saving"""
     if mode == 'a' and not os.path.exists(save_directory):
-        logger.warning('Data not saved to {0}: Save directory does not exist'.format(
-            save_directory))
+        logger.warning('Data not saved to {0}: Save directory does not exist'.format(save_directory))
         return
     # Get name of displacement file (without path). If string is not a file, return and don't make a file.
     try:
@@ -134,9 +133,8 @@ def _lat_long_dist(lat, earth_ellipsoid):
     elif isinstance(earth_ellipsoid, str):
         earth_ellipsoid = Geod(ellps=earth_ellipsoid)
     else:
-        raise ValueError('earth_ellipsoid must be a string or Geod type, but instead was {0} {1}'.format(earth_ellipsoid,
-                                                                                                        type(
-                                                                                                            earth_ellipsoid)))
+        raise ValueError('earth_ellipsoid must be a string or Geod type, but instead was {0} {1}'.format(
+            earth_ellipsoid, type(earth_ellipsoid)))
     geod_info = proj4_str_to_dict(earth_ellipsoid.initstring)
     e2 = (2 - 1 * geod_info['f']) * geod_info['f']
     lat = np.pi / 180 * lat
@@ -168,9 +166,8 @@ def _create_area(lat_ts, lat_0, long_0, projection=None, area_extent=None, shape
         projection_ellipsoid = Geod(ellps=projection_ellipsoid)
     else:
         raise ValueError(
-            'projection_ellipsoid must be a string or Geod type, but instead was {0} {1}'.format(projection_ellipsoid,
-                                                                                                type(
-                                                                                                    projection_ellipsoid)))
+            'projection_ellipsoid must be a string or Geod type, but instead was {0} {1}'.format(
+                projection_ellipsoid, type(projection_ellipsoid)))
     # Center is given in (lat, long) order, but create_area_def needs it in (long, lat) order.
     if area_extent is not None:
         area_extent_ll, area_extent_ur = area_extent[0:2], area_extent[2:4]
@@ -206,7 +203,7 @@ def _create_area(lat_ts, lat_0, long_0, projection=None, area_extent=None, shape
         center = _reverse_params([p(center[1], center[0], inverse=True)])[0]
         # Needs order [ll_x, ll_y, ur_x, ur_y]
         area_extent = _reverse_params([p(area_extent[0], area_extent[1], inverse=True)])[0] + \
-                      _reverse_params([p(area_extent[2], area_extent[3], inverse=True)])[0]
+            _reverse_params([p(area_extent[2], area_extent[3], inverse=True)])[0]
         if area_extent[2] - area_extent[0] < 0 or area_extent[3] - area_extent[1] < 0:
             logger.warning('invalid area_extent. Lower left corner is above or to the right of the upper right corner:'
                            '{0}'.format(area_extent))
@@ -374,21 +371,21 @@ def _compute_lat_long(lat_ts, lat_0, long_0, displacement_data=None, projection=
             dims = ['y', 'x']
         logger.debug('Saving lat_long')
         _save_data(save_directory, (xarray.DataArray(_reshape(new_lat, shape), name='new_latitude', dims=dims,
-                                                        attrs={'standard_name': 'latitude',
-                                                               'grid_mapping_name': 'polar_stereographic',
-                                                               'units': 'degrees'}),
-                                       xarray.DataArray(_reshape(new_long, shape), name='new_longitude', dims=dims,
-                                                        attrs={'standard_name': 'longitude',
-                                                               'grid_mapping_name': 'polar_stereographic',
-                                                               'units': 'degrees'}),
-                                       xarray.DataArray(_reshape(old_lat, shape), name='old_latitude', dims=dims,
-                                                        attrs={'standard_name': 'latitude',
-                                                               'grid_mapping_name': 'polar_stereographic',
-                                                               'units': 'degrees'}),
-                                       xarray.DataArray(_reshape(old_long, shape), name='old_longitude', dims=dims,
-                                                        attrs={'standard_name': 'longitude',
-                                                               'grid_mapping_name': 'polar_stereographic',
-                                                               'units': 'degrees'})))
+                                                     attrs={'standard_name': 'latitude',
+                                                            'grid_mapping_name': 'polar_stereographic',
+                                                            'units': 'degrees'}),
+                                    xarray.DataArray(_reshape(new_long, shape), name='new_longitude', dims=dims,
+                                                     attrs={'standard_name': 'longitude',
+                                                            'grid_mapping_name': 'polar_stereographic',
+                                                            'units': 'degrees'}),
+                                    xarray.DataArray(_reshape(old_lat, shape), name='old_latitude', dims=dims,
+                                                     attrs={'standard_name': 'latitude',
+                                                            'grid_mapping_name': 'polar_stereographic',
+                                                            'units': 'degrees'}),
+                                    xarray.DataArray(_reshape(old_long, shape), name='old_longitude', dims=dims,
+                                                     attrs={'standard_name': 'longitude',
+                                                            'grid_mapping_name': 'polar_stereographic',
+                                                            'units': 'degrees'})))
     return shape, new_lat, new_long, old_lat, old_long
 
 
@@ -422,13 +419,13 @@ def _compute_vu(lat_ts, lat_0, long_0, delta_time, displacement_data=None, proje
             dims = ['y', 'x']
         logger.debug('Saving vu')
         _save_data(save_directory, (xarray.DataArray(_reshape(v, shape), name='v', dims=dims,
-                                                        attrs={'standard_name': 'northward_wind',
-                                                               'grid_mapping_name': 'polar_stereographic',
-                                                               'units': 'm/s'}),
-                                       xarray.DataArray(_reshape(u, shape), name='u', dims=dims,
-                                                        attrs={'standard_name': 'eastward_wind',
-                                                               'grid_mapping_name': 'polar_stereographic',
-                                                               'units': 'm/s'})))
+                                                     attrs={'standard_name': 'northward_wind',
+                                                            'grid_mapping_name': 'polar_stereographic',
+                                                            'units': 'm/s'}),
+                                    xarray.DataArray(_reshape(u, shape), name='u', dims=dims,
+                                                     attrs={'standard_name': 'eastward_wind',
+                                                            'grid_mapping_name': 'polar_stereographic',
+                                                            'units': 'm/s'})))
     return shape, v, u, old_lat, old_long, new_lat, new_long
 
 
@@ -457,13 +454,13 @@ def _compute_velocity(lat_ts, lat_0, long_0, delta_time, displacement_data=None,
             dims = ['y', 'x']
         logger.debug('Saving velocity')
         _save_data(save_directory, (xarray.DataArray(_reshape(speed, shape), name='speed', dims=dims,
-                                                        attrs={'standard_name': 'wind_speed',
-                                                               'grid_mapping_name': 'polar_stereographic',
-                                                               'units': 'm/s'}),
-                                       xarray.DataArray(_reshape(angle, shape), name='angle', dims=dims,
-                                                        attrs={'standard_name': 'wind_from_direction',
-                                                               'grid_mapping_name': 'polar_stereographic',
-                                                               'units': 'degrees'})))
+                                                     attrs={'standard_name': 'wind_speed',
+                                                            'grid_mapping_name': 'polar_stereographic',
+                                                            'units': 'm/s'}),
+                                    xarray.DataArray(_reshape(angle, shape), name='angle', dims=dims,
+                                                     attrs={'standard_name': 'wind_from_direction',
+                                                            'grid_mapping_name': 'polar_stereographic',
+                                                            'units': 'degrees'})))
     # When wind vector bearing is 0 degrees it points North (mathematically 90 degrees) and moves clockwise.
     # speed is in meters/second.
     return shape, speed, angle, v, u, new_lat, new_long
@@ -907,7 +904,7 @@ def greatcircle(old_lat, old_long, new_lat, new_long, earth_ellipsoid=None):
     else:
         raise ValueError(
             'earth_ellipsoid must be a string or Geod type, but instead was {0} {1}'.format(earth_ellipsoid,
-                                                                                                type(earth_ellipsoid)))
+                                                                                            type(earth_ellipsoid)))
     initial_bearing, back_bearing, distance = earth_ellipsoid.inv(old_long, old_lat, new_long, new_lat)
     return distance, initial_bearing % 360, back_bearing % 360
 
@@ -984,7 +981,7 @@ def wind_info(lat_ts, lat_0, long_0, delta_time, displacement_data=None, project
         (latitude, longitude, velocity, angle, v, and u at each pixel) : numpy.array or list
             [latitude, longitude, velocity, angle, v, u] at each pixel in row-major format
     """
-    if no_save == True and save_directory is not None:
+    if no_save is True and save_directory is not None:
         logger.warning('Conflicting options: --print and --save_directory. Listening to --print')
     # Only lets wind_info save to make life easier.
     if no_save is False:
@@ -1034,9 +1031,9 @@ def wind_info(lat_ts, lat_0, long_0, delta_time, displacement_data=None, project
         logger.debug('Saving wind_info')
         # Creates the file or writes over old data.
         _save_data(save_directory, [xarray.DataArray(winds, name='wind_info', dims=dims,
-                                                        attrs={'standard_name': 'wind_speed',
-                                                               'description': 'new_lat, new_long, speed, angle, v, u',
-                                                               'grid_mapping_name': 'polar_stereographic'})],
+                                                     attrs={'standard_name': 'wind_speed',
+                                                            'description': 'new_lat, new_long, speed, angle, v, u',
+                                                            'grid_mapping_name': 'polar_stereographic'})],
                    text_shape=text_shape)
     # Columns: lat, long, speed, direction, v, u
     return winds
