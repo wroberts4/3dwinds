@@ -143,7 +143,7 @@ def _get_args(name, description):
                 if name == 'wind_info':
                     my_parser.add_argument('-p', '--print', '--no-save', action="store_true", dest='no_save',
                                            help="print data to shell without saving")
-                    my_parser.add_argument('--save-directory', '-s', type=str, metavar='path_name',
+                    my_parser.add_argument('-s', '--save-directory', type=str, metavar='path_name',
                                            help="directory to save to. Defaults to where script was ran")
                 my_parser.add_argument('delta-time', type=float,
                                        help='amount of time that separates both files in minutes')

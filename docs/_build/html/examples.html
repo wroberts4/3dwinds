@@ -581,7 +581,7 @@ center: None
 <span id="error-messages"></span><h2>Error and usage messages<a class="headerlink" href="#error-and-usage-messages" title="Permalink to this headline">¶</a></h2>
 <p>If incorrect commands were given:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ pywinds/wind_info.sh 60 90 0 --pixel-size 4000
-usage: wind_info.py [-h] [-j int] [-i int] [-p] [--save-directory path_name]
+usage: wind_info.py [-h] [-j int] [-i int] [-p] [-s path_name]
                     [--earth-ellipsoid str] [--center y x [units]]
                     [--pixel-size dy [dx] [units]] [--displacement-data filename]
                     [--units str]
@@ -648,66 +648,6 @@ shape: [1000, 1000]
 area-extent: [60.0, 135.0, 60.0, -45.0]
 pixel-size: [-4521.39, -4521.39]
 center: [90.0, 0.0]
-</pre></div>
-</div>
-<p>The help message for wind_info.sh:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ pywinds/wind_info.sh -h
-usage: wind_info.py [-h] [-j int] [-i int] [-p] [--save-directory path_name]
-                    [--earth-ellipsoid str] [--center y x [units]]
-                    [--pixel-size dy [dx] [units]] [--displacement-data filename]
-                    [--units str]
-                    [--upper-left-extent y x [units]]
-                    [--radius dy dx [units]]
-                    [--area-extent y_ll x_ll y_ur x_ur [units]]
-                    [--shape height width] [--projection str]
-                    [--projection-ellipsoid str] [-v]
-                    lat-ts lat-0 long-0 delta-time
-
-Computes the latitude, longitude, velocity, angle, v, and u of the wind given
-an area and pixel-displacement.
-
-positional arguments:
-  lat-ts                projection latitude of true scale
-  lat-0                 projection latitude of origin
-  long-0                projection central meridian
-  delta-time            amount of time that separates both files in minutes
-
-optional arguments:
-  -h, --help            show this help message and exit
-  -j int, --j int       row to run calculations on
-  -i int, --i int       column to run calculations on
-  -p, --print, --no-save
-                        print data to shell without saving
-  --save-directory path_name, -s path_name
-                        directory to save to. Defaults to where script was ran
-  --earth-ellipsoid str  ellipsoid of Earth
-  --center y x [units]
-                        projection y and x coordinate of the center of area.
-                        Default: lat long
-  --pixel-size dy [dx] [units]
-                        projection size of pixels in the y and x direction.If
-                        pixels are square, i.e. dy = dx, then only one value
-                        needs to be entered
-  --displacement-data filename
-                        filename or list containing displacements
-  --units str           units that all provided arguments that take units
-                        (except center) should be interpreted as
-  --upper-left-extent y x [units]
-                        projection y and x coordinates of the upper left
-                        corner of the upper left pixel
-  --radius dy dx [units]
-                        projection length from the center to the left/rightand
-                        top/bottom outer edges
-  --area-extent y_ll x_ll y_ur x_ur [units]
-                        area extent in projection space:
-                        lower_left_y,lower_left_x, upper_right_y,
-                        upper_right_x
-  --shape height width  number of pixels in the y and x direction
-  --projection str      name of projection that the image is in
-  --projection-ellipsoid str
-                        ellipsoid of projection
-  -v, --verbose         each occurrence increases verbosity 1 level through
-                        ERROR-WARNING-INFO-DEBUG
 </pre></div>
 </div>
 <div class="admonition note">
