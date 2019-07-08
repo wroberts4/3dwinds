@@ -19,8 +19,9 @@ logger = logging.getLogger(__name__)
 
 def _save_data(save_directory, data_list, text_shape=None, mode='a'):
     """Handles text and netcdf4 file saving"""
-    if save_directory is None:
-        logger.warning('No file saved: displacement_data not found or provided')
+    if mode == 'a' and not os.path.exists(save_directory):
+        logger.warning('Data not saved to {0}: Save directory does not exist'.format(
+            save_directory))
         return
     # Get name of displacement file (without path). If string is not a file, return and don't make a file.
     try:
@@ -52,6 +53,7 @@ def _save_data(save_directory, data_list, text_shape=None, mode='a'):
     netcdf4_path = os.path.join(save_directory, 'wind_info.nc')
     xarray.Dataset(dataset_dict, attrs={'Conventions': 'CF-1.7'}).to_netcdf(netcdf4_path, mode=mode,
                                                                             encoding=encoding)
+    logger.debug('Data saved successfully')
 
 
 def _extrapolate_j_i(j, i, shape):
@@ -982,6 +984,7 @@ def wind_info(lat_ts, lat_0, long_0, delta_time, displacement_data=None, project
         (latitude, longitude, velocity, angle, v, and u at each pixel) : numpy.array or list
             [latitude, longitude, velocity, angle, v, u] at each pixel in row-major format
     """
+    # Only lets wind_info save to make life easier.
     if no_save is False:
         # Get name of displacement file (without path). If string is not a file, return and don't make a file.
         if isinstance(displacement_data, str):
@@ -989,18 +992,19 @@ def wind_info(lat_ts, lat_0, long_0, delta_time, displacement_data=None, project
             extension = tail or ntpath.basename(head)
         else:
             extension = 'list'
-        if extension != 'list' and not os.path.exists(displacement_data):
-            save_directory = None
+        # If no save directory was given, make save directory where script was ran.
+        directory = save_directory if isinstance(save_directory, str) else os.getcwd()
+        directory = os.path.join(directory, extension + '_output')
+        if timestamp is None:
+            timestamp = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
+        save_directory = directory + '_' + timestamp
+        if extension != 'list' and (displacement_data is None or not os.path.exists(displacement_data)):
+            logger.warning(
+                'Save directory {0} not created: displacement_data not found or provided'.format(save_directory))
         else:
-            # If no save directory was given, make save directory where script was ran.
-            directory = save_directory if isinstance(save_directory, str) else os.getcwd()
-            directory = os.path.join(directory, extension + '_output')
-            if timestamp is None:
-                timestamp = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
-            save_directory = directory + '_' + timestamp
-        logger.debug('Creating save file')
-        # Creates the file.
-        _save_data(save_directory, [], mode='w')
+            logger.debug('Creating save file')
+            # Creates the save directory and the wind_info.nc file.
+            _save_data(save_directory, [], mode='w')
     shape, speed, angle, v, u, lat, long = _compute_velocity(lat_ts, lat_0, long_0, displacement_data=displacement_data,
                                                              projection=projection, j=j, i=i, delta_time=delta_time,
                                                              area_extent=area_extent, shape=shape, center=center,
