@@ -74,8 +74,8 @@ Calculating wind_info::
     [63.36, -135.0, 51.78, 317.1, 36.78, -36.47]
     $ pywinds/wind_info.sh 60 90 0 100 -j 0 -i 0 --pixel-size 4000 -p
     [63.36, -135.0, 51.78, 317.1, 36.78, -36.47]
-    $ pywinds/wind_info.sh 60 90 0 100 --pixel-size 4000 --center 90 0
-    $ pywinds/wind_info.sh 60 90 0 100 --pixel-size 4000 --center 90 0 -vv
+    $ pywinds/wind_info.sh 60 90 0 100 --pixel-size 4000
+    $ pywinds/wind_info.sh 60 90 0 100 --pixel-size 4000 -vv
     [INFO: 2019-03-01 12:00:00 : pywinds.wind_functions] Reading displacements from
     /Desktop/in.flo
     [INFO: 2019-03-01 12:00:08 : wind_info.py] Data saved to the directory
@@ -307,7 +307,7 @@ They have similar or identical arguments to wind_info.sh
     /Desktop
     $ ls
     in.flo	    pywinds
-    $ pywinds/velocity.sh 60 90 0 100 -j 0 -i 0 --pixel-size 4000 --center 90 0
+    $ pywinds/velocity.sh 60 90 0 100 -j 0 -i 0 --pixel-size 4000
     [51.78, 317.1]
 
 
@@ -319,7 +319,7 @@ They have similar or identical arguments to wind_info.sh
     /Desktop
     $ ls
     in.flo	    pywinds
-    $ pywinds/vu.sh 60 90 0 100 -j 0 -i 0 --pixel-size 4000 --center 90 0
+    $ pywinds/vu.sh 60 90 0 100 -j 0 -i 0 --pixel-size 4000
     [36.78, -36.47]
 
 
@@ -333,11 +333,9 @@ They have similar or identical arguments to wind_info.sh
     /Desktop
     $ ls
     in.flo	    pywinds
-    $ pywinds/lat_long.sh 60 90 0 -j 0 -i 0 --pixel-size 4000
-      --center 90 0 --shape 1000 1000
+    $ pywinds/lat_long.sh 60 90 0 -j 0 -i 0 --pixel-size 4000 --shape 1000 1000
     [63.36, -135.0]
-    $ pywinds/lat_long.sh 60 90 0 -j 0 -i 0 --pixel-size 4000
-      --center 90 0 --displacement-data in.flo
+    $ pywinds/lat_long.sh 60 90 0 -j 0 -i 0 --pixel-size 4000 --displacement-data in.flo
     [61.38, -130.77]
 
 
@@ -363,7 +361,7 @@ They have similar or identical arguments to wind_info.sh
     /Desktop
     $ ls
     in.flo	    pywinds
-    $ pywinds/area.sh 60 90 0 --pixel-size 4000 --center 90 0
+    $ pywinds/area.sh 60 90 0 --pixel-size 4000
     projection: stere
     lat-ts: 60
     lat-0: 90
