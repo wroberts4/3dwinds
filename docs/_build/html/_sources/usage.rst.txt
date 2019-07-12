@@ -118,7 +118,7 @@ Advanced arguments
 * **------units**: Units that provided arguments should be interpreted as. This can be
   one of 'deg', 'degrees', 'rad', 'radians', 'meters', 'metres', and any
   parameter supported by the `cs2cs -lu <https://proj4.org/apps/cs2cs.html#cmdoption-cs2cs-lu>`_
-  command (`cs2cs -lu <https://proj.org/apps/cs2cs.html?highlight=note#cmdoption-cs2cs-lu>`_: |cs2cs_lu.png|).
+  command (`<https://proj.org/apps/cs2cs.html?highlight=note#cmdoption-cs2cs-lu>`_: |cs2cs_lu.png|).
   Units are determined in the following priority:
 
   1. units expressed at the end of individual variables (see :ref:`Specifying input units<input_units>` for examples)
@@ -156,20 +156,11 @@ These are the output units for pywinds (Note: output units **cannot** be changed
 
 .. note::
 
-    v is the distance between the two latitudes over time and u is the distance between the two longitudes over time
-    using the average latitude for the distance calculations; this averaging is more noticeable near the poles.
-    It is **not** the distance * sine and distance * cosine of the initial bearing from the great circle arc.
-
-    Angle and distance are calculated using great circle arcs. This gives you the angle and speed in which you
-    would walk in a straight line to your destination. It will not be the tangent and hypotenuse of the u and
-    v component (ie what :ref:`euclidean.sh <euclidean.sh>` calculates).
-
-    However, both are giving you the direction that the wind is moving in, not the direction it came from.
+    velocity, v, and u are calculated using :ref:`loxodrome.sh<loxodrome.sh>`.
 
 .. note::
 
-    velocity angle is the final bearing (back bearing minus 180 degrees). This gives the angle that
-    the wind is moving when it reaches its new location.
+    velocity angle is the angle that the wind is moving when it reaches its new location.
 
 .. _data_format:
 
@@ -201,14 +192,6 @@ If no j and i values are provided, then data is calculated at every pixel (n-row
          ...,
          [new_latitude_nm, new_longitude_nm, velocity_nm, angle_nm, v_nm, u_nm]]
 
-    velocity:
-        [[[speed_11, ..., speed_1m],
-          ...,
-          [speed_n1, ..., speed_nm]],
-         [[angle_11, ..., angle_1m],
-          ...,
-          [angle_n1, ..., angle_nm]]]
-
     vu:
         [[[v_11, ..., v_1m],
           ...,
@@ -216,6 +199,14 @@ If no j and i values are provided, then data is calculated at every pixel (n-row
          [[u_11, ..., u_1m],
           ...,
           [u_n1, ..., u_nm]]]
+
+    velocity:
+        [[[speed_11, ..., speed_1m],
+          ...,
+          [speed_n1, ..., speed_nm]],
+         [[angle_11, ..., angle_1m],
+          ...,
+          [angle_n1, ..., angle_nm]]]
 
     lat_long:
         [[[latitude_11, ..., latitude_1m],
@@ -299,6 +290,18 @@ Additional utility methods
 None of these functions can save data, thus they **do not** have the **------print**/**-p** argument.
 They have similar or identical arguments to wind_info.sh
 
+* **vu.sh**: Prints just the v and u components of the wind. Same arguments as wind_info.sh
+
+::
+
+    $ pwd
+    /Desktop
+    $ ls
+    in.flo	    pywinds
+    $ pywinds/vu.sh 60 90 0 100 -j 0 -i 0 --pixel-size 4000
+    [36.78, -36.47]
+
+
 * **velocity.sh**: Prints just the velocity of the wind. Same arguments as wind_info.sh
 
 ::
@@ -310,17 +313,6 @@ They have similar or identical arguments to wind_info.sh
     $ pywinds/velocity.sh 60 90 0 100 -j 0 -i 0 --pixel-size 4000
     [51.78, 317.1]
 
-
-* **vu.sh**: Prints just the v and u components of the wind. Same arguments as wind_info.sh
-
-::
-
-    $ pwd
-    /Desktop
-    $ ls
-    in.flo	    pywinds
-    $ pywinds/vu.sh 60 90 0 100 -j 0 -i 0 --pixel-size 4000
-    [36.78, -36.47]
 
 
 * **lat_long.sh**: Prints just the latitude and longitude of the pixels. If displacements data is provided,
@@ -377,15 +369,11 @@ They have similar or identical arguments to wind_info.sh
 You can use area.sh on a file containing displacements to see what shape it is,
 even if the area is not completely defined, as shown in :ref:`advanced_examples`.
 
-.. _euclidean.sh:
+.. _loxodrome.sh:
 
-* **euclidean.sh**: Prints the hypotenuse, initial bearing, and back bearing of the euclidean
-  (ie flat and 2-dimensional) triangle formed from the north/south and east/west distance between
-  two points on the earth provided in latitude and longitude.
-
-.. note::
-
-    This method takes the average of the latitudes to find distance between the longitudes.
+* **loxodrome.sh**: Prints the distance, initial bearing, and back bearing between
+  two points on the earth provided in latitude and longitude as calculated from the rhumb line.
+  This is the angle and distance one would travel if direction is continuously updated.
 
 ::
 
@@ -393,11 +381,12 @@ even if the area is not completely defined, as shown in :ref:`advanced_examples`
     /Desktop
     $ ls
     in.flo	    pywinds
-    $ pywinds/euclidean.sh 60 130 61 131
+    $ pywinds/loxodrome.sh 60 130 61 131
     [124236.58, 26.25, 206.25]
 
-* **greatcircle.sh**: Prints the shortest distance, initial bearing, and back bearing between
-  two points on the earth provided in latitude and longitude (as calculated from the great circle arc).
+* **geodesic.sh**: Prints the shortest distance, initial bearing, and back bearing between
+  two points on the earth provided in latitude and longitude as calculated from the great circle arc.
+  This is the angle and distance one would travel if walking in a straight line without adjusting their course.
 
 ::
 
@@ -405,7 +394,7 @@ even if the area is not completely defined, as shown in :ref:`advanced_examples`
     /Desktop
     $ ls
     in.flo	    pywinds
-    $ pywinds/greatcircle.sh 60 130 61 131
+    $ pywinds/geodesic.sh 60 130 61 131
     [124233.13, 25.82, 206.69]
 
 Understanding error messages from scripts

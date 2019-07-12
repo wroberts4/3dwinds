@@ -7,7 +7,7 @@ import numpy as np
 import sys
 
 from os.path import abspath
-from pywinds.wind_functions import euclidean
+from pywinds.wind_functions import loxodrome
 from pywinds.wrapper_utils import run_script
 
 
@@ -17,5 +17,5 @@ def output_format(output, **kwargs):
 
 if __name__ == "__main__":
     sys.argv = [abspath("$0")] + "$*".split(' ')
-    run_script(euclidean, output_format, 'euclidean')
+    run_script(loxodrome, output_format, 'loxodrome')
 EOF

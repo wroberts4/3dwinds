@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 import glob
+import os
 import shutil
 import unittest
 
@@ -53,19 +54,20 @@ class TestPywinds(unittest.TestCase):
     def setUp(self):
         self.test_cases = []
         self.test_cases.append(
-            TestCase('./test_files/test_data_two.flo', i=1, j=8, pixel_size=10000, lat_ts=60, lat_0=90, long_0=0,
-                     center=(90, 0), speed=1629.81332, angle=89.7716, u=1163.53892, v=1621.06805, old_lat=2.01552,
+            TestCase(os.path.dirname(os.path.abspath(__file__)) + '/test_files/test_data_two.flo', i=1, j=8,
+                     pixel_size=10000, lat_ts=60, lat_0=90, long_0=0,
+                     center=(90, 0), speed=1686.77832, angle=16.05204, u=-1587.91074, v=-568.99963, old_lat=2.01552,
                      old_long=-134.75243, new_lat=89.52506, new_long=-45.0, old_x=-8135000.0, old_y=8065000.0,
                      new_x=-35000.0, new_y=-35000.0))
-        displacement_data = (np.array([x for x in range(100)]) * 10, np.array([x for x in range(100)]) * 20)
-        self.test_cases.append(
-            TestCase(displacement_data, pixel_size=5, units='km', lat_ts=60, lat_0=90, long_0=20, i=1, j=8,
-                     center=(40, 10), speed=1227.00691, angle=89.43759, u=1170.16575, v=467.3936, old_lat=14.53051,
-                     old_long=-60.99909, new_lat=39.83916, new_long=9.85413, old_x=-9082207.47114, old_y=-1438627.9423,
-                     new_x=-982207.47114, new_y=-5488627.9423))
+        # displacement_data = (np.array([x for x in range(100)]) * 10, np.array([x for x in range(100)]) * 20)
+        # self.test_cases.append(
+        #     TestCase(displacement_data, pixel_size=5, units='km', lat_ts=60, lat_0=90, long_0=20, i=1, j=8,
+        #              center=(40, 10), speed=1246.44915, angle=67.97448, u=519.88176, v=-1132.85411, old_lat=14.53051,
+        #              old_long=-60.99909, new_lat=39.83916, new_long=9.85413, old_x=-9082207.47114, old_y=-1438627.9423,
+        #              new_x=-982207.47114, new_y=-5488627.9423))
 
     def tearDown(self):
-        for directory in glob.glob('./*_output_*'):
+        for directory in glob.glob(os.path.dirname(os.path.abspath(__file__)) + '/test_data*.flo_output_*'):
             shutil.rmtree(directory)
 
     def test_wind_info(self):
@@ -77,14 +79,18 @@ class TestPywinds(unittest.TestCase):
                                                                         shape=case.shape, pixel_size=case.pixel_size,
                                                                         center=case.center,
                                                                         projection_ellipsoid=case.projection_ellipsoid,
-                                                                        earth_ellipsoid=case.earth_ellipsoid).transpose()
+                                                                        earth_ellipsoid=case.earth_ellipsoid,
+                                                                        save_directory=os.path.dirname(
+                                                                            os.path.abspath(__file__))
+                                                                        ).transpose()
             lat, long, speed, angle, v, u = wind_info(case.lat_ts, case.lat_0, case.long_0, case.delta_time,
                                                       displacement_data=case.displacement_data, units=case.units,
                                                       projection=case.projection, shape=case.shape,
                                                       pixel_size=case.pixel_size, center=case.center,
                                                       projection_ellipsoid=case.projection_ellipsoid,
-                                                      earth_ellipsoid=case.earth_ellipsoid).transpose().reshape(
-                [6] + list(case.shape))
+                                                      earth_ellipsoid=case.earth_ellipsoid,
+                                                      save_directory=os.path.dirname(os.path.abspath(__file__))
+                                                      ).transpose().reshape([6] + list(case.shape))
             self.assertEqual(case.new_lat, round(lat_ji, 5))
             self.assertEqual(case.new_long, round(long_ji, 5))
             self.assertEqual(lat[case.j, case.i], lat_ji)

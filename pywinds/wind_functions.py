@@ -121,31 +121,9 @@ def _pixel_to_pos(area_definition, j, i):
 def _delta_longitude(new_long, old_long):
     """Calculates the change in longitude on the Earth."""
     delta_long = new_long - old_long
-    if abs(delta_long) > 180.0:
-        if delta_long > 0.0:
-            return delta_long - 360.0
-        else:
-            return delta_long + 360.0
+    delta_long = np.where(delta_long < 180, delta_long, delta_long - 360.0)
+    delta_long = np.where(delta_long > -180, delta_long, delta_long + 360.0)
     return delta_long
-
-
-def _lat_long_dist(lat, earth_ellipsoid):
-    """Calculates the distance between latitudes and longitudes given a latitude."""
-    if earth_ellipsoid is None:
-        earth_ellipsoid = Geod(ellps='WGS84')
-    elif isinstance(earth_ellipsoid, str):
-        earth_ellipsoid = Geod(ellps=earth_ellipsoid)
-    else:
-        raise ValueError('earth_ellipsoid must be a string or Geod type, but instead was {0} {1}'.format(
-            earth_ellipsoid, type(earth_ellipsoid)))
-    geod_info = proj4_str_to_dict(earth_ellipsoid.initstring)
-    e2 = (2 - 1 * geod_info['f']) * geod_info['f']
-    lat = np.pi / 180 * lat
-    # Credit: https://gis.stackexchange.com/questions/75528/understanding-terms-in-length-of-degree-formula/75535#75535
-    # 2 * pi * r / 360 = distance per 1 degree.
-    lat_dist = 2 * np.pi * geod_info['a'] * (1 - e2) / (1 - e2 * np.sin(lat) ** 2) ** 1.5 / 360
-    long_dist = 2 * np.pi * geod_info['a'] / (1 - e2 * np.sin(lat) ** 2) ** .5 * np.cos(lat) / 360
-    return lat_dist, long_dist
 
 
 def _not_none(args):
@@ -171,6 +149,7 @@ def _create_area(lat_ts, lat_0, long_0, projection=None, area_extent=None, shape
         raise ValueError(
             'projection_ellipsoid must be a string or Geod type, but instead was {0} {1}'.format(
                 projection_ellipsoid, type(projection_ellipsoid)))
+    logger.debug('Projection ellipsoid data: {0}'.format(projection_ellipsoid.initstring))
     # Center is given in (lat, long) order, but create_area_def needs it in (long, lat) order.
     if area_extent is not None:
         area_extent_ll, area_extent_ur = area_extent[0:2], area_extent[2:4]
@@ -392,9 +371,9 @@ def _compute_lat_long(lat_ts, lat_0, long_0, displacement_data=None, projection=
     return shape, new_lat, new_long, old_lat, old_long
 
 
-def _compute_vu(lat_ts, lat_0, long_0, delta_time, displacement_data=None, projection=None, j=None, i=None,
-                area_extent=None, shape=None, center=None, pixel_size=None, upper_left_extent=None, radius=None,
-                units=None, projection_ellipsoid=None, earth_ellipsoid=None, no_save=True, save_directory=None):
+def _compute_velocity(lat_ts, lat_0, long_0, delta_time, displacement_data=None, projection=None, j=None, i=None,
+                      area_extent=None, shape=None, center=None, pixel_size=None, upper_left_extent=None, radius=None,
+                      units=None, projection_ellipsoid=None, earth_ellipsoid=None, no_save=True, save_directory=None):
     shape, new_lat, new_long, old_lat, old_long = _compute_lat_long(lat_ts, lat_0, long_0,
                                                                     displacement_data=displacement_data,
                                                                     projection=projection, j=j, i=i,
@@ -404,52 +383,8 @@ def _compute_vu(lat_ts, lat_0, long_0, delta_time, displacement_data=None, proje
                                                                     units=units,
                                                                     projection_ellipsoid=projection_ellipsoid,
                                                                     no_save=no_save, save_directory=save_directory)
-    logger.debug('Finding v and u components')
-    # Uses average of distances.
-    # v = (new_lat - old_lat) * (_lat_long_dist(old_lat, earth_ellipsoid)[0] +
-    #                            _lat_long_dist(new_lat, earth_ellipsoid)[0]) / (2 * (delta_time * 60))
-    # u = np.vectorize(_delta_longitude)(new_long, old_long) * (_lat_long_dist(old_lat, earth_ellipsoid)[1] +
-    #                                                           _lat_long_dist(new_lat, earth_ellipsoid)[1]) /\
-    #     (2 * (delta_time * 60))
-    # Uses average of angles. units: meters/second. Distance is in meters, delta_time is in minutes.
-    lat_long_distance = _lat_long_dist((new_lat + old_lat) / 2, earth_ellipsoid)
-    v = (new_lat - old_lat) * lat_long_distance[0] / (delta_time * 60)
-    u = np.vectorize(_delta_longitude)(new_long, old_long) * lat_long_distance[1] / (delta_time * 60)
-
-    if no_save is False:
-        dims = None
-        if np.size(v) != 1:
-            dims = ['y', 'x']
-        logger.debug('Saving vu')
-        _save_data(save_directory, (xarray.DataArray(_reshape(v, shape), name='v', dims=dims,
-                                                     attrs={'standard_name': 'northward_wind',
-                                                            'grid_mapping_name': 'polar_stereographic',
-                                                            'units': 'm/s'}),
-                                    xarray.DataArray(_reshape(u, shape), name='u', dims=dims,
-                                                     attrs={'standard_name': 'eastward_wind',
-                                                            'grid_mapping_name': 'polar_stereographic',
-                                                            'units': 'm/s'})))
-    return shape, v, u, old_lat, old_long, new_lat, new_long
-
-
-def _compute_velocity(lat_ts, lat_0, long_0, delta_time, displacement_data=None, projection=None, j=None, i=None,
-                      area_extent=None, shape=None, center=None, pixel_size=None, upper_left_extent=None, radius=None,
-                      units=None, projection_ellipsoid=None, earth_ellipsoid=None, no_save=True, save_directory=None):
-    shape, v, u, old_lat, old_long, new_lat, new_long = _compute_vu(lat_ts, lat_0, long_0, delta_time,
-                                                                    displacement_data=displacement_data,
-                                                                    projection=projection, j=j, i=i,
-                                                                    area_extent=area_extent, shape=shape,
-                                                                    center=center, pixel_size=pixel_size,
-                                                                    upper_left_extent=upper_left_extent, radius=radius,
-                                                                    units=units,
-                                                                    projection_ellipsoid=projection_ellipsoid,
-                                                                    earth_ellipsoid=earth_ellipsoid, no_save=no_save,
-                                                                    save_directory=save_directory)
     logger.debug('Calculating speed and angle (velocity)')
-    # speed, angle = (u ** 2 + v ** 2) ** .5, ((90 - np.arctan2(v, u) * 180 / np.pi) + 360) % 360
-    # Uses great circle arcs instead of the triangle made of u and v.
-    distance, initial_bearing, back_bearing = greatcircle(old_lat, old_long, new_lat, new_long, earth_ellipsoid=None)
-    angle = (back_bearing - 180) % 360
+    distance, angle = loxodrome(old_lat, old_long, new_lat, new_long, earth_ellipsoid=earth_ellipsoid)[:2]
     speed = distance / (delta_time * 60)
     if no_save is False:
         dims = None
@@ -466,7 +401,37 @@ def _compute_velocity(lat_ts, lat_0, long_0, delta_time, displacement_data=None,
                                                             'units': 'degrees'})))
     # When wind vector bearing is 0 degrees it points North (mathematically 90 degrees) and moves clockwise.
     # speed is in meters/second.
-    return shape, speed, angle, v, u, new_lat, new_long
+    return shape, speed, angle, new_lat, new_long
+
+
+def _compute_vu(lat_ts, lat_0, long_0, delta_time, displacement_data=None, projection=None, j=None, i=None,
+                area_extent=None, shape=None, center=None, pixel_size=None, upper_left_extent=None, radius=None,
+                units=None, projection_ellipsoid=None, earth_ellipsoid=None, no_save=True, save_directory=None):
+    shape, speed, angle, new_lat, new_long = _compute_velocity(lat_ts, lat_0, long_0, delta_time,
+                                                               displacement_data=displacement_data,
+                                                               projection=projection, j=j, i=i, area_extent=area_extent,
+                                                               shape=shape, center=center, pixel_size=pixel_size,
+                                                               upper_left_extent=upper_left_extent, radius=radius,
+                                                               units=units, projection_ellipsoid=projection_ellipsoid,
+                                                               earth_ellipsoid=earth_ellipsoid, no_save=no_save,
+                                                               save_directory=save_directory)
+    logger.debug('Finding v and u components')
+    v = np.sin(angle) * speed
+    u = np.cos(angle) * speed
+    if no_save is False:
+        dims = None
+        if np.size(v) != 1:
+            dims = ['y', 'x']
+        logger.debug('Saving vu')
+        _save_data(save_directory, (xarray.DataArray(_reshape(v, shape), name='v', dims=dims,
+                                                     attrs={'standard_name': 'northward_wind',
+                                                            'grid_mapping_name': 'polar_stereographic',
+                                                            'units': 'm/s'}),
+                                    xarray.DataArray(_reshape(u, shape), name='u', dims=dims,
+                                                     attrs={'standard_name': 'eastward_wind',
+                                                            'grid_mapping_name': 'polar_stereographic',
+                                                            'units': 'm/s'})))
+    return shape, v, u, speed, angle, new_lat, new_long
 
 
 def _find_displacements_and_area(lat_ts=None, lat_0=None, long_0=None, displacement_data=None, projection=None,
@@ -853,8 +818,8 @@ def lat_long(lat_ts, lat_0, long_0, displacement_data=None, projection=None, j=N
     return np.array((_reshape(old_lat, shape), _reshape(old_long, shape)))
 
 
-def euclidean(old_lat, old_long, new_lat, new_long, earth_ellipsoid=None):
-    """Computes the hypotenuse and initial/back bearing of the euclidean triangle formed between two lat-longs.
+def loxodrome(old_lat, old_long, new_lat, new_long, earth_ellipsoid=None):
+    """Computes the distance and initial/back bearing of the rhumb line formed between two lat-longs.
 
     Parameters
     ----------
@@ -871,16 +836,43 @@ def euclidean(old_lat, old_long, new_lat, new_long, earth_ellipsoid=None):
 
     Returns
     -------
-    (distance, forward angle, backward angle)
+    (distance, initial bearing, back bearing)
     """
-    lat_long_distance = _lat_long_dist((new_lat + old_lat) / 2, earth_ellipsoid)
-    y = (new_lat - old_lat) * lat_long_distance[0]
-    x = np.vectorize(_delta_longitude)(new_long, old_long) * lat_long_distance[1]
-    fwd_angle = (90 - np.arctan2(y, x) * 180 / np.pi) % 360
-    return (x ** 2 + y ** 2) ** .5, fwd_angle, (fwd_angle - 180) % 360
+    if earth_ellipsoid is None:
+        earth_ellipsoid = Geod(ellps='WGS84')
+    elif isinstance(earth_ellipsoid, str):
+        earth_ellipsoid = Geod(ellps=earth_ellipsoid)
+    else:
+        raise ValueError('earth_ellipsoid must be a string or Geod type, but instead was {0} {1}'.format(
+            earth_ellipsoid, type(earth_ellipsoid)))
+    geod_info = proj4_str_to_dict(earth_ellipsoid.initstring)
+    logger.debug('Earth ellipsoid data: {0}'.format(geod_info))
+    e2 = (2 - geod_info['f']) * geod_info['f']
+    e = e2 ** .5
+    initial_bearing = np.arctan2(np.radians(_delta_longitude(new_long, old_long)),
+                                 (np.log(np.tan((np.pi / 2 + np.radians(new_lat)) / 2) *
+                                         ((1 - e * np.sin(np.radians(new_lat))) /
+                                          (1 + e * np.sin(np.radians(new_lat))))**(e/2)) -
+                                  np.log(np.tan((np.pi / 2 + np.radians(old_lat)) / 2) *
+                                         ((1 - e * np.sin(np.radians(old_lat))) /
+                                          (1 + e * np.sin(np.radians(old_lat))))**(e/2))))
+    initial_bearing = np.where(new_lat != 90, initial_bearing, 0)
+    initial_bearing = np.where((new_lat != 90) | (new_lat != old_lat), initial_bearing, np.pi)
+    initial_bearing = np.where(old_lat != 90, initial_bearing, np.pi)
+    initial_bearing = np.where(new_lat != -90, initial_bearing, np.pi)
+    initial_bearing = np.where((new_lat != -90) | (new_lat != old_lat), initial_bearing, 0)
+    initial_bearing = np.where(old_lat != -90, initial_bearing, 0)
+    length = geod_info['a'] / np.cos(initial_bearing) * ((1 - e ** 2 / 4) * np.radians(new_lat - old_lat) -
+                                                         3 * e ** 2 / 8 *
+                                                         (np.sin(np.radians(2 * new_lat)) -
+                                                          np.sin(np.radians(2 * old_lat))))
+    horizontal_length = geod_info['a'] * abs(np.radians(_delta_longitude(new_long, old_long))) *\
+        np.cos(np.radians(new_lat))
+    length = np.where(new_lat != old_lat, length, horizontal_length)
+    return length, np.degrees(initial_bearing) % 360, (np.degrees(initial_bearing) - 180) % 360
 
 
-def greatcircle(old_lat, old_long, new_lat, new_long, earth_ellipsoid=None):
+def geodesic(old_lat, old_long, new_lat, new_long, earth_ellipsoid=None):
     """Computes the shortest distance and initial/back bearing between two two lat-longs.
 
     Parameters
@@ -908,6 +900,7 @@ def greatcircle(old_lat, old_long, new_lat, new_long, earth_ellipsoid=None):
         raise ValueError(
             'earth_ellipsoid must be a string or Geod type, but instead was {0} {1}'.format(earth_ellipsoid,
                                                                                             type(earth_ellipsoid)))
+    logger.debug('Earth ellipsoid data: {0}'.format(earth_ellipsoid.initstring))
     initial_bearing, back_bearing, distance = earth_ellipsoid.inv(old_long, old_lat, new_long, new_lat)
     return distance, initial_bearing % 360, back_bearing % 360
 
@@ -1007,14 +1000,14 @@ def wind_info(lat_ts, lat_0, long_0, delta_time, displacement_data=None, project
             logger.debug('Creating save file')
             # Creates the save directory and the wind_info.nc file.
             _save_data(save_directory, [], mode='w')
-    shape, speed, angle, v, u, lat, long = _compute_velocity(lat_ts, lat_0, long_0, displacement_data=displacement_data,
-                                                             projection=projection, j=j, i=i, delta_time=delta_time,
-                                                             area_extent=area_extent, shape=shape, center=center,
-                                                             pixel_size=pixel_size, upper_left_extent=upper_left_extent,
-                                                             radius=radius, units=units,
-                                                             projection_ellipsoid=projection_ellipsoid,
-                                                             earth_ellipsoid=earth_ellipsoid, no_save=no_save,
-                                                             save_directory=save_directory)
+    shape, v, u, speed, angle, lat, long = _compute_vu(lat_ts, lat_0, long_0, displacement_data=displacement_data,
+                                                       projection=projection, j=j, i=i, delta_time=delta_time,
+                                                       area_extent=area_extent, shape=shape, center=center,
+                                                       pixel_size=pixel_size, upper_left_extent=upper_left_extent,
+                                                       radius=radius, units=units,
+                                                       projection_ellipsoid=projection_ellipsoid,
+                                                       earth_ellipsoid=earth_ellipsoid, no_save=no_save,
+                                                       save_directory=save_directory)
     logger.debug('Formatting wind_info')
     # Make each variable its own column.
     winds = np.insert(np.expand_dims(np.ravel(lat), axis=1), 1, long, axis=1)

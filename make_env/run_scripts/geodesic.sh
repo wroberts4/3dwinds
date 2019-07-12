@@ -7,7 +7,7 @@ import numpy as np
 import sys
 
 from os.path import abspath
-from pywinds.wind_functions import greatcircle
+from pywinds.wind_functions import geodesic
 from pywinds.wrapper_utils import run_script
 
 
@@ -17,5 +17,5 @@ def output_format(output, **kwargs):
 
 if __name__ == "__main__":
     sys.argv = [abspath("$0")] + "$*".split(' ')
-    run_script(greatcircle, output_format, 'greatcircle')
+    run_script(geodesic, output_format, 'geodesic')
 EOF

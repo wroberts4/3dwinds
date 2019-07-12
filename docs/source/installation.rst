@@ -30,4 +30,5 @@ Or use the yaml (if you have the git repository on your machine)::
     $ ls
     pywinds
     $ conda env update -n pywinds -f pywinds/build_environment.yml
+    $ pip install pywinds
 

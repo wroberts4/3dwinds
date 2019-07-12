@@ -115,7 +115,7 @@ def _get_args(name, description):
                    'projection', 'projection_ellipsoid', 'earth_ellipsoid']
     my_parser = argparse.ArgumentParser(description=description, formatter_class=MyFormatter)
 
-    if name in ['euclidean', 'greatcircle']:
+    if name in ['loxodrome', 'geodesic']:
         arg_names = ['old-lat', 'old-long', 'new-lat', 'new-long']
         my_parser.add_argument('old-lat', type=float, help='Latitude of the first point')
         my_parser.add_argument('old-long', type=float, help='Longitude of the first point')
@@ -202,7 +202,7 @@ def run_script(func, output_format, name):
     if name == 'wind_info':
         kwargs['timestamp'] = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
     displacement_data = kwargs.get('displacement_data')
-    if displacement_data is None and name not in ['lat_long', 'euclidean', 'greatcircle']:
+    if displacement_data is None and name not in ['lat_long', 'loxodrome', 'geodesic']:
         displacement_data = os.path.join(os.getcwd(), '*.flo')
         kwargs['displacement_data'] = displacement_data
     if isinstance(displacement_data, str):

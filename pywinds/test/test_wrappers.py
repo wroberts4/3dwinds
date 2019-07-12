@@ -52,18 +52,18 @@ class TestCase:
 
 class TestWrappers(unittest.TestCase):
     def setUp(self):
-        self.root = os.path.dirname(__file__) + '/../../make_env/run_scripts/'
+        self.root = os.path.dirname(os.path.abspath(__file__)) + '/../../make_env/run_scripts/'
         self.test_cases = []
         self.test_cases.append(
-            TestCase(os.path.dirname(__file__) + '/test_files/test_data_three.flo', i=1, j=4, pixel_size=10000,
-                     lat_ts=60, lat_0=90, long_0=0, center=[90.0, 0.0], area_extent=[89.66, -45.0, 89.66, 135.0],
-                     speed=2529.37, angle=108.18, u=1871.01, v=2517.52, old_lat=-46.64, old_long=-134.96,
-                     new_lat=89.79, new_long=-26.57))
+            TestCase(os.path.dirname(os.path.abspath(__file__)) + '/test_files/test_data_three.flo', i=1, j=4,
+                     pixel_size=10000, lat_ts=60, lat_0=90, long_0=0, center=[90.0, 0.0],
+                     area_extent=[89.66, -45.0, 89.66, 135.0], speed=2610.01, angle=14.74, u=-1477.59, v=2151.49,
+                     old_lat=-46.64, old_long=-134.96, new_lat=89.79, new_long=-26.57))
         displacement_data = np.array(([x for x in range(25)], [x for x in range(25)])) * 10
         self.test_cases.append(
             TestCase(displacement_data.tolist(), pixel_size=5000, lat_ts=-60, lat_0=-90, long_0=20, i=1, j=4,
-                     center=[-40.0, 0.0], area_extent=[-40.06, -0.17, -39.94, 0.17], speed=208.31, angle=156.19,
-                     u=79.03, v=-192.85, old_lat=-29.63, old_long=-5.27, new_lat=-40.06, new_long=-0.08))
+                     center=[-40.0, 0.0], area_extent=[-40.06, -0.17, -39.94, 0.17], speed=208.34, angle=157.77,
+                     u=160.4, v=132.96, old_lat=-29.63, old_long=-5.27, new_lat=-40.06, new_long=-0.08))
 
     def test_wind_info(self):
         for case in self.test_cases:
@@ -171,8 +171,8 @@ class TestWrappers(unittest.TestCase):
     def test_area(self):
         for case in self.test_cases:
             area_data = args_to_data(
-                [self.root + 'area.sh', case.lat_ts, case.lat_0, case.long_0, '--shape', *case.shape, '--center',
-                 *case.center, 'deg', '--pixel-size', case.pixel_size])
+                [self.root + 'area.sh', case.lat_ts, case.lat_0, case.long_0, '--center',
+                 *case.center, 'deg', '--pixel-size', case.pixel_size, '--displacement-data', case.displacement_data])
             self.assertTrue('center: ' + str(case.center) in area_data)
             self.assertTrue('shape: ' + str(case.shape) in area_data)
             self.assertTrue('lat-0: ' + str(case.lat_0) in area_data)
