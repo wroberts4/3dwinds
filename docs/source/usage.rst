@@ -372,7 +372,7 @@ even if the area is not completely defined, as shown in :ref:`advanced_examples`
 
 .. _loxodrome.sh:
 
-* **loxodrome.sh**: Prints the distance, initial bearing, and back bearing between
+* **loxodrome.sh**: Prints the distance, forward bearing, and back bearing between
   two points on the earth provided in latitude and longitude as calculated from the rhumb line.
   This is the angle and distance one would travel if direction is continuously updated.
 

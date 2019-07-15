@@ -432,7 +432,7 @@ def _compute_velocity(lat_ts, lat_0, long_0, delta_time, displacement_data=None,
                                                      attrs={'standard_name': 'wind_to_direction',
                                                             'grid_mapping_name': 'polar_stereographic',
                                                             'units': 'degrees',
-                                                            'description': 'Initial bearing of rhumb line'})))
+                                                            'description': 'Forward bearing of rhumb line'})))
     # When wind vector bearing is 0 degrees it points North (mathematically 90 degrees) and moves clockwise.
     # speed is in meters/second.
     return shape, speed, angle, new_lat, new_long
@@ -874,7 +874,7 @@ def loxodrome(old_lat, old_long, new_lat, new_long, earth_ellipsoid=None):
 
     Returns
     -------
-    (distance, initial bearing, back bearing)
+    (distance, forward bearing, back bearing)
     """
     if earth_ellipsoid is None:
         earth_ellipsoid = Geod(ellps='WGS84')
@@ -891,21 +891,21 @@ def loxodrome(old_lat, old_long, new_lat, new_long, earth_ellipsoid=None):
     geod_info = proj4_str_to_dict(earth_ellipsoid.initstring)
     e2 = (2 - geod_info['f']) * geod_info['f']
     e = e2 ** .5
-    initial_bearing = np.arctan2(_delta_longitude(new_long, old_long),
+    forward_bearing = np.arctan2(_delta_longitude(new_long, old_long),
                                  np.arctanh(np.sin(new_lat)) - e * np.arctanh(e * np.sin(new_lat)) -
                                  (np.arctanh(np.sin(old_lat)) - e * np.arctanh(e * np.sin(old_lat))))
     # If staying at a pole.
-    initial_bearing = np.where(np.isnan(initial_bearing) == False, initial_bearing, new_lat + np.pi / 2)
+    forward_bearing = np.where(np.isnan(forward_bearing) == False, forward_bearing, new_lat + np.pi / 2)
     # (a + b) / 2 = a * (2 - f) / 2 since b = a * (1 - f)
     avg_radius = geod_info['a'] * (2 - geod_info['f']) / 2
     meridian_dist = avg_radius * _bessel_helmert(new_lat, old_lat, geod_info)
-    length = abs(meridian_dist / np.cos(initial_bearing))
+    length = abs(meridian_dist / np.cos(forward_bearing))
     lat_radius = geod_info['a'] / (1 - e2 * np.sin(new_lat) ** 2) ** .5 * np.cos(new_lat)
     # Only used when staying on the same latitude.
     horizontal_length = lat_radius * abs(_delta_longitude(new_long, old_long))
     # If staying on a lat, use horizontal_length. Unless at poles to prevent rounding error.
     length = np.where((new_lat != old_lat) | (abs(new_lat) == np.pi / 2), length, horizontal_length)
-    return length, np.degrees(initial_bearing) % 360, (np.degrees(initial_bearing) - 180) % 360
+    return length, np.degrees(forward_bearing) % 360, (np.degrees(forward_bearing) - 180) % 360
 
 
 def geodesic(old_lat, old_long, new_lat, new_long, earth_ellipsoid=None):
