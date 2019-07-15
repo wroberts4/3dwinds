@@ -57,13 +57,13 @@ class TestWrappers(unittest.TestCase):
         file_name = os.path.join(os.path.dirname(os.path.abspath(__file__)),'test_files', 'test_data_three.flo')
         self.test_cases.append(
             TestCase(file_name, i=1, j=4, pixel_size=10000, lat_ts=60, lat_0=90, long_0=0, center=[90.0, 0.0],
-                     area_extent=[89.66, -45.0, 89.66, 135.0], speed=2610.01, angle=14.74, u=-1477.59, v=2151.49,
+                     area_extent=[89.66, -45.0, 89.66, 135.0], speed=2610, angle=14.74, u=-1477.58, v=2151.48,
                      old_lat=-46.64, old_long=-134.96, new_lat=89.79, new_long=-26.57))
         displacement_data = np.array(([x for x in range(25)], [x for x in range(25)])) * 10
         self.test_cases.append(
             TestCase(displacement_data.tolist(), pixel_size=5000, lat_ts=-60, lat_0=-90, long_0=20, i=1, j=4,
                      center=[-40.0, 0.0], area_extent=[-40.06, -0.17, -39.94, 0.17], speed=208.34, angle=157.77,
-                     u=160.4, v=132.96, old_lat=-29.63, old_long=-5.27, new_lat=-40.06, new_long=-0.08))
+                     u=160.4, v=132.95, old_lat=-29.63, old_long=-5.27, new_lat=-40.06, new_long=-0.08))
 
     def test_wind_info(self):
         for case in self.test_cases:
@@ -114,8 +114,8 @@ class TestWrappers(unittest.TestCase):
             v_ji, u_ji = args_to_data(
                 [os.path.join(self.root, 'vu.sh'), case.lat_ts, case.lat_0, case.long_0, case.delta_time,
                  '--displacement-data', case.displacement_data, '--projection', case.projection, '-j', str(case.j),
-                 '-i', str(case.i), case.pixel_size, 'm', '--center', *case.center, 'deg', '--projection-ellipsoid',
-                 case.projection_ellipsoid, '--earth-ellipsoid', case.earth_ellipsoid])
+                 '-i', str(case.i), '--pixel-size', case.pixel_size, 'm', '--center', *case.center, 'deg',
+                 '--projection-ellipsoid', case.projection_ellipsoid, '--earth-ellipsoid', case.earth_ellipsoid])
             v, u = args_to_data(
                 [os.path.join(self.root, 'vu.sh'), case.lat_ts, case.lat_0, case.long_0, case.delta_time,
                  '--displacement-data', case.displacement_data, '--projection', case.projection, '--pixel-size',
@@ -134,17 +134,18 @@ class TestWrappers(unittest.TestCase):
                  '--pixel-size', case.pixel_size, 'm', '--center', *case.center, 'deg', '--projection-ellipsoid',
                  case.projection_ellipsoid])
             new_lat_ji, new_long_ji = args_to_data(
-                [os.path.join(self.root, 'lat_long.sh'), case.lat_ts, case.lat_0, case.long_0, '--projection', case.projection,
-                 '--shape', *case.shape, '-j', str(case.j), '-i', str(case.i), '--pixel-size', case.pixel_size, 'm',
-                 '--center', *case.center, 'deg', '--projection-ellipsoid', case.projection_ellipsoid])
+                [os.path.join(self.root, 'lat_long.sh'), case.lat_ts, case.lat_0, case.long_0, '--projection',
+                 case.projection, '--shape', *case.shape, '-j', str(case.j), '-i', str(case.i), '--pixel-size',
+                 case.pixel_size, 'm', '--center', *case.center, 'deg', '--projection-ellipsoid',
+                 case.projection_ellipsoid])
             old_lat, old_long = args_to_data(
                 [os.path.join(self.root, 'lat_long.sh'), case.lat_ts, case.lat_0, case.long_0, '--displacement-data',
                  case.displacement_data, '--projection', case.projection, '--pixel-size', case.pixel_size, 'm',
                  '--center', *case.center, 'deg', '--projection-ellipsoid', case.projection_ellipsoid])
             new_lat, new_long = args_to_data(
-                [os.path.join(self.root, 'lat_long.sh'), case.lat_ts, case.lat_0, case.long_0, '--projection', case.projection,
-                 '--shape', *case.shape, '--pixel-size', case.pixel_size, 'm', '--center', *case.center, 'deg',
-                 '--projection-ellipsoid', case.projection_ellipsoid])
+                [os.path.join(self.root, 'lat_long.sh'), case.lat_ts, case.lat_0, case.long_0, '--projection',
+                 case.projection, '--shape', *case.shape, '--pixel-size', case.pixel_size, 'm', '--center',
+                 *case.center, 'deg', '--projection-ellipsoid', case.projection_ellipsoid])
             self.assertEqual(case.old_lat, old_lat_ji)
             self.assertEqual(case.old_long, old_long_ji)
             self.assertEqual(case.new_lat, new_lat_ji)
@@ -183,7 +184,6 @@ class TestWrappers(unittest.TestCase):
 
 
 def args_to_data(commands):
-    print(commands)
     try:
         output = subprocess.check_output(list(map(str, commands))).decode('utf-8')
     except subprocess.CalledProcessError as err:

@@ -55,7 +55,7 @@ class TestPywinds(unittest.TestCase):
         self.test_cases = []
         file_name = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'test_files', 'test_data_two.flo')
         self.test_cases.append(
-            TestCase(file_name, i=1, j=8, pixel_size=10000, lat_ts=60, lat_0=90, long_0=0, center=(90, 0),
+            TestCase(file_name, i=1, j=8, pixel_size=10000, lat_ts=60, lat_0=90, long_0=0,
                      speed=1686.77451, angle=16.05204, u=-1587.90715, v=-568.99834, old_lat=2.01552,
                      old_long=-134.75243, new_lat=89.52506, new_long=-45.0, old_x=-8135000.0, old_y=8065000.0,
                      new_x=-35000.0, new_y=-35000.0))
@@ -163,9 +163,10 @@ class TestPywinds(unittest.TestCase):
 
     def test_pixel_to_pos(self):
         for case in self.test_cases:
+            center = (90, 0) if case.center is None else case.center
             area_definition = \
             _create_area(case.lat_ts, case.lat_0, case.long_0, projection=case.projection, shape=case.shape,
-                         pixel_size=case.pixel_size, projection_ellipsoid=case.projection_ellipsoid, center=case.center,
+                         pixel_size=case.pixel_size, projection_ellipsoid=case.projection_ellipsoid, center=center,
                          units=case.units, )[1]
             j_new, i_new = _extrapolate_j_i(None, None, case.shape)
             j_old, i_old = j_new - case.j_displacements, i_new - case.i_displacements
