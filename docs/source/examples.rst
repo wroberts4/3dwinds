@@ -318,7 +318,7 @@ Content of wind_info.nc
             angle:_FillValue = NaNf ;
             angle:standard_name = "wind_to_direction" ;
             angle:grid_mapping = "polar_stereographic" ;
-            angle:description = "Initial bearing of rhumb line" ;
+            angle:description = "Forward bearing of rhumb line" ;
             angle:units = "degrees" ;
         float wind_info(yx, vars) ;
             wind_info:_FillValue = NaNf ;
