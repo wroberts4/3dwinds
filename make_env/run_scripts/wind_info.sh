@@ -13,7 +13,7 @@ import numpy as np
 from pywinds.wind_functions import wind_info
 from pywinds.wrapper_utils import run_script
 
-logger = logging.getLogger('wind_info.py')
+logger = logging.getLogger(__name__)
 
 
 def output_format(output, **kwargs):
