@@ -1,6 +1,5 @@
 """Calculates area information, j and i displacement, new and old latitude/longitude, v, u, and velocity of the wind."""
 import logging
-import math
 import ntpath
 import os
 import datetime
@@ -57,6 +56,39 @@ def _save_data(save_directory, data_list, text_shape=None, mode='a'):
         logger.debug('Save directory and wind_info.nc created successfully')
     else:
         logger.debug('Data saved successfully')
+
+
+def double_factorial(n):
+    if n < 0:
+        return (-1) ** ((n - 1) / 2) * n / double_factorial(-n)
+    if n % 2 == 0:
+        k = n / 2
+        return 2 ** k * np.math.factorial(k)
+    k = (n + 1) / 2
+    return np.math.factorial(2 * k) / (2 ** k * np.math.factorial(k))
+
+
+def h_2k(n, k, precision=3):
+    k = k / 2
+    total = 0
+    # Converges fast enough that 3 iterations yields results accurate to over 15 decimal places.
+    for j in range(precision):
+        total += double_factorial(2 * j - 3) * double_factorial(2 * j + 2 * k - 3) * n ** (k + 2 * j) /\
+                 (double_factorial(2 * j) * double_factorial(2 * j + 2 * k))
+    if k == 0:
+        return (-1) ** k * (1 - 2 * k) * (1 + 2 * k) * total
+    return (-1) ** k * (1 - 2 * k) * (1 + 2 * k) * total / k
+
+
+def _bessel_helmert(new_lat, old_lat, geod_info, precision=6):
+    """Takes latitudes as radians. Credit: https://en.wikipedia.org/wiki/Meridian_arc"""
+    # Credit: https://en.wikipedia.org/wiki/Meridian_arc#cite_ref-14
+    # Third flattening: (a - b) / (a + b)
+    n = geod_info['f'] / (2 - geod_info['f'])
+    # 6 is enough coefficients to be accurate.
+    coeffs = [h_2k(n, 2 * k) for k in range(precision)]
+    return sum(coeff * new_lat if k == 0 else coeff * np.sin(2 * k * new_lat) for k, coeff in enumerate(coeffs)) -\
+        sum(coeff * old_lat if k == 0 else coeff * np.sin(2 * k * old_lat) for k, coeff in enumerate(coeffs))
 
 
 def _extrapolate_j_i(j, i, shape):
@@ -819,41 +851,10 @@ def lat_long(lat_ts, lat_0, long_0, displacement_data=None, projection=None, j=N
     return np.array((_reshape(old_lat, shape), _reshape(old_long, shape)))
 
 
-def double_factorial(n):
-    if n < 0:
-        return (-1) ** ((n - 1) / 2) * n / double_factorial(-n)
-    if n % 2 == 0:
-        k = n / 2
-        return 2 ** k * math.factorial(k)
-    k = (n + 1) / 2
-    return math.factorial(2 * k) / (2 ** k * math.factorial(k))
-
-
-def h_2k(n, k, precision=3):
-    k = k / 2
-    total = 0
-    # Converges fast enough that 3 iterations yields results accurate to over 15 decimal places.
-    for j in range(precision):
-        total += double_factorial(2 * j - 3) * double_factorial(2 * j + 2 * k - 3) * n ** (k + 2 * j) /\
-                 (double_factorial(2 * j) * double_factorial(2 * j + 2 * k))
-    if k == 0:
-        return (-1) ** k * (1 - 2 * k) * (1 + 2 * k) * total
-    return (-1) ** k * (1 - 2 * k) * (1 + 2 * k) * total / k
-
-
-def _bessel_helmert(new_lat, old_lat, geod_info, precision=6):
-    """Takes latitudes as radians. Credit: https://en.wikipedia.org/wiki/Meridian_arc"""
-    # Credit: https://en.wikipedia.org/wiki/Meridian_arc#cite_ref-14
-    # Third flattening: (a - b) / (a + b)
-    n = geod_info['f'] / (2 - geod_info['f'])
-    # 6 is enough coefficients to be accurate.
-    coeffs = [h_2k(n, 2 * k) for k in range(precision)]
-    return sum(coeff * new_lat if k == 0 else coeff * np.sin(2 * k * new_lat) for k, coeff in enumerate(coeffs)) -\
-        sum(coeff * old_lat if k == 0 else coeff * np.sin(2 * k * old_lat) for k, coeff in enumerate(coeffs))
-
-
 def loxodrome(old_lat, old_long, new_lat, new_long, earth_ellipsoid=None):
     """Computes the distance and initial/back bearing of the rhumb line formed between two lat-longs.
+
+    Credit: https://search-proquest-com.ezproxy.library.wisc.edu/docview/2130848771?rfr_id=info%3Axri%2Fsid%3Aprimo
 
     Parameters
     ----------
@@ -879,38 +880,28 @@ def loxodrome(old_lat, old_long, new_lat, new_long, earth_ellipsoid=None):
     else:
         raise ValueError('earth_ellipsoid must be a string or Geod type, but instead was {0} {1}'.format(
             earth_ellipsoid, type(earth_ellipsoid)))
+    logger.debug('Earth ellipsoid data: {0}'.format(earth_ellipsoid.initstring))
     old_lat = np.radians(old_lat)
     old_long = np.radians(old_long)
     new_lat = np.radians(new_lat)
     new_long = np.radians(new_long)
     geod_info = proj4_str_to_dict(earth_ellipsoid.initstring)
-    logger.debug('Earth ellipsoid data: {0}'.format(earth_ellipsoid.initstring))
     e2 = (2 - geod_info['f']) * geod_info['f']
     e = e2 ** .5
-    # credit: https://planetcalc.com/713/#fnref1:mih
     initial_bearing = np.arctan2(_delta_longitude(new_long, old_long),
-                                 np.log(np.tan((np.pi / 2 + new_lat) / 2) /
-                                        ((1 - e * np.sin(old_lat)) /
-                                         (1 + e * np.sin(old_lat))) ** (e / 2)) -
-                                 np.log(np.tan((np.pi / 2 + old_lat) / 2) /
-                                        ((1 - e * np.sin(new_lat)) /
-                                         (1 + e * np.sin(new_lat))) ** (e / 2)))
-    initial_bearing = np.where(new_lat != np.pi / 2, initial_bearing, 0)
-    initial_bearing = np.where((new_lat != np.pi / 2) | (new_lat != old_lat), initial_bearing, np.pi)
-    initial_bearing = np.where(old_lat != np.pi / 2, initial_bearing, np.pi)
-    initial_bearing = np.where(new_lat != -np.pi / 2, initial_bearing, np.pi)
-    initial_bearing = np.where((new_lat != -np.pi / 2) | (new_lat != old_lat), initial_bearing, 0)
-    initial_bearing = np.where(old_lat != -np.pi / 2, initial_bearing, 0)
+                                 np.arctanh(np.sin(new_lat)) - e * np.arctanh(e * np.sin(new_lat)) -
+                                 (np.arctanh(np.sin(old_lat)) - e * np.arctanh(e * np.sin(old_lat))))
+    # If staying at a pole.
+    initial_bearing = np.where(np.isnan(initial_bearing) == False, initial_bearing, new_lat + np.pi / 2)
     # (a + b) / 2 = a * (2 - f) / 2 since b = a * (1 - f)
     avg_radius = geod_info['a'] * (2 - geod_info['f']) / 2
     meridian_dist = avg_radius * _bessel_helmert(new_lat, old_lat, geod_info)
-    # length = sqrt(x^2 + y^2). tan(initial_bearing) = x / y implies that length = y * sqrt(tan(initial_bearing)^2 + 1).
     length = abs(meridian_dist / np.cos(initial_bearing))
-    # Credit: https://gis.stackexchange.com/questions/75528/understanding-terms-in-length-of-degree-formula/75535#75535
     lat_radius = geod_info['a'] / (1 - e2 * np.sin(new_lat) ** 2) ** .5 * np.cos(new_lat)
     # Only used when staying on the same latitude.
     horizontal_length = lat_radius * abs(_delta_longitude(new_long, old_long))
-    length = np.where(new_lat != old_lat, length, horizontal_length)
+    # If staying on a lat, use horizontal_length. Unless at poles to prevent rounding error.
+    length = np.where((new_lat != old_lat) | (abs(new_lat) == np.pi / 2), length, horizontal_length)
     return length, np.degrees(initial_bearing) % 360, (np.degrees(initial_bearing) - 180) % 360
 
 

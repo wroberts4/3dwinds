@@ -53,10 +53,10 @@ class TestCase:
 class TestPywinds(unittest.TestCase):
     def setUp(self):
         self.test_cases = []
+        file_name = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'test_files', 'test_data_two.flo')
         self.test_cases.append(
-            TestCase(os.path.dirname(os.path.abspath(__file__)) + '/test_files/test_data_two.flo', i=1, j=8,
-                     pixel_size=10000, lat_ts=60, lat_0=90, long_0=0,
-                     center=(90, 0), speed=1686.77451, angle=16.05204, u=-1587.90715, v=-568.99834, old_lat=2.01552,
+            TestCase(file_name, i=1, j=8, pixel_size=10000, lat_ts=60, lat_0=90, long_0=0, center=(90, 0),
+                     speed=1686.77451, angle=16.05204, u=-1587.90715, v=-568.99834, old_lat=2.01552,
                      old_long=-134.75243, new_lat=89.52506, new_long=-45.0, old_x=-8135000.0, old_y=8065000.0,
                      new_x=-35000.0, new_y=-35000.0))
         displacement_data = (np.array([x for x in range(100)]) * 10, np.array([x for x in range(100)]) * 20)
@@ -67,7 +67,7 @@ class TestPywinds(unittest.TestCase):
                      new_x=-982207.47114, new_y=-5488627.9423))
 
     def tearDown(self):
-        for directory in glob.glob(os.path.dirname(os.path.abspath(__file__)) + '/test_data*.flo_output_*'):
+        for directory in glob.glob(os.path.dirname(os.path.abspath(__file__)) + '/*_output_*'):
             shutil.rmtree(directory)
 
     def test_wind_info(self):
