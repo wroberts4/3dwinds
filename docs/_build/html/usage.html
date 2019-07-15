@@ -229,9 +229,9 @@ Specified using <strong>-vvv</strong></p></li>
 $ ls
 in.flo          pywinds
 $ pywinds/wind_info.sh 60 90 0 100 -j 0 -i 0 --pixel-size 4000 --center 90 0 -p
-[63.36, -135.0, 51.78, 317.1, 36.78, -36.47]
+[63.36, -135.0, 51.78, 315.25, 46.01, 23.77]
 $ pywinds/wind_info.sh 60 90 0 100 -j 0 -i 0 --pixel-size 4000 -p
-[63.36, -135.0, 51.78, 317.1, 36.78, -36.47]
+[63.36, -135.0, 51.78, 315.25, 46.01, 23.77]
 $ pywinds/wind_info.sh 60 90 0 100 --pixel-size 4000
 $ pywinds/wind_info.sh 60 90 0 100 --pixel-size 4000 -vv
 [INFO: 2019-03-01 12:00:00 : pywinds.wind_functions] Reading displacements from
@@ -435,7 +435,7 @@ They have similar or identical arguments to wind_info.sh</p>
 $ ls
 in.flo          pywinds
 $ pywinds/vu.sh 60 90 0 100 -j 0 -i 0 --pixel-size 4000
-[36.78, -36.47]
+[46.01, 23.77]
 </pre></div>
 </div>
 <ul class="simple">
@@ -446,7 +446,7 @@ $ pywinds/vu.sh 60 90 0 100 -j 0 -i 0 --pixel-size 4000
 $ ls
 in.flo          pywinds
 $ pywinds/velocity.sh 60 90 0 100 -j 0 -i 0 --pixel-size 4000
-[51.78, 317.1]
+[51.78, 315.25]
 </pre></div>
 </div>
 <ul class="simple">
@@ -486,15 +486,16 @@ $ ls
 in.flo          pywinds
 $ pywinds/area.sh 60 90 0 --pixel-size 4000
 projection: stere
-lat-ts: 60
-lat-0: 90
-long-0: 0
-equatorial radius: 6378137.0
-eccentricity: 0.003353
-area-extent: (65.81, -47.35, 67.6, 137.18)
-shape: (1000, 1000)
-pixel-size: (4000.0, 4000.0)
-center: (90.0, 0.0)
+lat-ts: 60.0
+lat-0: 90.0
+long-0: 0.0
+equatorial-radius: 6378137.0
+eccentricity: 0.08
+inverse-flattening: 298.26
+shape: [1000, 1000]
+area-extent: [63.33, -45.0, 63.33, 135.0]
+pixel-size: [4000.0, 4000.0]
+center: [90.0, 0.0]
 </pre></div>
 </div>
 <p>You can use area.sh on a file containing displacements to see what shape it is,
@@ -509,7 +510,7 @@ This is the angle and distance one would travel if direction is continuously upd
 $ ls
 in.flo          pywinds
 $ pywinds/loxodrome.sh 60 130 61 131
-[124236.58, 26.25, 206.25]
+[124234.33, 26.25, 206.25]
 </pre></div>
 </div>
 <ul class="simple">

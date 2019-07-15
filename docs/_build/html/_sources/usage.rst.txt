@@ -71,9 +71,9 @@ Calculating wind_info::
     $ ls
     in.flo	    pywinds
     $ pywinds/wind_info.sh 60 90 0 100 -j 0 -i 0 --pixel-size 4000 --center 90 0 -p
-    [63.36, -135.0, 51.78, 317.1, 36.78, -36.47]
+    [63.36, -135.0, 51.78, 315.25, 46.01, 23.77]
     $ pywinds/wind_info.sh 60 90 0 100 -j 0 -i 0 --pixel-size 4000 -p
-    [63.36, -135.0, 51.78, 317.1, 36.78, -36.47]
+    [63.36, -135.0, 51.78, 315.25, 46.01, 23.77]
     $ pywinds/wind_info.sh 60 90 0 100 --pixel-size 4000
     $ pywinds/wind_info.sh 60 90 0 100 --pixel-size 4000 -vv
     [INFO: 2019-03-01 12:00:00 : pywinds.wind_functions] Reading displacements from
@@ -299,7 +299,7 @@ They have similar or identical arguments to wind_info.sh
     $ ls
     in.flo	    pywinds
     $ pywinds/vu.sh 60 90 0 100 -j 0 -i 0 --pixel-size 4000
-    [36.78, -36.47]
+    [46.01, 23.77]
 
 
 * **velocity.sh**: Prints just the velocity of the wind. Same arguments as wind_info.sh
@@ -311,7 +311,7 @@ They have similar or identical arguments to wind_info.sh
     $ ls
     in.flo	    pywinds
     $ pywinds/velocity.sh 60 90 0 100 -j 0 -i 0 --pixel-size 4000
-    [51.78, 317.1]
+    [51.78, 315.25]
 
 
 
@@ -355,15 +355,16 @@ They have similar or identical arguments to wind_info.sh
     in.flo	    pywinds
     $ pywinds/area.sh 60 90 0 --pixel-size 4000
     projection: stere
-    lat-ts: 60
-    lat-0: 90
-    long-0: 0
-    equatorial radius: 6378137.0
-    eccentricity: 0.003353
-    area-extent: (65.81, -47.35, 67.6, 137.18)
-    shape: (1000, 1000)
-    pixel-size: (4000.0, 4000.0)
-    center: (90.0, 0.0)
+    lat-ts: 60.0
+    lat-0: 90.0
+    long-0: 0.0
+    equatorial-radius: 6378137.0
+    eccentricity: 0.08
+    inverse-flattening: 298.26
+    shape: [1000, 1000]
+    area-extent: [63.33, -45.0, 63.33, 135.0]
+    pixel-size: [4000.0, 4000.0]
+    center: [90.0, 0.0]
 
 
 You can use area.sh on a file containing displacements to see what shape it is,
@@ -382,7 +383,7 @@ even if the area is not completely defined, as shown in :ref:`advanced_examples`
     $ ls
     in.flo	    pywinds
     $ pywinds/loxodrome.sh 60 130 61 131
-    [124236.58, 26.25, 206.25]
+    [124234.33, 26.25, 206.25]
 
 * **geodesic.sh**: Prints the shortest distance, initial bearing, and back bearing between
   two points on the earth provided in latitude and longitude as calculated from the great circle arc.

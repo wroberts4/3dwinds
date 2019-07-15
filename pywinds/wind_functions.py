@@ -429,9 +429,10 @@ def _compute_velocity(lat_ts, lat_0, long_0, delta_time, displacement_data=None,
                                                             'grid_mapping_name': 'polar_stereographic',
                                                             'units': 'm/s'}),
                                     xarray.DataArray(_reshape(angle, shape), name='angle', dims=dims,
-                                                     attrs={'standard_name': 'wind_from_direction',
+                                                     attrs={'standard_name': 'wind_to_direction',
                                                             'grid_mapping_name': 'polar_stereographic',
-                                                            'units': 'degrees'})))
+                                                            'units': 'degrees',
+                                                            'description': 'Initial bearing of rhumb line'})))
     # When wind vector bearing is 0 degrees it points North (mathematically 90 degrees) and moves clockwise.
     # speed is in meters/second.
     return shape, speed, angle, new_lat, new_long

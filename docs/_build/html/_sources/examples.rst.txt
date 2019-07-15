@@ -13,7 +13,7 @@ Changing the center of area::
     $ ls
     in.flo        pywinds
     $ pywinds/wind_info.sh 60 90 0 100 -j 0 -i 0 --pixel-size 4000 --center 60 -45 -p
-    [86.44, 45.0, 54.87, 78.88, -16.97, 54.77]
+    [50.62, -86.47, 48.28, 1.59, 48.27, -0.79]
 
 
 .. note::
@@ -27,15 +27,15 @@ Having multiple files in run directory::
     $ ls
     in.flo        test.flo        pywinds
     $ pywinds/wind_info.sh 60 90 0 100 -j 0 -i 0 --pixel-size 4000 -p
-    [63.36, -135.0, 51.78, 317.1, 36.78, -36.47]
-    [63.36, -135.0, 51.78, 317.1, 36.78, -36.47]
+    [63.36, -135.0, 51.78, 315.25, 46.01, 23.77]
+    [63.36, -135.0, 51.78, 315.25, 46.01, 23.77]
     $ pywinds/wind_info.sh 60 90 0 100 -j 0 -i 0 --pixel-size 4000 -vv -p
     [INFO: 2019-03-01 12:00:00 : pywinds.wind_functions] Reading displacements from
     /Desktop/test.flo
-    [63.36, -135.0, 51.78, 317.1, 36.78, -36.47]
+    [63.36, -135.0, 51.78, 315.25, 46.01, 23.77]
     [INFO: 2019-03-01 12:00:00 : pywinds.wind_functions] Reading displacements from
     /Desktop/in.flo
-    [63.36, -135.0, 51.78, 317.1, 36.78, -36.47]
+    [63.36, -135.0, 51.78, 315.25, 46.01, 23.77]
     $ pywinds/wind_info.sh 60 90 0 100 --pixel-size 4000 -vv
     [INFO: 2019-03-01 12:00:00 : pywinds.wind_functions] Reading displacements from
     /Desktop/test.flo
@@ -64,7 +64,7 @@ Specifying a displacement file to read::
     in.flo        test.flo        pywinds
     $ pywinds/wind_info.sh 60 90 0 100 -j 0 -i 0 --pixel-size 4000
       --displacement-data in.flo -p
-    [63.36, -135.0, 51.78, 317.1, 36.78, -36.47]
+    [63.36, -135.0, 51.78, 315.25, 46.01, 23.77]
     $ pywinds/wind_info.sh 60 90 0 100 --pixel-size 4000
       --displacement-data path_to_other_directory/in.flo
     $ pywinds/wind_info.sh 60 90 0 100 --pixel-size 4000
@@ -85,10 +85,10 @@ Specifying multiple displacement files to read::
       --displacement-data \*test*.flo -vv -p
     [INFO: 2019-03-01 12:00:00 : pywinds.wind_functions] Reading displacements from
     /Desktop/windtest.flo
-    [63.36, -135.0, 51.78, 317.1, 36.78, -36.47]
+    [63.36, -135.0, 51.78, 315.25, 46.01, 23.77]
     [INFO: 2019-03-01 12:00:00 : pywinds.wind_functions] Reading displacements from
     /Desktop/windtest2.flo
-    [63.36, -135.0, 51.78, 317.1, 36.78, -36.47]
+    [63.36, -135.0, 51.78, 315.25, 46.01, 23.77]
     $ pywinds/wind_info.sh 60 90 0 100 --pixel-size 4000
       --displacement-data \*test*.flo -vv
     [INFO: 2019-03-01 12:00:00 : pywinds.wind_functions] Reading displacements from
@@ -125,10 +125,13 @@ Altering ellipsoids::
     in.flo        pywinds
     $ pywinds/wind_info.sh 60 90 0 100 -j 0 -i 0 --pixel-size 4000
       --projection-ellipsoid sphere -p
-    [63.26, -135.0, 51.93, 315.2, 36.85, -36.59]
+    [63.26, -135.0, 51.92, 315.21, 45.09, 25.74]
+    $ pywinds/wind_info.sh 60 90 0 100 -j 0 -i 0 --pixel-size 4000
+      --earth-ellipsoid sphere -p
+    [63.36, -135.0, 51.63, 315.29, 46.81, 21.78]
     $ pywinds/wind_info.sh 60 90 0 100 -j 0 -i 0 --pixel-size 4000
       --projection-ellipsoid sphere --earth-ellipsoid sphere -p
-    [63.26, -135.0, 51.77, 317.1, 36.76, -36.46]
+    [63.26, -135.0, 51.76, 315.25, 45.99, 23.76]
 
 
 .. _input_units:
@@ -141,34 +144,34 @@ Specifying input units::
     in.flo        pywinds
     $ pywinds/wind_info.sh 60 90 0 100 -j 0 -i 0
       --pixel-size 4000 -p
-    [63.36, -135.0, 51.78, 317.1, 36.78, -36.47]
+    [63.36, -135.0, 51.78, 315.25, 46.01, 23.77]
     $ pywinds/wind_info.sh 60 90 0 100 -j 0 -i 0
       --pixel-size 4 --units km -p
-    [63.36, -135.0, 51.78, 317.1, 36.78, -36.47]
+    [63.36, -135.0, 51.78, 315.25, 46.01, 23.77]
     $ pywinds/wind_info.sh 60 90 0 100 -j 0 -i 0
       --pixel-size 4 km -p
-    [63.36, -135.0, 51.78, 317.1, 36.78, -36.47]
+    [63.36, -135.0, 51.78, 315.25, 46.01, 23.77]
     $ pywinds/wind_info.sh 60 90 0 100 -j 0 -i 0
       --pixel-size 4 --center 0 0 m  --units km -p
-    [63.36, -135.0, 51.78, 317.1, 36.78, -36.47]
+    [63.36, -135.0, 51.78, 315.25, 46.01, 23.77]
     $ pywinds/wind_info.sh 60 90 0 100 -j 0 -i 0
       --pixel-size 4 km --center 0 0 m -p
-    [63.36, -135.0, 51.78, 317.1, 36.78, -36.47]
+    [63.36, -135.0, 51.78, 315.25, 46.01, 23.77]
     $ pywinds/wind_info.sh 60 90 0 100 -j 0 -i 0
       --pixel-size 4000 m --units km -p
-    [63.36, -135.0, 51.78, 317.1, 36.78, -36.47]
+    [63.36, -135.0, 51.78, 315.25, 46.01, 23.77]
     $ pywinds/wind_info.sh 60 90 0 100 -j 0 -i 0
       --upper-left-extent 2000 -2000 km
       --radius 2000 2000 km -p
-    [63.36, -135.0, 51.78, 317.1, 36.78, -36.47]
+    [63.36, -135.0, 51.78, 315.25, 46.01, 23.77]
     $ pywinds/wind_info.sh 60 90 0 100 -j 0 -i 0
       --upper-left-extent 2000 -2000
       --radius 2000 2000 --units km -p
-    [63.36, -135.0, 51.78, 317.1, 36.78, -36.47]
+    [63.36, -135.0, 51.78, 315.25, 46.01, 23.77]
     $ pywinds/wind_info.sh 60 90 0 100 -j 0 -i 0
       --upper-left-extent 63.335 -135 deg
       --radius 2000 2000 --units km -p
-    [63.36, -135.0, 51.78, 317.1, 36.78, -36.47]
+    [63.36, -135.0, 51.78, 315.25, 46.01, 23.77]
 
 
 .. note::
@@ -179,23 +182,23 @@ Using other advanced args::
 
     $ pywinds/wind_info.sh 60 90 0 100 -j 0 -i 0
       --radius 2000000 2000000 -p
-    [63.36, -135.0, 51.78, 317.1, 36.78, -36.47]
+    [63.36, -135.0, 51.78, 315.25, 46.01, 23.77]
     $ pywinds/wind_info.sh 60 90 0 100 -j 0 -i 0
       --upper-left-extent 2000000 -2000000 -p
-    [63.36, -135.0, 51.78, 317.1, 36.78, -36.47]
+    [63.36, -135.0, 51.78, 315.25, 46.01, 23.77]
     $ pywinds/wind_info.sh 60 90 0 100 -j 0 -i 0
       --area-extent -2000000 -2000000 2000000 2000000 -p
-    [63.36, -135.0, 51.78, 317.1, 36.78, -36.47]
+    [63.36, -135.0, 51.78, 315.25, 46.01, 23.77]
     $ pywinds/wind_info.sh 60 90 0 100 -j 0 -i 0
       --upper-left-extent 2000000 -2000000
       --radius 2000000 2000000 -p
-    [63.36, -135.0, 51.78, 317.1, 36.78, -36.47]
+    [63.36, -135.0, 51.78, 315.25, 46.01, 23.77]
     $ pywinds/wind_info.sh 60 90 0 100 -j 0 -i 0
       --pixel-size 4000 --shape 10000 100 -p
     [WARNING: 2019-03-01 12:00:00 : pywinds.wind_functions] Shape found
     from area or provided by user does not match the shape of the file:
     (10000, 100) vs (1000, 1000)
-    [63.36, -135.0, 51.78, 317.1, 36.78, -36.47]
+    [63.36, -135.0, 51.78, 315.25, 46.01, 23.77]
 
 
 Shuffling order of arguments/options::
@@ -208,10 +211,10 @@ Shuffling order of arguments/options::
 
     $ pywinds/wind_info.sh -j 0 -i 0
       -p --pixel-size 4000 -i 0 60 90 0 100
-    [63.36, -135.0, 51.78, 317.1, 36.78, -36.47]
+    [63.36, -135.0, 51.78, 315.25, 46.01, 23.77]
     $ pywinds/wind_info.sh -j 0 60 90 -i 0
       0 -p --pixel-size 4000 4000 100 -i 0
-    [63.36, -135.0, 51.78, 317.1, 36.78, -36.47]
+    [63.36, -135.0, 51.78, 315.25, 46.01, 23.77]
 
 
 .. note::
@@ -229,7 +232,7 @@ Shuffling order of arguments/options::
     in.flo        test.flo        pywinds
     $ pywinds/wind_info.sh 60 90 0 100 -j 0 -i 0 --pixel-size 4000
       --displacement-data [[1,2,3,4],[5,6,7,8]] -p
-    [89.97, -135.0, 3.76, 341.58, 3.57, -1.19]
+    [89.97, -135.0, 3.68, 346.03, 1.62, 3.3]
 
 .. _content_of_wind_info.nc:
 
@@ -313,8 +316,9 @@ Content of wind_info.nc
             speed:units = "m/s" ;
         float angle(y, x) ;
             angle:_FillValue = NaNf ;
-            angle:standard_name = "wind_from_direction" ;
+            angle:standard_name = "wind_to_direction" ;
             angle:grid_mapping = "polar_stereographic" ;
+            angle:description = "Initial bearing of rhumb line" ;
             angle:units = "degrees" ;
         float wind_info(yx, vars) ;
             wind_info:_FillValue = NaNf ;
