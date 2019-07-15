@@ -80,11 +80,11 @@ def h_2k(n, k, precision=3):
     return (-1) ** k * (1 - 2 * k) * (1 + 2 * k) * total / k
 
 
-def _bessel_helmert(new_lat, old_lat, geod_info, precision=6):
+def _bessel_helmert(new_lat, old_lat, flattening, precision=6):
     """Takes latitudes as radians. Credit: https://en.wikipedia.org/wiki/Meridian_arc"""
     # Credit: https://en.wikipedia.org/wiki/Meridian_arc#cite_ref-14
     # Third flattening: (a - b) / (a + b)
-    n = geod_info['f'] / (2 - geod_info['f'])
+    n = flattening / (2 - flattening)
     # 6 is enough coefficients to be accurate.
     coeffs = [h_2k(n, 2 * k) for k in range(precision)]
     return sum(coeff * new_lat if k == 0 else coeff * np.sin(2 * k * new_lat) for k, coeff in enumerate(coeffs)) -\
@@ -174,15 +174,8 @@ def _create_area(lat_ts, lat_0, long_0, projection=None, area_extent=None, shape
         projection = 'stere'
     if units is None:
         units = 'm'
-    if projection_ellipsoid is None:
-        projection_ellipsoid = Geod(ellps='WGS84')
-    elif isinstance(projection_ellipsoid, str):
-        projection_ellipsoid = Geod(ellps=projection_ellipsoid)
-    else:
-        raise ValueError(
-            'projection_ellipsoid must be a string or Geod type, but instead was {0} {1}'.format(
-                projection_ellipsoid, type(projection_ellipsoid)))
-    logger.debug('Projection ellipsoid data: {0}'.format(projection_ellipsoid.initstring))
+    geod_info = _make_ellipsoid(projection_ellipsoid, 'projection_ellipsoid')
+    logger.debug('Projection ellipsoid data: {0}'.format(geod_info.initstring.replace('+', '')))
     # Center is given in (lat, long) order, but create_area_def needs it in (long, lat) order.
     if area_extent is not None:
         area_extent_ll, area_extent_ur = area_extent[0:2], area_extent[2:4]
@@ -203,7 +196,7 @@ def _create_area(lat_ts, lat_0, long_0, projection=None, area_extent=None, shape
         center = xarray.DataArray(center, attrs={'units': 'degrees'})
     proj_dict = proj4_str_to_dict(
         '+lat_ts={0} +lat_0={1} +lon_0={2} +proj={3} {4}'.format(lat_ts, lat_0, long_0, projection,
-                                                                 projection_ellipsoid.initstring))
+                                                                 geod_info.initstring))
     # Object that contains area information.
     area_definition = create_area_def('pywinds', proj_dict, area_extent=area_extent, shape=shape, resolution=pixel_size,
                                       center=center, upper_left_extent=upper_left_extent, radius=radius, units=units)
@@ -854,6 +847,39 @@ def lat_long(lat_ts, lat_0, long_0, displacement_data=None, projection=None, j=N
     return np.array((_reshape(old_lat, shape), _reshape(old_long, shape)))
 
 
+def _make_ellipsoid(ellipsoid, var_name):
+    if ellipsoid is None:
+        geod_info = Geod(ellps='WGS84')
+    elif isinstance(ellipsoid, str):
+        geod_info = Geod(ellps=ellipsoid)
+    elif isinstance(ellipsoid, dict):
+        if 'a' not in ellipsoid:
+            if 'b' not in ellipsoid:
+                logger.warning('Neither the major axis (a) nor the minor axis (b) were provided')
+            else:
+                if 'rf' in ellipsoid:
+                    ellipsoid['f'] = 1 / ellipsoid['rf']
+                if 'e' in ellipsoid:
+                    ellipsoid['es'] = ellipsoid['e'] ** 2
+                if 'f' in ellipsoid:
+                    if ellipsoid['f'] < 0 or ellipsoid['f'] >= 1:
+                        raise ValueError('Invalid flattening of {0}: 0 <= flattening < 1'.format(ellipsoid['f']))
+                    ellipsoid['a'] = ellipsoid['b'] / (1 - ellipsoid['f'])
+                elif 'es' in ellipsoid:
+                    if ellipsoid['es'] < 0 or ellipsoid['es'] >= 1:
+                        raise ValueError('Invalid eccentricity of {0}: 0 <= eccentricity < 1'.format(ellipsoid['es']))
+                    ellipsoid['a'] = ellipsoid['b'] / (1 - ellipsoid['es']) ** .5
+        geod_info = Geod(**ellipsoid)
+    else:
+        raise ValueError('{0} must be a string or Geod type, but instead was {1} {2}'.format(var_name, ellipsoid,
+                                                                                             type(ellipsoid)))
+    if geod_info.a < 0:
+        raise ValueError('Invalid major axis of {0}: Negative numbers not allowed'.format(geod_info.a))
+    if geod_info.f < 0 or geod_info.f >= 1:
+        raise ValueError('Invalid flattening of {0}: 0 <= flattening < 1'.format(geod_info.f))
+    return geod_info
+
+
 def loxodrome(old_lat, old_long, new_lat, new_long, earth_ellipsoid=None):
     """Computes the distance and initial/back bearing of the rhumb line formed between two lat-longs.
 
@@ -876,31 +902,25 @@ def loxodrome(old_lat, old_long, new_lat, new_long, earth_ellipsoid=None):
     -------
     (distance, forward bearing, back bearing)
     """
-    if earth_ellipsoid is None:
-        earth_ellipsoid = Geod(ellps='WGS84')
-    elif isinstance(earth_ellipsoid, str):
-        earth_ellipsoid = Geod(ellps=earth_ellipsoid)
-    else:
-        raise ValueError('earth_ellipsoid must be a string or Geod type, but instead was {0} {1}'.format(
-            earth_ellipsoid, type(earth_ellipsoid)))
-    logger.debug('Earth ellipsoid data: {0}'.format(earth_ellipsoid.initstring))
+    geod_info = _make_ellipsoid(earth_ellipsoid, 'earth_ellipsoid')
+    logger.debug('Earth ellipsoid data: {0}'.format(geod_info.initstring.replace('+', '')))
     old_lat = np.radians(old_lat)
     old_long = np.radians(old_long)
     new_lat = np.radians(new_lat)
     new_long = np.radians(new_long)
-    geod_info = proj4_str_to_dict(earth_ellipsoid.initstring)
-    e2 = (2 - geod_info['f']) * geod_info['f']
-    e = e2 ** .5
+    # eccentricity squared.
+    es = (2 - geod_info.f) * geod_info.f
+    e = es ** .5
     forward_bearing = np.arctan2(_delta_longitude(new_long, old_long),
                                  np.arctanh(np.sin(new_lat)) - e * np.arctanh(e * np.sin(new_lat)) -
                                  (np.arctanh(np.sin(old_lat)) - e * np.arctanh(e * np.sin(old_lat))))
     # If staying at a pole.
     forward_bearing = np.where(np.isnan(forward_bearing) == False, forward_bearing, new_lat + np.pi / 2)
     # (a + b) / 2 = a * (2 - f) / 2 since b = a * (1 - f)
-    avg_radius = geod_info['a'] * (2 - geod_info['f']) / 2
-    meridian_dist = avg_radius * _bessel_helmert(new_lat, old_lat, geod_info)
+    avg_radius = geod_info.a * (2 - geod_info.f) / 2
+    meridian_dist = avg_radius * _bessel_helmert(new_lat, old_lat, geod_info.f)
     length = abs(meridian_dist / np.cos(forward_bearing))
-    lat_radius = geod_info['a'] / (1 - e2 * np.sin(new_lat) ** 2) ** .5 * np.cos(new_lat)
+    lat_radius = geod_info.a / (1 - es * np.sin(new_lat) ** 2) ** .5 * np.cos(new_lat)
     # Only used when staying on the same latitude.
     horizontal_length = lat_radius * abs(_delta_longitude(new_long, old_long))
     # If staying on a lat, use horizontal_length. Unless at poles to prevent rounding error.
@@ -928,16 +948,9 @@ def geodesic(old_lat, old_long, new_lat, new_long, earth_ellipsoid=None):
     -------
     (distance, initial bearing, back bearing)
     """
-    if earth_ellipsoid is None:
-        earth_ellipsoid = Geod(ellps='WGS84')
-    elif isinstance(earth_ellipsoid, str):
-        earth_ellipsoid = Geod(ellps=earth_ellipsoid)
-    else:
-        raise ValueError(
-            'earth_ellipsoid must be a string or Geod type, but instead was {0} {1}'.format(earth_ellipsoid,
-                                                                                            type(earth_ellipsoid)))
-    logger.debug('Earth ellipsoid data: {0}'.format(earth_ellipsoid.initstring))
-    initial_bearing, back_bearing, distance = earth_ellipsoid.inv(old_long, old_lat, new_long, new_lat)
+    geod_info = _make_ellipsoid(earth_ellipsoid, 'earth_ellipsoid')
+    logger.debug('Earth ellipsoid data: {0}'.format(geod_info.initstring.replace('+', '')))
+    initial_bearing, back_bearing, distance = geod_info.inv(old_long, old_lat, new_long, new_lat)
     return distance, initial_bearing % 360, back_bearing % 360
 
 

@@ -96,15 +96,20 @@ class CustomAction(argparse.Action):
         super().__init__(option_strings, dest, nargs=default_nargs, help=help)
 
     def __call__(self, parser, args, values, option_string=None):
-        # Handles units.
         values = [_nums_or_string(value) for value in values]
-        units = None
-        if isinstance(values[-1], str):
-            units = values.pop(-1)
-        if len(values) == 1:
-            values = values[0]
-        if units is not None:
-            values = xarray.DataArray(values, attrs={'units': units})
+        if 'ellipsoid' in option_string or 'spheroid' in option_string:
+            if len(values) == 1:
+                values = values[0]
+            else:
+                values = {key: val for key, val in zip(values[::2], values[1::2])}
+        else:
+            units = None
+            if isinstance(values[-1], str):
+                units = values.pop(-1)
+            if len(values) == 1:
+                values = values[0]
+            if units is not None:
+                values = xarray.DataArray(values, attrs={'units': units})
         setattr(args, self.dest, values)
 
 
@@ -121,7 +126,9 @@ def _get_args(name, description):
         my_parser.add_argument('old-long', type=float, help='Longitude of the first point')
         my_parser.add_argument('new-lat', type=float, help='Latitude of the second point')
         my_parser.add_argument('new-long', type=float, help='Longitude of the second point')
-        my_parser.add_argument('--earth-ellipsoid', '--earth-spheroid', metavar='str', help='ellipsoid of Earth')
+        my_parser.add_argument('--earth-ellipsoid', '--earth-spheroid', action=CustomAction, type=_nums_or_string,
+                               narg_types=[[str], [str, (float, int)], [str, (float, int), str, (float, int)]],
+                               help='ellipsoid of Earth')
     else:
         if name != 'area':
             my_parser.add_argument('-j', '--j', type=int, metavar='int', help='row to run calculations on')
