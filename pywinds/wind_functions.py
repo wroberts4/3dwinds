@@ -450,8 +450,10 @@ def _compute_vu(lat_ts, lat_0, long_0, delta_time, displacement_data=None, proje
                                                                earth_ellipsoid=earth_ellipsoid, no_save=no_save,
                                                                save_directory=save_directory)
     logger.debug('Finding v and u components')
-    v = np.sin(angle) * speed
-    u = np.cos(angle) * speed
+    # IMPORTANT, THIS IS CORRECT: Since angle is measured counter-cloclwise from north, then v = sin(pi - angle) and
+    # u = cos(pi - angle). sin(pi - angle) = cos(angle) and cos(pi - angle) = sin(angle)!
+    v = np.cos(np.radians(angle)) * speed
+    u = np.sin(np.radians(angle)) * speed
     if no_save is False:
         dims = None
         if np.size(v) != 1:

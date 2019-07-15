@@ -57,13 +57,13 @@ class TestWrappers(unittest.TestCase):
         file_name = os.path.join(os.path.dirname(os.path.abspath(__file__)),'test_files', 'test_data_three.flo')
         self.test_cases.append(
             TestCase(file_name, i=1, j=4, pixel_size=10000, lat_ts=60, lat_0=90, long_0=0, center=[90.0, 0.0],
-                     area_extent=[89.66, -45.0, 89.66, 135.0], speed=2610, angle=14.74, u=-1477.58, v=2151.48,
+                     area_extent=[89.66, -45.0, 89.66, 135.0], speed=2610, angle=14.74, u=664.03, v=2524.12,
                      old_lat=-46.64, old_long=-134.96, new_lat=89.79, new_long=-26.57))
         displacement_data = np.array(([x for x in range(25)], [x for x in range(25)])) * 10
         self.test_cases.append(
             TestCase(displacement_data.tolist(), pixel_size=5000, lat_ts=-60, lat_0=-90, long_0=20, i=1, j=4,
                      center=[-40.0, 0.0], area_extent=[-40.06, -0.17, -39.94, 0.17], speed=208.34, angle=157.77,
-                     u=160.4, v=132.95, old_lat=-29.63, old_long=-5.27, new_lat=-40.06, new_long=-0.08))
+                     u=78.81, v=-192.86, old_lat=-29.63, old_long=-5.27, new_lat=-40.06, new_long=-0.08))
 
     def test_wind_info(self):
         for case in self.test_cases:

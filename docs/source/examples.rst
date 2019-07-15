@@ -39,11 +39,11 @@ Having multiple files in run directory::
     $ pywinds/wind_info.sh 60 90 0 100 --pixel-size 4000 -vv
     [INFO: 2019-03-01 12:00:00 : pywinds.wind_functions] Reading displacements from
     /Desktop/test.flo
-    [INFO: 2019-03-01 12:00:08 : wind_info.py] Data saved to the directory
+    [INFO: 2019-03-01 12:00:08 : wind_info.sh] Data saved to the directory
     /Desktop/test.flo_output_20190301_115959
     [INFO: 2019-03-01 12:00:08 : pywinds.wind_functions] Reading displacements from
     /Desktop/in.flo
-    [INFO: 2019-03-01 12:00:16 : wind_info.py] Data saved to the directory
+    [INFO: 2019-03-01 12:00:16 : wind_info.sh] Data saved to the directory
     /Desktop/in.flo_output_20190301_115959
 
 
@@ -71,7 +71,7 @@ Specifying a displacement file to read::
       --displacement-data path_to_other_directory/in.flo -vv
     [INFO: 2019-03-01 12:00:00 : pywinds.wind_functions] Reading displacements from
     path_to_other_directory/in.flo
-    [INFO: 2019-03-01 12:00:08 : wind_info.py] Data saved to the directory
+    [INFO: 2019-03-01 12:00:08 : wind_info.sh] Data saved to the directory
     /Desktop/in.flo_output_20190301_115959
 
 
@@ -93,11 +93,11 @@ Specifying multiple displacement files to read::
       --displacement-data \*test*.flo -vv
     [INFO: 2019-03-01 12:00:00 : pywinds.wind_functions] Reading displacements from
     /Desktop/windtest.flo
-    [INFO: 2019-03-01 12:00:08 : wind_info.py] Data saved to the directory
+    [INFO: 2019-03-01 12:00:08 : wind_info.sh] Data saved to the directory
     /Desktop/windtest.flo_output_20190301_115959
     [INFO: 2019-03-01 12:00:08 : pywinds.wind_functions] Reading displacements from
     /Desktop/windtest2.flo
-    [INFO: 2019-03-01 12:00:16 : wind_info.py] Data saved to the directory
+    [INFO: 2019-03-01 12:00:16 : wind_info.sh] Data saved to the directory
     /Desktop/windtest2.flo_output_20190301_115959
 
 
@@ -110,11 +110,11 @@ Specifying save directory::
     $ pywinds/wind_info.sh 60 90 0 100 --pixel-size 4000 -vv -s new_directory
     [INFO: 2019-03-01 12:00:00 : pywinds.wind_functions] Reading displacements from
     /Desktop/in.flo
-    [INFO: 2019-03-01 12:00:08 : wind_info.py] Data saved to the directory
+    [INFO: 2019-03-01 12:00:08 : wind_info.sh] Data saved to the directory
     /Desktop/new_directory/in.flo_output_20190301_115959
     [INFO: 2019-03-01 12:00:08 : pywinds.wind_functions] Reading displacements from
     /Desktop/test.flo
-    [INFO: 2019-03-01 12:00:16 : wind_info.py] Data saved to the directory
+    [INFO: 2019-03-01 12:00:16 : wind_info.sh] Data saved to the directory
     /Desktop/new_directory/test.flo_output_20190301_115959
 
 Altering ellipsoids::
@@ -397,42 +397,42 @@ old_longitude.txt::
 v.txt::
 
     0.00,100.76,200.48
-    300.92,399.48,494.96
-    589.80,681.97,771.00
+    300.90,399.44,494.88
+    589.67,681.78,770.76
 
 
 u.txt::
 
-    0.00,-39.86,-158.31
-    118.10,467.99,-579.49
-    458.61,791.67,1188.80
+    0.00,-15.86,-59.25
+    38.97,0.00,-177.67
+    144.64,232.85,362.30
 
 
 speed.txt::
 
-    0.00,100.97,201.49
-    301.11,399.44,496.10
-    590.68,683.00,772.78
+    0.00,102.00,209.05
+    303.41,399.44,525.81
+    607.15,720.45,851.66
 
 
 angle.txt::
 
-    180.00,359.71,359.71
-    0.10,0.00,359.94
-    0.10,0.05,0.00
+    0.00,351.05,343.54
+    7.38,0.00,340.25
+    13.78,18.86,25.18
 
 
 wind_info.txt::
 
-    89.95,-135.00,0.00,90.00,0.00,0.00
-    89.96,180.00,108.36,338.42,100.76,-39.86
-    89.95,135.00,255.45,321.70,200.48,-158.31
-    89.96,-90.00,323.26,21.43,300.92,118.10
-    90.00,0.00,615.31,49.52,399.48,467.99
-    89.96,90.00,762.10,310.50,494.96,-579.49
-    89.95,-45.00,747.11,37.87,589.80,458.61
-    89.96,0.00,1044.90,49.26,681.97,791.67
-    89.95,45.00,1416.93,57.03,771.00,1188.80
+    89.95,-135.00,0.00,0.00,0.00,0.00
+    89.96,180.00,102.00,351.05,100.76,-15.86
+    89.95,135.00,209.05,343.54,200.48,-59.25
+    89.96,-90.00,303.41,7.38,300.90,38.97
+    90.00,0.00,399.44,0.00,399.44,0.00
+    89.96,90.00,525.81,340.25,494.88,-177.67
+    89.95,-45.00,607.15,13.78,589.67,144.64
+    89.96,0.00,720.45,18.86,681.78,232.85
+    89.95,45.00,851.66,25.18,770.76,362.30
 
 
 .. _advanced_examples:
@@ -446,13 +446,13 @@ Getting shape of displacement file using area.sh::
     /Desktop
     $ ls
     in.flo        pywinds
-    $ pywinds/area.py 60 90 0
+    $ pywinds/area.sh 60 90 0
     projection: stere
-    lat-ts: 60
-    lat-0: 90
-    long-0: 0
+    lat-ts: 60.0
+    lat-0: 90.0
+    long-0: 0.0
     equatorial-radius: 6378137.0
-    eccentricity: 0.081819
+    eccentricity: 0.08
     inverse-flattening: 298.26
     shape: [1000, 1000]
     area-extent: None
@@ -468,7 +468,7 @@ Error and usage messages
 If incorrect commands were given::
 
     $ pywinds/wind_info.sh 60 90 0 --pixel-size 4000
-    usage: wind_info.py [-h] [-j int] [-i int] [-p] [-s path_name]
+    usage: wind_info.sh [-h] [-j int] [-i int] [-p] [-s path_name]
                         [--earth-ellipsoid str] [--center y x [units]]
                         [--pixel-size dy [dx] [units]] [--displacement-data filename]
                         [--units str]
@@ -478,7 +478,7 @@ If incorrect commands were given::
                         [--shape height width] [--projection str]
                         [--projection-ellipsoid str] [-v]
                         lat-ts lat-0 long-0 delta-time
-    wind_info.py: error: the following arguments are required: delta-time
+    wind_info.sh: error: the following arguments are required: delta-time
 
 
 If not enough information is provided to a script, this kind of
@@ -490,28 +490,16 @@ error will be displayed (see :ref:`common combinations of area information<area_
     in.flo        pywinds
     $ pywinds/wind_info.sh 60 90 0 100 -i 0 -j 0 -p
     Traceback (most recent call last):
-      File "/home/wroberts/pywinds/env/lib/python3.7/runpy.py",
-    line 193, in _run_module_as_main
-        "__main__", mod_spec)
-      File "/Desktop/pywinds/env/lib/python3.7/runpy.py", line 85, in _run_code
-        exec(code, run_globals)
-      File "/Desktop/pywinds/env/lib/python3.7/site-packages/pywinds/wind_info.py",
-    line 34, in <module>
-        run_script(wind_info, output_format, 'wind_info')
-      File "/Desktop/pywinds/env/lib/python3.7/site-packages/pywinds/wrapper_utils.py",
-    line 213, in run_script
+      File "<stdin>", line 35, in <module>
+      File "pywinds/env/lib/python3.7/site-packages/pywinds/wrapper_utils.py",line 223, in run_script
         output = output_format(func(*args, **kwargs), **kwargs)
-      File "/Desktop/pywinds/env/lib/python3.7/site-packages/pywinds/wind_functions.py",
-    line 991, in wind_info
+      File "pywinds/env/lib/python3.7/site-packages/pywinds/wind_functions.py", line 1046, in wind_info
         save_directory=save_directory)
-      File "/Desktop/pywinds/env/lib/python3.7/site-packages/pywinds/wind_functions.py",
-    line 440, in _compute_velocity
+      File "pywinds/env/lib/python3.7/site-packages/pywinds/wind_functions.py", line 451, in _compute_vu
         save_directory=save_directory)
-      File "/Desktop/pywinds/env/lib/python3.7/site-packages/pywinds/wind_functions.py",
-    line 399, in _compute_vu
+      File "pywinds/env/lib/python3.7/site-packages/pywinds/wind_functions.py", line 418, in _compute_velocity
         no_save=no_save, save_directory=save_directory)
-      File "/Desktop/pywinds/env/lib/python3.7/site-packages/pywinds/wind_functions.py",
-    line 346, in _compute_lat_long
+      File "pywinds/env/lib/python3.7/site-packages/pywinds/wind_functions.py", line 365, in _compute_lat_long
         raise ValueError('Not enough information provided to create an area for projection')
     ValueError: Not enough information provided to create an area for projection
 
@@ -524,7 +512,7 @@ If an invalid area is created (in this case the lower left corner is the bottom 
     in.flo        pywinds
     $ pywinds/area.sh 60 90 0 --upper-left-extent 60 45 deg -v
     [WARNING: 2019-07-08 09:02:54 : pywinds.wind_functions] invalid area_extent.
-    Lower left corner is above or to the right of the upper right corner:
+      Lower left corner is above or to the right of the upper right corner:
     [59.99999999999866, 135.00000000000003, 59.99999999999866, -44.99999999999999]
     projection: stere
     lat-ts: 60.0
