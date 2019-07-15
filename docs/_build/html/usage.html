@@ -229,9 +229,9 @@ Specified using <strong>-vvv</strong></p></li>
 $ ls
 in.flo          pywinds
 $ pywinds/wind_info.sh 60 90 0 100 -j 0 -i 0 --pixel-size 4000 --center 90 0 -p
-[63.36, -135.0, 51.78, 315.25, 46.01, 23.77]
+[63.36, -135.0, 51.78, 315.25, 36.78, -36.46]
 $ pywinds/wind_info.sh 60 90 0 100 -j 0 -i 0 --pixel-size 4000 -p
-[63.36, -135.0, 51.78, 315.25, 46.01, 23.77]
+[63.36, -135.0, 51.78, 315.25, 36.78, -36.46]
 $ pywinds/wind_info.sh 60 90 0 100 --pixel-size 4000
 $ pywinds/wind_info.sh 60 90 0 100 --pixel-size 4000 -vv
 [INFO: 2019-03-01 12:00:00 : pywinds.wind_functions] Reading displacements from
@@ -435,7 +435,7 @@ They have similar or identical arguments to wind_info.sh</p>
 $ ls
 in.flo          pywinds
 $ pywinds/vu.sh 60 90 0 100 -j 0 -i 0 --pixel-size 4000
-[46.01, 23.77]
+[36.78, -36.46]
 </pre></div>
 </div>
 <ul class="simple">
@@ -501,7 +501,7 @@ center: [90.0, 0.0]
 <p>You can use area.sh on a file containing displacements to see what shape it is,
 even if the area is not completely defined, as shown in <a class="reference internal" href="examples.html#advanced-examples"><span class="std std-ref">Advanced examples</span></a>.</p>
 <ul class="simple" id="loxodrome-sh">
-<li><p><strong>loxodrome.sh</strong>: Prints the distance, initial bearing, and back bearing between
+<li><p><strong>loxodrome.sh</strong>: Prints the distance, forward bearing, and back bearing between
 two points on the earth provided in latitude and longitude as calculated from the rhumb line.
 This is the angle and distance one would travel if direction is continuously updated.</p></li>
 </ul>

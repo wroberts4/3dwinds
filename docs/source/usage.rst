@@ -71,9 +71,9 @@ Calculating wind_info::
     $ ls
     in.flo	    pywinds
     $ pywinds/wind_info.sh 60 90 0 100 -j 0 -i 0 --pixel-size 4000 --center 90 0 -p
-    [63.36, -135.0, 51.78, 315.25, 46.01, 23.77]
+    [63.36, -135.0, 51.78, 315.25, 36.78, -36.46]
     $ pywinds/wind_info.sh 60 90 0 100 -j 0 -i 0 --pixel-size 4000 -p
-    [63.36, -135.0, 51.78, 315.25, 46.01, 23.77]
+    [63.36, -135.0, 51.78, 315.25, 36.78, -36.46]
     $ pywinds/wind_info.sh 60 90 0 100 --pixel-size 4000
     $ pywinds/wind_info.sh 60 90 0 100 --pixel-size 4000 -vv
     [INFO: 2019-03-01 12:00:00 : pywinds.wind_functions] Reading displacements from
@@ -299,7 +299,7 @@ They have similar or identical arguments to wind_info.sh
     $ ls
     in.flo	    pywinds
     $ pywinds/vu.sh 60 90 0 100 -j 0 -i 0 --pixel-size 4000
-    [46.01, 23.77]
+    [36.78, -36.46]
 
 
 * **velocity.sh**: Prints just the velocity of the wind. Same arguments as wind_info.sh

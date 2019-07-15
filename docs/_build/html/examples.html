@@ -166,7 +166,7 @@
 $ ls
 in.flo        pywinds
 $ pywinds/wind_info.sh 60 90 0 100 -j 0 -i 0 --pixel-size 4000 --center 60 -45 -p
-[50.62, -86.47, 48.28, 1.59, 48.27, -0.79]
+[50.62, -86.47, 48.28, 1.59, 48.26, 1.34]
 </pre></div>
 </div>
 <div class="admonition note">
@@ -179,23 +179,23 @@ $ pywinds/wind_info.sh 60 90 0 100 -j 0 -i 0 --pixel-size 4000 --center 60 -45 -
 $ ls
 in.flo        test.flo        pywinds
 $ pywinds/wind_info.sh 60 90 0 100 -j 0 -i 0 --pixel-size 4000 -p
-[63.36, -135.0, 51.78, 315.25, 46.01, 23.77]
-[63.36, -135.0, 51.78, 315.25, 46.01, 23.77]
+[63.36, -135.0, 51.78, 315.25, 36.78, -36.46]
+[63.36, -135.0, 51.78, 315.25, 36.78, -36.46]
 $ pywinds/wind_info.sh 60 90 0 100 -j 0 -i 0 --pixel-size 4000 -vv -p
 [INFO: 2019-03-01 12:00:00 : pywinds.wind_functions] Reading displacements from
 /Desktop/test.flo
-[63.36, -135.0, 51.78, 315.25, 46.01, 23.77]
+[63.36, -135.0, 51.78, 315.25, 36.78, -36.46]
 [INFO: 2019-03-01 12:00:00 : pywinds.wind_functions] Reading displacements from
 /Desktop/in.flo
-[63.36, -135.0, 51.78, 315.25, 46.01, 23.77]
+[63.36, -135.0, 51.78, 315.25, 36.78, -36.46]
 $ pywinds/wind_info.sh 60 90 0 100 --pixel-size 4000 -vv
 [INFO: 2019-03-01 12:00:00 : pywinds.wind_functions] Reading displacements from
 /Desktop/test.flo
-[INFO: 2019-03-01 12:00:08 : wind_info.py] Data saved to the directory
+[INFO: 2019-03-01 12:00:08 : wind_info.sh] Data saved to the directory
 /Desktop/test.flo_output_20190301_115959
 [INFO: 2019-03-01 12:00:08 : pywinds.wind_functions] Reading displacements from
 /Desktop/in.flo
-[INFO: 2019-03-01 12:00:16 : wind_info.py] Data saved to the directory
+[INFO: 2019-03-01 12:00:16 : wind_info.sh] Data saved to the directory
 /Desktop/in.flo_output_20190301_115959
 </pre></div>
 </div>
@@ -215,14 +215,14 @@ $ ls
 in.flo        test.flo        pywinds
 $ pywinds/wind_info.sh 60 90 0 100 -j 0 -i 0 --pixel-size 4000
   --displacement-data in.flo -p
-[63.36, -135.0, 51.78, 315.25, 46.01, 23.77]
+[63.36, -135.0, 51.78, 315.25, 36.78, -36.46]
 $ pywinds/wind_info.sh 60 90 0 100 --pixel-size 4000
   --displacement-data path_to_other_directory/in.flo
 $ pywinds/wind_info.sh 60 90 0 100 --pixel-size 4000
   --displacement-data path_to_other_directory/in.flo -vv
 [INFO: 2019-03-01 12:00:00 : pywinds.wind_functions] Reading displacements from
 path_to_other_directory/in.flo
-[INFO: 2019-03-01 12:00:08 : wind_info.py] Data saved to the directory
+[INFO: 2019-03-01 12:00:08 : wind_info.sh] Data saved to the directory
 /Desktop/in.flo_output_20190301_115959
 </pre></div>
 </div>
@@ -235,19 +235,19 @@ $ pywinds/wind_info.sh 60 90 0 100 -j 0 -i 0 --pixel-size 4000
   --displacement-data \*test*.flo -vv -p
 [INFO: 2019-03-01 12:00:00 : pywinds.wind_functions] Reading displacements from
 /Desktop/windtest.flo
-[63.36, -135.0, 51.78, 315.25, 46.01, 23.77]
+[63.36, -135.0, 51.78, 315.25, 36.78, -36.46]
 [INFO: 2019-03-01 12:00:00 : pywinds.wind_functions] Reading displacements from
 /Desktop/windtest2.flo
-[63.36, -135.0, 51.78, 315.25, 46.01, 23.77]
+[63.36, -135.0, 51.78, 315.25, 36.78, -36.46]
 $ pywinds/wind_info.sh 60 90 0 100 --pixel-size 4000
   --displacement-data \*test*.flo -vv
 [INFO: 2019-03-01 12:00:00 : pywinds.wind_functions] Reading displacements from
 /Desktop/windtest.flo
-[INFO: 2019-03-01 12:00:08 : wind_info.py] Data saved to the directory
+[INFO: 2019-03-01 12:00:08 : wind_info.sh] Data saved to the directory
 /Desktop/windtest.flo_output_20190301_115959
 [INFO: 2019-03-01 12:00:08 : pywinds.wind_functions] Reading displacements from
 /Desktop/windtest2.flo
-[INFO: 2019-03-01 12:00:16 : wind_info.py] Data saved to the directory
+[INFO: 2019-03-01 12:00:16 : wind_info.sh] Data saved to the directory
 /Desktop/windtest2.flo_output_20190301_115959
 </pre></div>
 </div>
@@ -259,11 +259,11 @@ in.flo        test.flo        pywinds
 $ pywinds/wind_info.sh 60 90 0 100 --pixel-size 4000 -vv -s new_directory
 [INFO: 2019-03-01 12:00:00 : pywinds.wind_functions] Reading displacements from
 /Desktop/in.flo
-[INFO: 2019-03-01 12:00:08 : wind_info.py] Data saved to the directory
+[INFO: 2019-03-01 12:00:08 : wind_info.sh] Data saved to the directory
 /Desktop/new_directory/in.flo_output_20190301_115959
 [INFO: 2019-03-01 12:00:08 : pywinds.wind_functions] Reading displacements from
 /Desktop/test.flo
-[INFO: 2019-03-01 12:00:16 : wind_info.py] Data saved to the directory
+[INFO: 2019-03-01 12:00:16 : wind_info.sh] Data saved to the directory
 /Desktop/new_directory/test.flo_output_20190301_115959
 </pre></div>
 </div>
@@ -274,13 +274,13 @@ $ ls
 in.flo        pywinds
 $ pywinds/wind_info.sh 60 90 0 100 -j 0 -i 0 --pixel-size 4000
   --projection-ellipsoid sphere -p
-[63.26, -135.0, 51.92, 315.21, 45.09, 25.74]
+[63.26, -135.0, 51.92, 315.21, 36.85, -36.58]
 $ pywinds/wind_info.sh 60 90 0 100 -j 0 -i 0 --pixel-size 4000
   --earth-ellipsoid sphere -p
-[63.36, -135.0, 51.63, 315.29, 46.81, 21.78]
+[63.36, -135.0, 51.63, 315.29, 36.69, -36.32]
 $ pywinds/wind_info.sh 60 90 0 100 -j 0 -i 0 --pixel-size 4000
   --projection-ellipsoid sphere --earth-ellipsoid sphere -p
-[63.26, -135.0, 51.76, 315.25, 45.99, 23.76]
+[63.26, -135.0, 51.76, 315.25, 36.76, -36.44]
 </pre></div>
 </div>
 <p id="input-units">Specifying input units:</p>
@@ -290,34 +290,34 @@ $ ls
 in.flo        pywinds
 $ pywinds/wind_info.sh 60 90 0 100 -j 0 -i 0
   --pixel-size 4000 -p
-[63.36, -135.0, 51.78, 315.25, 46.01, 23.77]
+[63.36, -135.0, 51.78, 315.25, 36.78, -36.46]
 $ pywinds/wind_info.sh 60 90 0 100 -j 0 -i 0
   --pixel-size 4 --units km -p
-[63.36, -135.0, 51.78, 315.25, 46.01, 23.77]
+[63.36, -135.0, 51.78, 315.25, 36.78, -36.46]
 $ pywinds/wind_info.sh 60 90 0 100 -j 0 -i 0
   --pixel-size 4 km -p
-[63.36, -135.0, 51.78, 315.25, 46.01, 23.77]
+[63.36, -135.0, 51.78, 315.25, 36.78, -36.46]
 $ pywinds/wind_info.sh 60 90 0 100 -j 0 -i 0
   --pixel-size 4 --center 0 0 m  --units km -p
-[63.36, -135.0, 51.78, 315.25, 46.01, 23.77]
+[63.36, -135.0, 51.78, 315.25, 36.78, -36.46]
 $ pywinds/wind_info.sh 60 90 0 100 -j 0 -i 0
   --pixel-size 4 km --center 0 0 m -p
-[63.36, -135.0, 51.78, 315.25, 46.01, 23.77]
+[63.36, -135.0, 51.78, 315.25, 36.78, -36.46]
 $ pywinds/wind_info.sh 60 90 0 100 -j 0 -i 0
   --pixel-size 4000 m --units km -p
-[63.36, -135.0, 51.78, 315.25, 46.01, 23.77]
+[63.36, -135.0, 51.78, 315.25, 36.78, -36.46]
 $ pywinds/wind_info.sh 60 90 0 100 -j 0 -i 0
   --upper-left-extent 2000 -2000 km
   --radius 2000 2000 km -p
-[63.36, -135.0, 51.78, 315.25, 46.01, 23.77]
+[63.36, -135.0, 51.78, 315.25, 36.78, -36.46]
 $ pywinds/wind_info.sh 60 90 0 100 -j 0 -i 0
   --upper-left-extent 2000 -2000
   --radius 2000 2000 --units km -p
-[63.36, -135.0, 51.78, 315.25, 46.01, 23.77]
+[63.36, -135.0, 51.78, 315.25, 36.78, -36.46]
 $ pywinds/wind_info.sh 60 90 0 100 -j 0 -i 0
   --upper-left-extent 63.335 -135 deg
   --radius 2000 2000 --units km -p
-[63.36, -135.0, 51.78, 315.25, 46.01, 23.77]
+[63.36, -135.0, 51.78, 315.25, 36.78, -36.46]
 </pre></div>
 </div>
 <div class="admonition note">
@@ -327,23 +327,23 @@ $ pywinds/wind_info.sh 60 90 0 100 -j 0 -i 0
 <p>Using other advanced args:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ pywinds/wind_info.sh 60 90 0 100 -j 0 -i 0
   --radius 2000000 2000000 -p
-[63.36, -135.0, 51.78, 315.25, 46.01, 23.77]
+[63.36, -135.0, 51.78, 315.25, 36.78, -36.46]
 $ pywinds/wind_info.sh 60 90 0 100 -j 0 -i 0
   --upper-left-extent 2000000 -2000000 -p
-[63.36, -135.0, 51.78, 315.25, 46.01, 23.77]
+[63.36, -135.0, 51.78, 315.25, 36.78, -36.46]
 $ pywinds/wind_info.sh 60 90 0 100 -j 0 -i 0
   --area-extent -2000000 -2000000 2000000 2000000 -p
-[63.36, -135.0, 51.78, 315.25, 46.01, 23.77]
+[63.36, -135.0, 51.78, 315.25, 36.78, -36.46]
 $ pywinds/wind_info.sh 60 90 0 100 -j 0 -i 0
   --upper-left-extent 2000000 -2000000
   --radius 2000000 2000000 -p
-[63.36, -135.0, 51.78, 315.25, 46.01, 23.77]
+[63.36, -135.0, 51.78, 315.25, 36.78, -36.46]
 $ pywinds/wind_info.sh 60 90 0 100 -j 0 -i 0
   --pixel-size 4000 --shape 10000 100 -p
 [WARNING: 2019-03-01 12:00:00 : pywinds.wind_functions] Shape found
 from area or provided by user does not match the shape of the file:
 (10000, 100) vs (1000, 1000)
-[63.36, -135.0, 51.78, 315.25, 46.01, 23.77]
+[63.36, -135.0, 51.78, 315.25, 36.78, -36.46]
 </pre></div>
 </div>
 <p>Shuffling order of arguments/options:</p>
@@ -354,10 +354,10 @@ in.flo        pywinds
 
 $ pywinds/wind_info.sh -j 0 -i 0
   -p --pixel-size 4000 -i 0 60 90 0 100
-[63.36, -135.0, 51.78, 315.25, 46.01, 23.77]
+[63.36, -135.0, 51.78, 315.25, 36.78, -36.46]
 $ pywinds/wind_info.sh -j 0 60 90 -i 0
   0 -p --pixel-size 4000 4000 100 -i 0
-[63.36, -135.0, 51.78, 315.25, 46.01, 23.77]
+[63.36, -135.0, 51.78, 315.25, 36.78, -36.46]
 </pre></div>
 </div>
 <div class="admonition note">
@@ -373,7 +373,7 @@ $ ls
 in.flo        test.flo        pywinds
 $ pywinds/wind_info.sh 60 90 0 100 -j 0 -i 0 --pixel-size 4000
   --displacement-data [[1,2,3,4],[5,6,7,8]] -p
-[89.97, -135.0, 3.68, 346.03, 1.62, 3.3]
+[89.97, -135.0, 3.68, 346.03, 3.57, -0.89]
 </pre></div>
 </div>
 </div>
@@ -524,38 +524,38 @@ variables:
 </div>
 <p>v.txt:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="mf">0.00</span><span class="p">,</span><span class="mf">100.76</span><span class="p">,</span><span class="mf">200.48</span>
-<span class="mf">300.92</span><span class="p">,</span><span class="mf">399.48</span><span class="p">,</span><span class="mf">494.96</span>
-<span class="mf">589.80</span><span class="p">,</span><span class="mf">681.97</span><span class="p">,</span><span class="mf">771.00</span>
+<span class="mf">300.90</span><span class="p">,</span><span class="mf">399.44</span><span class="p">,</span><span class="mf">494.88</span>
+<span class="mf">589.67</span><span class="p">,</span><span class="mf">681.78</span><span class="p">,</span><span class="mf">770.76</span>
 </pre></div>
 </div>
 <p>u.txt:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="mf">0.00</span><span class="p">,</span><span class="o">-</span><span class="mf">39.86</span><span class="p">,</span><span class="o">-</span><span class="mf">158.31</span>
-<span class="mf">118.10</span><span class="p">,</span><span class="mf">467.99</span><span class="p">,</span><span class="o">-</span><span class="mf">579.49</span>
-<span class="mf">458.61</span><span class="p">,</span><span class="mf">791.67</span><span class="p">,</span><span class="mf">1188.80</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="mf">0.00</span><span class="p">,</span><span class="o">-</span><span class="mf">15.86</span><span class="p">,</span><span class="o">-</span><span class="mf">59.25</span>
+<span class="mf">38.97</span><span class="p">,</span><span class="mf">0.00</span><span class="p">,</span><span class="o">-</span><span class="mf">177.67</span>
+<span class="mf">144.64</span><span class="p">,</span><span class="mf">232.85</span><span class="p">,</span><span class="mf">362.30</span>
 </pre></div>
 </div>
 <p>speed.txt:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="mf">0.00</span><span class="p">,</span><span class="mf">100.97</span><span class="p">,</span><span class="mf">201.49</span>
-<span class="mf">301.11</span><span class="p">,</span><span class="mf">399.44</span><span class="p">,</span><span class="mf">496.10</span>
-<span class="mf">590.68</span><span class="p">,</span><span class="mf">683.00</span><span class="p">,</span><span class="mf">772.78</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="mf">0.00</span><span class="p">,</span><span class="mf">102.00</span><span class="p">,</span><span class="mf">209.05</span>
+<span class="mf">303.41</span><span class="p">,</span><span class="mf">399.44</span><span class="p">,</span><span class="mf">525.81</span>
+<span class="mf">607.15</span><span class="p">,</span><span class="mf">720.45</span><span class="p">,</span><span class="mf">851.66</span>
 </pre></div>
 </div>
 <p>angle.txt:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="mf">180.00</span><span class="p">,</span><span class="mf">359.71</span><span class="p">,</span><span class="mf">359.71</span>
-<span class="mf">0.10</span><span class="p">,</span><span class="mf">0.00</span><span class="p">,</span><span class="mf">359.94</span>
-<span class="mf">0.10</span><span class="p">,</span><span class="mf">0.05</span><span class="p">,</span><span class="mf">0.00</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="mf">0.00</span><span class="p">,</span><span class="mf">351.05</span><span class="p">,</span><span class="mf">343.54</span>
+<span class="mf">7.38</span><span class="p">,</span><span class="mf">0.00</span><span class="p">,</span><span class="mf">340.25</span>
+<span class="mf">13.78</span><span class="p">,</span><span class="mf">18.86</span><span class="p">,</span><span class="mf">25.18</span>
 </pre></div>
 </div>
 <p>wind_info.txt:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="mf">89.95</span><span class="p">,</span><span class="o">-</span><span class="mf">135.00</span><span class="p">,</span><span class="mf">0.00</span><span class="p">,</span><span class="mf">90.00</span><span class="p">,</span><span class="mf">0.00</span><span class="p">,</span><span class="mf">0.00</span>
-<span class="mf">89.96</span><span class="p">,</span><span class="mf">180.00</span><span class="p">,</span><span class="mf">108.36</span><span class="p">,</span><span class="mf">338.42</span><span class="p">,</span><span class="mf">100.76</span><span class="p">,</span><span class="o">-</span><span class="mf">39.86</span>
-<span class="mf">89.95</span><span class="p">,</span><span class="mf">135.00</span><span class="p">,</span><span class="mf">255.45</span><span class="p">,</span><span class="mf">321.70</span><span class="p">,</span><span class="mf">200.48</span><span class="p">,</span><span class="o">-</span><span class="mf">158.31</span>
-<span class="mf">89.96</span><span class="p">,</span><span class="o">-</span><span class="mf">90.00</span><span class="p">,</span><span class="mf">323.26</span><span class="p">,</span><span class="mf">21.43</span><span class="p">,</span><span class="mf">300.92</span><span class="p">,</span><span class="mf">118.10</span>
-<span class="mf">90.00</span><span class="p">,</span><span class="mf">0.00</span><span class="p">,</span><span class="mf">615.31</span><span class="p">,</span><span class="mf">49.52</span><span class="p">,</span><span class="mf">399.48</span><span class="p">,</span><span class="mf">467.99</span>
-<span class="mf">89.96</span><span class="p">,</span><span class="mf">90.00</span><span class="p">,</span><span class="mf">762.10</span><span class="p">,</span><span class="mf">310.50</span><span class="p">,</span><span class="mf">494.96</span><span class="p">,</span><span class="o">-</span><span class="mf">579.49</span>
-<span class="mf">89.95</span><span class="p">,</span><span class="o">-</span><span class="mf">45.00</span><span class="p">,</span><span class="mf">747.11</span><span class="p">,</span><span class="mf">37.87</span><span class="p">,</span><span class="mf">589.80</span><span class="p">,</span><span class="mf">458.61</span>
-<span class="mf">89.96</span><span class="p">,</span><span class="mf">0.00</span><span class="p">,</span><span class="mf">1044.90</span><span class="p">,</span><span class="mf">49.26</span><span class="p">,</span><span class="mf">681.97</span><span class="p">,</span><span class="mf">791.67</span>
-<span class="mf">89.95</span><span class="p">,</span><span class="mf">45.00</span><span class="p">,</span><span class="mf">1416.93</span><span class="p">,</span><span class="mf">57.03</span><span class="p">,</span><span class="mf">771.00</span><span class="p">,</span><span class="mf">1188.80</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="mf">89.95</span><span class="p">,</span><span class="o">-</span><span class="mf">135.00</span><span class="p">,</span><span class="mf">0.00</span><span class="p">,</span><span class="mf">0.00</span><span class="p">,</span><span class="mf">0.00</span><span class="p">,</span><span class="mf">0.00</span>
+<span class="mf">89.96</span><span class="p">,</span><span class="mf">180.00</span><span class="p">,</span><span class="mf">102.00</span><span class="p">,</span><span class="mf">351.05</span><span class="p">,</span><span class="mf">100.76</span><span class="p">,</span><span class="o">-</span><span class="mf">15.86</span>
+<span class="mf">89.95</span><span class="p">,</span><span class="mf">135.00</span><span class="p">,</span><span class="mf">209.05</span><span class="p">,</span><span class="mf">343.54</span><span class="p">,</span><span class="mf">200.48</span><span class="p">,</span><span class="o">-</span><span class="mf">59.25</span>
+<span class="mf">89.96</span><span class="p">,</span><span class="o">-</span><span class="mf">90.00</span><span class="p">,</span><span class="mf">303.41</span><span class="p">,</span><span class="mf">7.38</span><span class="p">,</span><span class="mf">300.90</span><span class="p">,</span><span class="mf">38.97</span>
+<span class="mf">90.00</span><span class="p">,</span><span class="mf">0.00</span><span class="p">,</span><span class="mf">399.44</span><span class="p">,</span><span class="mf">0.00</span><span class="p">,</span><span class="mf">399.44</span><span class="p">,</span><span class="mf">0.00</span>
+<span class="mf">89.96</span><span class="p">,</span><span class="mf">90.00</span><span class="p">,</span><span class="mf">525.81</span><span class="p">,</span><span class="mf">340.25</span><span class="p">,</span><span class="mf">494.88</span><span class="p">,</span><span class="o">-</span><span class="mf">177.67</span>
+<span class="mf">89.95</span><span class="p">,</span><span class="o">-</span><span class="mf">45.00</span><span class="p">,</span><span class="mf">607.15</span><span class="p">,</span><span class="mf">13.78</span><span class="p">,</span><span class="mf">589.67</span><span class="p">,</span><span class="mf">144.64</span>
+<span class="mf">89.96</span><span class="p">,</span><span class="mf">0.00</span><span class="p">,</span><span class="mf">720.45</span><span class="p">,</span><span class="mf">18.86</span><span class="p">,</span><span class="mf">681.78</span><span class="p">,</span><span class="mf">232.85</span>
+<span class="mf">89.95</span><span class="p">,</span><span class="mf">45.00</span><span class="p">,</span><span class="mf">851.66</span><span class="p">,</span><span class="mf">25.18</span><span class="p">,</span><span class="mf">770.76</span><span class="p">,</span><span class="mf">362.30</span>
 </pre></div>
 </div>
 </div>
@@ -566,13 +566,13 @@ variables:
 /Desktop
 $ ls
 in.flo        pywinds
-$ pywinds/area.py 60 90 0
+$ pywinds/area.sh 60 90 0
 projection: stere
-lat-ts: 60
-lat-0: 90
-long-0: 0
+lat-ts: 60.0
+lat-0: 90.0
+long-0: 0.0
 equatorial-radius: 6378137.0
-eccentricity: 0.081819
+eccentricity: 0.08
 inverse-flattening: 298.26
 shape: [1000, 1000]
 area-extent: None
@@ -585,7 +585,7 @@ center: None
 <span id="error-messages"></span><h2>Error and usage messages<a class="headerlink" href="#error-and-usage-messages" title="Permalink to this headline">¶</a></h2>
 <p>If incorrect commands were given:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ pywinds/wind_info.sh 60 90 0 --pixel-size 4000
-usage: wind_info.py [-h] [-j int] [-i int] [-p] [-s path_name]
+usage: wind_info.sh [-h] [-j int] [-i int] [-p] [-s path_name]
                     [--earth-ellipsoid str] [--center y x [units]]
                     [--pixel-size dy [dx] [units]] [--displacement-data filename]
                     [--units str]
@@ -595,7 +595,7 @@ usage: wind_info.py [-h] [-j int] [-i int] [-p] [-s path_name]
                     [--shape height width] [--projection str]
                     [--projection-ellipsoid str] [-v]
                     lat-ts lat-0 long-0 delta-time
-wind_info.py: error: the following arguments are required: delta-time
+wind_info.sh: error: the following arguments are required: delta-time
 </pre></div>
 </div>
 <p>If not enough information is provided to a script, this kind of
@@ -606,28 +606,17 @@ $ ls
 in.flo        pywinds
 $ pywinds/wind_info.sh 60 90 0 100 -i 0 -j 0 -p
 Traceback (most recent call last):
-  File &quot;/home/wroberts/pywinds/env/lib/python3.7/runpy.py&quot;,
-line 193, in _run_module_as_main
-    &quot;__main__&quot;, mod_spec)
-  File &quot;/Desktop/pywinds/env/lib/python3.7/runpy.py&quot;, line 85, in _run_code
-    exec(code, run_globals)
-  File &quot;/Desktop/pywinds/env/lib/python3.7/site-packages/pywinds/wind_info.py&quot;,
-line 34, in &lt;module&gt;
-    run_script(wind_info, output_format, &#39;wind_info&#39;)
-  File &quot;/Desktop/pywinds/env/lib/python3.7/site-packages/pywinds/wrapper_utils.py&quot;,
-line 213, in run_script
+  File &quot;&lt;stdin&gt;&quot;, line 35, in &lt;module&gt;
+  File &quot;pywinds/env/lib/python3.7/site-packages/pywinds/wrapper_utils.py&quot;,
+  line 223, in run_script
     output = output_format(func(*args, **kwargs), **kwargs)
-  File &quot;/Desktop/pywinds/env/lib/python3.7/site-packages/pywinds/wind_functions.py&quot;,
-line 991, in wind_info
+  File &quot;pywinds/env/lib/python3.7/site-packages/pywinds/wind_functions.py&quot;, line 1046, in wind_info
     save_directory=save_directory)
-  File &quot;/Desktop/pywinds/env/lib/python3.7/site-packages/pywinds/wind_functions.py&quot;,
-line 440, in _compute_velocity
+  File &quot;pywinds/env/lib/python3.7/site-packages/pywinds/wind_functions.py&quot;, line 451, in _compute_vu
     save_directory=save_directory)
-  File &quot;/Desktop/pywinds/env/lib/python3.7/site-packages/pywinds/wind_functions.py&quot;,
-line 399, in _compute_vu
+  File &quot;pywinds/env/lib/python3.7/site-packages/pywinds/wind_functions.py&quot;, line 418, in _compute_velocity
     no_save=no_save, save_directory=save_directory)
-  File &quot;/Desktop/pywinds/env/lib/python3.7/site-packages/pywinds/wind_functions.py&quot;,
-line 346, in _compute_lat_long
+  File &quot;pywinds/env/lib/python3.7/site-packages/pywinds/wind_functions.py&quot;, line 365, in _compute_lat_long
     raise ValueError(&#39;Not enough information provided to create an area for projection&#39;)
 ValueError: Not enough information provided to create an area for projection
 </pre></div>
@@ -639,7 +628,7 @@ $ ls
 in.flo        pywinds
 $ pywinds/area.sh 60 90 0 --upper-left-extent 60 45 deg -v
 [WARNING: 2019-07-08 09:02:54 : pywinds.wind_functions] invalid area_extent.
-Lower left corner is above or to the right of the upper right corner:
+  Lower left corner is above or to the right of the upper right corner:
 [59.99999999999866, 135.00000000000003, 59.99999999999866, -44.99999999999999]
 projection: stere
 lat-ts: 60.0
