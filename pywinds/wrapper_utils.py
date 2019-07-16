@@ -50,6 +50,7 @@ class MyFormatter(argparse.HelpFormatter):
             help_string = help_string.replace(form.format('AREA_EXTENT'), 'y_ll x_ll y_ur x_ur [units]')
             help_string = help_string.replace(form.format('CENTER'), 'y x [units]')
             help_string = help_string.replace(form.format('PIXEL_SIZE'), 'dy [dx] [units]')
+            help_string = help_string.replace(form.format('EARTH_ELLIPSOID'), 'str')
         return help_string
 
 
