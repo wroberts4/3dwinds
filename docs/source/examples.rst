@@ -505,7 +505,7 @@ error will be displayed (see :ref:`common combinations of area information<area_
     ValueError: Not enough information provided to create an area for projection
 
 
-If an invalid area is created (in this case the lower left corner is the bottom right corner)::
+If an invalid area is created (in this case the lower left corner is the upper right corner)::
 
     $ pwd
     /Desktop
