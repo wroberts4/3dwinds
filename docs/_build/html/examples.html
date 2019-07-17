@@ -20,20 +20,11 @@
   <script type="text/javascript" src="_static/js/modernizr.min.js"></script>
   
     
-      <script type="text/javascript">
-          var DOCUMENTATION_OPTIONS = {
-              URL_ROOT:'./',
-              VERSION:'',
-              LANGUAGE:'None',
-              COLLAPSE_INDEX:false,
-              FILE_SUFFIX:'.html',
-              HAS_SOURCE:  true,
-              SOURCELINK_SUFFIX: '.txt'
-          };
-      </script>
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
         <script type="text/javascript" src="_static/jquery.js"></script>
         <script type="text/javascript" src="_static/underscore.js"></script>
         <script type="text/javascript" src="_static/doctools.js"></script>
+        <script type="text/javascript" src="_static/language_data.js"></script>
     
     <script type="text/javascript" src="_static/js/theme.js"></script>
 
@@ -179,8 +170,8 @@ $ pywinds/wind_info.sh 60 90 0 100 -j 0 -i 0 --pixel-size 4000 --center 60 -45 -
 </pre></div>
 </div>
 <div class="admonition note">
-<p class="first admonition-title">Note</p>
-<p class="last"><strong>——center</strong> defaults to (<strong>lat-0</strong>, <strong>long-0</strong>) if area is incomplete and doesn’t override user provided data.</p>
+<p class="admonition-title">Note</p>
+<p><strong>——center</strong> defaults to (<strong>lat-0</strong>, <strong>long-0</strong>) if area is incomplete and doesn’t override user provided data.</p>
 </div>
 <p>Having multiple files in run directory:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ pwd
@@ -209,12 +200,12 @@ $ pywinds/wind_info.sh 60 90 0 100 --pixel-size 4000 -vv
 </pre></div>
 </div>
 <div class="admonition note">
-<p class="first admonition-title">Note</p>
-<p class="last">When <strong>——displacement-data</strong> is not provided, then every file ending in “.flo” where the script was ran is read.</p>
+<p class="admonition-title">Note</p>
+<p>When <strong>——displacement-data</strong> is not provided, then every file ending in “.flo” where the script was ran is read.</p>
 </div>
 <div class="admonition note">
-<p class="first admonition-title">Note</p>
-<p class="last">In this case, <strong>wind_info.sh</strong> saves all files mentioned in <a class="reference internal" href="usage.html#save-format"><span class="std std-ref">Save format</span></a>
+<p class="admonition-title">Note</p>
+<p>In this case, <strong>wind_info.sh</strong> saves all files mentioned in <a class="reference internal" href="usage.html#save-format"><span class="std std-ref">Save format</span></a>
 to /Desktop/test.flo_output_20190301_115959 and /Desktop/in.flo_output_20190301_115959.</p>
 </div>
 <p>Specifying a displacement file to read:</p>
@@ -330,8 +321,8 @@ $ pywinds/wind_info.sh 60 90 0 100 -j 0 -i 0
 </pre></div>
 </div>
 <div class="admonition note">
-<p class="first admonition-title">Note</p>
-<p class="last"><strong>center</strong>’s units default to degrees and are not affected by the <strong>units</strong> option.</p>
+<p class="admonition-title">Note</p>
+<p><strong>center</strong>’s units default to degrees and are not affected by the <strong>units</strong> option.</p>
 </div>
 <p>Using other advanced args:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ pywinds/wind_info.sh 60 90 0 100 -j 0 -i 0
@@ -370,8 +361,8 @@ $ pywinds/wind_info.sh -j 0 60 90 -i 0
 </pre></div>
 </div>
 <div class="admonition note">
-<p class="first admonition-title">Note</p>
-<p class="last">For <strong>——pixel-size</strong> to have positional arguments after it, it must be specified using two numbers
+<p class="admonition-title">Note</p>
+<p>For <strong>——pixel-size</strong> to have positional arguments after it, it must be specified using two numbers
 or with units. This is because <strong>——pixel-size</strong> would interpret the second number as input since
 <strong>——pixel-size</strong> can take one or two numbers as arguments).</p>
 </div>
@@ -630,7 +621,7 @@ Traceback (most recent call last):
 ValueError: Not enough information provided to create an area for projection
 </pre></div>
 </div>
-<p>If an invalid area is created (in this case the lower left corner is the bottom right corner):</p>
+<p>If an invalid area is created (in this case the lower left corner is the upper right corner):</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ pwd
 /Desktop
 $ ls
@@ -653,8 +644,8 @@ center: [90.0, 0.0]
 </pre></div>
 </div>
 <div class="admonition note">
-<p class="first admonition-title">Note</p>
-<p class="last">Brackets around an argument means that argument is optional.</p>
+<p class="admonition-title">Note</p>
+<p>Brackets around an argument means that argument is optional.</p>
 </div>
 </div>
 </div>

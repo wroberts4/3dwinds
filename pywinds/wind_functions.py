@@ -853,6 +853,9 @@ def _make_ellipsoid(ellipsoid, var_name):
     elif isinstance(ellipsoid, str):
         geod_info = Geod(ellps=ellipsoid)
     elif isinstance(ellipsoid, dict):
+        for key in ellipsoid.keys():
+            if key not in ['a', 'b', 'rf', 'e', 'f', 'es']:
+                logger.warning('Invalid parameter passed to ellipsoid: {0}'.format(key))
         if 'a' not in ellipsoid:
             if 'b' not in ellipsoid:
                 logger.warning('Neither the major axis (a) nor the minor axis (b) were provided')

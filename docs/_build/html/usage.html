@@ -20,20 +20,11 @@
   <script type="text/javascript" src="_static/js/modernizr.min.js"></script>
   
     
-      <script type="text/javascript">
-          var DOCUMENTATION_OPTIONS = {
-              URL_ROOT:'./',
-              VERSION:'',
-              LANGUAGE:'None',
-              COLLAPSE_INDEX:false,
-              FILE_SUFFIX:'.html',
-              HAS_SOURCE:  true,
-              SOURCELINK_SUFFIX: '.txt'
-          };
-      </script>
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
         <script type="text/javascript" src="_static/jquery.js"></script>
         <script type="text/javascript" src="_static/underscore.js"></script>
         <script type="text/javascript" src="_static/doctools.js"></script>
+        <script type="text/javascript" src="_static/language_data.js"></script>
     
     <script type="text/javascript" src="_static/js/theme.js"></script>
 
@@ -178,57 +169,59 @@ in with options (as long as they are not interpreted as part of the option).</p>
 v, u, and velocity of the wind. This is the primary function of pywinds.</p>
 <p>Required arguments:</p>
 <ul class="simple">
-<li><strong>lat-ts</strong>: Projection latitude of true scale</li>
-<li><strong>lat-0</strong>: Projection latitude of origin</li>
-<li><strong>long-0</strong>: Projection central meridian</li>
-<li><strong>delta-time</strong>: Amount of time that separates both files in minutes</li>
+<li><p><strong>lat-ts</strong>: Projection latitude of true scale</p></li>
+<li><p><strong>lat-0</strong>: Projection latitude of origin</p></li>
+<li><p><strong>long-0</strong>: Projection central meridian</p></li>
+<li><p><strong>delta-time</strong>: Amount of time that separates both files in minutes</p></li>
 </ul>
 <p>Optional arguments:</p>
 <ul class="simple">
-<li><strong>——center</strong>: Projection y and x coordinate of the center of area (lat, long). If center is not provided/found
-and the area created is not complete, then center defaults to the projection center (<strong>lat-0</strong>, <strong>long-0</strong>)</li>
-<li><strong>——pixel-size</strong>: Projection size of pixels in the y and x direction (dy, dx). If pixels are square, i.e. dy = dx,
-then only one value needs to be entered.</li>
-<li><strong>——displacement-data</strong>: Name of binary file (32-bit float) containing pixels displacements; How far the
+<li><p><strong>——center</strong>: Projection y and x coordinate of the center of area (lat, long). If center is not provided/found
+and the area created is not complete, then center defaults to the projection center (<strong>lat-0</strong>, <strong>long-0</strong>)</p></li>
+<li><p><strong>——pixel-size</strong>: Projection size of pixels in the y and x direction (dy, dx). If pixels are square, i.e. dy = dx,
+then only one value needs to be entered.</p></li>
+<li><p><strong>——displacement-data</strong>: Name of binary file (32-bit float) containing pixels displacements; How far the
 pixels had to move in the y (positive is down) and x (positive is right) direction to get to their new position.
 Wildcard (“*”) syntax is accepted when past as a string. If not provided, reads every file ending in “.flo”
-where the script is ran</li>
-<li><strong>-j</strong>: Row to run calculations on</li>
-<li><strong>-i</strong>: Column to run calculations on</li>
-<li><strong>——print</strong> (<strong>-p</strong>):<ol class="arabic">
-<li>When not flagged (Default): saves data without printing to shell</li>
-<li>When flagged: prints data to shell without saving</li>
+where the script is ran</p></li>
+<li><p><strong>-j</strong>: Row to run calculations on</p></li>
+<li><p><strong>-i</strong>: Column to run calculations on</p></li>
+<li><p><strong>——print</strong> (<strong>-p</strong>):</p>
+<ol class="arabic simple">
+<li><p>When not flagged (Default): saves data without printing to shell</p></li>
+<li><p>When flagged: prints data to shell without saving</p></li>
 </ol>
 </li>
-<li><strong>——verbose</strong> (<strong>-v</strong>): Provides 4 levels of information to users:<ol class="arabic">
-<li>ERROR (Default): The only thing printed to the shell will be errors (and potentially data).</li>
-<li>WARNING: Additionally to the above, instances that may cause faulty data will be displayed.
-Specified using <strong>-v</strong></li>
-<li>INFO: Additionally to the above, information about where data is read from and saved to will be displayed.
-Specified using <strong>-vv</strong></li>
-<li>DEBUG: Additionally to the above, information about the program’s progress will be displayed.
-Specified using <strong>-vvv</strong></li>
+<li><p><strong>——verbose</strong> (<strong>-v</strong>): Provides 4 levels of information to users:</p>
+<ol class="arabic simple">
+<li><p>ERROR (Default): The only thing printed to the shell will be errors (and potentially data).</p></li>
+<li><p>WARNING: Additionally to the above, instances that may cause faulty data will be displayed.
+Specified using <strong>-v</strong></p></li>
+<li><p>INFO: Additionally to the above, information about where data is read from and saved to will be displayed.
+Specified using <strong>-vv</strong></p></li>
+<li><p>DEBUG: Additionally to the above, information about the program’s progress will be displayed.
+Specified using <strong>-vvv</strong></p></li>
 </ol>
 </li>
 </ul>
 <p>Additional information:</p>
 <blockquote>
 <div><ul class="simple">
-<li>For more optional arguments, please see <a class="reference internal" href="#advanced-arguments"><span class="std std-ref">Advanced arguments</span></a>.</li>
-<li>For more information on save files and their formats, please see <a class="reference internal" href="#save-format"><span class="std std-ref">Save format</span></a></li>
-<li>For information on the output, please see <a class="reference internal" href="#output-information"><span class="std std-ref">Output information</span></a></li>
+<li><p>For more optional arguments, please see <a class="reference internal" href="#advanced-arguments"><span class="std std-ref">Advanced arguments</span></a>.</p></li>
+<li><p>For more information on save files and their formats, please see <a class="reference internal" href="#save-format"><span class="std std-ref">Save format</span></a></p></li>
+<li><p>For information on the output, please see <a class="reference internal" href="#output-information"><span class="std std-ref">Output information</span></a></p></li>
 </ul>
 </div></blockquote>
 <div class="admonition note" id="area-information-note">
-<p class="first admonition-title">Note</p>
+<p class="admonition-title">Note</p>
 <p>Enough information must be provided to make an area. Some common combinations of parameters are:</p>
 <ol class="arabic simple">
-<li><strong>——pixel-size</strong> and <strong>——center</strong> (defaults to the projection center if not provided)</li>
-<li><strong>——radius</strong> and <strong>——center</strong> (defaults to the projection center if not provided)</li>
-<li><strong>——upper-left-extent</strong> and <strong>——pixel-size</strong></li>
-<li><strong>——area-extent</strong></li>
+<li><p><strong>——pixel-size</strong> and <strong>——center</strong> (defaults to the projection center if not provided)</p></li>
+<li><p><strong>——radius</strong> and <strong>——center</strong> (defaults to the projection center if not provided)</p></li>
+<li><p><strong>——upper-left-extent</strong> and <strong>——pixel-size</strong></p></li>
+<li><p><strong>——area-extent</strong></p></li>
 </ol>
-<p class="last">along with shape, which should automatically be found from <strong>——displacement-data</strong>.</p>
+<p>along with shape, which should automatically be found from <strong>——displacement-data</strong>.</p>
 </div>
 <p>Calculating wind_info:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ pwd
@@ -252,45 +245,46 @@ $ pywinds/wind_info.sh 60 90 0 100 --pixel-size 4000 -vv
 <div class="section" id="advanced-arguments">
 <span id="id2"></span><h2>Advanced arguments<a class="headerlink" href="#advanced-arguments" title="Permalink to this headline">¶</a></h2>
 <ul class="simple">
-<li><strong>——save_directory</strong> (<strong>-s</strong>): Directory in which to save the file containing data (also a directory) to.
+<li><p><strong>——save_directory</strong> (<strong>-s</strong>): Directory in which to save the file containing data (also a directory) to.
 If the directory provided does not exist, then it is created. Defaults to a new directory by the name of
 the displacement file read appended with “_output_YYYYmmdd_HHMMSS” (the date and time when the script was ran),
-created where the script is ran</li>
-<li><strong>——projection</strong>: Name of projection that the image is in
+created where the script is ran</p></li>
+<li><p><strong>——projection</strong>: Name of projection that the image is in
 (<a class="reference external" href="https://proj.org/apps/cs2cs.html?highlight=note#cmdoption-cs2cs-lp">cs2cs -lp</a>: <a class="reference external" href="_static/cs2cs_lp.png"><img alt="cs2cs_lp.png" src="cs2cs_lp" /></a>).
-Defaults to stere</li>
-<li><strong>——projection-ellipsoid</strong>: ellipsoid of projection
+Defaults to stere</p></li>
+<li><p><strong>——projection-ellipsoid</strong>: ellipsoid of projection
 (<a class="reference external" href="https://proj.org/apps/cs2cs.html?highlight=note#cmdoption-cs2cs-le">cs2cs -le</a>: <a class="reference external" href="_static/cs2cs_le.png"><img alt="cs2cs_le.png" src="cs2cs_le" /></a>).
-Defaults to WGS84</li>
-<li><strong>——earth-ellipsoid</strong>: ellipsoid of Earth
+Defaults to WGS84</p></li>
+<li><p><strong>——earth-ellipsoid</strong>: ellipsoid of Earth
 (<a class="reference external" href="https://proj.org/apps/cs2cs.html?highlight=note#cmdoption-cs2cs-le">cs2cs -le</a>: <a class="reference external" href="_static/cs2cs_le.png"><img alt="cs2cs_le.png" src="cs2cs_le" /></a>).
-Defaults to WGS84</li>
-<li><strong>——shape</strong>: Number of pixels in the y and x direction (height, width). If shape is not provided,
-it attempts to be found from <strong>——displacement-data</strong></li>
-<li><strong>——upper-left-extent</strong>: Projection y and x coordinates of the upper left corner of the upper left pixel (y, x)</li>
-<li><strong>——radius</strong>: Projection length from the center to the left/right and top/bottom outer edges (dy, dx)</li>
-<li><strong>——units</strong>: Units that provided arguments should be interpreted as. This can be
+Defaults to WGS84</p></li>
+<li><p><strong>——shape</strong>: Number of pixels in the y and x direction (height, width). If shape is not provided,
+it attempts to be found from <strong>——displacement-data</strong></p></li>
+<li><p><strong>——upper-left-extent</strong>: Projection y and x coordinates of the upper left corner of the upper left pixel (y, x)</p></li>
+<li><p><strong>——radius</strong>: Projection length from the center to the left/right and top/bottom outer edges (dy, dx)</p></li>
+<li><p><strong>——units</strong>: Units that provided arguments should be interpreted as. This can be
 one of ‘deg’, ‘degrees’, ‘rad’, ‘radians’, ‘meters’, ‘metres’, and any
 parameter supported by the <a class="reference external" href="https://proj4.org/apps/cs2cs.html#cmdoption-cs2cs-lu">cs2cs -lu</a>
 command (<a class="reference external" href="https://proj.org/apps/cs2cs.html?highlight=note#cmdoption-cs2cs-lu">https://proj.org/apps/cs2cs.html?highlight=note#cmdoption-cs2cs-lu</a>: <a class="reference external" href="_static/cs2cs_lu.png"><img alt="cs2cs_lu.png" src="cs2cs_lu" /></a>).
-Units are determined in the following priority:<ol class="arabic">
-<li>units expressed at the end of individual variables (see <a class="reference internal" href="examples.html#input-units"><span class="std std-ref">Specifying input units</span></a> for examples)</li>
-<li>units passed to <code class="docutils literal notranslate"><span class="pre">--units</span></code> (exluding center)</li>
-<li>meters (exluding center, which is degrees)</li>
+Units are determined in the following priority:</p>
+<ol class="arabic simple">
+<li><p>units expressed at the end of individual variables (see <a class="reference internal" href="examples.html#input-units"><span class="std std-ref">Specifying input units</span></a> for examples)</p></li>
+<li><p>units passed to <code class="docutils literal notranslate"><span class="pre">--units</span></code> (exluding center)</p></li>
+<li><p>meters (exluding center, which is degrees)</p></li>
 </ol>
 </li>
-<li><strong>——area-extent</strong>: Area extent as a list [y_ll, x_ll, y_ur, x_ur]</li>
+<li><p><strong>——area-extent</strong>: Area extent as a list [y_ll, x_ll, y_ur, x_ur]</p></li>
 </ul>
 <p>where</p>
 <ul class="simple">
-<li><strong>y_ll</strong>: projection y coordinate of the lower left corner of the lower left pixel in meters</li>
-<li><strong>x_ll</strong>: projection x coordinate of the lower left corner of the lower left pixel in meters</li>
-<li><strong>y_ur</strong>: projection y coordinate of the upper right corner of the upper right pixel in meters</li>
-<li><strong>x_ur</strong>: projection x coordinate of the upper right corner of the upper right pixel in meters</li>
+<li><p><strong>y_ll</strong>: projection y coordinate of the lower left corner of the lower left pixel in meters</p></li>
+<li><p><strong>x_ll</strong>: projection x coordinate of the lower left corner of the lower left pixel in meters</p></li>
+<li><p><strong>y_ur</strong>: projection y coordinate of the upper right corner of the upper right pixel in meters</p></li>
+<li><p><strong>x_ur</strong>: projection x coordinate of the upper right corner of the upper right pixel in meters</p></li>
 </ul>
 <div class="admonition warning">
-<p class="first admonition-title">Warning</p>
-<p class="last">The shape provided or found can alter the native shape of <strong>——displacement-data</strong>.</p>
+<p class="admonition-title">Warning</p>
+<p>The shape provided or found can alter the native shape of <strong>——displacement-data</strong>.</p>
 </div>
 </div>
 <div class="section" id="output-information">
@@ -298,24 +292,24 @@ Units are determined in the following priority:<ol class="arabic">
 <p>These are the output units for pywinds (Note: output units <strong>cannot</strong> be changed by the user):</p>
 <blockquote>
 <div><ul class="simple">
-<li>area: See <a class="reference internal" href="examples.html#content-of-wind-info-nc"><span class="std std-ref">Content of wind_info.nc</span></a> or  <a class="reference internal" href="#area-print"><span class="std std-ref">area print format</span></a></li>
-<li>j: unitless</li>
-<li>i: unitless</li>
-<li>latitude: degrees</li>
-<li>longitude: degrees</li>
-<li>v: m/s</li>
-<li>u: m/s</li>
-<li>velocity speed: m/s</li>
-<li>velocity angle: degrees</li>
+<li><p>area: See <a class="reference internal" href="examples.html#content-of-wind-info-nc"><span class="std std-ref">Content of wind_info.nc</span></a> or  <a class="reference internal" href="#area-print"><span class="std std-ref">area print format</span></a></p></li>
+<li><p>j: unitless</p></li>
+<li><p>i: unitless</p></li>
+<li><p>latitude: degrees</p></li>
+<li><p>longitude: degrees</p></li>
+<li><p>v: m/s</p></li>
+<li><p>u: m/s</p></li>
+<li><p>velocity speed: m/s</p></li>
+<li><p>velocity angle: degrees</p></li>
 </ul>
 </div></blockquote>
 <div class="admonition note">
-<p class="first admonition-title">Note</p>
-<p class="last">velocity, v, and u are calculated using <a class="reference internal" href="#loxodrome-sh"><span class="std std-ref">loxodrome.sh</span></a>.</p>
+<p class="admonition-title">Note</p>
+<p>velocity, v, and u are calculated using <a class="reference internal" href="#loxodrome-sh"><span class="std std-ref">loxodrome.sh</span></a>.</p>
 </div>
 <div class="admonition note">
-<p class="first admonition-title">Note</p>
-<p class="last">velocity angle is the angle that the wind is moving when it reaches its new location.</p>
+<p class="admonition-title">Note</p>
+<p>velocity angle is the angle that the wind is moving when it reaches its new location.</p>
 </div>
 </div>
 <div class="section" id="data-format">
@@ -400,32 +394,31 @@ Units are determined in the following priority:<ol class="arabic">
 </div>
 <p><strong>All files are saved to –save_directory (see :ref:`advanced_arguments`)</strong></p>
 <div class="admonition note">
-<p class="first admonition-title">Note</p>
-<p class="last">Data is saved in the order given by “Text files” above, which means that if not enough information
+<p class="admonition-title">Note</p>
+<p>Data is saved in the order given by “Text files” above, which means that if not enough information
 was provided or an error occurs, data up to that point will be saved.</p>
 </div>
 <div class="admonition note">
-<p class="first admonition-title">Note</p>
-<p class="last">If re-saving data or saving data with the same <strong>displacement-data</strong> name, it is best to manually
+<p class="admonition-title">Note</p>
+<p>If re-saving data or saving data with the same <strong>displacement-data</strong> name, it is best to manually
 delete or rename the directory that old data was saved to. This ensures that the directory only
 contains that file’s data (in conjunction with the above note).</p>
 </div>
 <p>Text files:</p>
 <blockquote>
 <div><ul class="simple">
-<li>Text files are saved as comma separated files (except for polar-stereographic.txt
-which is the same format as it is in wind_info.nc). Numbers are rounded to 2 decimal places.</li>
-<li>For examples of what the text files looks like, please see <a class="reference internal" href="examples.html#content-of-text-files"><span class="std std-ref">Content of text files</span></a>.</li>
+<li><p>Text files are saved as comma separated files (except for polar-stereographic.txt
+which is the same format as it is in wind_info.nc). Numbers are rounded to 2 decimal places.</p></li>
+<li><p>For examples of what the text files looks like, please see <a class="reference internal" href="examples.html#content-of-text-files"><span class="std std-ref">Content of text files</span></a>.</p></li>
 </ul>
 </div></blockquote>
-<dl class="docutils">
-<dt>wind_info.nc:</dt>
-<dd><ul class="first last simple">
-<li>wind_info.nc is a netcdf4 file saved using 32-bit floats which follows
-<a class="reference external" href="http://cfconventions.org/Data/cf-conventions/cf-conventions-1.7/build/apf.html">CF-1.7 conventions</a>.</li>
-<li>Each variable listed under “Text files” at the top of this section is saved to wind_info.nc by the same
-name as their .txt counterparts.</li>
-<li>For an example of what wind_info.nc looks like, please see <a class="reference internal" href="examples.html#content-of-wind-info-nc"><span class="std std-ref">Content of wind_info.nc</span></a>.</li>
+<dl class="simple">
+<dt>wind_info.nc:</dt><dd><ul class="simple">
+<li><p>wind_info.nc is a netcdf4 file saved using 32-bit floats which follows
+<a class="reference external" href="http://cfconventions.org/Data/cf-conventions/cf-conventions-1.7/build/apf.html">CF-1.7 conventions</a>.</p></li>
+<li><p>Each variable listed under “Text files” at the top of this section is saved to wind_info.nc by the same
+name as their .txt counterparts.</p></li>
+<li><p>For an example of what wind_info.nc looks like, please see <a class="reference internal" href="examples.html#content-of-wind-info-nc"><span class="std std-ref">Content of wind_info.nc</span></a>.</p></li>
 </ul>
 </dd>
 </dl>
@@ -435,7 +428,7 @@ name as their .txt counterparts.</li>
 <p>None of these functions can save data, thus they <strong>do not</strong> have the <strong>——print</strong>/<strong>-p</strong> argument.
 They have similar or identical arguments to wind_info.sh</p>
 <ul class="simple">
-<li><strong>vu.sh</strong>: Prints just the v and u components of the wind. Same arguments as wind_info.sh</li>
+<li><p><strong>vu.sh</strong>: Prints just the v and u components of the wind. Same arguments as wind_info.sh</p></li>
 </ul>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ pwd
 /Desktop
@@ -446,7 +439,7 @@ $ pywinds/vu.sh 60 90 0 100 -j 0 -i 0 --pixel-size 4000
 </pre></div>
 </div>
 <ul class="simple">
-<li><strong>velocity.sh</strong>: Prints just the velocity of the wind. Same arguments as wind_info.sh</li>
+<li><p><strong>velocity.sh</strong>: Prints just the velocity of the wind. Same arguments as wind_info.sh</p></li>
 </ul>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ pwd
 /Desktop
@@ -457,9 +450,9 @@ $ pywinds/velocity.sh 60 90 0 100 -j 0 -i 0 --pixel-size 4000
 </pre></div>
 </div>
 <ul class="simple">
-<li><strong>lat_long.sh</strong>: Prints just the latitude and longitude of the pixels. If displacements data is provided,
+<li><p><strong>lat_long.sh</strong>: Prints just the latitude and longitude of the pixels. If displacements data is provided,
 then old_latitude and old_longitude are calculated, else new_latitude and new_longitude are calculated.
-Same arguments as wind_info.sh but does not take <strong>delta-time</strong> as an argument.</li>
+Same arguments as wind_info.sh but does not take <strong>delta-time</strong> as an argument.</p></li>
 </ul>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ pwd
 /Desktop
@@ -472,8 +465,8 @@ $ pywinds/lat_long.sh 60 90 0 -j 0 -i 0 --pixel-size 4000 --displacement-data in
 </pre></div>
 </div>
 <ul class="simple">
-<li><strong>displacements.sh</strong>: Prints just the j and i displacements of the pixels. Does not take <strong>delta-time</strong>
-as an argument. All other required arguments for wind_info.sh are optional arguments.</li>
+<li><p><strong>displacements.sh</strong>: Prints just the j and i displacements of the pixels. Does not take <strong>delta-time</strong>
+as an argument. All other required arguments for wind_info.sh are optional arguments.</p></li>
 </ul>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ pwd
 /Desktop
@@ -484,8 +477,8 @@ $ pywinds/displacements.sh -j 0 -i 0
 </pre></div>
 </div>
 <ul class="simple">
-<li><strong>area.sh</strong>: Prints information about the projection given. Same arguments as
-wind_info.sh but does not take <strong>delta-time</strong> as an argument.</li>
+<li><p><strong>area.sh</strong>: Prints information about the projection given. Same arguments as
+wind_info.sh but does not take <strong>delta-time</strong> as an argument.</p></li>
 </ul>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ pwd
 /Desktop
@@ -508,9 +501,9 @@ center: [90.0, 0.0]
 <p>You can use area.sh on a file containing displacements to see what shape it is,
 even if the area is not completely defined, as shown in <a class="reference internal" href="examples.html#advanced-examples"><span class="std std-ref">Advanced examples</span></a>.</p>
 <ul class="simple" id="loxodrome-sh">
-<li><strong>loxodrome.sh</strong>: Prints the distance, forward bearing, and back bearing between
+<li><p><strong>loxodrome.sh</strong>: Prints the distance, forward bearing, and back bearing between
 two points on the earth provided in latitude and longitude as calculated from the rhumb line.
-This is the angle and distance one would travel if direction is continuously updated.</li>
+This is the angle and distance one would travel if direction is continuously updated.</p></li>
 </ul>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ pwd
 /Desktop
@@ -521,9 +514,9 @@ $ pywinds/loxodrome.sh 60 130 61 131
 </pre></div>
 </div>
 <ul class="simple">
-<li><strong>geodesic.sh</strong>: Prints the shortest distance, initial bearing, and back bearing between
+<li><p><strong>geodesic.sh</strong>: Prints the shortest distance, initial bearing, and back bearing between
 two points on the earth provided in latitude and longitude as calculated from the great circle arc.
-This is the angle and distance one would travel if walking in a straight line without adjusting their course.</li>
+This is the angle and distance one would travel if walking in a straight line without adjusting their course.</p></li>
 </ul>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ pwd
 /Desktop
@@ -549,8 +542,8 @@ data, not enough information provided, etc.</p>
 <p>The second implies that there was a problem reading the command line: not all positional arguments provided,
 incorrect formatting, etc.</p>
 <div class="admonition note">
-<p class="first admonition-title">Note</p>
-<p class="last">Remember that you can always enter <strong>-h</strong> or <strong>——help</strong> for more usage detail.</p>
+<p class="admonition-title">Note</p>
+<p>Remember that you can always enter <strong>-h</strong> or <strong>——help</strong> for more usage detail.</p>
 </div>
 <p>Please see <a class="reference internal" href="examples.html#error-messages"><span class="std std-ref">Error and usage messages</span></a> in Examples.</p>
 </div>
