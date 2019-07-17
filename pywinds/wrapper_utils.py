@@ -50,7 +50,7 @@ class MyFormatter(argparse.HelpFormatter):
             help_string = help_string.replace(form.format('AREA_EXTENT'), 'y_ll x_ll y_ur x_ur [units]')
             help_string = help_string.replace(form.format('CENTER'), 'y x [units]')
             help_string = help_string.replace(form.format('PIXEL_SIZE'), 'dy [dx] [units]')
-            help_string = help_string.replace(form.format('EARTH_ELLIPSOID'), 'str')
+            help_string = help_string.replace(form.format('EARTH_ELLIPSOID'), 'str [val [units]] [str val [units]]')
         return help_string
 
 
@@ -66,7 +66,7 @@ class CustomAction(argparse.Action):
         # Setup parser to read all arguments after option.
         parser = NullParser()
         # Find the most amount of nargs possible.
-        parser.add_argument(option_strings[0], nargs='*')
+        parser.add_argument(*option_strings, nargs='*')
         # Setup argv to remove help flags and let main parser handle help.
         argv = sys.argv[1:]
         while '-h' in argv:
@@ -102,7 +102,11 @@ class CustomAction(argparse.Action):
             if len(values) == 1:
                 values = values[0]
             else:
-                values = {key: val for key, val in zip(values[::2], values[1::2])}
+                if len(values) % 3 == 0:
+                    values = {key: xarray.DataArray(val, attrs={'units': units}) for key, val, units in
+                              zip(values[::3], values[-5::3], values[-4::3])}
+                else:
+                    values = {key: val for key, val in zip(values[::2], values[1::2])}
         else:
             units = None
             if isinstance(values[-1], str):
@@ -128,7 +132,11 @@ def _get_args(name, description):
         my_parser.add_argument('new-lat', type=float, help='Latitude of the second point')
         my_parser.add_argument('new-long', type=float, help='Longitude of the second point')
         my_parser.add_argument('--earth-ellipsoid', '--earth-spheroid', action=CustomAction, type=_nums_or_string,
-                               narg_types=[[str], [str, (float, int)], [str, (float, int), str, (float, int)]],
+                               narg_types=[[str], [str, (float, int)], [str, (float, int), str],
+                                           [str, (float, int), str, (float, int)],
+                                           [str, (float, int), str, str, (float, int)],
+                                           [str, (float, int), str, (float, int), str],
+                                           [str, (float, int), str, str, (float, int), str]],
                                help='ellipsoid of Earth')
     else:
         if name != 'area':

@@ -869,6 +869,7 @@ def _make_ellipsoid(ellipsoid, var_name):
                     if ellipsoid['es'] < 0 or ellipsoid['es'] >= 1:
                         raise ValueError('Invalid eccentricity of {0}: 0 <= eccentricity < 1'.format(ellipsoid['es']))
                     ellipsoid['a'] = ellipsoid['b'] / (1 - ellipsoid['es']) ** .5
+        ellipsoid = {key: val.data if isinstance(val, xarray.DataArray) else val for key, val in ellipsoid.items()}
         geod_info = Geod(**ellipsoid)
     else:
         raise ValueError('{0} must be a string or Geod type, but instead was {1} {2}'.format(var_name, ellipsoid,
@@ -911,6 +912,7 @@ def loxodrome(old_lat, old_long, new_lat, new_long, earth_ellipsoid=None):
     # eccentricity squared.
     es = (2 - geod_info.f) * geod_info.f
     e = es ** .5
+    # Note: atanh(sin(x)) == asinh(tan(x)) for -pi / 2 <= x <= pi / 2
     forward_bearing = np.arctan2(_delta_longitude(new_long, old_long),
                                  np.arctanh(np.sin(new_lat)) - e * np.arctanh(e * np.sin(new_lat)) -
                                  (np.arctanh(np.sin(old_lat)) - e * np.arctanh(e * np.sin(old_lat))))
