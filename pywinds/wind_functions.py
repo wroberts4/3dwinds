@@ -848,6 +848,7 @@ def lat_long(lat_ts, lat_0, long_0, displacement_data=None, projection=None, j=N
 
 
 def _make_ellipsoid(ellipsoid, var_name):
+    from pyproj import transform
     if ellipsoid is None:
         geod_info = Geod(ellps='WGS84')
     elif isinstance(ellipsoid, str):
@@ -872,7 +873,14 @@ def _make_ellipsoid(ellipsoid, var_name):
                     if ellipsoid['es'] < 0 or ellipsoid['es'] >= 1:
                         raise ValueError('Invalid eccentricity of {0}: 0 <= eccentricity < 1'.format(ellipsoid['es']))
                     ellipsoid['a'] = ellipsoid['b'] / (1 - ellipsoid['es']) ** .5
-        ellipsoid = {key: val.data if isinstance(val, xarray.DataArray) else val for key, val in ellipsoid.items()}
+        for key, val in ellipsoid.items():
+            if hasattr(val, 'units'):
+                if key in ['a', 'b']:
+                    ellipsoid[key] = transform(Proj({'proj': 'stere', 'units': val.attrs['units']}),
+                                               Proj({'proj': 'stere', 'units': 'm'}), val, 0)[0]
+                else:
+                    logger.warning('Only a and b have units, but {0} was provided {1}'.format(key, val.attrs['units']))
+                    ellipsoid[key] = val.data
         geod_info = Geod(**ellipsoid)
     else:
         raise ValueError('{0} must be a string or Geod type, but instead was {1} {2}'.format(var_name, ellipsoid,
@@ -885,7 +893,7 @@ def _make_ellipsoid(ellipsoid, var_name):
 
 
 def loxodrome(old_lat, old_long, new_lat, new_long, earth_ellipsoid=None):
-    """Computes the distance and initial/back bearing of the rhumb line formed between two lat-longs.
+    """Computes the distance, forward bearing and back bearing of the rhumb line formed between two lat-longs.
 
     Credit: https://search-proquest-com.ezproxy.library.wisc.edu/docview/2130848771?rfr_id=info%3Axri%2Fsid%3Aprimo
 
@@ -934,7 +942,7 @@ def loxodrome(old_lat, old_long, new_lat, new_long, earth_ellipsoid=None):
 
 
 def geodesic(old_lat, old_long, new_lat, new_long, earth_ellipsoid=None):
-    """Computes the shortest distance and initial/back bearing between two two lat-longs.
+    """Computes the shortest distance, initial bearing, and back bearing between two two lat-longs.
 
     Parameters
     ----------

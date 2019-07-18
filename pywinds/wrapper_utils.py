@@ -102,7 +102,14 @@ class CustomAction(argparse.Action):
             if len(values) == 1:
                 values = values[0]
             else:
-                if len(values) % 3 == 0:
+                if len(values) == 3:
+                    values = {values[0]: xarray.DataArray(values[1], attrs={'units': values[2]})}
+                elif len(values) == 5:
+                    if isinstance(values[3], (int, float)):
+                        values = {values[0]: values[1], values[2]: xarray.DataArray(values[3], attrs={'units': values[4]})}
+                    else:
+                        values = {values[0]: xarray.DataArray(values[1], attrs={'units': values[2]}), values[3]: values[4]}
+                elif len(values) == 6:
                     values = {key: xarray.DataArray(val, attrs={'units': units}) for key, val, units in
                               zip(values[::3], values[-5::3], values[-4::3])}
                 else:
@@ -137,7 +144,8 @@ def _get_args(name, description):
                                            [str, (float, int), str, str, (float, int)],
                                            [str, (float, int), str, (float, int), str],
                                            [str, (float, int), str, str, (float, int), str]],
-                               help='ellipsoid of Earth')
+                               help='Ellipsoid of Earth. Coordinate system name or defined using a ' +
+                                    'combination of a, b, e, es, f, and rf')
     else:
         if name != 'area':
             my_parser.add_argument('-j', '--j', type=int, metavar='int', help='row to run calculations on')
@@ -163,8 +171,15 @@ def _get_args(name, description):
                                            help="directory to save to. Defaults to where script was ran")
                 my_parser.add_argument('delta-time', type=float,
                                        help='amount of time that separates both files in minutes')
-                my_parser.add_argument('--earth-ellipsoid', '--earth-spheroid', metavar='str',
-                                       help='ellipsoid of Earth')
+                my_parser.add_argument('--earth-ellipsoid', '--earth-spheroid', action=CustomAction,
+                                       type=_nums_or_string,
+                                       narg_types=[[str], [str, (float, int)], [str, (float, int), str],
+                                                   [str, (float, int), str, (float, int)],
+                                                   [str, (float, int), str, str, (float, int)],
+                                                   [str, (float, int), str, (float, int), str],
+                                                   [str, (float, int), str, str, (float, int), str]],
+                                       help='Ellipsoid of Earth. Coordinate system name or defined using a ' +
+                                            'combination of a, b, e, es, f, and rf')
                 arg_names.append('delta-time')
 
         my_parser.add_argument('--center', action=CustomAction, type=_nums_or_string,
@@ -192,7 +207,15 @@ def _get_args(name, description):
         my_parser.add_argument('--shape', type=_nums_or_string, nargs=2, metavar=('height', 'width'),
                                help='number of pixels in the y and x direction')
         my_parser.add_argument('--projection', metavar='str', help='name of projection that the image is in')
-        my_parser.add_argument('--projection-ellipsoid', metavar='str', help='ellipsoid of projection')
+        my_parser.add_argument('--projection-ellipsoid', '--projection-spheroid', action=CustomAction,
+                               type=_nums_or_string,
+                               narg_types=[[str], [str, (float, int)], [str, (float, int), str],
+                                           [str, (float, int), str, (float, int)],
+                                           [str, (float, int), str, str, (float, int)],
+                                           [str, (float, int), str, (float, int), str],
+                                           [str, (float, int), str, str, (float, int), str]],
+                               help='Ellipsoid of projection. Coordinate system name or defined using a ' +
+                                    'combination of a, b, e, es, f, and rf')
     my_parser.add_argument('-v', '--verbose', action="count", default=0,
                            help='each occurrence increases verbosity 1 level through ERROR-WARNING-INFO-DEBUG')
     commands = my_parser.parse_args()
