@@ -16,9 +16,9 @@ from pywinds.wrapper_utils import run_script
 logger = logging.getLogger('wind_info.sh')
 
 
-def output_format(output, **kwargs):
+def output_format(output, precision, **kwargs):
     if kwargs.get('no_save') is True:
-        return np.round(output, 2).tolist()
+        return np.round(output, precision).tolist()
     displacement_filename = kwargs.get('displacement_data')
     if isinstance(displacement_filename, str):
         if not os.path.isfile(displacement_filename):

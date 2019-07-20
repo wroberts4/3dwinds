@@ -125,19 +125,35 @@ class CustomAction(argparse.Action):
         setattr(args, self.dest, values)
 
 
-def _get_args(name, description):
+def _get_args(name, func):
     """Reads command line arguments and handles logic behind them."""
     kwarg_names = ['center', 'pixel_size', 'units', 'shape', 'upper_left_extent', 'radius',
                    'area_extent', 'displacement_data', 'j', 'i', 'no_save', 'save_directory',
-                   'projection', 'projection_ellipsoid', 'earth_ellipsoid']
-    my_parser = argparse.ArgumentParser(description=description, formatter_class=MyFormatter)
-
+                   'projection', 'projection_ellipsoid', 'earth_ellipsoid', 'precision']
+    kwargs = {}
     if name in ['loxodrome', 'geodesic']:
-        arg_names = ['old-lat', 'old-long', 'new-lat', 'new-long']
-        my_parser.add_argument('old-lat', type=float, help='Latitude of the first point')
-        my_parser.add_argument('old-long', type=float, help='Longitude of the first point')
-        my_parser.add_argument('new-lat', type=float, help='Latitude of the second point')
-        my_parser.add_argument('new-long', type=float, help='Longitude of the second point')
+        if '--inverse' in sys.argv:
+            sys.argv.remove('--inverse')
+            arg_names = ['old-lat', 'old-long', 'distance', 'forward-bearing']
+            kwarg_names = ['earth_ellipsoid', 'precision']
+            kwargs = {'inverse': True}
+            my_parser = argparse.ArgumentParser(description=func.__doc__.splitlines()[4].split('inverse: ')[1],
+                                                formatter_class=MyFormatter)
+            my_parser.add_argument('old-lat', type=float, help='Latitude of starting location.')
+            my_parser.add_argument('old-long', type=float, help='Longitude of starting locaion.')
+            my_parser.add_argument('distance', type=float, help='Distance to new location.')
+            my_parser.add_argument('forward-bearing', type=float, help='Angle to new location.')
+        else:
+            arg_names = ['old-lat', 'old-long', 'new-lat', 'new-long']
+            kwarg_names = ['earth_ellipsoid', 'inverse', 'precision']
+            my_parser = argparse.ArgumentParser(description=func.__doc__.splitlines()[2].split('forward: ')[1],
+                                                formatter_class=MyFormatter)
+            my_parser.add_argument('old-lat', type=float, help='Latitude of starting location.')
+            my_parser.add_argument('old-long', type=float, help='Longitude of starting locaion.')
+            my_parser.add_argument('new-lat', type=float, help='Latitude of ending location')
+            my_parser.add_argument('new-long', type=float, help='Longitude of ending location')
+            my_parser.add_argument('--inverse', action="store_true",
+                                   help='Find new location given a starting position, distance, and angle')
         my_parser.add_argument('--earth-ellipsoid', '--earth-spheroid', action=CustomAction, type=_nums_or_string,
                                narg_types=[[str], [str, (float, int)], [str, (float, int), str],
                                            [str, (float, int), str, (float, int)],
@@ -145,9 +161,10 @@ def _get_args(name, description):
                                            [str, (float, int), str, (float, int), str],
                                            [str, (float, int), str, str, (float, int), str]],
                                help='Ellipsoid of Earth. Coordinate system name or defined using a ' +
-                                    'combination of a, b, e, es, f, and rf')
+                                    'combination of a, b, e, es, f, and rf.')
     else:
-        if name != 'area':
+        my_parser = argparse.ArgumentParser(description=func.__doc__.splitlines()[0], formatter_class=MyFormatter)
+        if name not in ['area', 'position_to_pixel']:
             my_parser.add_argument('-j', '--j', type=int, metavar='int', help='row to run calculations on')
             my_parser.add_argument('-i', '--i', type=int, metavar='int', help='column to run calculations on')
         if name == 'displacements':
@@ -163,6 +180,11 @@ def _get_args(name, description):
             my_parser.add_argument('lat-ts', type=float, help='projection latitude of true scale')
             my_parser.add_argument('lat-0', type=float, help='projection latitude of origin')
             my_parser.add_argument('long-0', type=float, help='projection central meridian')
+            if name == 'position_to_pixel':
+                arg_names.append('lat')
+                my_parser.add_argument('lat', type=float, help='Latitude of position to transform into pixel.')
+                arg_names.append('long')
+                my_parser.add_argument('long', type=float, help='Longitude of position to transform into pixel.')
             if name in ['wind_info', 'velocity', 'vu']:
                 if name == 'wind_info':
                     my_parser.add_argument('-p', '--print', '--no-save', action="store_true", dest='no_save',
@@ -179,7 +201,7 @@ def _get_args(name, description):
                                                    [str, (float, int), str, (float, int), str],
                                                    [str, (float, int), str, str, (float, int), str]],
                                        help='Ellipsoid of Earth. Coordinate system name or defined using a ' +
-                                            'combination of a, b, e, es, f, and rf')
+                                            'combination of a, b, e, es, f, and rf.')
                 arg_names.append('delta-time')
 
         my_parser.add_argument('--center', action=CustomAction, type=_nums_or_string,
@@ -190,8 +212,10 @@ def _get_args(name, description):
                                            [(float, int), str], [(float, int)]],
                                help='projection size of pixels in the y and x direction.'
                                     'If pixels are square, i.e. dy = dx, then only one value needs to be entered')
-        my_parser.add_argument('--displacement-data', type=_nums_or_string, metavar='filename',
-                               help='filename or list containing displacements')
+        if name != 'position_to_pixel':
+            kwarg_names.remove('position_to_pixel')
+            my_parser.add_argument('--displacement-data', type=_nums_or_string, metavar='filename',
+                                   help='filename or list containing displacements')
         my_parser.add_argument('--units', metavar='str', help='units that all provided arguments that take units '
                                                               '(except center) should be interpreted as')
         my_parser.add_argument('--upper-left-extent', action=CustomAction, type=_nums_or_string,
@@ -215,9 +239,11 @@ def _get_args(name, description):
                                            [str, (float, int), str, (float, int), str],
                                            [str, (float, int), str, str, (float, int), str]],
                                help='Ellipsoid of projection. Coordinate system name or defined using a ' +
-                                    'combination of a, b, e, es, f, and rf')
+                                    'combination of a, b, e, es, f, and rf.')
     my_parser.add_argument('-v', '--verbose', action="count", default=0,
-                           help='each occurrence increases verbosity 1 level through ERROR-WARNING-INFO-DEBUG')
+                           help='Each occurrence increases verbosity 1 level through ERROR-WARNING-INFO-DEBUG.')
+    my_parser.add_argument('--precision', type=int, default=2, metavar='int',
+                           help='Number of decimal places to round printed output to.')
     commands = my_parser.parse_args()
     # Logging setup.
     levels = [logging.ERROR, logging.WARNING, logging.INFO, logging.DEBUG]
@@ -225,7 +251,6 @@ def _get_args(name, description):
     logging.basicConfig(level=levels[min(3, commands.verbose)], format=logging_format, datefmt='%Y-%m-%d %H:%M:%S')
     # Gets args and kwargs from command line data.
     args = [getattr(commands, arg) for arg in arg_names]
-    kwargs = {}
     for name in kwarg_names:
         val = getattr(commands, name, None)
         # Prevents variables not in function from being passed. ie no-save.
@@ -236,12 +261,12 @@ def _get_args(name, description):
 
 def run_script(func, output_format, name):
     """Runs python function from wind_functions.py."""
-    description = func.__doc__.splitlines()[0]
-    args, kwargs = _get_args(name, description)
+    args, kwargs = _get_args(name, func)
+    precision = kwargs.pop('precision')
     if name == 'wind_info':
         kwargs['timestamp'] = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
     displacement_data = kwargs.get('displacement_data')
-    if displacement_data is None and name not in ['lat_long', 'loxodrome', 'geodesic']:
+    if displacement_data is None and name not in ['lat_long', 'loxodrome', 'geodesic', 'position_to_pixel']:
         displacement_data = os.path.join(os.getcwd(), '*.flo')
         kwargs['displacement_data'] = displacement_data
     if isinstance(displacement_data, str):
@@ -250,7 +275,7 @@ def run_script(func, output_format, name):
         if files:
             for file in files:
                 kwargs['displacement_data'] = os.path.abspath(file)
-                output = output_format(func(*args, **kwargs), **kwargs)
+                output = output_format(func(*args, **kwargs), precision, **kwargs)
                 if output is not None:
                     print(output)
             return
@@ -259,6 +284,6 @@ def run_script(func, output_format, name):
             func(*args, **kwargs)
         kwargs.pop('displacement_data')
     # Only happens with lat_long, area, or if non string is given to displacement-data.
-    output = output_format(func(*args, **kwargs), **kwargs)
+    output = output_format(func(*args, **kwargs), precision, **kwargs)
     if output is not None:
         print(output)

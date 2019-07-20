@@ -7,7 +7,7 @@ import numpy as np
 import sys
 
 from os.path import abspath
-from pywinds.wind_functions import lat_long
+from pywinds.wind_functions import position_to_pixel
 from pywinds.wrapper_utils import run_script
 
 
@@ -17,5 +17,5 @@ def output_format(output, precision, **kwargs):
 
 if __name__ == "__main__":
     sys.argv = [abspath("$0")] + "$*".split(' ')
-    run_script(lat_long, output_format, 'lat_long')
+    run_script(position_to_pixel, output_format, 'position_to_pixel')
 EOF

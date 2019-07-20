@@ -58,39 +58,6 @@ def _save_data(save_directory, data_list, text_shape=None, mode='a'):
         logger.debug('Data saved successfully')
 
 
-def double_factorial(n):
-    if n < 0:
-        return (-1) ** ((n - 1) / 2) * n / double_factorial(-n)
-    if n % 2 == 0:
-        k = n / 2
-        return 2 ** k * np.math.factorial(k)
-    k = (n + 1) / 2
-    return np.math.factorial(2 * k) / (2 ** k * np.math.factorial(k))
-
-
-def h_2k(n, k, precision=3):
-    k = k / 2
-    total = 0
-    # Converges fast enough that 3 iterations yields results accurate to over 15 decimal places.
-    for j in range(precision):
-        total += double_factorial(2 * j - 3) * double_factorial(2 * j + 2 * k - 3) * n ** (k + 2 * j) /\
-                 (double_factorial(2 * j) * double_factorial(2 * j + 2 * k))
-    if k == 0:
-        return (-1) ** k * (1 - 2 * k) * (1 + 2 * k) * total
-    return (-1) ** k * (1 - 2 * k) * (1 + 2 * k) * total / k
-
-
-def _bessel_helmert(new_lat, old_lat, flattening, precision=6):
-    """Takes latitudes as radians. Credit: https://en.wikipedia.org/wiki/Meridian_arc"""
-    # Credit: https://en.wikipedia.org/wiki/Meridian_arc#cite_ref-14
-    # Third flattening: (a - b) / (a + b)
-    n = flattening / (2 - flattening)
-    # 6 is enough coefficients to be accurate.
-    coeffs = [h_2k(n, 2 * k) for k in range(precision)]
-    return sum(coeff * new_lat if k == 0 else coeff * np.sin(2 * k * new_lat) for k, coeff in enumerate(coeffs)) -\
-        sum(coeff * old_lat if k == 0 else coeff * np.sin(2 * k * old_lat) for k, coeff in enumerate(coeffs))
-
-
 def _extrapolate_j_i(j, i, shape):
     """Extrapolates j and i to be the entire image if they are not provided."""
     if np.size(i) != 1 or np.size(j) != 1 or i is None and j is not None or j is None and i is not None:
@@ -151,11 +118,36 @@ def _pixel_to_pos(area_definition, j, i):
     return position
 
 
+def sin(angle):
+    """"Sine function that takes degrees"""
+    return np.sin(np.radians(angle))
+
+
+def cos(angle):
+    """"Cosine function that takes degrees"""
+    return np.cos(np.radians(angle))
+
+
+def tan(angle):
+    """"Tangent function that takes degrees"""
+    return np.tan(np.radians(angle))
+
+
+def arctanh(x):
+    """"Hyperarctangent function that outputs degrees"""
+    return np.degrees(np.arctanh(x))
+
+
+def arctan2(x, y):
+    """"atan2 function that outputs degrees"""
+    return np.degrees(np.arctan2(x, y))
+
+
 def _delta_longitude(new_long, old_long):
-    """Calculates the change in longitude on the Earth. Takes units of radians"""
+    """Calculates the change in longitude on the Earth. Units are in degrees"""
     delta_long = new_long - old_long
-    delta_long = np.where(delta_long < np.pi, delta_long, delta_long - 2 * np.pi)
-    delta_long = np.where(delta_long > -np.pi, delta_long, delta_long + 2 * np.pi)
+    delta_long = np.where(delta_long < 180, delta_long, delta_long - 360)
+    delta_long = np.where(delta_long > -180, delta_long, delta_long + 360)
     return delta_long
 
 
@@ -241,8 +233,7 @@ def _create_area(lat_ts, lat_0, long_0, projection=None, area_extent=None, shape
             up_longitude = -180.0
         # Credit: http://earth-info.nga.mil/GandG/coordsys/polar_stereographic/Polar_Stereo_phi1_from_k0_memo.pdf
         k90 = ((1 + e) ** (1 + e) * (1 - e) ** (1 - e)) ** .5
-        phi = np.pi * lat_ts / 180
-        k0 = (1 + np.sin(phi)) / 2 * k90 / ((1 + e * np.sin(phi)) ** (1 + e) * (1 - e * np.sin(phi)) ** (1 - e)) ** .5
+        k0 = (1 + sin(lat_ts)) / 2 * k90 / ((1 + e * sin(lat_ts)) ** (1 + e) * (1 - e * sin(lat_ts)) ** (1 - e)) ** .5
         attrs = {'straight_vertical_longitude_from_pole': up_longitude, 'latitude_of_projection_origin': float(lat_0),
                  'scale_factor_at_projection_origin': k0, 'standard_parallel': float(lat_ts),
                  'resolution_at_standard_parallel': np.ravel(pixel_size)[0], 'false_easting': 0.0,
@@ -445,8 +436,8 @@ def _compute_vu(lat_ts, lat_0, long_0, delta_time, displacement_data=None, proje
     logger.debug('Finding v and u components')
     # IMPORTANT, THIS IS CORRECT: Since angle is measured counter-cloclwise from north, then v = sin(pi - angle) and
     # u = cos(pi - angle). sin(pi - angle) = cos(angle) and cos(pi - angle) = sin(angle)!
-    v = np.cos(np.radians(angle)) * speed
-    u = np.sin(np.radians(angle)) * speed
+    v = cos(angle) * speed
+    u = sin(angle) * speed
     if no_save is False:
         dims = None
         if np.size(v) != 1:
@@ -892,8 +883,12 @@ def _make_ellipsoid(ellipsoid, var_name):
     return geod_info
 
 
-def loxodrome(old_lat, old_long, new_lat, new_long, earth_ellipsoid=None):
-    """Computes the distance, forward bearing and back bearing of the rhumb line formed between two lat-longs.
+def loxodrome(old_lat, old_long, new_lat, new_long, earth_ellipsoid=None, inverse=False):
+    """Solves either the forward or inverse equation for a rhumb line.
+
+    forward: Computes the distance, forward bearing and back bearing given a starting and ending position.
+
+    inverse: Computes the new lat, new long, and back bearing given a starting position, distance, and forward bearing.
 
     Credit: https://search-proquest-com.ezproxy.library.wisc.edu/docview/2130848771?rfr_id=info%3Axri%2Fsid%3Aprimo
 
@@ -907,6 +902,8 @@ def loxodrome(old_lat, old_long, new_lat, new_long, earth_ellipsoid=None):
         Ending point latitude
     new_long: float
         Ending point longitude
+    inverse: bool
+        Calculate the inverse equation.
     earth_ellipsoid: str, optional
         ellipsoid of Earth (WGS84, sphere, etc)
 
@@ -916,33 +913,39 @@ def loxodrome(old_lat, old_long, new_lat, new_long, earth_ellipsoid=None):
     """
     geod_info = _make_ellipsoid(earth_ellipsoid, 'earth_ellipsoid')
     logger.debug('Earth ellipsoid data: {0}'.format(geod_info.initstring.replace('+', '')))
-    old_lat = np.radians(old_lat)
-    old_long = np.radians(old_long)
-    new_lat = np.radians(new_lat)
-    new_long = np.radians(new_long)
     # eccentricity squared.
     es = (2 - geod_info.f) * geod_info.f
     e = es ** .5
+    if inverse:
+        dist = new_lat
+        forward_bearing = new_long
+        new_lat = np.vectorize(geod_info.fwd)(old_long, old_lat, 0, cos(forward_bearing) * dist)[1]
+        new_long = tan(forward_bearing) * (arctanh(sin(new_lat)) - e * arctanh(e * sin(new_lat)) -
+                                           (arctanh(sin(old_lat)) - e * arctanh(e * sin(old_lat)))) + old_long
+        return new_lat, new_long, (forward_bearing - 180) % 360
     # Note: atanh(sin(x)) == asinh(tan(x)) for -pi / 2 <= x <= pi / 2
-    forward_bearing = np.arctan2(_delta_longitude(new_long, old_long),
-                                 np.arctanh(np.sin(new_lat)) - e * np.arctanh(e * np.sin(new_lat)) -
-                                 (np.arctanh(np.sin(old_lat)) - e * np.arctanh(e * np.sin(old_lat))))
+    forward_bearing = arctan2(_delta_longitude(new_long, old_long),
+                                 arctanh(sin(new_lat)) - e * arctanh(e * sin(new_lat)) -
+                                 (arctanh(sin(old_lat)) - e * arctanh(e * sin(old_lat))))
     # If staying at a pole.
-    forward_bearing = np.where(np.isnan(forward_bearing) == False, forward_bearing, new_lat + np.pi / 2)
-    # (a + b) / 2 = a * (2 - f) / 2 since b = a * (1 - f)
-    avg_radius = geod_info.a * (2 - geod_info.f) / 2
-    meridian_dist = avg_radius * _bessel_helmert(new_lat, old_lat, geod_info.f)
-    length = abs(meridian_dist / np.cos(forward_bearing))
-    lat_radius = geod_info.a / (1 - es * np.sin(new_lat) ** 2) ** .5 * np.cos(new_lat)
+    forward_bearing = np.where(np.isnan(forward_bearing) == False, forward_bearing, new_lat + 90)
+    # meridian_dist = avg_radius * _bessel_helmert(new_lat, old_lat, geod_info.f)
+    meridian_dist = np.vectorize(geod_info.inv)(0, old_lat, 0, new_lat)[-1]
+    length = abs(meridian_dist / cos(forward_bearing))
+    lat_radius = geod_info.a / (1 - es * sin(new_lat) ** 2) ** .5 * cos(new_lat)
     # Only used when staying on the same latitude.
     horizontal_length = lat_radius * abs(_delta_longitude(new_long, old_long))
     # If staying on a lat, use horizontal_length. Unless at poles to prevent rounding error.
-    length = np.where((new_lat != old_lat) | (abs(new_lat) == np.pi / 2), length, horizontal_length)
-    return length, np.degrees(forward_bearing) % 360, (np.degrees(forward_bearing) - 180) % 360
+    length = np.where((new_lat != old_lat) | (abs(new_lat) == 90), length, horizontal_length)
+    return length, forward_bearing % 360, (forward_bearing - 180) % 360
 
 
-def geodesic(old_lat, old_long, new_lat, new_long, earth_ellipsoid=None):
-    """Computes the shortest distance, initial bearing, and back bearing between two two lat-longs.
+def geodesic(old_lat, old_long, new_lat, new_long, earth_ellipsoid=None, inverse=False):
+    """Solves either the forward or inverse equation for a great circle arc.
+
+    forward: Computes the shortest distance, initial bearing and back bearing given a starting and ending position.
+
+    inverse: Computes the new lat, new long, and back bearing given a starting position, distance, and forward bearing.
 
     Parameters
     ----------
@@ -963,8 +966,29 @@ def geodesic(old_lat, old_long, new_lat, new_long, earth_ellipsoid=None):
     """
     geod_info = _make_ellipsoid(earth_ellipsoid, 'earth_ellipsoid')
     logger.debug('Earth ellipsoid data: {0}'.format(geod_info.initstring.replace('+', '')))
+    if inverse:
+        forward_bearing = new_long
+        dist = new_lat
+        new_long, new_lat, back_bearing = geod_info.fwd(old_long, old_lat, forward_bearing, dist)
+        return new_lat, new_long, back_bearing
     initial_bearing, back_bearing, distance = geod_info.inv(old_long, old_lat, new_long, new_lat)
     return distance, initial_bearing % 360, back_bearing % 360
+
+
+def position_to_pixel(lat_ts, lat_0, long_0, lat, long, projection=None, area_extent=None, shape=None, center=None,
+                      pixel_size=None, upper_left_extent=None, radius=None, projection_ellipsoid=None, units=None):
+    """Calculates the pixel given a position"""
+    area_definition = _find_displacements_and_area(lat_ts=lat_ts, lat_0=lat_0, long_0=long_0, projection=projection,
+                                                   area_extent=area_extent, shape=shape, center=center,
+                                                   pixel_size=pixel_size, upper_left_extent=upper_left_extent,
+                                                   radius=radius, projection_ellipsoid=projection_ellipsoid,
+                                                   units=units)[3]
+    u_l_pixel = area_definition.pixel_upper_left
+    p = Proj(area_definition.proj_dict, errcheck=True, preserve_units=True)
+    position = p(long, lat)
+    i = (position[0] - u_l_pixel[0]) / area_definition.pixel_size_x
+    j = (u_l_pixel[1] - position[1]) / area_definition.pixel_size_y
+    return j, i
 
 
 def wind_info(lat_ts, lat_0, long_0, delta_time, displacement_data=None, projection=None, j=None, i=None,
