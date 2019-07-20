@@ -210,9 +210,8 @@ def _get_args(name, func):
                                            [(float, int), str], [(float, int)]],
                                help='projection size of pixels in the y and x direction.'
                                     'If pixels are square, i.e. dy = dx, then only one value needs to be entered')
-        if name != 'position_to_pixel':
-            my_parser.add_argument('--displacement-data', type=_nums_or_string, metavar='filename',
-                                   help='filename or list containing displacements')
+        my_parser.add_argument('--displacement-data', type=_nums_or_string, metavar='filename',
+                               help='filename or list containing displacements')
         my_parser.add_argument('--units', metavar='str', help='units that all provided arguments that take units '
                                                               '(except center) should be interpreted as')
         my_parser.add_argument('--upper-left-extent', action=CustomAction, type=_nums_or_string,
@@ -280,7 +279,7 @@ def run_script(func, output_format, name):
         elif name != 'area':
             func(*args, **kwargs)
         kwargs.pop('displacement_data')
-    # Only happens with lat_long, area, or if non string is given to displacement-data.
+    # Only happens with lat_long, area, position_to_pixel, or if non string is given to displacement-data.
     output = output_format(func(*args, **kwargs), precision, **kwargs)
     if output is not None:
         print(output)

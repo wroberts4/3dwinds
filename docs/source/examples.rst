@@ -65,6 +65,9 @@ Specifying a displacement file to read::
     $ pywinds/wind_info.sh 60 90 0 100 -j 0 -i 0 --pixel-size 4000
       --displacement-data in.flo -p
     [63.36, -135.0, 51.78, 315.25, 36.78, -36.46]
+    $ pywinds/wind_info.sh 60 90 0 100 -j 0 -i 0 --pixel-size 4000
+      --displacement-data in.flo -p --precision 10
+    [63.3588708008, -135.0, 51.7849361906, 315.2531658088, 36.7789187111, -36.4553254642]
     $ pywinds/wind_info.sh 60 90 0 100 --pixel-size 4000
       --displacement-data path_to_other_directory/in.flo
     $ pywinds/wind_info.sh 60 90 0 100 --pixel-size 4000
@@ -132,6 +135,27 @@ Altering ellipsoids::
     $ pywinds/wind_info.sh 60 90 0 100 -j 0 -i 0 --pixel-size 4000
       --projection-ellipsoid sphere --earth-ellipsoid sphere -p
     [63.26, -135.0, 51.76, 315.25, 36.76, -36.44]
+
+
+Custom ellipsoids::
+
+    $ pwd
+    /Desktop
+    $ ls
+    in.flo        pywinds
+    $ pywinds/wind_info.sh 60 90 0 100 -j 0 -i 0 --pixel-size 4000
+      --projection-ellipsoid a 1234 -vvv
+    [DEBUG: 2019-03-01 12:00:00 : pywinds.wind_functions] Earth ellipsoid data: a=1234 f=0
+    [1650.98, 38.49, 218.49]
+    $ pywinds/wind_info.sh 60 90 0 100 -j 0 -i 0 --pixel-size 4000
+      --projection-ellipsoid b 1234 -vvv
+    [DEBUG: 2019-03-01 12:00:00 : pywinds.wind_functions] Earth ellipsoid data: a=1234 f=0
+    [1650.98, 38.49, 218.49]
+    $ pywinds/wind_info.sh 60 90 0 100 -j 0 -i 0 --pixel-size 4000
+      --projection-ellipsoid a 100 e .5 -vvv
+    [DEBUG: 2019-03-01 12:00:00 : pywinds.wind_functions] Earth ellipsoid data: a=100
+    f=0.13397459621556138
+    [123.33, 43.98, 223.98]
 
 
 .. _input_units:

@@ -64,6 +64,10 @@ Additional information:
 
     along with shape, which should automatically be found from **------displacement-data**.
 
+.. note::
+
+    Pixels are referenced from their center.
+
 Calculating wind_info::
 
     $ pwd
@@ -102,15 +106,17 @@ Advanced arguments
   If the directory provided does not exist, then it is created. Defaults to a new directory by the name of
   the displacement file read appended with "_output_YYYYmmdd_HHMMSS" (the date and time when the script was ran),
   created where the script is ran
+* **------precision**: Determines the number of decimal places to round printed data to. Saved data will always
+  be the highest precision regardless of this input. Defaults to 2.
 * **------projection**: Name of projection that the image is in
   (`cs2cs -lp <https://proj.org/apps/cs2cs.html?highlight=note#cmdoption-cs2cs-lp>`_: |cs2cs_lp.png|).
   Defaults to stere
 * **------projection-ellipsoid**: ellipsoid of projection
   (`cs2cs -le <https://proj.org/apps/cs2cs.html?highlight=note#cmdoption-cs2cs-le>`_: |cs2cs_le.png|).
-  Defaults to WGS84
+  Defaults to WGS84. Custom ellipsoids can be made, see.
 * **------earth-ellipsoid**: ellipsoid of Earth
   (`cs2cs -le <https://proj.org/apps/cs2cs.html?highlight=note#cmdoption-cs2cs-le>`_: |cs2cs_le.png|).
-  Defaults to WGS84
+  Defaults to WGS84. Custom ellipsoids can be made, see.
 * **------shape**: Number of pixels in the y and x direction (height, width). If shape is not provided,
   it attempts to be found from **------displacement-data**
 * **------upper-left-extent**: Projection y and x coordinates of the upper left corner of the upper left pixel (y, x)
@@ -378,12 +384,21 @@ even if the area is not completely defined, as shown in :ref:`advanced_examples`
 
 ::
 
-    $ pwd
-    /Desktop
     $ ls
-    in.flo	    pywinds
+    pywinds
     $ pywinds/loxodrome.sh 60 130 61 131
     [124234.33, 26.25, 206.25]
+
+The inverse may be set to True in order to find a given latitude and longitude if given a starting
+position, distance, and forward bearing to the new position.
+
+::
+
+    $ ls
+    pywinds
+    $ pywinds/loxodrome.sh 60 130 124234.33 26.25 --inverse
+    [61.0, 131.0, 206.25]
+
 
 * **geodesic.sh**: Prints the shortest distance, initial bearing, and back bearing between
   two points on the earth provided in latitude and longitude as calculated from the great circle arc.
@@ -391,12 +406,30 @@ even if the area is not completely defined, as shown in :ref:`advanced_examples`
 
 ::
 
-    $ pwd
-    /Desktop
     $ ls
-    in.flo	    pywinds
+    pywinds
     $ pywinds/geodesic.sh 60 130 61 131
     [124233.13, 25.82, 206.69]
+
+The inverse may be set to True in order to find a given latitude and longitude if given a starting
+position, distance, and initial bearing to the new position.
+
+::
+    $ ls
+    pywinds
+    $ pywinds/geodesic.sh 60 130 124233.13 25.82 --inverse
+    [61.0, 131.0, 206.69]
+
+
+* **position_to_pixel.sh**: Returns the pixel that a provided latitude and longitude correspond to on a user
+  provided area.
+
+::
+
+    $ ls
+    in.flo	    pywinds
+    $ pywinds/position_to_pixel.sh 60 90 0 80 45 --pixel-size 4 km
+    [684.18, 684.18]
 
 Understanding error messages from scripts
 -----------------------------------------

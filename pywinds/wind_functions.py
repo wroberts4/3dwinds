@@ -864,6 +864,8 @@ def _make_ellipsoid(ellipsoid, var_name):
                     if ellipsoid['es'] < 0 or ellipsoid['es'] >= 1:
                         raise ValueError('Invalid eccentricity of {0}: 0 <= eccentricity < 1'.format(ellipsoid['es']))
                     ellipsoid['a'] = ellipsoid['b'] / (1 - ellipsoid['es']) ** .5
+                else:
+                    ellipsoid['a'] = ellipsoid['b']
         for key, val in ellipsoid.items():
             if hasattr(val, 'units'):
                 if key in ['a', 'b']:
@@ -970,19 +972,20 @@ def geodesic(old_lat, old_long, new_lat, new_long, earth_ellipsoid=None, inverse
         forward_bearing = new_long
         dist = new_lat
         new_long, new_lat, back_bearing = geod_info.fwd(old_long, old_lat, forward_bearing, dist)
-        return new_lat, new_long, back_bearing
+        return new_lat, new_long, back_bearing % 360
     initial_bearing, back_bearing, distance = geod_info.inv(old_long, old_lat, new_long, new_lat)
     return distance, initial_bearing % 360, back_bearing % 360
 
 
 def position_to_pixel(lat_ts, lat_0, long_0, lat, long, projection=None, area_extent=None, shape=None, center=None,
-                      pixel_size=None, upper_left_extent=None, radius=None, projection_ellipsoid=None, units=None):
+                      pixel_size=None, upper_left_extent=None, radius=None, projection_ellipsoid=None, units=None,
+                      displacement_data=None):
     """Calculates the pixel given a position"""
     area_definition = _find_displacements_and_area(lat_ts=lat_ts, lat_0=lat_0, long_0=long_0, projection=projection,
                                                    area_extent=area_extent, shape=shape, center=center,
                                                    pixel_size=pixel_size, upper_left_extent=upper_left_extent,
                                                    radius=radius, projection_ellipsoid=projection_ellipsoid,
-                                                   units=units)[3]
+                                                   units=units, displacement_data=displacement_data)[3]
     u_l_pixel = area_definition.pixel_upper_left
     p = Proj(area_definition.proj_dict, errcheck=True, preserve_units=True)
     position = p(long, lat)
