@@ -493,14 +493,15 @@ If incorrect commands were given::
 
     $ pywinds/wind_info.sh 60 90 0 --pixel-size 4000
     usage: wind_info.sh [-h] [-j int] [-i int] [-p] [-s path_name]
-                        [--earth-ellipsoid str] [--center y x [units]]
-                        [--pixel-size dy [dx] [units]] [--displacement-data filename]
-                        [--units str]
+                        [--earth-ellipsoid str [val [units]] [str val [units]]]
+                        [--center y x [units]] [--pixel-size dy [dx] [units]]
+                        [--displacement-data filename] [--units str]
                         [--upper-left-extent y x [units]]
                         [--radius dy dx [units]]
                         [--area-extent y_ll x_ll y_ur x_ur [units]]
                         [--shape height width] [--projection str]
-                        [--projection-ellipsoid str] [-v]
+                        [--projection-ellipsoid [val [units]] [str val [units]]] [-v]
+                        [--precision int]
                         lat-ts lat-0 long-0 delta-time
     wind_info.sh: error: the following arguments are required: delta-time
 
