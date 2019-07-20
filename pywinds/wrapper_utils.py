@@ -135,7 +135,6 @@ def _get_args(name, func):
         if '--inverse' in sys.argv:
             sys.argv.remove('--inverse')
             arg_names = ['old-lat', 'old-long', 'distance', 'forward-bearing']
-            kwarg_names = ['earth_ellipsoid', 'precision']
             kwargs = {'inverse': True}
             my_parser = argparse.ArgumentParser(description=func.__doc__.splitlines()[4].split('inverse: ')[1],
                                                 formatter_class=MyFormatter)
@@ -145,7 +144,6 @@ def _get_args(name, func):
             my_parser.add_argument('forward-bearing', type=float, help='Angle to new location.')
         else:
             arg_names = ['old-lat', 'old-long', 'new-lat', 'new-long']
-            kwarg_names = ['earth_ellipsoid', 'inverse', 'precision']
             my_parser = argparse.ArgumentParser(description=func.__doc__.splitlines()[2].split('forward: ')[1],
                                                 formatter_class=MyFormatter)
             my_parser.add_argument('old-lat', type=float, help='Latitude of starting location.')
@@ -213,7 +211,6 @@ def _get_args(name, func):
                                help='projection size of pixels in the y and x direction.'
                                     'If pixels are square, i.e. dy = dx, then only one value needs to be entered')
         if name != 'position_to_pixel':
-            kwarg_names.remove('position_to_pixel')
             my_parser.add_argument('--displacement-data', type=_nums_or_string, metavar='filename',
                                    help='filename or list containing displacements')
         my_parser.add_argument('--units', metavar='str', help='units that all provided arguments that take units '
