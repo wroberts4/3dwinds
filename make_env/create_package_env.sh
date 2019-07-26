@@ -7,10 +7,11 @@ rm $PARENTDIR/new_pywinds.tar.gz 2> /dev/null
 rm -r $PARENTDIR/pywinds 2> /dev/null
 
 . ~/anaconda3/etc/profile.d/conda.sh
-conda env update -n pywinds -f $PARENTDIR/../build_environment.yml
+conda env create -n pywinds -f $PARENTDIR/../build_environment.yml --force
 conda activate pywinds
-pip install $PARENTDIR/..
-conda-pack -o $PARENTDIR/new_pywinds.tar.gz --exclude conda-pack --exclude sphinx
+pip install -U --no-deps $PARENTDIR/..
+conda clean -afy
+conda-pack -o $PARENTDIR/new_pywinds.tar.gz --exclude sphinx
 mkdir $PARENTDIR/pywinds
 mkdir $PARENTDIR/pywinds/env
 tar -xzf $PARENTDIR/new_pywinds.tar.gz -C $PARENTDIR/pywinds/env

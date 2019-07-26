@@ -923,7 +923,8 @@ def loxodrome(old_lat, old_long, new_lat, new_long, earth_ellipsoid=None, invers
     if inverse:
         dist = new_lat
         forward_bearing = new_long
-        new_lat = np.vectorize(geod_info.fwd)(old_long, old_lat, 0, cos(forward_bearing) * dist)[1]
+        new_lat = geod_info.fwd(np.zeros(np.shape(old_lat)), old_lat, np.zeros(np.shape(old_lat)),
+                                              cos(forward_bearing) * dist)[1]
         new_long = tan(forward_bearing) * (arctanh(sin(new_lat)) - e * arctanh(e * sin(new_lat)) -
                                            (arctanh(sin(old_lat)) - e * arctanh(e * sin(old_lat)))) + old_long
         new_long = _delta_longitude(new_long, 0)
