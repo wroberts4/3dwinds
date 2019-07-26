@@ -282,6 +282,7 @@ Text files:
     * For examples of what the text files looks like, please see :ref:`content_of_text_files`.
 
 wind_info.nc:
+
     * wind_info.nc is a netcdf4 file saved using 32-bit floats which follows
       `CF-1.7 conventions <http://cfconventions.org/Data/cf-conventions/cf-conventions-1.7/build/apf.html>`_.
 
@@ -415,6 +416,7 @@ The inverse may be set to True in order to find a given latitude and longitude i
 position, distance, and initial bearing to the new position.
 
 ::
+
     $ ls
     pywinds
     $ pywinds/geodesic.sh 60 130 124233.13 25.82 --inverse

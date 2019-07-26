@@ -418,16 +418,16 @@ which is the same format as it is in wind_info.nc). Numbers are rounded to 2 dec
 <li><p>For examples of what the text files looks like, please see <a class="reference internal" href="examples.html#content-of-text-files"><span class="std std-ref">Content of text files</span></a>.</p></li>
 </ul>
 </div></blockquote>
-<dl class="simple">
-<dt>wind_info.nc:</dt><dd><ul class="simple">
+<p>wind_info.nc:</p>
+<blockquote>
+<div><ul class="simple">
 <li><p>wind_info.nc is a netcdf4 file saved using 32-bit floats which follows
 <a class="reference external" href="http://cfconventions.org/Data/cf-conventions/cf-conventions-1.7/build/apf.html">CF-1.7 conventions</a>.</p></li>
 <li><p>Each variable listed under “Text files” at the top of this section is saved to wind_info.nc by the same
 name as their .txt counterparts.</p></li>
 <li><p>For an example of what wind_info.nc looks like, please see <a class="reference internal" href="examples.html#content-of-wind-info-nc"><span class="std std-ref">Content of wind_info.nc</span></a>.</p></li>
 </ul>
-</dd>
-</dl>
+</div></blockquote>
 </div>
 <div class="section" id="additional-utility-methods">
 <h2>Additional utility methods<a class="headerlink" href="#additional-utility-methods" title="Permalink to this headline">¶</a></h2>
@@ -538,13 +538,12 @@ $ pywinds/geodesic.sh 60 130 61 131
 </div>
 <p>The inverse may be set to True in order to find a given latitude and longitude if given a starting
 position, distance, and initial bearing to the new position.</p>
-<dl class="simple">
-<dt>::</dt><dd><p>$ ls
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ ls
 pywinds
-$ pywinds/geodesic.sh 60 130 124233.13 25.82 –inverse
-[61.0, 131.0, 206.69]</p>
-</dd>
-</dl>
+$ pywinds/geodesic.sh 60 130 124233.13 25.82 --inverse
+[61.0, 131.0, 206.69]
+</pre></div>
+</div>
 <ul class="simple">
 <li><p><strong>position_to_pixel.sh</strong>: Returns the pixel that a provided latitude and longitude correspond to on a user
 provided area.</p></li>
