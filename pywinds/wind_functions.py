@@ -146,6 +146,8 @@ def arctan2(x, y):
 def _delta_longitude(new_long, old_long):
     """Calculates the change in longitude on the Earth. Units are in degrees"""
     delta_long = new_long - old_long
+    delta_long = np.where(delta_long < 360, delta_long, delta_long % 360)
+    delta_long = np.where(delta_long > -360, delta_long, delta_long % -360)
     delta_long = np.where(delta_long < 180, delta_long, delta_long - 360)
     delta_long = np.where(delta_long > -180, delta_long, delta_long + 360)
     return delta_long
@@ -924,6 +926,13 @@ def loxodrome(old_lat, old_long, new_lat, new_long, earth_ellipsoid=None, invers
         new_lat = np.vectorize(geod_info.fwd)(old_long, old_lat, 0, cos(forward_bearing) * dist)[1]
         new_long = tan(forward_bearing) * (arctanh(sin(new_lat)) - e * arctanh(e * sin(new_lat)) -
                                            (arctanh(sin(old_lat)) - e * arctanh(e * sin(old_lat)))) + old_long
+        # Only used if new_lat == old_lat.
+        lat_radius = geod_info.a / (1 - es * sin(old_lat) ** 2) ** .5 * cos(old_lat)
+        # Makes it so that going east or west uses the correct formula. Note: tange(angle) -> 0 as angle -> 0; this
+        # yields a nice convergence.
+        new_long = np.where(((new_long != old_long) | (forward_bearing % 180 == 0)) & (forward_bearing % 180 != 90),
+                            new_long,_delta_longitude(-np.sign(forward_bearing % 360 - 180) *
+                                                      np.degrees(dist / lat_radius) + old_long, 0))
         return new_lat, new_long, (forward_bearing - 180) % 360
     # Note: atanh(sin(x)) == asinh(tan(x)) for -pi / 2 <= x <= pi / 2
     forward_bearing = arctan2(_delta_longitude(new_long, old_long),
@@ -936,7 +945,7 @@ def loxodrome(old_lat, old_long, new_lat, new_long, earth_ellipsoid=None, invers
     length = abs(meridian_dist / cos(forward_bearing))
     lat_radius = geod_info.a / (1 - es * sin(new_lat) ** 2) ** .5 * cos(new_lat)
     # Only used when staying on the same latitude.
-    horizontal_length = lat_radius * abs(_delta_longitude(new_long, old_long))
+    horizontal_length = lat_radius * np.radians(abs(_delta_longitude(new_long, old_long)))
     # If staying on a lat, use horizontal_length. Unless at poles to prevent rounding error.
     length = np.where((new_lat != old_lat) | (abs(new_lat) == 90), length, horizontal_length)
     return length, forward_bearing % 360, (forward_bearing - 180) % 360

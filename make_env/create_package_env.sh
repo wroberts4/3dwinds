@@ -12,9 +12,9 @@ conda activate pywinds
 pip install $PARENTDIR/..
 conda-pack -o $PARENTDIR/new_pywinds.tar.gz --exclude conda-pack --exclude sphinx
 mkdir $PARENTDIR/pywinds
-cp $PARENTDIR/run_scripts/* $PARENTDIR/pywinds/.
 mkdir $PARENTDIR/pywinds/env
 tar -xzf $PARENTDIR/new_pywinds.tar.gz -C $PARENTDIR/pywinds/env
+mv $PARENTDIR/pywinds/env/bin/*.sh $PARENTDIR/pywinds
 rm $PARENTDIR/new_pywinds.tar.gz
 
 # Remove non-bash activate/deactivate scripts
