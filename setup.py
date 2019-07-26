@@ -10,4 +10,4 @@ setup(name='pywinds',
       url='https://github.com/wroberts4/pywinds',
       install_requires='sphinx_rtd_theme',
       packages=['pywinds'],
-      scripts=glob('make_env/run_scripts/*'))
+      scripts=glob('make_env/run_scripts/*') + ['README.txt'])

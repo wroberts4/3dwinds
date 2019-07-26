@@ -15,6 +15,7 @@ mkdir $PARENTDIR/pywinds
 mkdir $PARENTDIR/pywinds/env
 tar -xzf $PARENTDIR/new_pywinds.tar.gz -C $PARENTDIR/pywinds/env
 mv $PARENTDIR/pywinds/env/bin/*.sh $PARENTDIR/pywinds
+mv $PARENTDIR/pywinds/env/bin/*.txt $PARENTDIR/pywinds
 rm $PARENTDIR/new_pywinds.tar.gz
 
 # Remove non-bash activate/deactivate scripts
