@@ -887,6 +887,39 @@ def _make_ellipsoid(ellipsoid, var_name):
     return geod_info
 
 
+def double_factorial(n):
+    if n < 0:
+        return (-1) ** ((n - 1) / 2) * n / double_factorial(-n)
+    if n % 2 == 0:
+        k = n / 2
+        return 2 ** k * np.math.factorial(k)
+    k = (n + 1) / 2
+    return np.math.factorial(2 * k) / (2 ** k * np.math.factorial(k))
+
+
+def h_2k(n, k, precision=4):
+    k = k / 2
+    total = 0
+    # Converges fast enough that 3 iterations yields results accurate to over 15 decimal places.
+    for j in range(precision):
+        total += double_factorial(2 * j - 3) * double_factorial(2 * j + 2 * k - 3) * n ** (k + 2 * j) /\
+                 (double_factorial(2 * j) * double_factorial(2 * j + 2 * k))
+    if k == 0:
+        return (-1) ** k * (1 - 2 * k) * (1 + 2 * k) * total
+    return (-1) ** k * (1 - 2 * k) * (1 + 2 * k) * total / k
+
+
+def _bessel_helmert(new_lat, old_lat, flattening, precision=7):
+    """Takes latitudes as radians. Credit: https://en.wikipedia.org/wiki/Meridian_arc"""
+    # Credit: https://en.wikipedia.org/wiki/Meridian_arc#cite_ref-14
+    # Third flattening: (a - b) / (a + b)
+    n = flattening / (2 - flattening)
+    # 6 is enough coefficients to be accurate.
+    coeffs = [h_2k(n, 2 * k) for k in range(precision)]
+    return sum(coeff * new_lat if k == 0 else coeff * np.sin(2 * k * new_lat) for k, coeff in enumerate(coeffs)) -\
+        sum(coeff * old_lat if k == 0 else coeff * np.sin(2 * k * old_lat) for k, coeff in enumerate(coeffs))
+
+
 def loxodrome(old_lat, old_long, new_lat, new_long, earth_ellipsoid=None, inverse=False):
     """Solves either the forward or inverse equation for a rhumb line.
 
@@ -935,17 +968,19 @@ def loxodrome(old_lat, old_long, new_lat, new_long, earth_ellipsoid=None, invers
                                                       np.degrees(dist / lat_radius) + old_long, 0))
         return new_lat, new_long, (forward_bearing - 180) % 360
     # Note: atanh(sin(x)) == asinh(tan(x)) for -pi / 2 <= x <= pi / 2
-    forward_bearing = arctan2(_delta_longitude(new_long, old_long),
-                                 arctanh(sin(new_lat)) - e * arctanh(e * sin(new_lat)) -
-                                 (arctanh(sin(old_lat)) - e * arctanh(e * sin(old_lat))))
+    delta_longitude = _delta_longitude(new_long, old_long)
+    forward_bearing = arctan2(delta_longitude,
+                              arctanh(sin(new_lat)) - e * arctanh(e * sin(new_lat)) -
+                              (arctanh(sin(old_lat)) - e * arctanh(e * sin(old_lat))))
     # If staying at a pole.
     forward_bearing = np.where(np.isnan(forward_bearing) == False, forward_bearing, new_lat + 90)
-    # meridian_dist = avg_radius * _bessel_helmert(new_lat, old_lat, geod_info.f)
-    meridian_dist = np.vectorize(geod_info.inv)(0, old_lat, 0, new_lat)[-1]
+    avg_radius = geod_info.a * (2 - geod_info.f) / 2
+    # This is much faster than using pyproj.Geod.inv().
+    meridian_dist = avg_radius * _bessel_helmert(np.radians(new_lat), np.radians(old_lat), geod_info.f)
     length = abs(meridian_dist / cos(forward_bearing))
     lat_radius = geod_info.a / (1 - es * sin(new_lat) ** 2) ** .5 * cos(new_lat)
     # Only used when staying on the same latitude.
-    horizontal_length = lat_radius * np.radians(abs(_delta_longitude(new_long, old_long)))
+    horizontal_length = lat_radius * np.radians(abs(delta_longitude))
     # If staying on a lat, use horizontal_length. Unless at poles to prevent rounding error.
     length = np.where((new_lat != old_lat) | (abs(new_lat) == 90), length, horizontal_length)
     return length, forward_bearing % 360, (forward_bearing - 180) % 360
