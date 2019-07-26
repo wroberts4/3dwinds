@@ -959,6 +959,7 @@ def loxodrome(old_lat, old_long, new_lat, new_long, earth_ellipsoid=None, invers
         new_lat = np.vectorize(geod_info.fwd)(old_long, old_lat, 0, cos(forward_bearing) * dist)[1]
         new_long = tan(forward_bearing) * (arctanh(sin(new_lat)) - e * arctanh(e * sin(new_lat)) -
                                            (arctanh(sin(old_lat)) - e * arctanh(e * sin(old_lat)))) + old_long
+        new_long = _delta_longitude(new_long, 0)
         # Only used if new_lat == old_lat.
         lat_radius = geod_info.a / (1 - es * sin(old_lat) ** 2) ** .5 * cos(old_lat)
         # Makes it so that going east or west uses the correct formula. Note: tange(angle) -> 0 as angle -> 0; this
