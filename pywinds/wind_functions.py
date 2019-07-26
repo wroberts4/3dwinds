@@ -143,6 +143,53 @@ def arctan2(x, y):
     return np.degrees(np.arctan2(x, y))
 
 
+def _make_ellipsoid(ellipsoid, var_name):
+    from pyproj import transform
+    if ellipsoid is None:
+        geod_info = Geod(ellps='WGS84')
+    elif isinstance(ellipsoid, str):
+        geod_info = Geod(ellps=ellipsoid)
+    elif isinstance(ellipsoid, dict):
+        for key in ellipsoid.keys():
+            if key not in ['a', 'b', 'rf', 'e', 'f', 'es']:
+                logger.warning('Invalid parameter passed to ellipsoid: {0}'.format(key))
+        if 'a' not in ellipsoid:
+            if 'b' not in ellipsoid:
+                logger.warning('Neither the major axis (a) nor the minor axis (b) were provided')
+            else:
+                if 'rf' in ellipsoid:
+                    ellipsoid['f'] = 1 / ellipsoid['rf']
+                if 'e' in ellipsoid:
+                    ellipsoid['es'] = ellipsoid['e'] ** 2
+                if 'f' in ellipsoid:
+                    if ellipsoid['f'] < 0 or ellipsoid['f'] >= 1:
+                        raise ValueError('Invalid flattening of {0}: 0 <= flattening < 1'.format(ellipsoid['f']))
+                    ellipsoid['a'] = ellipsoid['b'] / (1 - ellipsoid['f'])
+                elif 'es' in ellipsoid:
+                    if ellipsoid['es'] < 0 or ellipsoid['es'] >= 1:
+                        raise ValueError('Invalid eccentricity of {0}: 0 <= eccentricity < 1'.format(ellipsoid['es']))
+                    ellipsoid['a'] = ellipsoid['b'] / (1 - ellipsoid['es']) ** .5
+                else:
+                    ellipsoid['a'] = ellipsoid['b']
+        for key, val in ellipsoid.items():
+            if hasattr(val, 'units'):
+                if key in ['a', 'b']:
+                    ellipsoid[key] = transform(Proj({'proj': 'stere', 'units': val.attrs['units']}),
+                                               Proj({'proj': 'stere', 'units': 'm'}), val, 0)[0]
+                else:
+                    logger.warning('Only a and b have units, but {0} was provided {1}'.format(key, val.attrs['units']))
+                    ellipsoid[key] = val.data
+        geod_info = Geod(**ellipsoid)
+    else:
+        raise ValueError('{0} must be a string or Geod type, but instead was {1} {2}'.format(var_name, ellipsoid,
+                                                                                             type(ellipsoid)))
+    if geod_info.a < 0:
+        raise ValueError('Invalid major axis of {0}: Negative numbers not allowed'.format(geod_info.a))
+    if geod_info.f < 0 or geod_info.f >= 1:
+        raise ValueError('Invalid flattening of {0}: 0 <= flattening < 1'.format(geod_info.f))
+    return geod_info
+
+
 def _delta_longitude(new_long, old_long):
     """Calculates the change in longitude on the Earth. Units are in degrees"""
     delta_long = new_long - old_long
@@ -840,86 +887,6 @@ def lat_long(lat_ts, lat_0, long_0, displacement_data=None, projection=None, j=N
     return np.array((_reshape(old_lat, shape), _reshape(old_long, shape)))
 
 
-def _make_ellipsoid(ellipsoid, var_name):
-    from pyproj import transform
-    if ellipsoid is None:
-        geod_info = Geod(ellps='WGS84')
-    elif isinstance(ellipsoid, str):
-        geod_info = Geod(ellps=ellipsoid)
-    elif isinstance(ellipsoid, dict):
-        for key in ellipsoid.keys():
-            if key not in ['a', 'b', 'rf', 'e', 'f', 'es']:
-                logger.warning('Invalid parameter passed to ellipsoid: {0}'.format(key))
-        if 'a' not in ellipsoid:
-            if 'b' not in ellipsoid:
-                logger.warning('Neither the major axis (a) nor the minor axis (b) were provided')
-            else:
-                if 'rf' in ellipsoid:
-                    ellipsoid['f'] = 1 / ellipsoid['rf']
-                if 'e' in ellipsoid:
-                    ellipsoid['es'] = ellipsoid['e'] ** 2
-                if 'f' in ellipsoid:
-                    if ellipsoid['f'] < 0 or ellipsoid['f'] >= 1:
-                        raise ValueError('Invalid flattening of {0}: 0 <= flattening < 1'.format(ellipsoid['f']))
-                    ellipsoid['a'] = ellipsoid['b'] / (1 - ellipsoid['f'])
-                elif 'es' in ellipsoid:
-                    if ellipsoid['es'] < 0 or ellipsoid['es'] >= 1:
-                        raise ValueError('Invalid eccentricity of {0}: 0 <= eccentricity < 1'.format(ellipsoid['es']))
-                    ellipsoid['a'] = ellipsoid['b'] / (1 - ellipsoid['es']) ** .5
-                else:
-                    ellipsoid['a'] = ellipsoid['b']
-        for key, val in ellipsoid.items():
-            if hasattr(val, 'units'):
-                if key in ['a', 'b']:
-                    ellipsoid[key] = transform(Proj({'proj': 'stere', 'units': val.attrs['units']}),
-                                               Proj({'proj': 'stere', 'units': 'm'}), val, 0)[0]
-                else:
-                    logger.warning('Only a and b have units, but {0} was provided {1}'.format(key, val.attrs['units']))
-                    ellipsoid[key] = val.data
-        geod_info = Geod(**ellipsoid)
-    else:
-        raise ValueError('{0} must be a string or Geod type, but instead was {1} {2}'.format(var_name, ellipsoid,
-                                                                                             type(ellipsoid)))
-    if geod_info.a < 0:
-        raise ValueError('Invalid major axis of {0}: Negative numbers not allowed'.format(geod_info.a))
-    if geod_info.f < 0 or geod_info.f >= 1:
-        raise ValueError('Invalid flattening of {0}: 0 <= flattening < 1'.format(geod_info.f))
-    return geod_info
-
-
-def double_factorial(n):
-    if n < 0:
-        return (-1) ** ((n - 1) / 2) * n / double_factorial(-n)
-    if n % 2 == 0:
-        k = n / 2
-        return 2 ** k * np.math.factorial(k)
-    k = (n + 1) / 2
-    return np.math.factorial(2 * k) / (2 ** k * np.math.factorial(k))
-
-
-def h_2k(n, k, precision=4):
-    k = k / 2
-    total = 0
-    # Converges fast enough that 4 iterations yields results accurate to over 15 decimal places.
-    for j in range(precision):
-        total += double_factorial(2 * j - 3) * double_factorial(2 * j + 2 * k - 3) * n ** (k + 2 * j) /\
-                 (double_factorial(2 * j) * double_factorial(2 * j + 2 * k))
-    if k == 0:
-        return (-1) ** k * (1 - 2 * k) * (1 + 2 * k) * total
-    return (-1) ** k * (1 - 2 * k) * (1 + 2 * k) * total / k
-
-
-def _bessel_helmert(new_lat, old_lat, flattening, precision=7):
-    """Takes latitudes as radians. Credit: https://en.wikipedia.org/wiki/Meridian_arc"""
-    # Credit: https://en.wikipedia.org/wiki/Meridian_arc#cite_ref-14
-    # Third flattening: (a - b) / (a + b)
-    n = flattening / (2 - flattening)
-    # 7 is enough coefficients to be accurate.
-    coeffs = [h_2k(n, 2 * k) for k in range(precision)]
-    return sum(coeff * new_lat if k == 0 else coeff * np.sin(2 * k * new_lat) for k, coeff in enumerate(coeffs)) -\
-        sum(coeff * old_lat if k == 0 else coeff * np.sin(2 * k * old_lat) for k, coeff in enumerate(coeffs))
-
-
 def loxodrome(old_lat, old_long, new_lat, new_long, earth_ellipsoid=None, inverse=False):
     """Solves either the forward or inverse equation for a rhumb line.
 
@@ -939,7 +906,7 @@ def loxodrome(old_lat, old_long, new_lat, new_long, earth_ellipsoid=None, invers
         Ending point latitude
     new_long: float
         Ending point longitude
-    inverse: bool
+    inverse: bool, optional
         Calculate the inverse equation.
     earth_ellipsoid: str, optional
         ellipsoid of Earth (WGS84, sphere, etc)
@@ -965,8 +932,8 @@ def loxodrome(old_lat, old_long, new_lat, new_long, earth_ellipsoid=None, invers
         # Makes it so that going east or west uses the correct formula. Note: tange(angle) -> 0 as angle -> 0; this
         # yields a nice convergence.
         new_long = np.where(((new_long != old_long) | (forward_bearing % 180 == 0)) & (forward_bearing % 180 != 90),
-                            new_long,_delta_longitude(-np.sign(forward_bearing % 360 - 180) *
-                                                      np.degrees(dist / lat_radius) + old_long, 0))
+                            new_long, _delta_longitude(-np.sign(forward_bearing % 360 - 180) *
+                                                       np.degrees(dist / lat_radius) + old_long, 0))
         return new_lat, new_long, (forward_bearing - 180) % 360
     # Note: atanh(sin(x)) == asinh(tan(x)) for -pi / 2 <= x <= pi / 2
     delta_longitude = _delta_longitude(new_long, old_long)
@@ -975,12 +942,7 @@ def loxodrome(old_lat, old_long, new_lat, new_long, earth_ellipsoid=None, invers
                               (arctanh(sin(old_lat)) - e * arctanh(e * sin(old_lat))))
     # If staying at a pole.
     forward_bearing = np.where(np.isnan(forward_bearing) == False, forward_bearing, new_lat + 90)
-    if geod_info.f <= .01:
-        # This is much faster than using pyproj.Geod.inv(), but less accurate for higher f.
-        avg_radius = geod_info.a * (2 - geod_info.f) / 2
-        meridian_dist = avg_radius * _bessel_helmert(np.radians(new_lat), np.radians(old_lat), geod_info.f)
-    else:
-        meridian_dist = np.vectorize(geod_info.inv)(0, old_lat, 0, new_lat)[-1]
+    meridian_dist = geod_info.inv(np.zeros(np.shape(old_lat)), old_lat, np.zeros(np.shape(old_lat)), new_lat)[-1]
     length = abs(meridian_dist / cos(forward_bearing))
     lat_radius = geod_info.a / (1 - es * sin(new_lat) ** 2) ** .5 * cos(new_lat)
     # Only used when staying on the same latitude.
@@ -1007,6 +969,8 @@ def geodesic(old_lat, old_long, new_lat, new_long, earth_ellipsoid=None, inverse
         Ending point latitude
     new_long: float
         Ending point longitude
+    inverse: bool, optional
+        Calculate the inverse equation.
     earth_ellipsoid: str, optional
         ellipsoid of Earth (WGS84, sphere, etc)
 
