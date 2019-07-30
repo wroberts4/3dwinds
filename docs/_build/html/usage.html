@@ -165,8 +165,8 @@ GNU command line style; order in which options are provided does not matter and 
 in with options (as long as they are not interpreted as part of the option).</p>
 <div class="section" id="wind-info-sh">
 <span id="id1"></span><h2>wind_info.sh<a class="headerlink" href="#wind-info-sh" title="Permalink to this headline">¶</a></h2>
-<p>wind_info.sh calculates area information, j and i displacement, new and old latitude/longitude,
-v, u, and velocity of the wind. This is the primary function of pywinds.</p>
+<p>wind_info.sh calculates area information, j and i displacement, new and old latitude/longitude, velocity, and
+v and u components of the wind. This is the primary function of pywinds.</p>
 <p>Required arguments:</p>
 <ul class="simple">
 <li><p><strong>lat-ts</strong>: Projection latitude of true scale</p></li>
@@ -321,7 +321,7 @@ Units are determined in the following priority:</p>
 <div class="section" id="data-format">
 <span id="id5"></span><h2>Data format<a class="headerlink" href="#data-format" title="Permalink to this headline">¶</a></h2>
 <p>If j and i values are provided, then data is calculated at a single pixel:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">wind_info</span><span class="p">:</span> <span class="p">[</span><span class="n">new_latitude</span><span class="p">,</span> <span class="n">new_longitude</span><span class="p">,</span> <span class="n">velocity</span><span class="p">,</span> <span class="n">angle</span><span class="p">,</span> <span class="n">v</span><span class="p">,</span> <span class="n">u</span><span class="p">]</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">wind_info</span><span class="p">:</span> <span class="p">[</span><span class="n">new_latitude</span><span class="p">,</span> <span class="n">new_longitude</span><span class="p">,</span> <span class="n">speed</span><span class="p">,</span> <span class="n">angle</span><span class="p">,</span> <span class="n">v</span><span class="p">,</span> <span class="n">u</span><span class="p">]</span>
 
 <span class="n">velocity</span><span class="p">:</span> <span class="p">[</span><span class="n">speed</span><span class="p">,</span> <span class="n">direction</span><span class="p">]</span>
 
@@ -334,11 +334,11 @@ Units are determined in the following priority:</p>
 </div>
 <p>If no j and i values are provided, then data is calculated at every pixel (n-rows, m-columns):</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">wind_info</span><span class="p">:</span>
-    <span class="p">[[</span><span class="n">new_latitude_11</span><span class="p">,</span> <span class="n">new_longitude_11</span><span class="p">,</span> <span class="n">velocity_11</span><span class="p">,</span> <span class="n">angle_11</span><span class="p">,</span> <span class="n">v_11</span><span class="p">,</span> <span class="n">u_11</span><span class="p">],</span>
+    <span class="p">[[</span><span class="n">new_latitude_11</span><span class="p">,</span> <span class="n">new_longitude_11</span><span class="p">,</span> <span class="n">speed_11</span><span class="p">,</span> <span class="n">angle_11</span><span class="p">,</span> <span class="n">v_11</span><span class="p">,</span> <span class="n">u_11</span><span class="p">],</span>
      <span class="o">...</span><span class="p">,</span>
-     <span class="p">[</span><span class="n">new_latitude_1m</span><span class="p">,</span> <span class="n">new_longitude_1m</span><span class="p">,</span> <span class="n">velocity_1m</span><span class="p">,</span> <span class="n">angle_1m</span><span class="p">,</span> <span class="n">v_1m</span><span class="p">,</span> <span class="n">u_1m</span><span class="p">],</span>
+     <span class="p">[</span><span class="n">new_latitude_1m</span><span class="p">,</span> <span class="n">new_longitude_1m</span><span class="p">,</span> <span class="n">speed_1m</span><span class="p">,</span> <span class="n">angle_1m</span><span class="p">,</span> <span class="n">v_1m</span><span class="p">,</span> <span class="n">u_1m</span><span class="p">],</span>
      <span class="o">...</span><span class="p">,</span>
-     <span class="p">[</span><span class="n">new_latitude_nm</span><span class="p">,</span> <span class="n">new_longitude_nm</span><span class="p">,</span> <span class="n">velocity_nm</span><span class="p">,</span> <span class="n">angle_nm</span><span class="p">,</span> <span class="n">v_nm</span><span class="p">,</span> <span class="n">u_nm</span><span class="p">]]</span>
+     <span class="p">[</span><span class="n">new_latitude_nm</span><span class="p">,</span> <span class="n">new_longitude_nm</span><span class="p">,</span> <span class="n">speed_nm</span><span class="p">,</span> <span class="n">angle_nm</span><span class="p">,</span> <span class="n">v_nm</span><span class="p">,</span> <span class="n">u_nm</span><span class="p">]]</span>
 
 <span class="n">vu</span><span class="p">:</span>
     <span class="p">[[[</span><span class="n">v_11</span><span class="p">,</span> <span class="o">...</span><span class="p">,</span> <span class="n">v_1m</span><span class="p">],</span>

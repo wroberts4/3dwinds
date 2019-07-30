@@ -9,8 +9,8 @@ in with options (as long as they are not interpreted as part of the option).
 
 wind_info.sh
 ------------
-wind_info.sh calculates area information, j and i displacement, new and old latitude/longitude,
-v, u, and velocity of the wind. This is the primary function of pywinds.
+wind_info.sh calculates area information, j and i displacement, new and old latitude/longitude, velocity, and
+v and u components of the wind. This is the primary function of pywinds.
 
 Required arguments:
 
@@ -177,7 +177,7 @@ If j and i values are provided, then data is calculated at a single pixel:
 
 ::
 
-    wind_info: [new_latitude, new_longitude, velocity, angle, v, u]
+    wind_info: [new_latitude, new_longitude, speed, angle, v, u]
 
     velocity: [speed, direction]
 
@@ -192,11 +192,11 @@ If no j and i values are provided, then data is calculated at every pixel (n-row
 ::
 
     wind_info:
-        [[new_latitude_11, new_longitude_11, velocity_11, angle_11, v_11, u_11],
+        [[new_latitude_11, new_longitude_11, speed_11, angle_11, v_11, u_11],
          ...,
-         [new_latitude_1m, new_longitude_1m, velocity_1m, angle_1m, v_1m, u_1m],
+         [new_latitude_1m, new_longitude_1m, speed_1m, angle_1m, v_1m, u_1m],
          ...,
-         [new_latitude_nm, new_longitude_nm, velocity_nm, angle_nm, v_nm, u_nm]]
+         [new_latitude_nm, new_longitude_nm, speed_nm, angle_nm, v_nm, u_nm]]
 
     vu:
         [[[v_11, ..., v_1m],
