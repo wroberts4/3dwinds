@@ -204,12 +204,12 @@ def _get_args(name, func):
                 my_parser.add_argument('long', type=float, help='Longitude of position to transform into pixel.')
             if name in ['wind_info', 'velocity', 'vu']:
                 if name == 'wind_info':
-                    my_parser.add_argument('--from-lat-long', action="store_true",
-                                           help="Switches to taking latitudes and longitudes as arguments.")
                     my_parser.add_argument('-p', '--print', '--no-save', action="store_true", dest='no_save',
                                            help="print data to shell without saving")
                     my_parser.add_argument('-s', '--save-directory', type=str, metavar='path_name',
                                            help="directory to save to. Defaults to where script was ran")
+                my_parser.add_argument('--from-lat-long', action="store_true",
+                                       help="Switches to taking latitudes and longitudes as arguments.")
                 my_parser.add_argument('delta-time', type=float,
                                        help='amount of time that separates both files in minutes')
                 my_parser.add_argument('--earth-ellipsoid', '--earth-spheroid', action=CustomAction,
