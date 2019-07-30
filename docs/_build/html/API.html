@@ -429,6 +429,26 @@ from area and pixel-displacement in row-major format</p>
 </dd></dl>
 
 <dl class="function">
+<dt id="pywinds.wind_functions.velocity_fll">
+<code class="sig-prename descclassname">pywinds.wind_functions.</code><code class="sig-name descname">velocity_fll</code><span class="sig-paren">(</span><em class="sig-param">delta_time</em>, <em class="sig-param">old_lat</em>, <em class="sig-param">old_long</em>, <em class="sig-param">new_lat</em>, <em class="sig-param">new_long</em>, <em class="sig-param">earth_ellipsoid=None</em><span class="sig-paren">)</span><a class="headerlink" href="#pywinds.wind_functions.velocity_fll" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>delta_time</strong> – </p></li>
+<li><p><strong>old_lat</strong> – </p></li>
+<li><p><strong>old_long</strong> – </p></li>
+<li><p><strong>new_lat</strong> – </p></li>
+<li><p><strong>new_long</strong> – </p></li>
+<li><p><strong>earth_ellipsoid</strong> – </p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
 <dt id="pywinds.wind_functions.vu">
 <code class="sig-prename descclassname">pywinds.wind_functions.</code><code class="sig-name descname">vu</code><span class="sig-paren">(</span><em class="sig-param">lat_ts</em>, <em class="sig-param">lat_0</em>, <em class="sig-param">long_0</em>, <em class="sig-param">delta_time</em>, <em class="sig-param">displacement_data=None</em>, <em class="sig-param">projection=None</em>, <em class="sig-param">j=None</em>, <em class="sig-param">i=None</em>, <em class="sig-param">area_extent=None</em>, <em class="sig-param">shape=None</em>, <em class="sig-param">center=None</em>, <em class="sig-param">pixel_size=None</em>, <em class="sig-param">upper_left_extent=None</em>, <em class="sig-param">radius=None</em>, <em class="sig-param">units=None</em>, <em class="sig-param">projection_ellipsoid=None</em>, <em class="sig-param">earth_ellipsoid=None</em><span class="sig-paren">)</span><a class="headerlink" href="#pywinds.wind_functions.vu" title="Permalink to this definition">¶</a></dt>
 <dd><p>Computes the v and u components of the wind given an area and pixel-displacement.</p>
@@ -471,6 +491,26 @@ Note that shape can be found from the displacement file or the area provided.</p
 </dd>
 <dt class="field-odd">Return type</dt>
 <dd class="field-odd"><p>numpy.array or <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.7)">list</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="pywinds.wind_functions.vu_fll">
+<code class="sig-prename descclassname">pywinds.wind_functions.</code><code class="sig-name descname">vu_fll</code><span class="sig-paren">(</span><em class="sig-param">delta_time</em>, <em class="sig-param">old_lat</em>, <em class="sig-param">old_long</em>, <em class="sig-param">new_lat</em>, <em class="sig-param">new_long</em>, <em class="sig-param">earth_ellipsoid=None</em><span class="sig-paren">)</span><a class="headerlink" href="#pywinds.wind_functions.vu_fll" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>delta_time</strong> – </p></li>
+<li><p><strong>old_lat</strong> – </p></li>
+<li><p><strong>old_long</strong> – </p></li>
+<li><p><strong>new_lat</strong> – </p></li>
+<li><p><strong>new_long</strong> – </p></li>
+<li><p><strong>earth_ellipsoid</strong> – </p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p></p>
 </dd>
 </dl>
 </dd></dl>
@@ -528,6 +568,26 @@ where the script is ran</p></li>
 </dd>
 <dt class="field-odd">Return type</dt>
 <dd class="field-odd"><p>numpy.array or <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.7)">list</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="pywinds.wind_functions.wind_info_fll">
+<code class="sig-prename descclassname">pywinds.wind_functions.</code><code class="sig-name descname">wind_info_fll</code><span class="sig-paren">(</span><em class="sig-param">delta_time</em>, <em class="sig-param">old_lat</em>, <em class="sig-param">old_long</em>, <em class="sig-param">new_lat</em>, <em class="sig-param">new_long</em>, <em class="sig-param">earth_ellipsoid=None</em>, <em class="sig-param">no_save=True</em><span class="sig-paren">)</span><a class="headerlink" href="#pywinds.wind_functions.wind_info_fll" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>delta_time</strong> – </p></li>
+<li><p><strong>old_lat</strong> – </p></li>
+<li><p><strong>old_long</strong> – </p></li>
+<li><p><strong>new_lat</strong> – </p></li>
+<li><p><strong>new_long</strong> – </p></li>
+<li><p><strong>earth_ellipsoid</strong> – </p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p></p>
 </dd>
 </dl>
 </dd></dl>

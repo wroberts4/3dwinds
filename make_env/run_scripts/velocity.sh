@@ -2,6 +2,7 @@
 
 PARENTDIR="$( cd -P "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 source $PARENTDIR/env/bin/activate  2> /dev/null
+# https://stackoverflow.com/questions/8063228/how-do-i-check-if-a-variable-exists-in-a-list-in-bash
 if [[ $* =~ (^|[[:space:]])"--from-lat-long"($|[[:space:]]) ]]; then
     func=velocity_fll
 else
