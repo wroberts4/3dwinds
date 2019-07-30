@@ -161,6 +161,24 @@ def _get_args(name, func):
                                            [str, (float, int), str, str, (float, int), str]],
                                help='Ellipsoid of Earth. Coordinate system name or defined using a ' +
                                     'combination of a, b, e, es, f, and rf.')
+    elif name in ['wind_info_fll', 'velocity_fll', 'vu_fll']:
+        arg_names = ['delta-time', 'old-lat', 'old-long', 'new-lat', 'new-long']
+        sys.argv.remove('--from-lat-long')
+        my_parser = argparse.ArgumentParser(description=func.__doc__.splitlines()[0], formatter_class=MyFormatter)
+        my_parser.add_argument('delta-time', type=float, help='Amount of time spent getting between ' +
+                                                              'the two positions in minutes.')
+        my_parser.add_argument('old-lat', type=float, help='Latitude of starting location.')
+        my_parser.add_argument('old-long', type=float, help='Longitude of starting locaion.')
+        my_parser.add_argument('new-lat', type=float, help='Latitude of ending location')
+        my_parser.add_argument('new-long', type=float, help='Longitude of ending location')
+        my_parser.add_argument('--earth-ellipsoid', '--earth-spheroid', action=CustomAction, type=_nums_or_string,
+                               narg_types=[[str], [str, (float, int)], [str, (float, int), str],
+                                           [str, (float, int), str, (float, int)],
+                                           [str, (float, int), str, str, (float, int)],
+                                           [str, (float, int), str, (float, int), str],
+                                           [str, (float, int), str, str, (float, int), str]],
+                               help='Ellipsoid of Earth. Coordinate system name or defined using a ' +
+                                    'combination of a, b, e, es, f, and rf.')
     else:
         my_parser = argparse.ArgumentParser(description=func.__doc__.splitlines()[0], formatter_class=MyFormatter)
         if name not in ['area', 'position_to_pixel']:
@@ -186,6 +204,8 @@ def _get_args(name, func):
                 my_parser.add_argument('long', type=float, help='Longitude of position to transform into pixel.')
             if name in ['wind_info', 'velocity', 'vu']:
                 if name == 'wind_info':
+                    my_parser.add_argument('--from-lat-long', action="store_true",
+                                           help="Switches to taking latitudes and longitudes as arguments.")
                     my_parser.add_argument('-p', '--print', '--no-save', action="store_true", dest='no_save',
                                            help="print data to shell without saving")
                     my_parser.add_argument('-s', '--save-directory', type=str, metavar='path_name',
@@ -263,7 +283,10 @@ def run_script(func, output_format, name):
     if name == 'wind_info':
         kwargs['timestamp'] = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
     displacement_data = kwargs.get('displacement_data')
-    if displacement_data is None and name not in ['lat_long', 'loxodrome', 'geodesic', 'position_to_pixel']:
+    if name == 'wind_info_fll':
+        kwargs['no_save'] = True
+    if displacement_data is None and name not in ['lat_long', 'loxodrome', 'geodesic', 'position_to_pixel',
+                                                  'velocity_fll', 'vu_fll', 'wind_info_fll']:
         displacement_data = os.path.join(os.getcwd(), '*.flo')
         kwargs['displacement_data'] = displacement_data
     if isinstance(displacement_data, str):

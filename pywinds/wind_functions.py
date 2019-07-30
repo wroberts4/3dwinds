@@ -756,6 +756,21 @@ def velocity(lat_ts, lat_0, long_0, delta_time, displacement_data=None, projecti
     return np.array((_reshape(speed, shape), _reshape(angle, shape)))
 
 
+def velocity_fll(delta_time, old_lat, old_long, new_lat, new_long, earth_ellipsoid=None):
+    """
+
+    :param delta_time:
+    :param old_lat:
+    :param old_long:
+    :param new_lat:
+    :param new_long:
+    :param earth_ellipsoid:
+    :return:
+    """
+
+    return wind_info_fll(delta_time, old_lat, old_long, new_lat, new_long, earth_ellipsoid=earth_ellipsoid)[2:4]
+
+
 def vu(lat_ts, lat_0, long_0, delta_time, displacement_data=None, projection=None, j=None, i=None, area_extent=None,
        shape=None, center=None, pixel_size=None, upper_left_extent=None, radius=None, units=None,
        projection_ellipsoid=None, earth_ellipsoid=None):
@@ -819,6 +834,20 @@ def vu(lat_ts, lat_0, long_0, delta_time, displacement_data=None, projection=Non
                               pixel_size=pixel_size, upper_left_extent=upper_left_extent, radius=radius, units=units,
                               projection_ellipsoid=projection_ellipsoid, earth_ellipsoid=earth_ellipsoid)[:3]
     return np.array((_reshape(v, shape), _reshape(u, shape)))
+
+
+def vu_fll(delta_time, old_lat, old_long, new_lat, new_long, earth_ellipsoid=None):
+    """
+
+    :param delta_time:
+    :param old_lat:
+    :param old_long:
+    :param new_lat:
+    :param new_long:
+    :param earth_ellipsoid:
+    :return:
+    """
+    return wind_info_fll(delta_time, old_lat, old_long, new_lat, new_long, earth_ellipsoid=earth_ellipsoid)[4:]
 
 
 def lat_long(lat_ts, lat_0, long_0, displacement_data=None, projection=None, j=None, i=None, area_extent=None,
@@ -1134,4 +1163,33 @@ def wind_info(lat_ts, lat_0, long_0, delta_time, displacement_data=None, project
                                                             'grid_mapping_name': 'polar_stereographic'})],
                    text_shape=text_shape)
     # Columns: lat, long, speed, direction, v, u
+    return winds
+
+
+def wind_info_fll(delta_time, old_lat, old_long, new_lat, new_long, earth_ellipsoid=None, no_save=True):
+    """
+
+    :param delta_time:
+    :param old_lat:
+    :param old_long:
+    :param new_lat:
+    :param new_long:
+    :param earth_ellipsoid:
+    :return:
+    """
+    distance, angle = loxodrome(old_lat, old_long, new_lat, new_long, earth_ellipsoid=earth_ellipsoid)[:2]
+    speed = distance / (delta_time * 60)
+    # IMPORTANT, THIS IS CORRECT: Since angle is measured counter-cloclwise from north, then v = sin(pi - angle) and
+    # u = cos(pi - angle). sin(pi - angle) = cos(angle) and cos(pi - angle) = sin(angle)!
+    v = cos(angle) * speed
+    u = sin(angle) * speed
+    # Make each variable its own column.
+    winds = np.insert(np.expand_dims(np.ravel(new_lat), axis=1), 1, new_long, axis=1)
+    winds = np.insert(winds, 2, speed, axis=1)
+    winds = np.insert(winds, 3, angle, axis=1)
+    winds = np.insert(winds, 4, v, axis=1)
+    winds = np.insert(winds, 5, u, axis=1)
+    # Reshapes so that when one pixel is specified, each variable is its own row instead of its own column.
+    if np.shape(winds)[0] == 1:
+        winds = winds[0]
     return winds

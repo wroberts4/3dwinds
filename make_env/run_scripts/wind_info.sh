@@ -2,6 +2,11 @@
 
 PARENTDIR="$( cd -P "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 source $PARENTDIR/env/bin/activate  2> /dev/null
+if [[ $* =~ (^|[[:space:]])"--from-lat-long"($|[[:space:]]) ]]; then
+    func=wind_info_fll
+else
+    func=wind_info
+fi
 python -W ignore<<EOF
 import logging
 import ntpath
@@ -10,7 +15,7 @@ import sys
 
 import numpy as np
 
-from pywinds.wind_functions import wind_info
+from pywinds.wind_functions import wind_info, wind_info_fll
 from pywinds.wrapper_utils import run_script
 
 logger = logging.getLogger('wind_info.sh')
@@ -37,5 +42,5 @@ def output_format(output, precision, **kwargs):
 
 if __name__ == "__main__":
     sys.argv = [os.path.abspath("$0")] + "$*".split(' ')
-    run_script(wind_info, output_format, 'wind_info')
+    run_script($func, output_format, "$func")
 EOF
