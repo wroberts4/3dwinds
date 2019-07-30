@@ -208,7 +208,7 @@ def _get_args(name, func):
                                            help="print data to shell without saving")
                     my_parser.add_argument('-s', '--save-directory', type=str, metavar='path_name',
                                            help="directory to save to. Defaults to where script was ran")
-                my_parser.add_argument('--from-lat-long', action="store_true",
+                my_parser.add_argument('--from-lat-long',
                                        help="Switches to taking latitudes and longitudes as arguments.")
                 my_parser.add_argument('delta-time', type=float,
                                        help='amount of time that separates both files in minutes')
@@ -262,6 +262,7 @@ def _get_args(name, func):
     my_parser.add_argument('--precision', type=int, default=2, metavar='int',
                            help='Number of decimal places to round printed output to.')
     commands = my_parser.parse_args()
+    print(commands)
     # Logging setup.
     levels = [logging.ERROR, logging.WARNING, logging.INFO, logging.DEBUG]
     logging_format = '[%(levelname)s: %(asctime)s : %(name)s] %(message)s'
