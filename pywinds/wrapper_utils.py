@@ -262,7 +262,6 @@ def _get_args(name, func):
     my_parser.add_argument('--precision', type=int, default=2, metavar='int',
                            help='Number of decimal places to round printed output to.')
     commands = my_parser.parse_args()
-    print(commands)
     # Logging setup.
     levels = [logging.ERROR, logging.WARNING, logging.INFO, logging.DEBUG]
     logging_format = '[%(levelname)s: %(asctime)s : %(name)s] %(message)s'
