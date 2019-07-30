@@ -130,7 +130,7 @@ def _get_args(name, func):
     """Reads command line arguments and handles logic behind them."""
     kwarg_names = ['center', 'pixel_size', 'units', 'shape', 'upper_left_extent', 'radius',
                    'area_extent', 'displacement_data', 'j', 'i', 'no_save', 'save_directory',
-                   'projection', 'projection_ellipsoid', 'earth_ellipsoid', 'precision']
+                   'projection', 'projection_ellipsoid', 'earth_ellipsoid', 'precision', 'from_lat_long']
     kwargs = {}
     if name in ['loxodrome', 'geodesic']:
         if '--inverse' in sys.argv:
