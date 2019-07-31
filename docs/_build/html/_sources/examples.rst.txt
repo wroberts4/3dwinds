@@ -6,12 +6,6 @@ Examples
 Examples of wind_info.sh
 ------------------------
 
-.. note::
-
-    If pywinds was installed via the git repository, then scripts may be called directly:
-
-    $ wind_info.sh 60 90 0 100 ------pixel-size 4000
-
 Changing the center of area::
 
     $ pwd
@@ -174,6 +168,10 @@ Using latitudes and longitudes directly::
     in.flo        pywinds
     $ ./pywinds/wind_info.sh --from-lat-long 100 30 120 35 140
     [35.0, 140.0, 326.43, 73.55, 92.41, 313.08]
+    $ ./pywinds/velocity.sh 60 70 -175 70 175 --from-lat-long
+    [106.07, 270.0]
+    $ ./pywinds/vu.sh .01666 0 0 0 180 --from-lat-long --earth-ellipsoid a 1
+    [0.0, 3.14]
 
 
 .. _input_units:
@@ -245,7 +243,6 @@ Using other advanced args::
 
 Shuffling order of arguments/options::
 
-
     $ pwd
     /Desktop
     $ ls
@@ -261,9 +258,9 @@ Shuffling order of arguments/options::
 
 .. note::
 
-    For **------pixel-size** to have positional arguments after it, it must be specified using two numbers
-    or with units. This is because **------pixel-size** would interpret the second number as input since
-    **------pixel-size** can take one or two numbers as arguments).
+    It is safest to not have positional arguments after **------pixel-size**, **------projection-ellipsoid**,
+    and **------earth-ellipsoid**. This is because they may interpret positional arguments as
+    input since they can take a variable set of inputs.
 
 **------displacement-data** can also be a list ([j_displacement,i_displacement] in row-major format)::
 

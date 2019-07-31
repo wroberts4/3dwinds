@@ -82,8 +82,9 @@
             
               <ul class="current">
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Installing pywinds</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="#package-usage-option-1">Package usage option 1</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#package-usage-option-2">Package usage option 2</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#package-usage-option-1">Package Usage Option 1</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#package-usage-option-2">Package Usage Option 2</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#dependencies">Dependencies</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="usage.html">Usage</a></li>
@@ -155,38 +156,58 @@
             
   <div class="section" id="installing-pywinds">
 <h1>Installing pywinds<a class="headerlink" href="#installing-pywinds" title="Permalink to this headline">¶</a></h1>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>Option 1 and option 2 are separate: Updating one will not update the other.</p>
+</div>
+<div class="section" id="package-usage-option-1">
+<h2>Package Usage Option 1<a class="headerlink" href="#package-usage-option-1" title="Permalink to this headline">¶</a></h2>
+<p>If using pywinds from a tarball, everything should already be setup and ready to go after you untar it
+(ie: tar -zxf linux_pywinds.tar.gz). The tarball can be found on 3dwinds.ssec.wisc.edu:/home/wroberts.
+New releases of pywinds will be put on 3dwinds.ssec.wisc.edu:/home/wroberts and will need to be
+untared to users’ directories every time an update is made.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>This is different than the git installation. The tarball is not meant to be updated by users. If you
+wish to have pywinds in your virtual environment, install the package into a conda environment (see below).</p>
+</div>
+</div>
+<div class="section" id="package-usage-option-2">
+<h2>Package Usage Option 2<a class="headerlink" href="#package-usage-option-2" title="Permalink to this headline">¶</a></h2>
+<p>If installing the package, you will need to use <a class="reference external" href="https://www.anaconda.com/distribution/">anaconda for python 3</a>.
+Source code is available to clone on <a class="reference external" href="https://github.com/wroberts4/pywinds">https://github.com/wroberts4/pywinds</a>. If you are unfamiliar with creating
+and managing virtual environments, please see
+<a class="reference external" href="https://docs.conda.io/projects/conda/en/latest/user-guide/tasks/manage-environments.html">https://docs.conda.io/projects/conda/en/latest/user-guide/tasks/manage-environments.html</a> for more information.
+Run these commands again to update your environment every time a change is made to pywinds.</p>
+<p>Conda commands to install pywinds:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ conda install -c conda-forge python=3.7.3 numpy pyproj xarray pyresample netcdf4
+$ pip install git+https://github.com/wroberts4/pywinds.git
+</pre></div>
+</div>
+<p>Or use the yaml (only if you have the git repository on your machine):</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ git clone https://github.com/wroberts4/pywinds.git
+Cloning into &#39;pywinds&#39;...
+remote: Enumerating objects: 23, done.
+remote: Counting objects: 100% (23/23), done.
+remote: Compressing objects: 100% (23/23), done.
+remote: Total 10942 (delta 2), reused 6 (delta 0), pack-reused 10919
+Receiving objects: 100% (10942/10942), 720.97 MiB | 22.34 MiB/s, done.
+Resolving deltas: 100% (3242/3242), done.
+$ ls
+pywinds
+$ conda env update -f ./pywinds/build_environment.yml
+$ pip install ./pywinds
+</pre></div>
+</div>
+</div>
+<div class="section" id="dependencies">
+<h2>Dependencies<a class="headerlink" href="#dependencies" title="Permalink to this headline">¶</a></h2>
 <p>pywinds depends on python=3.7.3, pyproj=2.2.1, numpy=1.16.4, xarray=0.12.2, pyresample=1.12.3, and netcdf4=1.5.1.2</p>
 <p>If you are making the docs, sphinx=2.1.2 and sphinx-rtd-theme=0.4.3</p>
 <p>If you are packing the environment, conda-pack=0.3.1</p>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
 <p>All versions were used at development time and later or previous versions of each package may work.</p>
-</div>
-<div class="section" id="package-usage-option-1">
-<h2>Package usage option 1<a class="headerlink" href="#package-usage-option-1" title="Permalink to this headline">¶</a></h2>
-<p>If using pywinds from a tarball, everything should already be setup and ready to go after you untar it
-(ie: tar -zxvf linux_pywinds.tar.gz). The tarball can be found on 3dwinds.ssec.wisc.edu:/home/wroberts.</p>
-<div class="admonition note">
-<p class="admonition-title">Note</p>
-<p>This is different than the git installation. The tarball is not meant to be updated by users.
-If you wish to update pywinds manually, install the package into a conda environment (see below).</p>
-</div>
-</div>
-<div class="section" id="package-usage-option-2">
-<h2>Package usage option 2<a class="headerlink" href="#package-usage-option-2" title="Permalink to this headline">¶</a></h2>
-<p>If installing the package, you will need to use <a class="reference external" href="https://www.anaconda.com/distribution/">anaconda</a>.
-Source code is available to clone on <a class="reference external" href="https://github.com/wroberts4/pywinds">https://github.com/wroberts4/pywinds</a>.</p>
-<p>Conda commands to install pywinds (if you do not have the git repository on your machine):</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ conda install -c conda-forge python=3.7.3 numpy pyproj xarray pyresample netcdf4
-$ pip install git+https://github.com/wroberts4/pywinds.git
-</pre></div>
-</div>
-<p>Or use the yaml (if you have the git repository on your machine):</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ ls
-pywinds
-$ conda env update -f ./pywinds/build_environment.yml
-$ pip install ./pywinds
-</pre></div>
 </div>
 </div>
 </div>

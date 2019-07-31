@@ -25,4 +25,7 @@ Documentation
 Contact Maintainer
 ------------------
 email: wroberts4@wisc.edu
-office: 1225 W Dayton St, Madison, WI 53706, Room 623/A/B
+
+office building: 1225 W Dayton St, Madison, WI 53706
+
+office number: 623/A/B

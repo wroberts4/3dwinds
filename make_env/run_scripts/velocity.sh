@@ -13,7 +13,7 @@ import numpy as np
 import sys
 
 from os.path import abspath
-from pywinds.wind_functions import velocity, velocity_fll
+from pywinds.wind_functions import $func
 from pywinds.wrapper_utils import run_script
 
 
@@ -23,5 +23,12 @@ def output_format(output, precision, **kwargs):
 
 if __name__ == "__main__":
     sys.argv = [abspath("$0")] + "$*".split(' ')
-    run_script($func, output_format, "$func")
+    if "$func" == "velocity_fll":
+        sys.argv.remove('--from-lat-long')
+        flag_names = ['delta-time', 'old-lat', 'old-long', 'new-lat', 'new-long', '--earth-ellipsoid']
+    else:
+        flag_names = ['lat-ts', 'lat-0', 'long-0', 'delta-time', '--pixel-size', '--displacement-data', '--projection',
+                      '-j', '-i', '--area-extent', '--shape', '--center', '--upper-left-extent', '--radius',
+                      '--units', '--projection-ellipsoid', '--earth-ellipsoid', '--from-lat-long']
+    run_script($func, flag_names, output_format, "$func")
 EOF

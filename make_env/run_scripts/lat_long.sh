@@ -17,5 +17,8 @@ def output_format(output, precision, **kwargs):
 
 if __name__ == "__main__":
     sys.argv = [abspath("$0")] + "$*".split(' ')
-    run_script(lat_long, output_format, 'lat_long')
+    flag_names = ['lat-ts', 'lat-0', 'long-0', '--displacement-data', '-j', '-i', '--projection', '--area-extent',
+             '--shape', '--center', '--pixel-size', '--upper-left-extent', '--radius', '--units',
+             '--projection-ellipsoid']
+    run_script(lat_long, flag_names, output_format, 'lat_long')
 EOF

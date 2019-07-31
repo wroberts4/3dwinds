@@ -85,8 +85,7 @@
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Usage</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#wind-info-sh">wind_info.sh</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#advanced-arguments">Advanced arguments</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#output-information">Output information</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#data-format">Data format</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#output-format">Output format</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#save-format">Save format</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#additional-utility-methods">Additional utility methods</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#understanding-error-messages-from-scripts">Understanding error messages from scripts</a></li>
@@ -163,6 +162,15 @@
 <p>Use the <strong>-h</strong> or <strong>——help</strong> flags on any scripts to print a usage message. These scripts follow
 GNU command line style; order in which options are provided does not matter and positional arguments may be mixed
 in with options (as long as they are not interpreted as part of the option).</p>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>The following is <strong>NOT</strong> interchangeable and calling one is not the same as calling the other:</p>
+<ul class="simple">
+<li><p>If pywinds was installed via the git repository, then scripts must be called directly (ie <strong>$ wind_info.sh</strong>)</p></li>
+<li><p>If pywinds was installed via the tarball, then scripts must be called as scripts: (ie <strong>$ ./wind_info.sh</strong>)</p></li>
+</ul>
+<p><strong>Documentation assumes pywinds was installed using the tarball.</strong></p>
+</div>
 <div class="section" id="wind-info-sh">
 <span id="id1"></span><h2>wind_info.sh<a class="headerlink" href="#wind-info-sh" title="Permalink to this headline">¶</a></h2>
 <p>wind_info.sh calculates area information, j and i displacement, new and old latitude/longitude, velocity, and
@@ -209,7 +217,7 @@ Specified using <strong>-vvv</strong></p></li>
 <div><ul class="simple">
 <li><p>For more optional arguments, please see <a class="reference internal" href="#advanced-arguments"><span class="std std-ref">Advanced arguments</span></a>.</p></li>
 <li><p>For more information on save files and their formats, please see <a class="reference internal" href="#save-format"><span class="std std-ref">Save format</span></a></p></li>
-<li><p>For information on the output, please see <a class="reference internal" href="#output-information"><span class="std std-ref">Output information</span></a></p></li>
+<li><p>For information on the output, please see <a class="reference internal" href="#output-format"><span class="std std-ref">Output format</span></a></p></li>
 </ul>
 </div></blockquote>
 <div class="admonition note" id="area-information-note">
@@ -225,7 +233,11 @@ Specified using <strong>-vvv</strong></p></li>
 </div>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
-<p>Pixels are referenced from their center.</p>
+<ul class="simple">
+<li><p>Pixels are referenced from their center.</p></li>
+<li><p>velocity, v, and u are calculated using <a class="reference internal" href="#loxodrome-sh"><span class="std std-ref">loxodrome.sh</span></a>.</p></li>
+<li><p>velocity is the speed and angle that the wind is moving when it reaches its new location.</p></li>
+</ul>
 </div>
 <p>Calculating wind_info:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ pwd
@@ -295,8 +307,8 @@ Units are determined in the following priority:</p>
 <p>The shape provided or found can alter the native shape of <strong>——displacement-data</strong>.</p>
 </div>
 </div>
-<div class="section" id="output-information">
-<span id="id4"></span><h2>Output information<a class="headerlink" href="#output-information" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="output-format">
+<span id="id4"></span><h2>Output format<a class="headerlink" href="#output-format" title="Permalink to this headline">¶</a></h2>
 <p>These are the output units for pywinds (Note: output units <strong>cannot</strong> be changed by the user):</p>
 <blockquote>
 <div><ul class="simple">
@@ -311,21 +323,10 @@ Units are determined in the following priority:</p>
 <li><p>velocity angle: degrees</p></li>
 </ul>
 </div></blockquote>
-<div class="admonition note">
-<p class="admonition-title">Note</p>
-<p>velocity, v, and u are calculated using <a class="reference internal" href="#loxodrome-sh"><span class="std std-ref">loxodrome.sh</span></a>.</p>
-</div>
-<div class="admonition note">
-<p class="admonition-title">Note</p>
-<p>velocity angle is the angle that the wind is moving when it reaches its new location.</p>
-</div>
-</div>
-<div class="section" id="data-format">
-<span id="id5"></span><h2>Data format<a class="headerlink" href="#data-format" title="Permalink to this headline">¶</a></h2>
 <p>If j and i values are provided, then data is calculated at a single pixel:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">wind_info</span><span class="p">:</span> <span class="p">[</span><span class="n">new_latitude</span><span class="p">,</span> <span class="n">new_longitude</span><span class="p">,</span> <span class="n">speed</span><span class="p">,</span> <span class="n">angle</span><span class="p">,</span> <span class="n">v</span><span class="p">,</span> <span class="n">u</span><span class="p">]</span>
 
-<span class="n">velocity</span><span class="p">:</span> <span class="p">[</span><span class="n">speed</span><span class="p">,</span> <span class="n">direction</span><span class="p">]</span>
+<span class="n">velocity</span><span class="p">:</span> <span class="p">[</span><span class="n">speed</span><span class="p">,</span> <span class="n">angle</span><span class="p">]</span>
 
 <span class="n">vu</span><span class="p">:</span> <span class="p">[</span><span class="n">v</span><span class="p">,</span> <span class="n">u</span><span class="p">]</span>
 
@@ -391,7 +392,7 @@ Units are determined in the following priority:</p>
 </div>
 </div>
 <div class="section" id="save-format">
-<span id="id6"></span><h2>Save format<a class="headerlink" href="#save-format" title="Permalink to this headline">¶</a></h2>
+<span id="id5"></span><h2>Save format<a class="headerlink" href="#save-format" title="Permalink to this headline">¶</a></h2>
 <p>wind_info.sh saves data to</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Text</span> <span class="n">files</span><span class="p">:</span> <span class="n">polar_stereographic</span><span class="o">.</span><span class="n">txt</span><span class="p">,</span> <span class="n">j_displacement</span><span class="o">.</span><span class="n">txt</span><span class="p">,</span> <span class="n">i_displacement</span><span class="o">.</span><span class="n">txt</span><span class="p">,</span>
             <span class="n">new_latitude</span><span class="o">.</span><span class="n">txt</span><span class="p">,</span> <span class="n">new_longitude</span><span class="o">.</span><span class="n">txt</span><span class="p">,</span> <span class="n">old_latitude</span><span class="o">.</span><span class="n">txt</span><span class="p">,</span> <span class="n">old_longitude</span><span class="o">.</span><span class="n">txt</span><span class="p">,</span>

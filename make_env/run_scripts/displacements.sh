@@ -17,5 +17,8 @@ def output_format(output, precision, **kwargs):
 
 if __name__ == "__main__":
     sys.argv = [abspath("$0")] + "$*".split(' ')
-    run_script(displacements, output_format, 'displacements')
+    flag_names = ['--lat-ts', '--lat-0', '--long-0', '--displacement-data', '-j', '-i', '--projection',
+                  '--area-extent', '--shape', '--center', '--pixel-size', '--upper-left-extent',
+                  '--radius', '--units', '--projection_ellipsoid']
+    run_script(displacements, flag_names, output_format, 'displacements')
 EOF

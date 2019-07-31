@@ -16,7 +16,7 @@ import sys
 
 import numpy as np
 
-from pywinds.wind_functions import wind_info, wind_info_fll
+from pywinds.wind_functions import $func
 from pywinds.wrapper_utils import run_script
 
 logger = logging.getLogger('wind_info.sh')
@@ -43,5 +43,13 @@ def output_format(output, precision, **kwargs):
 
 if __name__ == "__main__":
     sys.argv = [os.path.abspath("$0")] + "$*".split(' ')
-    run_script($func, output_format, "$func")
+    if "$func" == "wind_info_fll":
+        sys.argv.remove('--from-lat-long')
+        flag_names = ['delta-time', 'old-lat', 'old-long', 'new-lat', 'new-long', '--earth-ellipsoid']
+    else:
+        flag_names = ['lat-ts', 'lat-0', 'long-0', 'delta-time', '--pixel-size', '--displacement-data', '--projection',
+                      '-j', '-i', '--area-extent', '--shape', '--center', '--upper-left-extent', '--radius',
+                      '--units', '--projection-ellipsoid', '--earth-ellipsoid', '--no-save', '--save-directory',
+                      '--from-lat-long']
+    run_script($func, flag_names, output_format, "$func")
 EOF

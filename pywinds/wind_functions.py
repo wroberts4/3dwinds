@@ -450,7 +450,7 @@ def _compute_velocity(lat_ts, lat_0, long_0, delta_time, displacement_data=None,
                                                                     projection_ellipsoid=projection_ellipsoid,
                                                                     no_save=no_save, save_directory=save_directory)
     logger.debug('Calculating speed and angle (velocity)')
-    distance, angle = loxodrome(old_lat, old_long, new_lat, new_long, earth_ellipsoid=earth_ellipsoid)[:2]
+    distance, angle = loxodrome_bck(old_lat, old_long, new_lat, new_long, earth_ellipsoid=earth_ellipsoid)[:2]
     speed = distance / (delta_time * 60)
     if no_save is False:
         dims = None
@@ -690,8 +690,7 @@ def displacements(lat_ts=None, lat_0=None, long_0=None, displacement_data=None, 
 
 def velocity(lat_ts, lat_0, long_0, delta_time, displacement_data=None, projection=None, j=None, i=None,
              area_extent=None, shape=None, center=None, pixel_size=None, upper_left_extent=None, radius=None,
-             units=None,
-             projection_ellipsoid=None, earth_ellipsoid=None):
+             units=None, projection_ellipsoid=None, earth_ellipsoid=None):
     """Computes the speed and angle of the wind given an area and pixel-displacement.
 
     Parameters
@@ -757,15 +756,28 @@ def velocity(lat_ts, lat_0, long_0, delta_time, displacement_data=None, projecti
 
 
 def velocity_fll(delta_time, old_lat, old_long, new_lat, new_long, earth_ellipsoid=None):
-    """
+    """Computes the speed and angle of the wind given two latitudes and longitudes.
 
-    :param delta_time:
-    :param old_lat:
-    :param old_long:
-    :param new_lat:
-    :param new_long:
-    :param earth_ellipsoid:
-    :return:
+    Parameters
+    ----------
+    delta_time : int
+        Amount of time that separates both files in minutes.
+    old_lat: float
+        Starting point latitude
+    old_long: float
+        Starting point longitude
+    new_lat: float
+        Ending point latitude
+    new_long: float
+        Ending point longitude
+    earth_ellipsoid: str, optional
+        ellipsoid of Earth (WGS84, sphere, etc)
+
+    Returns
+    -------
+        (speed, angle) : numpy.array or list
+            speed and angle (measured clockwise from north) of the wind calculated
+            from area and pixel-displacement in row-major format
     """
 
     return wind_info_fll(delta_time, old_lat, old_long, new_lat, new_long, earth_ellipsoid=earth_ellipsoid)[2:4]
@@ -837,15 +849,27 @@ def vu(lat_ts, lat_0, long_0, delta_time, displacement_data=None, projection=Non
 
 
 def vu_fll(delta_time, old_lat, old_long, new_lat, new_long, earth_ellipsoid=None):
-    """
+    """Computes the v and u components of the wind given two latitudes and longitudes.
 
-    :param delta_time:
-    :param old_lat:
-    :param old_long:
-    :param new_lat:
-    :param new_long:
-    :param earth_ellipsoid:
-    :return:
+    Parameters
+    ----------
+    delta_time : int
+        Amount of time that separates both files in minutes.
+    old_lat: float
+        Starting point latitude
+    old_long: float
+        Starting point longitude
+    new_lat: float
+        Ending point latitude
+    new_long: float
+        Ending point longitude
+    earth_ellipsoid: str, optional
+        ellipsoid of Earth (WGS84, sphere, etc)
+
+    Returns
+    -------
+        (v, u) : numpy.array or list
+            v and u components of wind calculated from area and pixel-displacement in row-major format
     """
     return wind_info_fll(delta_time, old_lat, old_long, new_lat, new_long, earth_ellipsoid=earth_ellipsoid)[4:]
 
@@ -916,12 +940,8 @@ def lat_long(lat_ts, lat_0, long_0, displacement_data=None, projection=None, j=N
     return np.array((_reshape(old_lat, shape), _reshape(old_long, shape)))
 
 
-def loxodrome(old_lat, old_long, new_lat, new_long, earth_ellipsoid=None, inverse=False):
-    """Solves either the forward or inverse equation for a rhumb line.
-
-    forward: Computes the distance, forward bearing and back bearing given a starting and ending position.
-
-    inverse: Computes the new lat, new long, and back bearing given a starting position, distance, and forward bearing.
+def loxodrome_bck(old_lat, old_long, new_lat, new_long, earth_ellipsoid=None):
+    """Computes the distance, forward bearing and back bearing given a starting and ending position.
 
     Credit: https://search-proquest-com.ezproxy.library.wisc.edu/docview/2130848771?rfr_id=info%3Axri%2Fsid%3Aprimo
 
@@ -935,36 +955,19 @@ def loxodrome(old_lat, old_long, new_lat, new_long, earth_ellipsoid=None, invers
         Ending point latitude
     new_long: float
         Ending point longitude
-    inverse: bool, optional
-        Calculate the inverse equation.
     earth_ellipsoid: str, optional
         ellipsoid of Earth (WGS84, sphere, etc)
 
     Returns
     -------
-    (distance, forward bearing, back bearing)
+    (distance, forward bearing, back bearing) : numpy.array or list
+        distance, forward bearing, and back bearing from initial position to final position
     """
     geod_info = _make_ellipsoid(earth_ellipsoid, 'earth_ellipsoid')
     logger.debug('Earth ellipsoid data: {0}'.format(geod_info.initstring.replace('+', '')))
     # eccentricity squared.
     es = (2 - geod_info.f) * geod_info.f
     e = es ** .5
-    if inverse:
-        dist = new_lat
-        forward_bearing = new_long
-        new_lat = geod_info.fwd(np.zeros(np.shape(old_lat)), old_lat, np.zeros(np.shape(old_lat)),
-                                              cos(forward_bearing) * dist)[1]
-        new_long = tan(forward_bearing) * (arctanh(sin(new_lat)) - e * arctanh(e * sin(new_lat)) -
-                                           (arctanh(sin(old_lat)) - e * arctanh(e * sin(old_lat)))) + old_long
-        new_long = _delta_longitude(new_long, 0)
-        # Only used if new_lat == old_lat.
-        lat_radius = geod_info.a / (1 - es * sin(old_lat) ** 2) ** .5 * cos(old_lat)
-        # Makes it so that going east or west uses the correct formula. Note: tange(angle) -> 0 as angle -> 0; this
-        # yields a nice convergence.
-        new_long = np.where(((new_long != old_long) | (forward_bearing % 180 == 0)) & (forward_bearing % 180 != 90),
-                            new_long, _delta_longitude(-np.sign(forward_bearing % 360 - 180) *
-                                                       np.degrees(dist / lat_radius) + old_long, 0))
-        return new_lat, new_long, (forward_bearing - 180) % 360
     # Note: atanh(sin(x)) == asinh(tan(x)) for -pi / 2 <= x <= pi / 2
     delta_longitude = _delta_longitude(new_long, old_long)
     forward_bearing = arctan2(delta_longitude,
@@ -982,12 +985,51 @@ def loxodrome(old_lat, old_long, new_lat, new_long, earth_ellipsoid=None, invers
     return length, forward_bearing % 360, (forward_bearing - 180) % 360
 
 
-def geodesic(old_lat, old_long, new_lat, new_long, earth_ellipsoid=None, inverse=False):
-    """Solves either the forward or inverse equation for a great circle arc.
+def loxodrome_fwd(old_lat, old_long, distance, forward_bearing, earth_ellipsoid=None):
+    """Computes the new lat, new long, and back bearing given a starting position, distance, and forward bearing.
 
-    forward: Computes the shortest distance, initial bearing and back bearing given a starting and ending position.
+    Credit: https://search-proquest-com.ezproxy.library.wisc.edu/docview/2130848771?rfr_id=info%3Axri%2Fsid%3Aprimo
 
-    inverse: Computes the new lat, new long, and back bearing given a starting position, distance, and forward bearing.
+    Parameters
+    ----------
+    old_lat: float
+        Starting point latitude
+    old_long: float
+        Starting point longitude
+    distance: float
+        Distance from old position to new position
+    forward_bearing: float
+        Forward bearing from old position to new position
+    earth_ellipsoid: str, optional
+        ellipsoid of Earth (WGS84, sphere, etc)
+
+    Returns
+    -------
+    (new lat, new long, back bearing) : numpy.array or list
+        new latitude, new longitude, and back bearing from initial position
+    """
+    geod_info = _make_ellipsoid(earth_ellipsoid, 'earth_ellipsoid')
+    logger.debug('Earth ellipsoid data: {0}'.format(geod_info.initstring.replace('+', '')))
+    # eccentricity squared.
+    es = (2 - geod_info.f) * geod_info.f
+    e = es ** .5
+    new_lat = geod_info.fwd(np.zeros(np.shape(old_lat)), old_lat, np.zeros(np.shape(old_lat)),
+                                          cos(forward_bearing) * distance)[1]
+    new_long = tan(forward_bearing) * (arctanh(sin(new_lat)) - e * arctanh(e * sin(new_lat)) -
+                                       (arctanh(sin(old_lat)) - e * arctanh(e * sin(old_lat)))) + old_long
+    new_long = _delta_longitude(new_long, 0)
+    # Only used if new_lat == old_lat.
+    lat_radius = geod_info.a / (1 - es * sin(old_lat) ** 2) ** .5 * cos(old_lat)
+    # Makes it so that going east or west uses the correct formula. Note: tange(angle) -> 0 as angle -> 0; this
+    # yields a nice convergence.
+    new_long = np.where(((new_long != old_long) | (forward_bearing % 180 == 0)) & (forward_bearing % 180 != 90),
+                        new_long, _delta_longitude(-np.sign(forward_bearing % 360 - 180) *
+                                                   np.degrees(distance / lat_radius) + old_long, 0))
+    return new_lat, new_long, (forward_bearing - 180) % 360
+
+
+def geodesic_bck(old_lat, old_long, new_lat, new_long, earth_ellipsoid=None):
+    """Computes the shortest distance, initial bearing and back bearing given a starting and ending position.
 
     Parameters
     ----------
@@ -999,30 +1041,101 @@ def geodesic(old_lat, old_long, new_lat, new_long, earth_ellipsoid=None, inverse
         Ending point latitude
     new_long: float
         Ending point longitude
-    inverse: bool, optional
-        Calculate the inverse equation.
     earth_ellipsoid: str, optional
         ellipsoid of Earth (WGS84, sphere, etc)
 
     Returns
     -------
-    (distance, initial bearing, back bearing)
+    (distance, forward bearing, back bearing) : numpy.array or list
+        distance, forward bearing, and back bearing from initial position to final position
     """
     geod_info = _make_ellipsoid(earth_ellipsoid, 'earth_ellipsoid')
     logger.debug('Earth ellipsoid data: {0}'.format(geod_info.initstring.replace('+', '')))
-    if inverse:
-        forward_bearing = new_long
-        dist = new_lat
-        new_long, new_lat, back_bearing = geod_info.fwd(old_long, old_lat, forward_bearing, dist)
-        return new_lat, new_long, back_bearing % 360
     initial_bearing, back_bearing, distance = geod_info.inv(old_long, old_lat, new_long, new_lat)
     return distance, initial_bearing % 360, back_bearing % 360
+
+
+def geodesic_fwd(old_lat, old_long, distance, initial_bearing, earth_ellipsoid=None):
+    """Computes the new lat, new long, and back bearing given a starting position, distance, and forward bearing.
+
+    Parameters
+    ----------
+    old_lat: float
+        Starting point latitude
+    old_long: float
+        Starting point longitude
+    distance: float
+        Distance from old position to new position
+    initial_bearing: float
+        Initial bearing from old position to new position
+    earth_ellipsoid: str, optional
+        ellipsoid of Earth (WGS84, sphere, etc)
+
+    Returns
+    -------
+    (new lat, new long, back bearing) : numpy.array or list
+        new latitude, new longitude, and back bearing from initial position
+    """
+    geod_info = _make_ellipsoid(earth_ellipsoid, 'earth_ellipsoid')
+    logger.debug('Earth ellipsoid data: {0}'.format(geod_info.initstring.replace('+', '')))
+    new_long, new_lat, back_bearing = geod_info.fwd(old_long, old_lat, initial_bearing, distance)
+    return new_lat, new_long, back_bearing % 360
 
 
 def position_to_pixel(lat_ts, lat_0, long_0, lat, long, projection=None, area_extent=None, shape=None, center=None,
                       pixel_size=None, upper_left_extent=None, radius=None, projection_ellipsoid=None, units=None,
                       displacement_data=None):
-    """Calculates the pixel given a position"""
+    """Calculates the pixel given a position
+
+    Parameters
+    ----------
+    lat_ts: float
+        Latitude  of true scale
+    lat_0 : float
+        Latitude of origin
+    long_0 : float
+        Central meridian
+    displacement_data : str or list, optional
+        Filename or list containing displacements: [tag, width, height, i_11, j_11, i_12, j_12, ..., i_nm, j_nm] or
+        [[j_displacement], [i_displacement]] respectively
+    projection : str
+        Name of projection that pixels are describing (stere, laea, merc, etc).
+    units : str, optional
+        Units that provided arguments should be interpreted as. This can be
+        one of 'deg', 'degrees', 'rad', 'radians', 'meters', 'metres', and any
+        parameter supported by the `cs2cs -lu <https://proj4.org/apps/cs2cs.html#cmdoption-cs2cs-lu>`_
+        command. Units are determined in the following priority:
+
+        1. units expressed with variables via @your_units (see 'Using units' under
+           :ref:`Examples_of_wind_info.sh` for examples)
+        2. units passed to ``--units`` (exluding center)
+        3. meters (exluding center, which is degrees)
+
+    j : float or None, optional
+        Row to run calculations on
+    i : float or None, optional
+        Column to run calculations on
+    area_extent : list, optional
+        Area extent in projection units [lower_left_y, lower_left_x, upper_right_y, upper_right_x]
+    shape : list, optional
+        Number of pixels in the y and x direction following row-major format (height, width).
+        Note that shape can be found from the displacement file or the area provided.
+    center : list, optional
+        Center of projection (lat, long)
+    pixel_size : list or float, optional
+        Size of pixels: (dy, dx)
+    upper_left_extent : list, optional
+        Projection y and x coordinates of the upper left corner of the upper left pixel (y, x)
+    radius : list or float, optional
+        Projection length from the center to the left/right and top/bottom outer edges (dy, dx)
+    projection_ellipsoid : string or Geod, optional
+        ellipsoid of projection (WGS84, sphere, etc)
+
+    Returns
+    -------
+    (j, i) : numpy.array or list
+        j and i pixel that the provided latitude and longitude represent on the given area.
+    """
     area_definition = _find_displacements_and_area(lat_ts=lat_ts, lat_0=lat_0, long_0=long_0, projection=projection,
                                                    area_extent=area_extent, shape=shape, center=center,
                                                    pixel_size=pixel_size, upper_left_extent=upper_left_extent,
@@ -1167,17 +1280,29 @@ def wind_info(lat_ts, lat_0, long_0, delta_time, displacement_data=None, project
 
 
 def wind_info_fll(delta_time, old_lat, old_long, new_lat, new_long, earth_ellipsoid=None, no_save=True):
-    """
+    """Computes the latitude, longitude, velocity, angle, v, and u of the wind given two latitudes and longitudes.
 
-    :param delta_time:
-    :param old_lat:
-    :param old_long:
-    :param new_lat:
-    :param new_long:
-    :param earth_ellipsoid:
-    :return:
+    Parameters
+    ----------
+    delta_time : int
+        Amount of time that separates both files in minutes.
+    old_lat: float
+        Starting point latitude
+    old_long: float
+        Starting point longitude
+    new_lat: float
+        Ending point latitude
+    new_long: float
+        Ending point longitude
+    earth_ellipsoid: str, optional
+        ellipsoid of Earth (WGS84, sphere, etc)
+
+    Returns
+    -------
+        (latitude, longitude, velocity, angle, v, and u at each pixel) : numpy.array or list
+            [latitude, longitude, velocity, angle, v, u] at each pixel in row-major format
     """
-    distance, angle = loxodrome(old_lat, old_long, new_lat, new_long, earth_ellipsoid=earth_ellipsoid)[:2]
+    distance, angle = loxodrome_bck(old_lat, old_long, new_lat, new_long, earth_ellipsoid=earth_ellipsoid)[:2]
     speed = distance / (delta_time * 60)
     # IMPORTANT, THIS IS CORRECT: Since angle is measured counter-cloclwise from north, then v = sin(pi - angle) and
     # u = cos(pi - angle). sin(pi - angle) = cos(angle) and cos(pi - angle) = sin(angle)!

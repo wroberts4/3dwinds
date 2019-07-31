@@ -160,11 +160,6 @@
 <h1>Examples<a class="headerlink" href="#examples" title="Permalink to this headline">¶</a></h1>
 <div class="section" id="examples-of-wind-info-sh">
 <span id="id1"></span><h2>Examples of wind_info.sh<a class="headerlink" href="#examples-of-wind-info-sh" title="Permalink to this headline">¶</a></h2>
-<div class="admonition note">
-<p class="admonition-title">Note</p>
-<p>If pywinds was installed via the git repository, then scripts may be called directly:</p>
-<p>$ wind_info.sh 60 90 0 100 ——pixel-size 4000</p>
-</div>
 <p>Changing the center of area:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ pwd
 /Desktop
@@ -318,6 +313,10 @@ $ ls
 in.flo        pywinds
 $ ./pywinds/wind_info.sh --from-lat-long 100 30 120 35 140
 [35.0, 140.0, 326.43, 73.55, 92.41, 313.08]
+$ ./pywinds/velocity.sh 60 70 -175 70 175 --from-lat-long
+[106.07, 270.0]
+$ ./pywinds/vu.sh .01666 0 0 0 180 --from-lat-long --earth-ellipsoid a 1
+[0.0, 3.14]
 </pre></div>
 </div>
 <p id="input-units">Specifying input units:</p>
@@ -399,9 +398,9 @@ $ ./pywinds/wind_info.sh -j 0 60 90 -i 0
 </div>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
-<p>For <strong>——pixel-size</strong> to have positional arguments after it, it must be specified using two numbers
-or with units. This is because <strong>——pixel-size</strong> would interpret the second number as input since
-<strong>——pixel-size</strong> can take one or two numbers as arguments).</p>
+<p>It is safest to not have positional arguments after <strong>——pixel-size</strong>, <strong>——projection-ellipsoid</strong>,
+and <strong>——earth-ellipsoid</strong>. This is because they may interpret positional arguments as
+input since they can take a variable set of inputs.</p>
 </div>
 <p><strong>——displacement-data</strong> can also be a list ([j_displacement,i_displacement] in row-major format):</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ pwd

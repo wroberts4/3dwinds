@@ -5,6 +5,15 @@ Use the **-h** or **------help** flags on any scripts to print a usage message. 
 GNU command line style; order in which options are provided does not matter and positional arguments may be mixed
 in with options (as long as they are not interpreted as part of the option).
 
+.. warning::
+
+    The following is **NOT** interchangeable and calling one is not the same as calling the other:
+
+    * If pywinds was installed via the git repository, then scripts must be called directly (ie **$ wind_info.sh**)
+    * If pywinds was installed via the tarball, then scripts must be called as scripts: (ie **$ ./wind_info.sh**)
+
+    **Documentation assumes pywinds was installed using the tarball.**
+
 .. _wind_info.sh:
 
 wind_info.sh
@@ -49,7 +58,7 @@ Additional information:
 
     * For more optional arguments, please see :ref:`advanced_arguments`.
     * For more information on save files and their formats, please see :ref:`save_format`
-    * For information on the output, please see :ref:`output_information`
+    * For information on the output, please see :ref:`output_format`
 
 .. _area_information_note:
 
@@ -66,7 +75,9 @@ Additional information:
 
 .. note::
 
-    Pixels are referenced from their center.
+    * Pixels are referenced from their center.
+    * velocity, v, and u are calculated using :ref:`loxodrome.sh<loxodrome.sh>`.
+    * velocity is the speed and angle that the wind is moving when it reaches its new location.
 
 Calculating wind_info::
 
@@ -145,10 +156,11 @@ where
 
     The shape provided or found can alter the native shape of **------displacement-data**.
 
-.. _output_information:
 
-Output information
-------------------
+.. _output_format:
+
+Output format
+-------------
 
 These are the output units for pywinds (Note: output units **cannot** be changed by the user):
 
@@ -162,26 +174,13 @@ These are the output units for pywinds (Note: output units **cannot** be changed
     * velocity speed: m/s
     * velocity angle: degrees
 
-.. note::
-
-    velocity, v, and u are calculated using :ref:`loxodrome.sh<loxodrome.sh>`.
-
-.. note::
-
-    velocity angle is the angle that the wind is moving when it reaches its new location.
-
-.. _data_format:
-
-Data format
------------
-
 If j and i values are provided, then data is calculated at a single pixel:
 
 ::
 
     wind_info: [new_latitude, new_longitude, speed, angle, v, u]
 
-    velocity: [speed, direction]
+    velocity: [speed, angle]
 
     vu: [v, u]
 
