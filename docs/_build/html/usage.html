@@ -232,12 +232,12 @@ Specified using <strong>-vvv</strong></p></li>
 /Desktop
 $ ls
 in.flo          pywinds
-$ pywinds/wind_info.sh 60 90 0 100 -j 0 -i 0 --pixel-size 4000 --center 90 0 -p
+$ ./pywinds/wind_info.sh 60 90 0 100 -j 0 -i 0 --pixel-size 4000 --center 90 0 -p
 [63.36, -135.0, 51.78, 315.25, 36.78, -36.46]
-$ pywinds/wind_info.sh 60 90 0 100 -j 0 -i 0 --pixel-size 4000 -p
+$ ./pywinds/wind_info.sh 60 90 0 100 -j 0 -i 0 --pixel-size 4000 -p
 [63.36, -135.0, 51.78, 315.25, 36.78, -36.46]
-$ pywinds/wind_info.sh 60 90 0 100 --pixel-size 4000
-$ pywinds/wind_info.sh 60 90 0 100 --pixel-size 4000 -vv
+$ ./pywinds/wind_info.sh 60 90 0 100 --pixel-size 4000
+$ ./pywinds/wind_info.sh 60 90 0 100 --pixel-size 4000 -vv
 [INFO: 2019-03-01 12:00:00 : pywinds.wind_functions] Reading displacements from
 /Desktop/in.flo
 [INFO: 2019-03-01 12:00:08 : wind_info.py] Data saved to the directory
@@ -255,6 +255,8 @@ the displacement file read appended with “_output_YYYYmmdd_HHMMSS” (the date
 created where the script is ran</p></li>
 <li><p><strong>——precision</strong>: Determines the number of decimal places to round printed data to. Saved data will always
 be the highest precision regardless of this input. Defaults to 2.</p></li>
+<li><p><strong>——from-lat-long</strong>: Skips directly to using delta-time and two provided positions in order to find
+wind information (see <a class="reference internal" href="examples.html#from-lat-long"><span class="std std-ref">Using latitudes and longitudes directly</span></a>).</p></li>
 <li><p><strong>——projection</strong>: Name of projection that the image is in
 (<a class="reference external" href="https://proj.org/apps/cs2cs.html?highlight=note#cmdoption-cs2cs-lp">cs2cs -lp</a>: <a class="reference external" href="_static/cs2cs_lp.png"><img alt="cs2cs_lp.png" src="cs2cs_lp" /></a>).
 Defaults to stere</p></li>
@@ -440,7 +442,7 @@ They have similar or identical arguments to wind_info.sh</p>
 /Desktop
 $ ls
 in.flo          pywinds
-$ pywinds/vu.sh 60 90 0 100 -j 0 -i 0 --pixel-size 4000
+$ ./pywinds/vu.sh 60 90 0 100 -j 0 -i 0 --pixel-size 4000
 [36.78, -36.46]
 </pre></div>
 </div>
@@ -451,7 +453,7 @@ $ pywinds/vu.sh 60 90 0 100 -j 0 -i 0 --pixel-size 4000
 /Desktop
 $ ls
 in.flo          pywinds
-$ pywinds/velocity.sh 60 90 0 100 -j 0 -i 0 --pixel-size 4000
+$ ./pywinds/velocity.sh 60 90 0 100 -j 0 -i 0 --pixel-size 4000
 [51.78, 315.25]
 </pre></div>
 </div>
@@ -464,9 +466,9 @@ Same arguments as wind_info.sh but does not take <strong>delta-time</strong> as 
 /Desktop
 $ ls
 in.flo          pywinds
-$ pywinds/lat_long.sh 60 90 0 -j 0 -i 0 --pixel-size 4000 --shape 1000 1000
+$ ./pywinds/lat_long.sh 60 90 0 -j 0 -i 0 --pixel-size 4000 --shape 1000 1000
 [63.36, -135.0]
-$ pywinds/lat_long.sh 60 90 0 -j 0 -i 0 --pixel-size 4000 --displacement-data in.flo
+$ ./pywinds/lat_long.sh 60 90 0 -j 0 -i 0 --pixel-size 4000 --displacement-data in.flo
 [61.38, -130.77]
 </pre></div>
 </div>
@@ -478,7 +480,7 @@ as an argument. All other required arguments for wind_info.sh are optional argum
 /Desktop
 $ ls
 in.flo          pywinds
-$ pywinds/displacements.sh -j 0 -i 0
+$ ./pywinds/displacements.sh -j 0 -i 0
 [-2.53, 76.8]
 </pre></div>
 </div>
@@ -490,7 +492,7 @@ wind_info.sh but does not take <strong>delta-time</strong> as an argument.</p></
 /Desktop
 $ ls
 in.flo          pywinds
-$ pywinds/area.sh 60 90 0 --pixel-size 4000
+$ ./pywinds/area.sh 60 90 0 --pixel-size 4000
 projection: stere
 lat-ts: 60.0
 lat-0: 90.0
@@ -513,7 +515,7 @@ This is the angle and distance one would travel if direction is continuously upd
 </ul>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ ls
 pywinds
-$ pywinds/loxodrome.sh 60 130 61 131
+$ ./pywinds/loxodrome.sh 60 130 61 131
 [124234.33, 26.25, 206.25]
 </pre></div>
 </div>
@@ -521,7 +523,7 @@ $ pywinds/loxodrome.sh 60 130 61 131
 position, distance, and forward bearing to the new position.</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ ls
 pywinds
-$ pywinds/loxodrome.sh 60 130 124234.33 26.25 --inverse
+$ ./pywinds/loxodrome.sh 60 130 124234.33 26.25 --inverse
 [61.0, 131.0, 206.25]
 </pre></div>
 </div>
@@ -532,7 +534,7 @@ This is the angle and distance one would travel if walking in a straight line wi
 </ul>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ ls
 pywinds
-$ pywinds/geodesic.sh 60 130 61 131
+$ ./pywinds/geodesic.sh 60 130 61 131
 [124233.13, 25.82, 206.69]
 </pre></div>
 </div>
@@ -540,7 +542,7 @@ $ pywinds/geodesic.sh 60 130 61 131
 position, distance, and initial bearing to the new position.</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ ls
 pywinds
-$ pywinds/geodesic.sh 60 130 124233.13 25.82 --inverse
+$ ./pywinds/geodesic.sh 60 130 124233.13 25.82 --inverse
 [61.0, 131.0, 206.69]
 </pre></div>
 </div>
@@ -550,7 +552,7 @@ provided area.</p></li>
 </ul>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ ls
 in.flo          pywinds
-$ pywinds/position_to_pixel.sh 60 90 0 80 45 --pixel-size 4 km
+$ ./pywinds/position_to_pixel.sh 60 90 0 80 45 --pixel-size 4 km
 [684.18, 684.18]
 </pre></div>
 </div>

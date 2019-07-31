@@ -74,12 +74,12 @@ Calculating wind_info::
     /Desktop
     $ ls
     in.flo	    pywinds
-    $ pywinds/wind_info.sh 60 90 0 100 -j 0 -i 0 --pixel-size 4000 --center 90 0 -p
+    $ ./pywinds/wind_info.sh 60 90 0 100 -j 0 -i 0 --pixel-size 4000 --center 90 0 -p
     [63.36, -135.0, 51.78, 315.25, 36.78, -36.46]
-    $ pywinds/wind_info.sh 60 90 0 100 -j 0 -i 0 --pixel-size 4000 -p
+    $ ./pywinds/wind_info.sh 60 90 0 100 -j 0 -i 0 --pixel-size 4000 -p
     [63.36, -135.0, 51.78, 315.25, 36.78, -36.46]
-    $ pywinds/wind_info.sh 60 90 0 100 --pixel-size 4000
-    $ pywinds/wind_info.sh 60 90 0 100 --pixel-size 4000 -vv
+    $ ./pywinds/wind_info.sh 60 90 0 100 --pixel-size 4000
+    $ ./pywinds/wind_info.sh 60 90 0 100 --pixel-size 4000 -vv
     [INFO: 2019-03-01 12:00:00 : pywinds.wind_functions] Reading displacements from
     /Desktop/in.flo
     [INFO: 2019-03-01 12:00:08 : wind_info.py] Data saved to the directory
@@ -108,6 +108,8 @@ Advanced arguments
   created where the script is ran
 * **------precision**: Determines the number of decimal places to round printed data to. Saved data will always
   be the highest precision regardless of this input. Defaults to 2.
+* **------from-lat-long**: Skips directly to using delta-time and two provided positions in order to find
+  wind information (see :ref:`Using latitudes and longitudes directly<from_lat_long>`).
 * **------projection**: Name of projection that the image is in
   (`cs2cs -lp <https://proj.org/apps/cs2cs.html?highlight=note#cmdoption-cs2cs-lp>`_: |cs2cs_lp.png|).
   Defaults to stere
@@ -305,7 +307,7 @@ They have similar or identical arguments to wind_info.sh
     /Desktop
     $ ls
     in.flo	    pywinds
-    $ pywinds/vu.sh 60 90 0 100 -j 0 -i 0 --pixel-size 4000
+    $ ./pywinds/vu.sh 60 90 0 100 -j 0 -i 0 --pixel-size 4000
     [36.78, -36.46]
 
 
@@ -317,7 +319,7 @@ They have similar or identical arguments to wind_info.sh
     /Desktop
     $ ls
     in.flo	    pywinds
-    $ pywinds/velocity.sh 60 90 0 100 -j 0 -i 0 --pixel-size 4000
+    $ ./pywinds/velocity.sh 60 90 0 100 -j 0 -i 0 --pixel-size 4000
     [51.78, 315.25]
 
 
@@ -332,9 +334,9 @@ They have similar or identical arguments to wind_info.sh
     /Desktop
     $ ls
     in.flo	    pywinds
-    $ pywinds/lat_long.sh 60 90 0 -j 0 -i 0 --pixel-size 4000 --shape 1000 1000
+    $ ./pywinds/lat_long.sh 60 90 0 -j 0 -i 0 --pixel-size 4000 --shape 1000 1000
     [63.36, -135.0]
-    $ pywinds/lat_long.sh 60 90 0 -j 0 -i 0 --pixel-size 4000 --displacement-data in.flo
+    $ ./pywinds/lat_long.sh 60 90 0 -j 0 -i 0 --pixel-size 4000 --displacement-data in.flo
     [61.38, -130.77]
 
 
@@ -347,7 +349,7 @@ They have similar or identical arguments to wind_info.sh
     /Desktop
     $ ls
     in.flo	    pywinds
-    $ pywinds/displacements.sh -j 0 -i 0
+    $ ./pywinds/displacements.sh -j 0 -i 0
     [-2.53, 76.8]
 
 
@@ -360,7 +362,7 @@ They have similar or identical arguments to wind_info.sh
     /Desktop
     $ ls
     in.flo	    pywinds
-    $ pywinds/area.sh 60 90 0 --pixel-size 4000
+    $ ./pywinds/area.sh 60 90 0 --pixel-size 4000
     projection: stere
     lat-ts: 60.0
     lat-0: 90.0
@@ -387,7 +389,7 @@ even if the area is not completely defined, as shown in :ref:`advanced_examples`
 
     $ ls
     pywinds
-    $ pywinds/loxodrome.sh 60 130 61 131
+    $ ./pywinds/loxodrome.sh 60 130 61 131
     [124234.33, 26.25, 206.25]
 
 The inverse may be set to True in order to find a given latitude and longitude if given a starting
@@ -397,7 +399,7 @@ position, distance, and forward bearing to the new position.
 
     $ ls
     pywinds
-    $ pywinds/loxodrome.sh 60 130 124234.33 26.25 --inverse
+    $ ./pywinds/loxodrome.sh 60 130 124234.33 26.25 --inverse
     [61.0, 131.0, 206.25]
 
 
@@ -409,7 +411,7 @@ position, distance, and forward bearing to the new position.
 
     $ ls
     pywinds
-    $ pywinds/geodesic.sh 60 130 61 131
+    $ ./pywinds/geodesic.sh 60 130 61 131
     [124233.13, 25.82, 206.69]
 
 The inverse may be set to True in order to find a given latitude and longitude if given a starting
@@ -419,7 +421,7 @@ position, distance, and initial bearing to the new position.
 
     $ ls
     pywinds
-    $ pywinds/geodesic.sh 60 130 124233.13 25.82 --inverse
+    $ ./pywinds/geodesic.sh 60 130 124233.13 25.82 --inverse
     [61.0, 131.0, 206.69]
 
 
@@ -430,7 +432,7 @@ position, distance, and initial bearing to the new position.
 
     $ ls
     in.flo	    pywinds
-    $ pywinds/position_to_pixel.sh 60 90 0 80 45 --pixel-size 4 km
+    $ ./pywinds/position_to_pixel.sh 60 90 0 80 45 --pixel-size 4 km
     [684.18, 684.18]
 
 Understanding error messages from scripts
