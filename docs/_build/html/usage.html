@@ -274,14 +274,15 @@ wind information (see <a class="reference internal" href="examples.html#from-lat
 Defaults to stere</p></li>
 <li><p><strong>——projection-ellipsoid</strong>: ellipsoid of projection
 (<a class="reference external" href="https://proj.org/apps/cs2cs.html?highlight=note#cmdoption-cs2cs-le">cs2cs -le</a>: <a class="reference external" href="_static/cs2cs_le.png"><img alt="cs2cs_le.png" src="cs2cs_le" /></a>).
-Defaults to WGS84. Custom ellipsoids can be made, see.</p></li>
+Defaults to WGS84. Custom ellipsoids can be made (see <a class="reference internal" href="examples.html#custom-ellipsoids"><span class="std std-ref">Custom ellipsoids</span></a>).</p></li>
 <li><p><strong>——earth-ellipsoid</strong>: ellipsoid of Earth
 (<a class="reference external" href="https://proj.org/apps/cs2cs.html?highlight=note#cmdoption-cs2cs-le">cs2cs -le</a>: <a class="reference external" href="_static/cs2cs_le.png"><img alt="cs2cs_le.png" src="cs2cs_le" /></a>).
-Defaults to WGS84. Custom ellipsoids can be made, see.</p></li>
+Defaults to WGS84. Custom ellipsoids can be made (see <a class="reference internal" href="examples.html#custom-ellipsoids"><span class="std std-ref">Custom ellipsoids</span></a>).</p></li>
 <li><p><strong>——shape</strong>: Number of pixels in the y and x direction (height, width). If shape is not provided,
 it attempts to be found from <strong>——displacement-data</strong></p></li>
 <li><p><strong>——upper-left-extent</strong>: Projection y and x coordinates of the upper left corner of the upper left pixel (y, x)</p></li>
-<li><p><strong>——radius</strong>: Projection length from the center to the left/right and top/bottom outer edges (dy, dx)</p></li>
+<li><p><strong>——radius</strong>: Projection length from the center to the left/right and top/bottom outer edges (dy, dx).
+If the area is a square square, i.e. dy = dx, then only one value needs to be entered.</p></li>
 <li><p><strong>——units</strong>: Units that provided arguments should be interpreted as. This can be
 one of ‘deg’, ‘degrees’, ‘rad’, ‘radians’, ‘meters’, ‘metres’, and any
 parameter supported by the <a class="reference external" href="https://proj4.org/apps/cs2cs.html#cmdoption-cs2cs-lu">cs2cs -lu</a>

@@ -41,15 +41,20 @@ def output_format(output, precision, **kwargs):
     logger.info('Data saved to the directory {0}'.format(save_directory))
 
 
+def output_format_fll(output, precision, **kwargs):
+    return np.round(output, precision).tolist()
+
+
 if __name__ == "__main__":
     sys.argv = [os.path.abspath("$0")] + "$*".split(' ')
     if "$func" == "wind_info_fll":
         sys.argv.remove('--from-lat-long')
         flag_names = ['delta-time', 'old-lat', 'old-long', 'new-lat', 'new-long', '--earth-ellipsoid']
+        run_script(wind_info_fll, flag_names, output_format_fll, 'wind_info_fll')
     else:
-        flag_names = ['lat-ts', 'lat-0', 'long-0', 'delta-time', '--pixel-size', '--displacement-data', '--projection',
-                      '-j', '-i', '--area-extent', '--shape', '--center', '--upper-left-extent', '--radius',
-                      '--units', '--projection-ellipsoid', '--earth-ellipsoid', '--no-save', '--save-directory',
-                      '--from-lat-long']
-    run_script($func, flag_names, output_format, "$func")
+        flag_names = ['lat-ts', 'lat-0', 'long-0', 'delta-time', '-p', '-s', '-j', '-i', '--pixel-size', '--center',
+                      '--displacement-data', '--from-lat-long', '--projection', '--projection-ellipsoid',
+                      '--earth-ellipsoid', '--area-extent', '--shape', '--upper-left-extent', '--radius',
+                      '--units']
+        run_script(wind_info, flag_names, output_format, 'wind_info')
 EOF

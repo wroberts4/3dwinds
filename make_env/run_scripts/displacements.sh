@@ -19,6 +19,6 @@ if __name__ == "__main__":
     sys.argv = [abspath("$0")] + "$*".split(' ')
     flag_names = ['--lat-ts', '--lat-0', '--long-0', '--displacement-data', '-j', '-i', '--projection',
                   '--area-extent', '--shape', '--center', '--pixel-size', '--upper-left-extent',
-                  '--radius', '--units', '--projection_ellipsoid']
+                  '--radius', '--units', '--projection-ellipsoid']
     run_script(displacements, flag_names, output_format, 'displacements')
 EOF

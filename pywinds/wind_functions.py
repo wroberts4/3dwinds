@@ -118,27 +118,27 @@ def _pixel_to_pos(area_definition, j, i):
     return position
 
 
-def sin(angle):
+def _sin(angle):
     """"Sine function that takes degrees"""
     return np.sin(np.radians(angle))
 
 
-def cos(angle):
+def _cos(angle):
     """"Cosine function that takes degrees"""
     return np.cos(np.radians(angle))
 
 
-def tan(angle):
+def _tan(angle):
     """"Tangent function that takes degrees"""
     return np.tan(np.radians(angle))
 
 
-def arctanh(x):
+def _arctanh(x):
     """"Hyperarctangent function that outputs degrees"""
     return np.degrees(np.arctanh(x))
 
 
-def arctan2(x, y):
+def _arctan2(x, y):
     """"atan2 function that outputs degrees"""
     return np.degrees(np.arctan2(x, y))
 
@@ -282,7 +282,8 @@ def _create_area(lat_ts, lat_0, long_0, projection=None, area_extent=None, shape
             up_longitude = -180.0
         # Credit: http://earth-info.nga.mil/GandG/coordsys/polar_stereographic/Polar_Stereo_phi1_from_k0_memo.pdf
         k90 = ((1 + e) ** (1 + e) * (1 - e) ** (1 - e)) ** .5
-        k0 = (1 + sin(lat_ts)) / 2 * k90 / ((1 + e * sin(lat_ts)) ** (1 + e) * (1 - e * sin(lat_ts)) ** (1 - e)) ** .5
+        k0 = ((1 + _sin(lat_ts)) / 2 * k90 /
+              ((1 + e * _sin(lat_ts)) ** (1 + e) * (1 - e * _sin(lat_ts)) ** (1 - e)) ** .5)
         attrs = {'straight_vertical_longitude_from_pole': up_longitude, 'latitude_of_projection_origin': float(lat_0),
                  'scale_factor_at_projection_origin': k0, 'standard_parallel': float(lat_ts),
                  'resolution_at_standard_parallel': np.ravel(pixel_size)[0], 'false_easting': 0.0,
@@ -485,8 +486,8 @@ def _compute_vu(lat_ts, lat_0, long_0, delta_time, displacement_data=None, proje
     logger.debug('Finding v and u components')
     # IMPORTANT, THIS IS CORRECT: Since angle is measured counter-cloclwise from north, then v = sin(pi - angle) and
     # u = cos(pi - angle). sin(pi - angle) = cos(angle) and cos(pi - angle) = sin(angle)!
-    v = cos(angle) * speed
-    u = sin(angle) * speed
+    v = _cos(angle) * speed
+    u = _sin(angle) * speed
     if no_save is False:
         dims = None
         if np.size(v) != 1:
@@ -970,14 +971,13 @@ def loxodrome_bck(old_lat, old_long, new_lat, new_long, earth_ellipsoid=None):
     e = es ** .5
     # Note: atanh(sin(x)) == asinh(tan(x)) for -pi / 2 <= x <= pi / 2
     delta_longitude = _delta_longitude(new_long, old_long)
-    forward_bearing = arctan2(delta_longitude,
-                              arctanh(sin(new_lat)) - e * arctanh(e * sin(new_lat)) -
-                              (arctanh(sin(old_lat)) - e * arctanh(e * sin(old_lat))))
+    forward_bearing = _arctan2(delta_longitude, _arctanh(_sin(new_lat)) - e * _arctanh(e * _sin(new_lat)) -
+                               (_arctanh(_sin(old_lat)) - e * _arctanh(e * _sin(old_lat))))
     # If staying at a pole.
     forward_bearing = np.where(np.isnan(forward_bearing) == False, forward_bearing, new_lat + 90)
     meridian_dist = geod_info.inv(np.zeros(np.shape(old_lat)), old_lat, np.zeros(np.shape(old_lat)), new_lat)[-1]
-    length = abs(meridian_dist / cos(forward_bearing))
-    lat_radius = geod_info.a / (1 - es * sin(new_lat) ** 2) ** .5 * cos(new_lat)
+    length = abs(meridian_dist / _cos(forward_bearing))
+    lat_radius = geod_info.a / (1 - es * _sin(new_lat) ** 2) ** .5 * _cos(new_lat)
     # Only used when staying on the same latitude.
     horizontal_length = lat_radius * np.radians(abs(delta_longitude))
     # If staying on a lat, use horizontal_length. Unless at poles to prevent rounding error.
@@ -1014,12 +1014,12 @@ def loxodrome_fwd(old_lat, old_long, distance, forward_bearing, earth_ellipsoid=
     es = (2 - geod_info.f) * geod_info.f
     e = es ** .5
     new_lat = geod_info.fwd(np.zeros(np.shape(old_lat)), old_lat, np.zeros(np.shape(old_lat)),
-                                          cos(forward_bearing) * distance)[1]
-    new_long = tan(forward_bearing) * (arctanh(sin(new_lat)) - e * arctanh(e * sin(new_lat)) -
-                                       (arctanh(sin(old_lat)) - e * arctanh(e * sin(old_lat)))) + old_long
+                            _cos(forward_bearing) * distance)[1]
+    new_long = _tan(forward_bearing) * (_arctanh(_sin(new_lat)) - e * _arctanh(e * _sin(new_lat)) -
+                                        (_arctanh(_sin(old_lat)) - e * _arctanh(e * _sin(old_lat)))) + old_long
     new_long = _delta_longitude(new_long, 0)
     # Only used if new_lat == old_lat.
-    lat_radius = geod_info.a / (1 - es * sin(old_lat) ** 2) ** .5 * cos(old_lat)
+    lat_radius = geod_info.a / (1 - es * _sin(old_lat) ** 2) ** .5 * _cos(old_lat)
     # Makes it so that going east or west uses the correct formula. Note: tange(angle) -> 0 as angle -> 0; this
     # yields a nice convergence.
     new_long = np.where(((new_long != old_long) | (forward_bearing % 180 == 0)) & (forward_bearing % 180 != 90),
@@ -1279,7 +1279,7 @@ def wind_info(lat_ts, lat_0, long_0, delta_time, displacement_data=None, project
     return winds
 
 
-def wind_info_fll(delta_time, old_lat, old_long, new_lat, new_long, earth_ellipsoid=None, no_save=True):
+def wind_info_fll(delta_time, old_lat, old_long, new_lat, new_long, earth_ellipsoid=None):
     """Computes the latitude, longitude, velocity, angle, v, and u of the wind given two latitudes and longitudes.
 
     Parameters
@@ -1306,8 +1306,8 @@ def wind_info_fll(delta_time, old_lat, old_long, new_lat, new_long, earth_ellips
     speed = distance / (delta_time * 60)
     # IMPORTANT, THIS IS CORRECT: Since angle is measured counter-cloclwise from north, then v = sin(pi - angle) and
     # u = cos(pi - angle). sin(pi - angle) = cos(angle) and cos(pi - angle) = sin(angle)!
-    v = cos(angle) * speed
-    u = sin(angle) * speed
+    v = _cos(angle) * speed
+    u = _sin(angle) * speed
     # Make each variable its own column.
     winds = np.insert(np.expand_dims(np.ravel(new_lat), axis=1), 1, new_long, axis=1)
     winds = np.insert(winds, 2, speed, axis=1)

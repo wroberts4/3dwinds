@@ -126,14 +126,15 @@ Advanced arguments
   Defaults to stere
 * **------projection-ellipsoid**: ellipsoid of projection
   (`cs2cs -le <https://proj.org/apps/cs2cs.html?highlight=note#cmdoption-cs2cs-le>`_: |cs2cs_le.png|).
-  Defaults to WGS84. Custom ellipsoids can be made, see.
+  Defaults to WGS84. Custom ellipsoids can be made (see :ref:`Custom ellipsoids<custom_ellipsoids>`).
 * **------earth-ellipsoid**: ellipsoid of Earth
   (`cs2cs -le <https://proj.org/apps/cs2cs.html?highlight=note#cmdoption-cs2cs-le>`_: |cs2cs_le.png|).
-  Defaults to WGS84. Custom ellipsoids can be made, see.
+  Defaults to WGS84. Custom ellipsoids can be made (see :ref:`Custom ellipsoids<custom_ellipsoids>`).
 * **------shape**: Number of pixels in the y and x direction (height, width). If shape is not provided,
   it attempts to be found from **------displacement-data**
 * **------upper-left-extent**: Projection y and x coordinates of the upper left corner of the upper left pixel (y, x)
-* **------radius**: Projection length from the center to the left/right and top/bottom outer edges (dy, dx)
+* **------radius**: Projection length from the center to the left/right and top/bottom outer edges (dy, dx).
+  If the area is a square square, i.e. dy = dx, then only one value needs to be entered.
 * **------units**: Units that provided arguments should be interpreted as. This can be
   one of 'deg', 'degrees', 'rad', 'radians', 'meters', 'metres', and any
   parameter supported by the `cs2cs -lu <https://proj4.org/apps/cs2cs.html#cmdoption-cs2cs-lu>`_

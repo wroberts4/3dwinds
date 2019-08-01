@@ -137,6 +137,8 @@ Altering ellipsoids::
     [63.26, -135.0, 51.76, 315.25, 36.76, -36.44]
 
 
+.. _custom_ellipsoids:
+
 Custom ellipsoids::
 
     $ pwd

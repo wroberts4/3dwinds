@@ -152,18 +152,6 @@
 <span id="api"></span><h1>API<a class="headerlink" href="#module-pywinds.wind_functions" title="Permalink to this headline">¶</a></h1>
 <p>Calculates area information, j and i displacement, new and old latitude/longitude, v, u, and velocity of the wind.</p>
 <dl class="function">
-<dt id="pywinds.wind_functions.arctan2">
-<code class="sig-prename descclassname">pywinds.wind_functions.</code><code class="sig-name descname">arctan2</code><span class="sig-paren">(</span><em class="sig-param">x</em>, <em class="sig-param">y</em><span class="sig-paren">)</span><a class="headerlink" href="#pywinds.wind_functions.arctan2" title="Permalink to this definition">¶</a></dt>
-<dd><p>“atan2 function that outputs degrees</p>
-</dd></dl>
-
-<dl class="function">
-<dt id="pywinds.wind_functions.arctanh">
-<code class="sig-prename descclassname">pywinds.wind_functions.</code><code class="sig-name descname">arctanh</code><span class="sig-paren">(</span><em class="sig-param">x</em><span class="sig-paren">)</span><a class="headerlink" href="#pywinds.wind_functions.arctanh" title="Permalink to this definition">¶</a></dt>
-<dd><p>“Hyperarctangent function that outputs degrees</p>
-</dd></dl>
-
-<dl class="function">
 <dt id="pywinds.wind_functions.area">
 <code class="sig-prename descclassname">pywinds.wind_functions.</code><code class="sig-name descname">area</code><span class="sig-paren">(</span><em class="sig-param">lat_ts</em>, <em class="sig-param">lat_0</em>, <em class="sig-param">long_0</em>, <em class="sig-param">displacement_data=None</em>, <em class="sig-param">projection=None</em>, <em class="sig-param">area_extent=None</em>, <em class="sig-param">shape=None</em>, <em class="sig-param">center=None</em>, <em class="sig-param">pixel_size=None</em>, <em class="sig-param">upper_left_extent=None</em>, <em class="sig-param">radius=None</em>, <em class="sig-param">units=None</em>, <em class="sig-param">projection_ellipsoid=None</em><span class="sig-paren">)</span><a class="headerlink" href="#pywinds.wind_functions.area" title="Permalink to this definition">¶</a></dt>
 <dd><p>Dynamically computes area of projection.</p>
@@ -208,12 +196,6 @@ inverse_flattening, shape, area_extent (degrees), pixel_size (projection meters)
 </ul>
 </dd>
 </dl>
-</dd></dl>
-
-<dl class="function">
-<dt id="pywinds.wind_functions.cos">
-<code class="sig-prename descclassname">pywinds.wind_functions.</code><code class="sig-name descname">cos</code><span class="sig-paren">(</span><em class="sig-param">angle</em><span class="sig-paren">)</span><a class="headerlink" href="#pywinds.wind_functions.cos" title="Permalink to this definition">¶</a></dt>
-<dd><p>“Cosine function that takes degrees</p>
 </dd></dl>
 
 <dl class="function">
@@ -449,18 +431,6 @@ Note that shape can be found from the displacement file or the area provided.</p
 </dd></dl>
 
 <dl class="function">
-<dt id="pywinds.wind_functions.sin">
-<code class="sig-prename descclassname">pywinds.wind_functions.</code><code class="sig-name descname">sin</code><span class="sig-paren">(</span><em class="sig-param">angle</em><span class="sig-paren">)</span><a class="headerlink" href="#pywinds.wind_functions.sin" title="Permalink to this definition">¶</a></dt>
-<dd><p>“Sine function that takes degrees</p>
-</dd></dl>
-
-<dl class="function">
-<dt id="pywinds.wind_functions.tan">
-<code class="sig-prename descclassname">pywinds.wind_functions.</code><code class="sig-name descname">tan</code><span class="sig-paren">(</span><em class="sig-param">angle</em><span class="sig-paren">)</span><a class="headerlink" href="#pywinds.wind_functions.tan" title="Permalink to this definition">¶</a></dt>
-<dd><p>“Tangent function that takes degrees</p>
-</dd></dl>
-
-<dl class="function">
 <dt id="pywinds.wind_functions.velocity">
 <code class="sig-prename descclassname">pywinds.wind_functions.</code><code class="sig-name descname">velocity</code><span class="sig-paren">(</span><em class="sig-param">lat_ts</em>, <em class="sig-param">lat_0</em>, <em class="sig-param">long_0</em>, <em class="sig-param">delta_time</em>, <em class="sig-param">displacement_data=None</em>, <em class="sig-param">projection=None</em>, <em class="sig-param">j=None</em>, <em class="sig-param">i=None</em>, <em class="sig-param">area_extent=None</em>, <em class="sig-param">shape=None</em>, <em class="sig-param">center=None</em>, <em class="sig-param">pixel_size=None</em>, <em class="sig-param">upper_left_extent=None</em>, <em class="sig-param">radius=None</em>, <em class="sig-param">units=None</em>, <em class="sig-param">projection_ellipsoid=None</em>, <em class="sig-param">earth_ellipsoid=None</em><span class="sig-paren">)</span><a class="headerlink" href="#pywinds.wind_functions.velocity" title="Permalink to this definition">¶</a></dt>
 <dd><p>Computes the speed and angle of the wind given an area and pixel-displacement.</p>
@@ -663,7 +633,7 @@ where the script is ran</p></li>
 
 <dl class="function">
 <dt id="pywinds.wind_functions.wind_info_fll">
-<code class="sig-prename descclassname">pywinds.wind_functions.</code><code class="sig-name descname">wind_info_fll</code><span class="sig-paren">(</span><em class="sig-param">delta_time</em>, <em class="sig-param">old_lat</em>, <em class="sig-param">old_long</em>, <em class="sig-param">new_lat</em>, <em class="sig-param">new_long</em>, <em class="sig-param">earth_ellipsoid=None</em>, <em class="sig-param">no_save=True</em><span class="sig-paren">)</span><a class="headerlink" href="#pywinds.wind_functions.wind_info_fll" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">pywinds.wind_functions.</code><code class="sig-name descname">wind_info_fll</code><span class="sig-paren">(</span><em class="sig-param">delta_time</em>, <em class="sig-param">old_lat</em>, <em class="sig-param">old_long</em>, <em class="sig-param">new_lat</em>, <em class="sig-param">new_long</em>, <em class="sig-param">earth_ellipsoid=None</em><span class="sig-paren">)</span><a class="headerlink" href="#pywinds.wind_functions.wind_info_fll" title="Permalink to this definition">¶</a></dt>
 <dd><p>Computes the latitude, longitude, velocity, angle, v, and u of the wind given two latitudes and longitudes.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
