@@ -5,5 +5,5 @@ is then easily accessible from both netcdf and text file formats.
 
 The main function is wind_info.sh
 
-To read full documentation, go to https://www.ssec.wisc.edu/~wroberts/pywinds/ or open docs/_build/html/index.html.
+To read full documentation, go to https://www.ssec.wisc.edu/~wroberts/pywinds/.
 Code is on https://github.com/wroberts4/pywinds.
