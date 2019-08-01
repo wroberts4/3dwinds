@@ -174,6 +174,8 @@ def _make_ellipsoid(ellipsoid, var_name):
         for key, val in ellipsoid.items():
             if hasattr(val, 'units'):
                 if key in ['a', 'b']:
+                    val.attrs['units'] =\
+                        'm' if val.attrs['units'] == 'meters' or val.attrs['units'] == 'metres' else val.attrs['units']
                     ellipsoid[key] = transform(Proj({'proj': 'stere', 'units': val.attrs['units']}),
                                                Proj({'proj': 'stere', 'units': 'm'}), val, 0)[0]
                 else:
