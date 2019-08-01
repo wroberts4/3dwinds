@@ -7,7 +7,7 @@ import struct
 
 import numpy as np
 import xarray
-from pyproj import Geod, Proj
+from pyproj import Geod, Proj, transform
 from pyresample.area_config import create_area_def
 from pyresample.geometry import AreaDefinition, DynamicAreaDefinition
 from pyresample.utils import proj4_str_to_dict
@@ -143,8 +143,14 @@ def _arctan2(x, y):
     return np.degrees(np.arctan2(x, y))
 
 
+def _change_units(initial_units, final_units):
+    initial_units = 'm' if initial_units == 'meters' or initial_units == 'metres' else initial_units
+    end_units = 'm' if final_units == 'meters' or final_units == 'metres' else final_units
+    return transform(Proj({'proj': 'stere', 'units': initial_units}),
+                     Proj({'proj': 'stere', 'units': end_units}), 1, 1)[0]
+
+
 def _make_ellipsoid(ellipsoid, var_name):
-    from pyproj import transform
     if ellipsoid is None:
         geod_info = Geod(ellps='WGS84')
     elif isinstance(ellipsoid, str):
@@ -174,13 +180,11 @@ def _make_ellipsoid(ellipsoid, var_name):
         for key, val in ellipsoid.items():
             if hasattr(val, 'units'):
                 if key in ['a', 'b']:
-                    val.attrs['units'] =\
-                        'm' if val.attrs['units'] == 'meters' or val.attrs['units'] == 'metres' else val.attrs['units']
-                    ellipsoid[key] = transform(Proj({'proj': 'stere', 'units': val.attrs['units']}),
-                                               Proj({'proj': 'stere', 'units': 'm'}), val, 0)[0]
+                    ellipsoid[key] = val * _change_units(val.attrs['units'], 'm')
                 else:
-                    logger.warning('Only a and b have units, but {0} was provided {1}'.format(key, val.attrs['units']))
-                    ellipsoid[key] = val.data
+                    logger.warning('Only a and b can have units, but {0} was provided {1}'.format(key,
+                                                                                                  val.attrs['units']))
+                ellipsoid[key] = val.data
         geod_info = Geod(**ellipsoid)
     else:
         raise ValueError('{0} must be a string or Geod type, but instead was {1} {2}'.format(var_name, ellipsoid,
@@ -1097,6 +1101,10 @@ def position_to_pixel(lat_ts, lat_0, long_0, lat, long, projection=None, area_ex
         Latitude of origin
     long_0 : float
         Central meridian
+    lat : float or None, optional
+        Latitude to run calculations on
+    long : float or None, optional
+        Longitude to run calculations on
     displacement_data : str or list, optional
         Filename or list containing displacements: [tag, width, height, i_11, j_11, i_12, j_12, ..., i_nm, j_nm] or
         [[j_displacement], [i_displacement]] respectively
@@ -1113,10 +1121,6 @@ def position_to_pixel(lat_ts, lat_0, long_0, lat, long, projection=None, area_ex
         2. units passed to ``--units`` (exluding center)
         3. meters (exluding center, which is degrees)
 
-    j : float or None, optional
-        Row to run calculations on
-    i : float or None, optional
-        Column to run calculations on
     area_extent : list, optional
         Area extent in projection units [lower_left_y, lower_left_x, upper_right_y, upper_right_x]
     shape : list, optional
