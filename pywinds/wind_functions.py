@@ -516,6 +516,9 @@ def _find_displacements_and_area(lat_ts=None, lat_0=None, long_0=None, displacem
                                  upper_left_extent=None, radius=None, units=None, projection_ellipsoid=None,
                                  no_save=True, save_directory=None):
     """Dynamically finds displacements and area of projection"""
+    if np.shape(shape) == 2 and (isinstance(shape[0], (float, int)) and int(shape[0]) != float(shape[0]) or isinstance(
+        shape[1], (float, int)) and int(shape[1]) != float(shape[1])):
+        logger.warning('Shape contains floats, but should only contain integers')
     area_definition = None
     area_data = None
     # Allows just displacements to be called without raising an area not found axception.

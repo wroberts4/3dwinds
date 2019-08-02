@@ -6,7 +6,6 @@ import datetime
 import logging
 import numpy as np
 import os
-import sys
 from glob import glob
 
 import xarray
@@ -25,7 +24,7 @@ def area_to_string(area_dict, round_nums=None):
 
 
 def _nums_or_string(var):
-    """Converts strings to number like python objects"""
+    """Converts strings to number like python objects, and leaves as default type if unable to convert."""
     try:
         return ast.literal_eval('%s' % var)
     except (ValueError, SyntaxError):
@@ -35,7 +34,13 @@ def _nums_or_string(var):
 class NullParser(argparse.ArgumentParser):
     """Used to nullify error output."""
 
-    def error(self, message):
+    def print_usage(self, *args, **kwargs):
+        return
+
+    def print_help(self, *args, **kwargs):
+        return
+
+    def exit(self, *args, **kwargs):
         return
 
 
@@ -50,6 +55,7 @@ class MyFormatter(argparse.HelpFormatter):
             help_string = help_string.replace(form.format('RADIUS'), 'dy [dx] [units]')
             help_string = help_string.replace(form.format('AREA_EXTENT'), 'y_ll x_ll y_ur x_ur [units]')
             help_string = help_string.replace(form.format('CENTER'), 'y x [units]')
+            help_string = help_string.replace(form.format('SHAPE'), 'height width')
             help_string = help_string.replace(form.format('PIXEL_SIZE'), 'dy [dx] [units]')
             help_string = help_string.replace(form.format('EARTH_ELLIPSOID'), 'str [val [units]] [str val [units]]')
             help_string = help_string.replace(form.format('PROJECTION_ELLIPSOID'),
@@ -57,47 +63,67 @@ class MyFormatter(argparse.HelpFormatter):
         return help_string
 
 
+class DualParser(argparse.ArgumentParser):
+    """Adds a null parser so that --help works for CustomAction"""
+
+    def __init__(self, *args, **kwargs):
+        data_type = kwargs.get('type') if kwargs.get('type') else _nums_or_string
+        self.null_parser = NullParser(*args, conflict_handler='resolve', **kwargs)
+        super().__init__(*args, **kwargs)
+
+    def add_argument(self, *args, **kwargs):
+        narg_types = kwargs.pop('narg_types', None)
+        self.null_parser.add_argument(*args, **kwargs)
+        if kwargs.get('action') is None:
+            kwargs['action'] = CustomAction
+            kwargs['parser'] = self.null_parser
+            kwargs['narg_types'] = narg_types
+        super().add_argument(*args, **kwargs)
+
+
 class CustomAction(argparse.Action):
     """Dynamically finds correct number of nargs to use, then converts those numbers to correct python objects."""
 
-    def __init__(self, option_strings, dest, narg_types=None, type=None, help=None, parser=None, **kwargs):
+    def __init__(self, option_strings, dest, narg_types=None, parser=None, **kwargs):
+        if kwargs.get('nargs'):
+            super().__init__(option_strings, dest, **kwargs)
+            return
+        type = kwargs if kwargs.get('type') else _nums_or_string
+        narg_types = narg_types if narg_types else [[type]]
         narg_types.sort(key=len)
         # If an error occurs or number of args are too small, use the bare minimum nargs.
         default_nargs = len(narg_types[0])
         # Setup narg_types so that larger lists take priority.
         narg_types = list(reversed(narg_types))
         # Setup parser to read all arguments after option.
-        parser = copy.deepcopy(parser) if parser else NullParser()
+        parser = copy.deepcopy(parser)
         # Find the most amount of nargs possible.
-        parser.add_argument(*option_strings if option_strings else [dest], nargs='*')
+        parser.add_argument(*option_strings if option_strings else [dest], nargs='+')
         # Setup argv to remove help flags and let main parser handle help.
-        argv = sys.argv[:]
-        while '-h' in argv:
-            argv.remove('-h')
-        while '--help' in argv:
-            argv.remove('--help')
-        known_args = parser.parse_known_args(argv)
+        known_args = parser.parse_known_args()
         # Extract only arguments associated with option.
         if known_args is not None:
             args = getattr(known_args[0], dest)
-            if args is None:
-                super().__init__(option_strings, dest, nargs=default_nargs, help=help)
+            if not args:
+                super().__init__(option_strings, dest, nargs=default_nargs, **kwargs)
                 return
             args = [type(arg) for arg in args]
         else:
-            super().__init__(option_strings, dest, nargs=default_nargs, help=help)
+            super().__init__(option_strings, dest, nargs=default_nargs, **kwargs)
             return
         # Try to match up narg_types with args from command line.
         for narg_type in narg_types:
             if len(narg_type) <= len(args):
                 for i in range(len(narg_type)):
+                    narg_type[i] = (int, float) if narg_type[i] == float else narg_type[i]
+                    narg_type[i] = (int, float, str) if narg_type[i] == _nums_or_string else narg_type[i]
                     if not isinstance(args[i], narg_type[i]):
                         break
                 # Every type matched up:
                 else:
-                    super().__init__(option_strings, dest, nargs=len(narg_type), help=help)
+                    super().__init__(option_strings, dest, nargs=len(narg_type), **kwargs)
                     return
-        super().__init__(option_strings, dest, nargs=default_nargs, help=help)
+        super().__init__(option_strings, dest, nargs=default_nargs, **kwargs)
 
     def __call__(self, parser, args, values, option_string=None):
         values = [_nums_or_string(value) for value in values]
@@ -117,13 +143,16 @@ class CustomAction(argparse.Action):
             elif len(values) != 1:
                 values = {key: val for key, val in zip(values[::2], values[1::2])}
         else:
-            units = None
-            if isinstance(values[-1], str):
-                units = values.pop(-1)
             if len(values) == 1:
                 values = values[0]
-            if units is not None:
-                values = xarray.DataArray(values, attrs={'units': units})
+            else:
+                units = None
+                if isinstance(values[-1], str):
+                    units = values.pop(-1)
+                    if len(values) == 1:
+                        values = values[0]
+                if units is not None:
+                    values = xarray.DataArray(values, attrs={'units': units})
         if isinstance(values, list) and len(values) == 1:
             values = values[0]
         setattr(args, self.dest, values)
@@ -134,83 +163,79 @@ def _add_flag(dictionary, *names, **kwargs):
 
 
 def _make_parser(flag_names, description):
-    my_parser = argparse.ArgumentParser(description=description, formatter_class=MyFormatter)
-    my_parser.add_argument('-v', '--verbose', action="count", default=0,
-                           help='Each occurrence increases verbosity 1 level through ERROR-WARNING-INFO-DEBUG.')
+    # Adds flags that are for every script.
+    flag_names = ['-v'] + flag_names + ['--precision']
+    my_parser = DualParser(description=description, formatter_class=MyFormatter)
     flags = {}
-    _add_flag(flags, 'old-lat', action=CustomAction, type=_nums_or_string, narg_types=[[(float, int)]],
-              parser=my_parser, help='Latitude of starting location.')
-    _add_flag(flags, 'old-long', action=CustomAction, type=_nums_or_string, narg_types=[[(float, int)]],
-              parser=my_parser, help='Longitude of starting locaion.')
-    _add_flag(flags, 'new-lat', type=float, help='Latitude of ending location')
-    _add_flag(flags, 'new-long', type=float, help='Longitude of ending location')
-    _add_flag(flags, 'distance', action=CustomAction, type=_nums_or_string, parser=my_parser,
-              narg_types=[[(float, int)], [(float, int), str]],
-              help='Distance to new location.')
-    _add_flag(flags, 'initial-bearing', type=float, help='Angle to new location.')
-    _add_flag(flags, 'forward-bearing', type=float, help='Angle to new location.')
+    _add_flag(flags, '-v', '--verbose', action="count", default=0,
+              help='Each occurrence increases verbosity 1 level through ERROR-WARNING-INFO-DEBUG.')
+    _add_flag(flags, 'old-lat', help='Latitude of starting location.')
+    _add_flag(flags, 'old-long', help='Longitude of starting locaion.')
+    _add_flag(flags, 'new-lat', help='Latitude of ending location')
+    _add_flag(flags, 'new-long', help='Longitude of ending location')
+    _add_flag(flags, 'distance', narg_types=[[float], [float, str]], help='Distance to new location.')
+    _add_flag(flags, 'initial-bearing', help='Angle to new location.')
+    _add_flag(flags, 'forward-bearing', help='Angle to new location.')
     _add_flag(flags, '--inverse', action="store_true",
               help='Find new location given a starting position, distance, and angle')
-    _add_flag(flags, 'lat', type=float, help='Latitude of position to transform into pixel.')
-    _add_flag(flags, 'long', type=float, help='Longitude of position to transform into pixel.')
-    _add_flag(flags, '--lat-ts', type=float, metavar='float', help='projection latitude of true scale')
-    _add_flag(flags, '--lat-0', type=float, metavar='float', help='projection latitude of origin')
-    _add_flag(flags, '--long-0', type=float, metavar='float', help='projection central meridian')
-    _add_flag(flags, 'lat-ts', type=float, help='projection latitude of true scale')
-    _add_flag(flags, 'lat-0', type=float, help='projection latitude of origin')
-    _add_flag(flags, 'long-0', type=float, help='projection central meridian')
-    _add_flag(flags, 'delta-time', type=float,
-              help='Amount of time spent getting between the two positions in minutes.')
+    _add_flag(flags, 'lat', help='Latitude of position to transform into pixel.')
+    _add_flag(flags, 'long', help='Longitude of position to transform into pixel.')
+    _add_flag(flags, '--lat-ts', metavar='float', help='projection latitude of true scale')
+    _add_flag(flags, '--lat-0', metavar='float', help='projection latitude of origin')
+    _add_flag(flags, '--long-0', metavar='float', help='projection central meridian')
+    _add_flag(flags, 'lat-ts', help='projection latitude of true scale')
+    _add_flag(flags, 'lat-0', help='projection latitude of origin')
+    _add_flag(flags, 'long-0', help='projection central meridian')
+    _add_flag(flags, 'delta-time', help='Amount of time spent getting between the two positions in minutes.')
     _add_flag(flags, '-p', '--print', '--no-save', action='store_true', dest='no_save',
               help='print data to shell without saving')
-    _add_flag(flags, '-s', '--save-directory', type=str, metavar='path-name',
+    _add_flag(flags, '-s', '--save-directory', metavar='path-name',
               help='directory to save to. Defaults to where script was ran')
     _add_flag(flags, '--from-lat-long', metavar='',
               help='Switches to taking latitudes and longitudes as arguments. '
                    'Use the args --from-lat-long -h for more information.')
-    _add_flag(flags, '-j', '--j', type=int, metavar='int', help='row to run calculations on')
-    _add_flag(flags, '-i', '--i', type=int, metavar='int', help='column to run calculations on')
-    _add_flag(flags, '--center', action=CustomAction, type=_nums_or_string,
-              narg_types=[[(float, int), (float, int), str], [(float, int), (float, int)]],
+    _add_flag(flags, '-j', '--j', metavar='int', nargs=1, type=int, help='row to run calculations on')
+    _add_flag(flags, '-i', '--i', metavar='int', nargs=1, type=int, help='column to run calculations on')
+    _add_flag(flags, '--center',
+              narg_types=[[float, float, str], [float, float]],
               help='projection y and x coordinate of the center of area. Default: lat long')
-    _add_flag(flags, '--pixel-size', action=CustomAction, type=_nums_or_string,
-              narg_types=[[(float, int), (float, int), str], [(float, int), (float, int)],
-                          [(float, int), str], [(float, int)]],
+    _add_flag(flags, '--pixel-size',
+              narg_types=[[float, float, str], [float, float],
+                          [float, str], [float]],
               help='projection size of pixels in the y and x direction. If pixels are '
                    'square, i.e. dy = dx, then only one value needs to be entered')
-    _add_flag(flags, '--displacement-data', type=_nums_or_string, metavar='filename',
+    _add_flag(flags, '--displacement-data', metavar='filename',
               help='filename or list containing displacements')
     _add_flag(flags, '--units', metavar='str',
               help='units that all provided arguments that take units (except center) should be interpreted as')
-    _add_flag(flags, '--upper-left-extent', action=CustomAction, type=_nums_or_string,
-              narg_types=[[(float, int), (float, int), str], [(float, int), (float, int)]],
+    _add_flag(flags, '--upper-left-extent',
+              narg_types=[[float, float, str], [float, float]],
               help='projection y and x coordinates of the upper left corner of the upper left pixel')
-    _add_flag(flags, '--radius', action=CustomAction, type=_nums_or_string,
-              narg_types=[[(float, int)], [(float, int), str], [(float, int), (float, int), str],
-                          [(float, int), (float, int)]],
+    _add_flag(flags, '--radius',
+              narg_types=[[float], [float, str], [float, float, str],
+                          [float, float]],
               help='projection length from the center to the left/rightand top/bottom outer edges')
-    _add_flag(flags, '--area-extent', action=CustomAction, type=_nums_or_string,
-              narg_types=[[(float, int) for i in range(4)] + [str], [(float, int) for i in range(4)]],
+    _add_flag(flags, '--area-extent',
+              narg_types=[[float for i in range(4)] + [str], [float for i in range(4)]],
               help='area extent in projection space: lower_left_y, lower_left_x, upper_right_y, upper_right_x')
-    _add_flag(flags, '--shape', type=_nums_or_string, nargs=2, metavar=('height', 'width'),
-              help='number of pixels in the y and x direction')
+    _add_flag(flags, '--shape', nargs=2, type=int, help='number of pixels in the y and x direction')
     _add_flag(flags, '--projection', metavar='str', help='name of projection that the image is in')
-    _add_flag(flags, '--earth-ellipsoid', '--earth-spheroid', action=CustomAction, type=_nums_or_string,
-              narg_types=[[str], [str, (float, int)], [str, (float, int), str], [str, (float, int), str, (float, int)],
-                          [str, (float, int), str, str, (float, int)], [str, (float, int), str, (float, int), str],
-                          [str, (float, int), str, str, (float, int), str]],
+    _add_flag(flags, '--earth-ellipsoid', '--earth-spheroid',
+              narg_types=[[str], [str, float], [str, float, str], [str, float, str, float],
+                          [str, float, str, str, float], [str, float, str, float, str],
+                          [str, float, str, str, float, str]],
               help='Ellipsoid of Earth. Coordinate system name or defined '
                    'using a combination of a, b, e, es, f, and rf.')
-    _add_flag(flags, '--projection-ellipsoid', '--projection-spheroid', action=CustomAction, type=_nums_or_string,
-              narg_types=[[str], [str, (float, int)], [str, (float, int), str], [str, (float, int), str, (float, int)],
-                          [str, (float, int), str, str, (float, int)], [str, (float, int), str, (float, int), str],
-                          [str, (float, int), str, str, (float, int), str]],
+    _add_flag(flags, '--projection-ellipsoid', '--projection-spheroid',
+              narg_types=[[str], [str, float], [str, float, str], [str, float, str, float],
+                          [str, float, str, str, float], [str, float, str, float, str],
+                          [str, float, str, str, float, str]],
               help='Ellipsoid of projection. Coordinate system name or defined '
                    'using a combination of a, b, e, es, f, and rf.')
+    _add_flag(flags, '--precision', default=2, metavar='int',
+              help='Number of decimal places to round printed output to, defaults to 2.')
     for flag in flag_names:
         my_parser.add_argument(*flags[flag]['args'], **flags[flag]['kwargs'])
-    my_parser.add_argument('--precision', type=int, default=2, metavar='int',
-                           help='Number of decimal places to round printed output to.')
     return my_parser
 
 
