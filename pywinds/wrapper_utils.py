@@ -67,18 +67,18 @@ class DualParser(argparse.ArgumentParser):
     """Adds a null parser so that --help works for CustomAction"""
 
     def __init__(self, *args, **kwargs):
-        data_type = kwargs.get('type') if kwargs.get('type') else _nums_or_string
         self.null_parser = NullParser(*args, conflict_handler='resolve', **kwargs)
         super().__init__(*args, **kwargs)
 
     def add_argument(self, *args, **kwargs):
         narg_types = kwargs.pop('narg_types', None)
-        self.null_parser.add_argument(*args, **kwargs)
+        other_kwargs = dict(**kwargs)
         if kwargs.get('action') is None:
             kwargs['action'] = CustomAction
             kwargs['parser'] = self.null_parser
             kwargs['narg_types'] = narg_types
         super().add_argument(*args, **kwargs)
+        self.null_parser.add_argument(*args, **other_kwargs)
 
 
 class CustomAction(argparse.Action):
@@ -86,8 +86,9 @@ class CustomAction(argparse.Action):
 
     def __init__(self, option_strings, dest, narg_types=None, parser=None, **kwargs):
         kwargs['type'] = kwargs.get('type') if kwargs.get('type') else _nums_or_string
+        # If nargs is provided or no narg_typesis provided, treat as "normal".
         if kwargs.get('nargs') or narg_types is None:
-            if kwargs.get('nargs') is None:
+            if not kwargs.get('nargs'):
                 kwargs['nargs'] = 1
             super().__init__(option_strings, dest, **kwargs)
             return
@@ -99,9 +100,9 @@ class CustomAction(argparse.Action):
         # Setup parser to read all arguments after option.
         parser = copy.deepcopy(parser)
         # Find the most amount of nargs possible.
-        parser.add_argument(*option_strings if option_strings else [dest], nargs='+')
+        parser.add_argument(*option_strings if not kwargs.get('required') else [dest], nargs='+')
         # Setup argv to remove help flags and let main parser handle help.
-        known_args = parser.parse_known_args()
+        known_args = parser.parse_known_intermixed_args()
         # Extract only arguments associated with option.
         if known_args is not None:
             args = getattr(known_args[0], dest)
@@ -170,13 +171,13 @@ def _make_parser(flag_names, description):
     flags = {}
     _add_flag(flags, '-v', '--verbose', action="count", default=0,
               help='Each occurrence increases verbosity 1 level through ERROR-WARNING-INFO-DEBUG.')
-    _add_flag(flags, 'old-lat', type=float, help='Latitude of starting location.')
-    _add_flag(flags, 'old-long', type=float, help='Longitude of starting locaion.')
-    _add_flag(flags, 'new-lat', type=float, help='Latitude of ending location')
-    _add_flag(flags, 'new-long', type=float, help='Longitude of ending location')
-    _add_flag(flags, 'distance', type=float, narg_types=[[float], [float, str]], help='Distance to new location.')
-    _add_flag(flags, 'initial-bearing', type=float, help='Angle to new location.')
-    _add_flag(flags, 'forward-bearing', type=float, help='Angle to new location.')
+    _add_flag(flags, 'old-lat', help='Latitude of starting location.')
+    _add_flag(flags, 'old-long', help='Longitude of starting locaion.')
+    _add_flag(flags, 'new-lat', help='Latitude of ending location')
+    _add_flag(flags, 'new-long', help='Longitude of ending location')
+    _add_flag(flags, 'distance', narg_types=[[float], [float, str]], help='Distance to new location.')
+    _add_flag(flags, 'initial-bearing', help='Angle to new location.')
+    _add_flag(flags, 'forward-bearing', help='Angle to new location.')
     _add_flag(flags, '--inverse', action="store_true",
               help='Find new location given a starting position, distance, and angle')
     _add_flag(flags, 'lat', type=float, help='Latitude of position to transform into pixel.')

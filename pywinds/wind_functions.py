@@ -1352,7 +1352,7 @@ def wind_info_fll(delta_time, old_lat, old_long, new_lat, new_long, earth_ellips
     v = _cos(angle) * speed
     u = _sin(angle) * speed
     # Make each variable its own column.
-    winds = np.insert(np.expand_dims(np.ravel(new_lat), axis=1), 1, new_long, axis=1)
+    winds = np.insert(np.expand_dims(np.ravel(np.array(new_lat, dtype=float)), axis=1), 1, new_long, axis=1)
     winds = np.insert(winds, 2, speed, axis=1)
     winds = np.insert(winds, 3, angle, axis=1)
     winds = np.insert(winds, 4, v, axis=1)
