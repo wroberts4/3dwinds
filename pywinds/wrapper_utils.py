@@ -71,7 +71,7 @@ class CustomAction(argparse.Action):
         # Find the most amount of nargs possible.
         parser.add_argument(*option_strings if option_strings else [dest], nargs='*')
         # Setup argv to remove help flags and let main parser handle help.
-        argv = sys.argv[1:]
+        argv = sys.argv[:]
         while '-h' in argv:
             argv.remove('-h')
         while '--help' in argv:
