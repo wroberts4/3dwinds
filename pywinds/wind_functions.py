@@ -7,7 +7,7 @@ import struct
 
 import numpy as np
 import xarray
-from pyproj import Geod, Proj
+from pyproj import Geod, Proj, transform
 from pyresample.area_config import create_area_def
 from pyresample.geometry import AreaDefinition, DynamicAreaDefinition
 from pyresample.utils import proj4_str_to_dict
@@ -143,12 +143,20 @@ def _arctan2(x, y):
     return np.degrees(np.arctan2(x, y))
 
 
-def _make_ellipsoid(ellipsoid, var_name):
-    from pyproj import transform
+def _change_units(initial_units, final_units):
+    if initial_units and final_units:
+        initial_units = 'm' if initial_units == 'meters' or initial_units == 'metres' else initial_units
+        end_units = 'm' if final_units == 'meters' or final_units == 'metres' else final_units
+        return transform(Proj({'proj': 'stere', 'units': initial_units}),
+                         Proj({'proj': 'stere', 'units': end_units}), 1, 1)[0]
+    return 1
+
+
+def _make_ellipsoid(ellipsoid, var_name, units=None):
     if ellipsoid is None:
-        geod_info = Geod(ellps='WGS84')
+        ellipsoid = Geod(ellps='WGS84')
     elif isinstance(ellipsoid, str):
-        geod_info = Geod(ellps=ellipsoid)
+        ellipsoid = Geod(ellps=ellipsoid)
     elif isinstance(ellipsoid, dict):
         for key in ellipsoid.keys():
             if key not in ['a', 'b', 'rf', 'e', 'f', 'es']:
@@ -167,29 +175,26 @@ def _make_ellipsoid(ellipsoid, var_name):
                     ellipsoid['a'] = ellipsoid['b'] / (1 - ellipsoid['f'])
                 elif 'es' in ellipsoid:
                     if ellipsoid['es'] < 0 or ellipsoid['es'] >= 1:
-                        raise ValueError('Invalid eccentricity of {0}: 0 <= eccentricity < 1'.format(ellipsoid['es']))
+                        raise ValueError('Invalid eccentricity squared of {0}: 0 <= eccentricity squared < 1'.format(
+                            ellipsoid['es']))
                     ellipsoid['a'] = ellipsoid['b'] / (1 - ellipsoid['es']) ** .5
                 else:
                     ellipsoid['a'] = ellipsoid['b']
         for key, val in ellipsoid.items():
-            if hasattr(val, 'units'):
-                if key in ['a', 'b']:
-                    val.attrs['units'] =\
-                        'm' if val.attrs['units'] == 'meters' or val.attrs['units'] == 'metres' else val.attrs['units']
-                    ellipsoid[key] = transform(Proj({'proj': 'stere', 'units': val.attrs['units']}),
-                                               Proj({'proj': 'stere', 'units': 'm'}), val, 0)[0]
-                else:
-                    logger.warning('Only a and b have units, but {0} was provided {1}'.format(key, val.attrs['units']))
-                    ellipsoid[key] = val.data
-        geod_info = Geod(**ellipsoid)
-    else:
-        raise ValueError('{0} must be a string or Geod type, but instead was {1} {2}'.format(var_name, ellipsoid,
+            if key in ['a', 'b']:
+                ellipsoid[key] = val * _change_units(getattr(val, 'units', units), 'm')
+            elif hasattr(val, 'units'):
+                logger.warning('Only a and b can have units, but {0} was provided {1}'.format(
+                    key, val.attrs['units']))
+        ellipsoid = Geod(**ellipsoid)
+    elif isinstance(ellipsoid, Geod):
+        raise ValueError('{0} must be a string, dict, or Geod type, but instead was {1} {2}'.format(var_name, ellipsoid,
                                                                                              type(ellipsoid)))
-    if geod_info.a < 0:
-        raise ValueError('Invalid major axis of {0}: Negative numbers not allowed'.format(geod_info.a))
-    if geod_info.f < 0 or geod_info.f >= 1:
-        raise ValueError('Invalid flattening of {0}: 0 <= flattening < 1'.format(geod_info.f))
-    return geod_info
+    if ellipsoid.a < 0:
+        raise ValueError('Invalid major axis of {0}: Negative numbers not allowed'.format(ellipsoid.a))
+    if ellipsoid.f < 0 or ellipsoid.f >= 1:
+        raise ValueError('Invalid flattening of {0}: 0 <= flattening < 1'.format(ellipsoid.f))
+    return ellipsoid
 
 
 def _delta_longitude(new_long, old_long):
@@ -217,8 +222,8 @@ def _create_area(lat_ts, lat_0, long_0, projection=None, area_extent=None, shape
         projection = 'stere'
     if units is None:
         units = 'm'
-    geod_info = _make_ellipsoid(projection_ellipsoid, 'projection_ellipsoid')
-    logger.debug('Projection ellipsoid data: {0}'.format(geod_info.initstring.replace('+', '')))
+    ellipsoid = _make_ellipsoid(projection_ellipsoid, 'projection_ellipsoid', units=units)
+    logger.debug('Projection ellipsoid data: {0}'.format(ellipsoid.initstring.replace('+', '')))
     # Center is given in (lat, long) order, but create_area_def needs it in (long, lat) order.
     if area_extent is not None:
         area_extent_ll, area_extent_ur = area_extent[0:2], area_extent[2:4]
@@ -239,7 +244,7 @@ def _create_area(lat_ts, lat_0, long_0, projection=None, area_extent=None, shape
         center = xarray.DataArray(center, attrs={'units': 'degrees'})
     proj_dict = proj4_str_to_dict(
         '+lat_ts={0} +lat_0={1} +lon_0={2} +proj={3} {4}'.format(lat_ts, lat_0, long_0, projection,
-                                                                 geod_info.initstring))
+                                                                 ellipsoid.initstring))
     # Object that contains area information.
     area_definition = create_area_def('pywinds', proj_dict, area_extent=area_extent, shape=shape, resolution=pixel_size,
                                       center=center, upper_left_extent=upper_left_extent, radius=radius, units=units)
@@ -581,14 +586,13 @@ def area(lat_ts, lat_0, long_0, displacement_data=None, projection=None, area_ex
     projection : str
         Name of projection that pixels are describing (stere, laea, merc, etc)
     units : str, optional
-        Units that provided arguments should be interpreted as. This can be
+        Units that length arguments should be interpreted as. This can be
         one of 'deg', 'degrees', 'rad', 'radians', 'meters', 'metres', and any
         parameter supported by the `cs2cs -lu <https://proj4.org/apps/cs2cs.html#cmdoption-cs2cs-lu>`_
         command. Units are determined in the following priority:
 
-        1. units expressed with variables via @your_units (see 'Using units' under
-           :ref:`Examples_of_wind_info.sh` for examples)
-        2. units passed to ``--units`` (exluding center)
+        1. units expressed with variables via xarray attributes
+        2. units passed to ``units`` (exluding center)
         3. meters (exluding center, which is degrees)
 
     area_extent : list, optional
@@ -604,7 +608,7 @@ def area(lat_ts, lat_0, long_0, displacement_data=None, projection=None, area_ex
         Projection y and x coordinates of the upper left corner of the upper left pixel (y, x)
     radius : list or float, optional
         Projection length from the center to the left/right and top/bottom outer edges (dy, dx)
-    projection_ellipsoid : string or Geod, optional
+    projection_ellipsoid : str, dict, or pyproj.Geod, optional
         ellipsoid of projection (WGS84, sphere, etc)
 
         Returns
@@ -642,14 +646,13 @@ def displacements(lat_ts=None, lat_0=None, long_0=None, displacement_data=None, 
     projection : str, optional
         Name of projection that pixels are describing (stere, laea, merc, etc).
     units : str, optional
-        Units that provided arguments should be interpreted as. This can be
+        Units that length arguments should be interpreted as. This can be
         one of 'deg', 'degrees', 'rad', 'radians', 'meters', 'metres', and any
         parameter supported by the `cs2cs -lu <https://proj4.org/apps/cs2cs.html#cmdoption-cs2cs-lu>`_
         command. Units are determined in the following priority:
 
-        1. units expressed with variables via @your_units (see 'Using units' under
-           :ref:`Examples_of_wind_info.sh` for examples)
-        2. units passed to ``--units`` (exluding center)
+        1. units expressed with variables via xarray attributes
+        2. units passed to ``units`` (exluding center)
         3. meters (exluding center, which is degrees)
 
     j : float or None, optional
@@ -669,7 +672,7 @@ def displacements(lat_ts=None, lat_0=None, long_0=None, displacement_data=None, 
         Projection y and x coordinates of the upper left corner of the upper left pixel (y, x)
     radius : list or float, optional
         Projection length from the center to the left/right and top/bottom outer edges (dy, dx)
-    projection_ellipsoid : string or Geod, optional
+    projection_ellipsoid : str, dict, or pyproj.Geod, optional
         ellipsoid of projection (WGS84, sphere, etc)
 
         Returns
@@ -712,14 +715,13 @@ def velocity(lat_ts, lat_0, long_0, delta_time, displacement_data=None, projecti
     projection : str
         Name of projection that the image is in (stere, laea, merc, etc).
     units : str, optional
-        Units that provided arguments should be interpreted as. This can be
+        Units that length arguments should be interpreted as. This can be
         one of 'deg', 'degrees', 'rad', 'radians', 'meters', 'metres', and any
         parameter supported by the `cs2cs -lu <https://proj4.org/apps/cs2cs.html#cmdoption-cs2cs-lu>`_
         command. Units are determined in the following priority:
 
-        1. units expressed with variables via @your_units (see 'Using units' under
-           :ref:`Examples_of_wind_info.sh` for examples)
-        2. units passed to ``--units`` (exluding center)
+        1. units expressed with variables via xarray attributes
+        2. units passed to ``units`` (exluding center)
         3. meters (exluding center, which is degrees)
 
     j : float or None, optional
@@ -739,9 +741,9 @@ def velocity(lat_ts, lat_0, long_0, delta_time, displacement_data=None, projecti
         Projection y and x coordinates of the upper left corner of the upper left pixel (y, x)
     radius : list or float, optional
         Projection length from the center to the left/right and top/bottom outer edges (dy, dx)
-    projection_ellipsoid : string or Geod, optional
+    projection_ellipsoid : str, dict, or pyproj.Geod, optional
         ellipsoid of projection (WGS84, sphere, etc)
-    earth_ellipsoid : string or Geod, optional
+    earth_ellipsoid : str, dict, or pyproj.Geod, optional
         ellipsoid of Earth (WGS84, sphere, etc)
 
     Returns
@@ -807,14 +809,13 @@ def vu(lat_ts, lat_0, long_0, delta_time, displacement_data=None, projection=Non
     projection : str
         Name of projection that pixels are describing (stere, laea, merc, etc).
     units : str, optional
-        Units that provided arguments should be interpreted as. This can be
+        Units that length arguments should be interpreted as. This can be
         one of 'deg', 'degrees', 'rad', 'radians', 'meters', 'metres', and any
         parameter supported by the `cs2cs -lu <https://proj4.org/apps/cs2cs.html#cmdoption-cs2cs-lu>`_
         command. Units are determined in the following priority:
 
-        1. units expressed with variables via @your_units (see 'Using units' under
-           :ref:`Examples_of_wind_info.sh` for examples)
-        2. units passed to ``--units`` (exluding center)
+        1. units expressed with variables via xarray attributes
+        2. units passed to ``units`` (exluding center)
         3. meters (exluding center, which is degrees)
 
     j : float or None, optional
@@ -834,9 +835,9 @@ def vu(lat_ts, lat_0, long_0, delta_time, displacement_data=None, projection=Non
         Projection y and x coordinates of the upper left corner of the upper left pixel (y, x)
     radius : list or float, optional
         Projection length from the center to the left/right and top/bottom outer edges (dy, dx)
-    projection_ellipsoid : string or Geod, optional
+    projection_ellipsoid : str, dict, or pyproj.Geod, optional
         ellipsoid of projection (WGS84, sphere, etc)
-    earth_ellipsoid : string or Geod, optional
+    earth_ellipsoid : str, dict, or pyproj.Geod, optional
         ellipsoid of Earth (WGS84, sphere, etc)
 
     Returns
@@ -896,14 +897,13 @@ def lat_long(lat_ts, lat_0, long_0, displacement_data=None, projection=None, j=N
     projection : str
         Name of projection that pixels are describing (stere, laea, merc, etc).
     units : str, optional
-        Units that provided arguments should be interpreted as. This can be
+        Units that length arguments should be interpreted as. This can be
         one of 'deg', 'degrees', 'rad', 'radians', 'meters', 'metres', and any
         parameter supported by the `cs2cs -lu <https://proj4.org/apps/cs2cs.html#cmdoption-cs2cs-lu>`_
         command. Units are determined in the following priority:
 
-        1. units expressed with variables via @your_units (see 'Using units' under
-           :ref:`Examples_of_wind_info.sh` for examples)
-        2. units passed to ``--units`` (exluding center)
+        1. units expressed with variables via xarray attributes
+        2. units passed to ``units`` (exluding center)
         3. meters (exluding center, which is degrees)
 
     j : float or None, optional
@@ -923,7 +923,7 @@ def lat_long(lat_ts, lat_0, long_0, displacement_data=None, projection=None, j=N
         Projection y and x coordinates of the upper left corner of the upper left pixel (y, x)
     radius : list or float, optional
         Projection length from the center to the left/right and top/bottom outer edges (dy, dx)
-    projection_ellipsoid : string or Geod, optional
+    projection_ellipsoid : str, dict, or pyproj.Geod, optional
         ellipsoid of projection (WGS84, sphere, etc)
 
     Returns
@@ -943,7 +943,7 @@ def lat_long(lat_ts, lat_0, long_0, displacement_data=None, projection=None, j=N
     return np.array((_reshape(old_lat, shape), _reshape(old_long, shape)))
 
 
-def loxodrome_bck(old_lat, old_long, new_lat, new_long, earth_ellipsoid=None):
+def loxodrome_bck(old_lat, old_long, new_lat, new_long, earth_ellipsoid=None, units=None):
     """Computes the distance, forward bearing and back bearing given a starting and ending position.
 
     Credit: https://search-proquest-com.ezproxy.library.wisc.edu/docview/2130848771?rfr_id=info%3Axri%2Fsid%3Aprimo
@@ -960,16 +960,25 @@ def loxodrome_bck(old_lat, old_long, new_lat, new_long, earth_ellipsoid=None):
         Ending point longitude
     earth_ellipsoid: str, optional
         ellipsoid of Earth (WGS84, sphere, etc)
+    units : str, optional
+        Units that length arguments should be interpreted as. This can be
+        one of 'meters', 'metres', and any
+        parameter supported by the `cs2cs -lu <https://proj4.org/apps/cs2cs.html#cmdoption-cs2cs-lu>`_
+        command. Units are determined in the following priority:
+
+        1. units expressed with variables via xarray attributes
+        2. units passed to ``units``
+        3. meters
 
     Returns
     -------
     (distance, forward bearing, back bearing) : numpy.array or list
         distance, forward bearing, and back bearing from initial position to final position
     """
-    geod_info = _make_ellipsoid(earth_ellipsoid, 'earth_ellipsoid')
-    logger.debug('Earth ellipsoid data: {0}'.format(geod_info.initstring.replace('+', '')))
+    ellipsoid = _make_ellipsoid(earth_ellipsoid, 'earth_ellipsoid', units=units)
+    logger.debug('Earth ellipsoid data: {0}'.format(ellipsoid.initstring.replace('+', '')))
     # eccentricity squared.
-    es = (2 - geod_info.f) * geod_info.f
+    es = (2 - ellipsoid.f) * ellipsoid.f
     e = es ** .5
     # Note: atanh(sin(x)) == asinh(tan(x)) for -pi / 2 <= x <= pi / 2
     delta_longitude = _delta_longitude(new_long, old_long)
@@ -977,9 +986,9 @@ def loxodrome_bck(old_lat, old_long, new_lat, new_long, earth_ellipsoid=None):
                                (_arctanh(_sin(old_lat)) - e * _arctanh(e * _sin(old_lat))))
     # If staying at a pole.
     forward_bearing = np.where(np.isnan(forward_bearing) == False, forward_bearing, new_lat + 90)
-    meridian_dist = geod_info.inv(np.zeros(np.shape(old_lat)), old_lat, np.zeros(np.shape(old_lat)), new_lat)[-1]
+    meridian_dist = ellipsoid.inv(np.zeros(np.shape(old_lat)), old_lat, np.zeros(np.shape(old_lat)), new_lat)[-1]
     length = abs(meridian_dist / _cos(forward_bearing))
-    lat_radius = geod_info.a / (1 - es * _sin(new_lat) ** 2) ** .5 * _cos(new_lat)
+    lat_radius = ellipsoid.a / (1 - es * _sin(new_lat) ** 2) ** .5 * _cos(new_lat)
     # Only used when staying on the same latitude.
     horizontal_length = lat_radius * np.radians(abs(delta_longitude))
     # If staying on a lat, use horizontal_length. Unless at poles to prevent rounding error.
@@ -987,7 +996,7 @@ def loxodrome_bck(old_lat, old_long, new_lat, new_long, earth_ellipsoid=None):
     return length, forward_bearing % 360, (forward_bearing - 180) % 360
 
 
-def loxodrome_fwd(old_lat, old_long, distance, forward_bearing, earth_ellipsoid=None):
+def loxodrome_fwd(old_lat, old_long, distance, forward_bearing, earth_ellipsoid=None, units=None):
     """Computes the new lat, new long, and back bearing given a starting position, distance, and forward bearing.
 
     Credit: https://search-proquest-com.ezproxy.library.wisc.edu/docview/2130848771?rfr_id=info%3Axri%2Fsid%3Aprimo
@@ -1004,33 +1013,45 @@ def loxodrome_fwd(old_lat, old_long, distance, forward_bearing, earth_ellipsoid=
         Forward bearing from old position to new position
     earth_ellipsoid: str, optional
         ellipsoid of Earth (WGS84, sphere, etc)
+    units : str, optional
+        Units that length arguments should be interpreted as. This can be
+        one of 'meters', 'metres', and any
+        parameter supported by the `cs2cs -lu <https://proj4.org/apps/cs2cs.html#cmdoption-cs2cs-lu>`_
+        command. Units are determined in the following priority:
+
+        1. units expressed with variables via xarray attributes
+        2. units passed to ``units``
+        3. meters
 
     Returns
     -------
     (new lat, new long, back bearing) : numpy.array or list
         new latitude, new longitude, and back bearing from initial position
     """
-    geod_info = _make_ellipsoid(earth_ellipsoid, 'earth_ellipsoid')
-    logger.debug('Earth ellipsoid data: {0}'.format(geod_info.initstring.replace('+', '')))
+    ellipsoid = _make_ellipsoid(earth_ellipsoid, 'earth_ellipsoid', units=units)
+    logger.debug('Earth ellipsoid data: {0}'.format(ellipsoid.initstring.replace('+', '')))
     # eccentricity squared.
-    es = (2 - geod_info.f) * geod_info.f
+    es = (2 - ellipsoid.f) * ellipsoid.f
     e = es ** .5
-    new_lat = geod_info.fwd(np.zeros(np.shape(old_lat)), old_lat, np.zeros(np.shape(old_lat)),
+    distance = distance * _change_units(getattr(distance, 'units', units), 'm')
+    new_lat = ellipsoid.fwd(np.zeros(np.shape(old_lat)), old_lat, np.zeros(np.shape(old_lat)),
                             _cos(forward_bearing) * distance)[1]
     new_long = _tan(forward_bearing) * (_arctanh(_sin(new_lat)) - e * _arctanh(e * _sin(new_lat)) -
                                         (_arctanh(_sin(old_lat)) - e * _arctanh(e * _sin(old_lat)))) + old_long
     new_long = _delta_longitude(new_long, 0)
     # Only used if new_lat == old_lat.
-    lat_radius = geod_info.a / (1 - es * _sin(old_lat) ** 2) ** .5 * _cos(old_lat)
-    # Makes it so that going east or west uses the correct formula. Note: tange(angle) -> 0 as angle -> 0; this
-    # yields a nice convergence.
+    lat_radius = ellipsoid.a / (1 - es * _sin(old_lat) ** 2) ** .5 * _cos(old_lat)
+    # Makes it so that going east or west uses the correct formula. Note: tan(angle) -> 0 as angle -> 0; this
+    # yields a nice convergence. Used to work around floating point error.
     new_long = np.where(((new_long != old_long) | (forward_bearing % 180 == 0)) & (forward_bearing % 180 != 90),
                         new_long, _delta_longitude(-np.sign(forward_bearing % 360 - 180) *
                                                    np.degrees(distance / lat_radius) + old_long, 0))
+    # When near a pole and floating point error comes into play.
+    new_long = np.where(np.isnan(new_long) == False, new_long, old_long)
     return new_lat, new_long, (forward_bearing - 180) % 360
 
 
-def geodesic_bck(old_lat, old_long, new_lat, new_long, earth_ellipsoid=None):
+def geodesic_bck(old_lat, old_long, new_lat, new_long, earth_ellipsoid=None, units=None):
     """Computes the shortest distance, initial bearing and back bearing given a starting and ending position.
 
     Parameters
@@ -1045,19 +1066,28 @@ def geodesic_bck(old_lat, old_long, new_lat, new_long, earth_ellipsoid=None):
         Ending point longitude
     earth_ellipsoid: str, optional
         ellipsoid of Earth (WGS84, sphere, etc)
+    units : str, optional
+        Units that length arguments should be interpreted as. This can be
+        one of 'meters', 'metres', and any
+        parameter supported by the `cs2cs -lu <https://proj4.org/apps/cs2cs.html#cmdoption-cs2cs-lu>`_
+        command. Units are determined in the following priority:
+
+        1. units expressed with variables via xarray attributes
+        2. units passed to ``units``
+        3. meters
 
     Returns
     -------
     (distance, forward bearing, back bearing) : numpy.array or list
         distance, forward bearing, and back bearing from initial position to final position
     """
-    geod_info = _make_ellipsoid(earth_ellipsoid, 'earth_ellipsoid')
-    logger.debug('Earth ellipsoid data: {0}'.format(geod_info.initstring.replace('+', '')))
-    initial_bearing, back_bearing, distance = geod_info.inv(old_long, old_lat, new_long, new_lat)
+    ellipsoid = _make_ellipsoid(earth_ellipsoid, 'earth_ellipsoid', units=units)
+    logger.debug('Earth ellipsoid data: {0}'.format(ellipsoid.initstring.replace('+', '')))
+    initial_bearing, back_bearing, distance = ellipsoid.inv(old_long, old_lat, new_long, new_lat)
     return distance, initial_bearing % 360, back_bearing % 360
 
 
-def geodesic_fwd(old_lat, old_long, distance, initial_bearing, earth_ellipsoid=None):
+def geodesic_fwd(old_lat, old_long, distance, initial_bearing, earth_ellipsoid=None, units=None):
     """Computes the new lat, new long, and back bearing given a starting position, distance, and forward bearing.
 
     Parameters
@@ -1072,15 +1102,25 @@ def geodesic_fwd(old_lat, old_long, distance, initial_bearing, earth_ellipsoid=N
         Initial bearing from old position to new position
     earth_ellipsoid: str, optional
         ellipsoid of Earth (WGS84, sphere, etc)
+    units : str, optional
+        Units that length arguments should be interpreted as. This can be
+        one of 'meters', 'metres', and any
+        parameter supported by the `cs2cs -lu <https://proj4.org/apps/cs2cs.html#cmdoption-cs2cs-lu>`_
+        command. Units are determined in the following priority:
+
+        1. units expressed with variables via xarray attributes
+        2. units passed to ``units``
+        3. meters
 
     Returns
     -------
     (new lat, new long, back bearing) : numpy.array or list
         new latitude, new longitude, and back bearing from initial position
     """
-    geod_info = _make_ellipsoid(earth_ellipsoid, 'earth_ellipsoid')
-    logger.debug('Earth ellipsoid data: {0}'.format(geod_info.initstring.replace('+', '')))
-    new_long, new_lat, back_bearing = geod_info.fwd(old_long, old_lat, initial_bearing, distance)
+    ellipsoid = _make_ellipsoid(earth_ellipsoid, 'earth_ellipsoid', units=units)
+    logger.debug('Earth ellipsoid data: {0}'.format(ellipsoid.initstring.replace('+', '')))
+    distance = distance * _change_units(getattr(distance, 'units', units), 'm')
+    new_long, new_lat, back_bearing = ellipsoid.fwd(old_long, old_lat, initial_bearing, distance)
     return new_lat, new_long, back_bearing % 360
 
 
@@ -1097,26 +1137,25 @@ def position_to_pixel(lat_ts, lat_0, long_0, lat, long, projection=None, area_ex
         Latitude of origin
     long_0 : float
         Central meridian
+    lat : float or None, optional
+        Latitude to run calculations on
+    long : float or None, optional
+        Longitude to run calculations on
     displacement_data : str or list, optional
         Filename or list containing displacements: [tag, width, height, i_11, j_11, i_12, j_12, ..., i_nm, j_nm] or
         [[j_displacement], [i_displacement]] respectively
     projection : str
         Name of projection that pixels are describing (stere, laea, merc, etc).
     units : str, optional
-        Units that provided arguments should be interpreted as. This can be
+        Units that length arguments should be interpreted as. This can be
         one of 'deg', 'degrees', 'rad', 'radians', 'meters', 'metres', and any
         parameter supported by the `cs2cs -lu <https://proj4.org/apps/cs2cs.html#cmdoption-cs2cs-lu>`_
         command. Units are determined in the following priority:
 
-        1. units expressed with variables via @your_units (see 'Using units' under
-           :ref:`Examples_of_wind_info.sh` for examples)
-        2. units passed to ``--units`` (exluding center)
+        1. units expressed with variables via xarray attributes
+        2. units passed to ``units`` (exluding center)
         3. meters (exluding center, which is degrees)
 
-    j : float or None, optional
-        Row to run calculations on
-    i : float or None, optional
-        Column to run calculations on
     area_extent : list, optional
         Area extent in projection units [lower_left_y, lower_left_x, upper_right_y, upper_right_x]
     shape : list, optional
@@ -1130,7 +1169,7 @@ def position_to_pixel(lat_ts, lat_0, long_0, lat, long, projection=None, area_ex
         Projection y and x coordinates of the upper left corner of the upper left pixel (y, x)
     radius : list or float, optional
         Projection length from the center to the left/right and top/bottom outer edges (dy, dx)
-    projection_ellipsoid : string or Geod, optional
+    projection_ellipsoid : str, dict, or pyproj.Geod, optional
         ellipsoid of projection (WGS84, sphere, etc)
 
     Returns
@@ -1173,14 +1212,13 @@ def wind_info(lat_ts, lat_0, long_0, delta_time, displacement_data=None, project
     projection : str
         Name of projection that pixels are describing (stere, laea, merc, etc).
     units : str, optional
-        Units that provided arguments should be interpreted as. This can be
+        Units that length arguments should be interpreted as. This can be
         one of 'deg', 'degrees', 'rad', 'radians', 'meters', 'metres', and any
         parameter supported by the `cs2cs -lu <https://proj4.org/apps/cs2cs.html#cmdoption-cs2cs-lu>`_
         command. Units are determined in the following priority:
 
-        1. units expressed with variables via @your_units (see 'Using units' under
-           :ref:`Examples_of_wind_info.sh` for examples)
-        2. units passed to ``--units`` (exluding center)
+        1. units expressed with variables via xarray attributes
+        2. units passed to ``units`` (exluding center)
         3. meters (exluding center, which is degrees)
 
     j : float or None, optional
@@ -1200,9 +1238,9 @@ def wind_info(lat_ts, lat_0, long_0, delta_time, displacement_data=None, project
         Projection y and x coordinates of the upper left corner of the upper left pixel (y, x)
     radius : list or float, optional
         Projection length from the center to the left/right and top/bottom outer edges (dy, dx)
-    projection_ellipsoid : string or Geod, optional
+    projection_ellipsoid : str, dict, or pyproj.Geod, optional
         ellipsoid of projection (WGS84, sphere, etc)
-    earth_ellipsoid : string or Geod, optional
+    earth_ellipsoid : str, dict, or pyproj.Geod, optional
         ellipsoid of Earth (WGS84, sphere, etc)
     no_save : bool, optional
         When False, saves wind_info to name_of_projection.txt, j_displacement.txt, i_displacement.txt,

@@ -144,6 +144,11 @@ Advanced arguments
   1. units expressed at the end of individual variables (see :ref:`Specifying input units<input_units>` for examples)
   2. units passed to ``--units`` (exluding center)
   3. meters (exluding center, which is degrees)
+
+  The following variables have units: **------radius**, **------upper-left-extent**, **------center**,
+  **------pixel-size**, **------area-extent**, ellipsoid **a**, and ellipsoid **b**.
+  Note that ellipsoid **a** and **b** cannot
+  be angular units.
 * **------area-extent**: Area extent as a list [y_ll, x_ll, y_ur, x_ur]
 
 where

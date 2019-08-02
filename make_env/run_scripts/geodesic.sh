@@ -25,8 +25,8 @@ if __name__ == "__main__":
     sys.argv = [abspath("$0")] + "$*".split(' ')
     if "$func" == "geodesic_fwd":
         sys.argv.remove('--inverse')
-        flag_names = ['old-lat', 'old-long', 'distance', 'initial-bearing', '--earth-ellipsoid']
+        flag_names = ['old-lat', 'old-long', 'distance', 'initial-bearing', '--earth-ellipsoid', '--units']
     else:
-        flag_names = ['old-lat', 'old-long', 'new-lat', 'new-long', '--earth-ellipsoid']
+        flag_names = ['old-lat', 'old-long', 'new-lat', 'new-long', '--earth-ellipsoid', '--units']
     run_script($func, flag_names, output_format, "$func")
 EOF
