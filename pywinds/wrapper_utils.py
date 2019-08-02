@@ -85,11 +85,12 @@ class CustomAction(argparse.Action):
     """Dynamically finds correct number of nargs to use, then converts those numbers to correct python objects."""
 
     def __init__(self, option_strings, dest, narg_types=None, parser=None, **kwargs):
-        if kwargs.get('nargs'):
+        kwargs['type'] = kwargs.get('type') if kwargs.get('type') else _nums_or_string
+        if kwargs.get('nargs') or narg_types is None:
+            if kwargs.get('nargs') is None:
+                kwargs['nargs'] = 1
             super().__init__(option_strings, dest, **kwargs)
             return
-        type = kwargs if kwargs.get('type') else _nums_or_string
-        narg_types = narg_types if narg_types else [[type]]
         narg_types.sort(key=len)
         # If an error occurs or number of args are too small, use the bare minimum nargs.
         default_nargs = len(narg_types[0])
@@ -107,7 +108,7 @@ class CustomAction(argparse.Action):
             if not args:
                 super().__init__(option_strings, dest, nargs=default_nargs, **kwargs)
                 return
-            args = [type(arg) for arg in args]
+            args = [kwargs['type'](arg) for arg in args]
         else:
             super().__init__(option_strings, dest, nargs=default_nargs, **kwargs)
             return
@@ -169,33 +170,34 @@ def _make_parser(flag_names, description):
     flags = {}
     _add_flag(flags, '-v', '--verbose', action="count", default=0,
               help='Each occurrence increases verbosity 1 level through ERROR-WARNING-INFO-DEBUG.')
-    _add_flag(flags, 'old-lat', help='Latitude of starting location.')
-    _add_flag(flags, 'old-long', help='Longitude of starting locaion.')
-    _add_flag(flags, 'new-lat', help='Latitude of ending location')
-    _add_flag(flags, 'new-long', help='Longitude of ending location')
-    _add_flag(flags, 'distance', narg_types=[[float], [float, str]], help='Distance to new location.')
-    _add_flag(flags, 'initial-bearing', help='Angle to new location.')
-    _add_flag(flags, 'forward-bearing', help='Angle to new location.')
+    _add_flag(flags, 'old-lat', type=float, help='Latitude of starting location.')
+    _add_flag(flags, 'old-long', type=float, help='Longitude of starting locaion.')
+    _add_flag(flags, 'new-lat', type=float, help='Latitude of ending location')
+    _add_flag(flags, 'new-long', type=float, help='Longitude of ending location')
+    _add_flag(flags, 'distance', type=float, narg_types=[[float], [float, str]], help='Distance to new location.')
+    _add_flag(flags, 'initial-bearing', type=float, help='Angle to new location.')
+    _add_flag(flags, 'forward-bearing', type=float, help='Angle to new location.')
     _add_flag(flags, '--inverse', action="store_true",
               help='Find new location given a starting position, distance, and angle')
-    _add_flag(flags, 'lat', help='Latitude of position to transform into pixel.')
-    _add_flag(flags, 'long', help='Longitude of position to transform into pixel.')
-    _add_flag(flags, '--lat-ts', metavar='float', help='projection latitude of true scale')
-    _add_flag(flags, '--lat-0', metavar='float', help='projection latitude of origin')
-    _add_flag(flags, '--long-0', metavar='float', help='projection central meridian')
-    _add_flag(flags, 'lat-ts', help='projection latitude of true scale')
-    _add_flag(flags, 'lat-0', help='projection latitude of origin')
-    _add_flag(flags, 'long-0', help='projection central meridian')
-    _add_flag(flags, 'delta-time', help='Amount of time spent getting between the two positions in minutes.')
+    _add_flag(flags, 'lat', type=float, help='Latitude of position to transform into pixel.')
+    _add_flag(flags, 'long', type=float, help='Longitude of position to transform into pixel.')
+    _add_flag(flags, '--lat-ts', type=float, metavar='float', help='projection latitude of true scale')
+    _add_flag(flags, '--lat-0', type=float, metavar='float', help='projection latitude of origin')
+    _add_flag(flags, '--long-0', type=float, metavar='float', help='projection central meridian')
+    _add_flag(flags, 'lat-ts', type=float, help='projection latitude of true scale')
+    _add_flag(flags, 'lat-0', type=float, help='projection latitude of origin')
+    _add_flag(flags, 'long-0', type=float, help='projection central meridian')
+    _add_flag(flags, 'delta-time', type=float,
+              help='Amount of time spent getting between the two positions in minutes.')
     _add_flag(flags, '-p', '--print', '--no-save', action='store_true', dest='no_save',
               help='print data to shell without saving')
     _add_flag(flags, '-s', '--save-directory', metavar='path-name',
               help='directory to save to. Defaults to where script was ran')
-    _add_flag(flags, '--from-lat-long', metavar='',
+    _add_flag(flags, '--from-lat-long', action="store_true",
               help='Switches to taking latitudes and longitudes as arguments. '
                    'Use the args --from-lat-long -h for more information.')
-    _add_flag(flags, '-j', '--j', metavar='int', nargs=1, type=int, help='row to run calculations on')
-    _add_flag(flags, '-i', '--i', metavar='int', nargs=1, type=int, help='column to run calculations on')
+    _add_flag(flags, '-j', '--j', metavar='int', type=int, help='row to run calculations on')
+    _add_flag(flags, '-i', '--i', metavar='int', type=int, help='column to run calculations on')
     _add_flag(flags, '--center',
               narg_types=[[float, float, str], [float, float]],
               help='projection y and x coordinate of the center of area. Default: lat long')
@@ -232,7 +234,7 @@ def _make_parser(flag_names, description):
                           [str, float, str, str, float, str]],
               help='Ellipsoid of projection. Coordinate system name or defined '
                    'using a combination of a, b, e, es, f, and rf.')
-    _add_flag(flags, '--precision', default=2, metavar='int',
+    _add_flag(flags, '--precision', default=2, metavar='int', type=int,
               help='Number of decimal places to round printed output to, defaults to 2.')
     for flag in flag_names:
         my_parser.add_argument(*flags[flag]['args'], **flags[flag]['kwargs'])
