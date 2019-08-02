@@ -1,6 +1,7 @@
 """Convert command line arguments to python arguments for wind_functions.py"""
 import argparse
 import ast
+import copy
 import datetime
 import logging
 import numpy as np
@@ -59,14 +60,14 @@ class MyFormatter(argparse.HelpFormatter):
 class CustomAction(argparse.Action):
     """Dynamically finds correct number of nargs to use, then converts those numbers to correct python objects."""
 
-    def __init__(self, option_strings, dest, narg_types=None, type=None, help=None, pos=(0, 0), **kwargs):
+    def __init__(self, option_strings, dest, narg_types=None, type=None, help=None, parser=None, **kwargs):
         narg_types.sort(key=len)
         # If an error occurs or number of args are too small, use the bare minimum nargs.
         default_nargs = len(narg_types[0])
         # Setup narg_types so that larger lists take priority.
         narg_types = list(reversed(narg_types))
         # Setup parser to read all arguments after option.
-        parser = NullParser()
+        parser = copy.deepcopy(parser) if parser else NullParser()
         # Find the most amount of nargs possible.
         parser.add_argument(*option_strings if option_strings else [dest], nargs='*')
         # Setup argv to remove help flags and let main parser handle help.
@@ -132,99 +133,19 @@ def _add_flag(dictionary, *names, **kwargs):
     dictionary.update(dict.fromkeys(names, dict(args=names, kwargs=kwargs)))
 
 
-class TestAction(argparse.Action):
-
-    def __init__(self, option_strings, dest, narg_types=None, type=None, help=None, pos=(0, 0), parser=None, **kwargs):
-        narg_types.sort(key=len)
-        # If an error occurs or number of args are too small, use the bare minimum nargs.
-        default_nargs = len(narg_types[0])
-        # Setup narg_types so that larger lists take priority.
-        narg_types = list(reversed(narg_types))
-        # Setup parser to read all arguments after option.
-        # Find the most amount of nargs possible.
-        parser.add_argument(*option_strings if option_strings else [dest], nargs='*')
-        # Setup argv to remove help flags and let main parser handle help.
-        argv = sys.argv[1:]
-        while '-h' in argv:
-            argv.remove('-h')
-        while '--help' in argv:
-            argv.remove('--help')
-        known_args = parser.parse_known_args(argv)
-        print(known_args)
-        # Extract only arguments associated with option.
-        if known_args is not None:
-            args = getattr(known_args[0], dest)
-            # Makes args empty if pos not in range.
-            args = args[pos[0]:-(len(args) - pos[1] - 1)]
-            if not args:
-                super().__init__(option_strings, dest, nargs=default_nargs, help=help)
-                return
-            args = [type(arg) for arg in args]
-        else:
-            super().__init__(option_strings, dest, nargs=default_nargs, help=help)
-            return
-        # Try to match up narg_types with args from command line.
-        for narg_type in narg_types:
-            if len(narg_type) <= len(args):
-                for i in range(len(narg_type)):
-                    if not isinstance(args[i], narg_type[i]):
-                        break
-                # Every type matched up:
-                else:
-                    super().__init__(option_strings, dest, nargs=len(narg_type), help=help)
-                    return
-        super().__init__(option_strings, dest, nargs=default_nargs, help=help)
-
-    def __call__(self, parser, args, values, option_string=None):
-        values = [_nums_or_string(value) for value in values]
-        if option_string and ('ellipsoid' in option_string or 'spheroid' in option_string):
-            if len(values) == 3:
-                values = {values[0]: xarray.DataArray(values[1], attrs={'units': values[2]})}
-            elif len(values) == 5:
-                if isinstance(values[3], (int, float)):
-                    values = {values[0]: values[1],
-                              values[2]: xarray.DataArray(values[3], attrs={'units': values[4]})}
-                else:
-                    values = {values[0]: xarray.DataArray(values[1], attrs={'units': values[2]}),
-                              values[3]: values[4]}
-            elif len(values) == 6:
-                values = {key: xarray.DataArray(val, attrs={'units': units}) for key, val, units in
-                          zip(values[::3], values[-5::3], values[-4::3])}
-            elif len(values) != 1:
-                values = {key: val for key, val in zip(values[::2], values[1::2])}
-        else:
-            units = None
-            if isinstance(values[-1], str):
-                units = values.pop(-1)
-            if len(values) == 1:
-                values = values[0]
-            if units is not None:
-                values = xarray.DataArray(values, attrs={'units': units})
-        if isinstance(values, list) and len(values) == 1:
-            values = values[0]
-        setattr(args, self.dest, values)
-
-
-class Test2Action(argparse.Action):
-
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-
-    def __call__(self, parser, namespace, values, option_string=None):
-        setattr(namespace, self.dest, values)
-
-
 def _make_parser(flag_names, description):
     my_parser = argparse.ArgumentParser(description=description, formatter_class=MyFormatter)
     my_parser.add_argument('-v', '--verbose', action="count", default=0,
                            help='Each occurrence increases verbosity 1 level through ERROR-WARNING-INFO-DEBUG.')
     flags = {}
-    _add_flag(flags, 'old-lat', type=float, help='Latitude of starting location.')
-    _add_flag(flags, 'old-long', type=float, help='Longitude of starting locaion.')
+    _add_flag(flags, 'old-lat', action=CustomAction, type=_nums_or_string, narg_types=[[(float, int)]],
+              parser=my_parser, help='Latitude of starting location.')
+    _add_flag(flags, 'old-long', action=CustomAction, type=_nums_or_string, narg_types=[[(float, int)]],
+              parser=my_parser, help='Longitude of starting locaion.')
     _add_flag(flags, 'new-lat', type=float, help='Latitude of ending location')
     _add_flag(flags, 'new-long', type=float, help='Longitude of ending location')
-    _add_flag(flags, 'distance', action=TestAction, type=_nums_or_string,
-              narg_types=[[(float, int)], [(float, int), str]], pos=[2, 3], parser=my_parser,
+    _add_flag(flags, 'distance', action=CustomAction, type=_nums_or_string, parser=my_parser,
+              narg_types=[[(float, int)], [(float, int), str]],
               help='Distance to new location.')
     _add_flag(flags, 'initial-bearing', type=float, help='Angle to new location.')
     _add_flag(flags, 'forward-bearing', type=float, help='Angle to new location.')
