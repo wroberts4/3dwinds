@@ -67,13 +67,15 @@ class DualParser(argparse.ArgumentParser):
     """Adds a null parser so that --help works for CustomAction"""
 
     def __init__(self, *args, **kwargs):
+        self.null_parser = NullParser(*args, conflict_handler='resolve', **kwargs)
         super().__init__(*args, **kwargs)
 
     def add_argument(self, *args, **kwargs):
         if kwargs.get('action') is None:
             kwargs['action'] = CustomAction
-            kwargs['parser'] = self
+            kwargs['parser'] = self.null_parser
         super().add_argument(*args, **kwargs)
+        self.null_parser.add_argument(*args, **kwargs)
 
 
 class CustomAction(argparse.Action):
