@@ -49,12 +49,13 @@ if __name__ == "__main__":
     sys.argv = [os.path.abspath("$0")] + "$*".split(' ')
     if "$func" == "wind_info_fll":
         sys.argv.remove('--from-lat-long')
-        flag_names = ['delta-time', 'old-lat', 'old-long', 'new-lat', 'new-long', '--earth-ellipsoid']
-        run_script(wind_info_fll, flag_names, output_format_fll, 'wind_info_fll')
+        kwargs_names = ['--earth-ellipsoid']
+        args_names = ['delta-time', 'old-lat', 'old-long', 'new-lat', 'new-long']
+        run_script(wind_info_fll, kwargs_names + args_names, output_format_fll, 'wind_info_fll')
     else:
-        flag_names = ['lat-ts', 'lat-0', 'long-0', 'delta-time', '-p', '-s', '-j', '-i', '--pixel-size', '--center',
-                      '--displacement-data', '--from-lat-long', '--projection', '--projection-ellipsoid',
-                      '--earth-ellipsoid', '--area-extent', '--shape', '--upper-left-extent', '--radius',
-                      '--units']
-        run_script(wind_info, flag_names, output_format, 'wind_info')
+        kwargs_names = ['-p', '-s', '-j', '-i', '--pixel-size', '--center', '--displacement-data', '--from-lat-long',
+                        '--projection', '--projection-ellipsoid', '--earth-ellipsoid', '--area-extent', '--shape',
+                        '--upper-left-extent', '--radius', '--units']
+        args_names = ['lat-ts', 'lat-0', 'long-0', 'delta-time']
+        run_script(wind_info, flag_names + args_names, output_format, 'wind_info')
 EOF

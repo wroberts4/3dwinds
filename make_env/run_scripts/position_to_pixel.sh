@@ -17,8 +17,8 @@ def output_format(output, precision, **kwargs):
 
 if __name__ == "__main__":
     sys.argv = [abspath("$0")] + "$*".split(' ')
-    flag_names = ['lat-ts', 'lat-0', 'long-0', 'lat', 'long', '--projection', '--area-extent',
-                  '--shape', '--center', '--pixel-size', '--upper-left-extent', '--radius',
-                  '--projection-ellipsoid', '--units', '--displacement-data']
-    run_script(position_to_pixel, flag_names, output_format, 'position_to_pixel')
+    kwargs_names = ['--projection', '--area-extent', '--shape', '--center', '--pixel-size', '--upper-left-extent',
+                    '--radius', '--projection-ellipsoid', '--units', '--displacement-data']
+    args_names = ['lat-ts', 'lat-0', 'long-0', 'lat', 'long']
+    run_script(position_to_pixel, kwargs_names + args_names, output_format, 'position_to_pixel')
 EOF

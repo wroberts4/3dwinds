@@ -23,10 +23,11 @@ def output_format(output, precision, **kwargs):
 
 if __name__ == "__main__":
     sys.argv = [abspath("$0")] + "$*".split(' ')
+    kwargs_names = ['--earth-ellipsoid', '--units']
     if "$func" == "loxodrome_fwd":
         sys.argv.remove('--inverse')
-        flag_names = ['old-lat', 'old-long', 'distance', 'forward-bearing', '--earth-ellipsoid', '--units']
+        args_names = ['old-lat', 'old-long', 'distance', 'forward-bearing']
     else:
-        flag_names = ['old-lat', 'old-long', 'new-lat', 'new-long', '--earth-ellipsoid', '--units']
-    run_script($func, flag_names, output_format, "$func")
+        args_names = ['old-lat', 'old-long', 'new-lat', 'new-long']
+    run_script($func, kwargs_names + args_names, output_format, "$func")
 EOF

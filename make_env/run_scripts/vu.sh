@@ -25,10 +25,12 @@ if __name__ == "__main__":
     sys.argv = [abspath("$0")] + "$*".split(' ')
     if "$func" == "vu_fll":
         sys.argv.remove('--from-lat-long')
-        flag_names = ['delta-time', 'old-lat', 'old-long', 'new-lat', 'new-long', '--earth-ellipsoid']
+        kwargs_names = ['--earth-ellipsoid']
+        args_names = ['delta-time', 'old-lat', 'old-long', 'new-lat', 'new-long']
     else:
-        flag_names = ['lat-ts', 'lat-0', 'long-0', 'delta-time', '--pixel-size', '--displacement-data', '--projection',
-                      '-j', '-i', '--area-extent', '--shape', '--center', '--upper-left-extent', '--radius',
-                      '--units', '--projection-ellipsoid', '--earth-ellipsoid', '--from-lat-long']
-    run_script($func, flag_names, output_format, "$func")
+        kwargs_names = ['--pixel-size', '--displacement-data', '--projection', '-j', '-i', '--area-extent', '--shape',
+                        '--center', '--upper-left-extent', '--radius', '--units', '--projection-ellipsoid',
+                        '--earth-ellipsoid', '--from-lat-long']
+        args_names = ['lat-ts', 'lat-0', 'long-0', 'delta-time']
+    run_script($func, kwargs_names + args_names, output_format, "$func")
 EOF

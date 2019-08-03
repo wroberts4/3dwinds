@@ -98,7 +98,6 @@ class CustomAction(argparse.Action):
         parser = copy.deepcopy(parser)
         # Find the most amount of nargs possible.
         NullParser.add_argument(parser, *option_strings if not kwargs.get('required') else [dest], nargs='+')
-        # Setup argv to remove help flags and let main parser handle help.
         known_args = NullParser().parse_known_args(parser.parse_known_args()[1], parser.parse_known_args()[0])
         # Extract only arguments associated with option.
         if known_args is not None:
