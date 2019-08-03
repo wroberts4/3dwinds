@@ -57,5 +57,5 @@ if __name__ == "__main__":
                         '--projection', '--projection-ellipsoid', '--earth-ellipsoid', '--area-extent', '--shape',
                         '--upper-left-extent', '--radius', '--units']
         args_names = ['lat-ts', 'lat-0', 'long-0', 'delta-time']
-        run_script(wind_info, flag_names + args_names, output_format, 'wind_info')
+        run_script(wind_info, kwargs_names + args_names, output_format, 'wind_info')
 EOF
