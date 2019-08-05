@@ -254,7 +254,7 @@ Shuffling order of arguments/options::
       -p --pixel-size 4000 -i 0 60 90 0 100
     [63.36, -135.0, 51.78, 315.25, 36.78, -36.46]
     $ ./pywinds/wind_info.sh -j 0 60 90 -i 0
-      0 -p --pixel-size 4000 4000 100 -i 0
+      0 -p --pixel-size 4000 4000 100
     [63.36, -135.0, 51.78, 315.25, 36.78, -36.46]
 
 

@@ -15,7 +15,7 @@ pip install -U --no-deps $PARENTDIR/..
 conda clean -afy
 mkdir $PARENTDIR/pywinds
 mkdir $PARENTDIR/pywinds/env
-conda-pack --n-threads -1 --compress-level 0 -d $PARENTDIR/pywinds/env --exclude *.a
+conda-pack --n-threads -1 --compress-level 0 -d $PARENTDIR/pywinds/env --exclude *.a --exclude *sphinx*
 tar -xzf $PARENTDIR/pywinds.tar.gz -C $PARENTDIR/pywinds/env
 mv $PARENTDIR/pywinds/env/bin/*.sh $PARENTDIR/pywinds
 mv $PARENTDIR/pywinds/env/bin/*.txt $PARENTDIR/pywinds
