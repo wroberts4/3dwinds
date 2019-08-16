@@ -19,6 +19,7 @@ Documentation
    installation.rst
    usage.rst
    examples.rst
+   change_log.rst
    API.rst
 
 

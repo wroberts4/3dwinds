@@ -254,7 +254,6 @@ def _parse_args(flag_names, description):
 def run_script(func, flag_names, output_format, name):
     """Runs python function from wind_functions.py."""
     commands = _parse_args(flag_names, func.__doc__.splitlines()[0])
-    precision = commands.pop('precision')
     if name == 'wind_info':
         commands['timestamp'] = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
     displacement_data = commands.get('displacement_data')
@@ -269,7 +268,7 @@ def run_script(func, flag_names, output_format, name):
         if files:
             for file in files:
                 commands['displacement_data'] = os.path.abspath(file)
-                output = output_format(func(**commands), precision, **commands)
+                output = output_format(func(**commands), **commands)
                 if output is not None:
                     print(output)
             return
@@ -278,6 +277,6 @@ def run_script(func, flag_names, output_format, name):
             func(**commands)
         commands.pop('displacement_data')
     # Only happens with lat_long, area, position_to_pixel, or if non string is given to displacement-data.
-    output = output_format(func(**commands), precision, **commands)
+    output = output_format(func(**commands), **commands)
     if output is not None:
         print(output)

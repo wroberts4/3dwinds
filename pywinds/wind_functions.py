@@ -17,7 +17,7 @@ from pywinds.wrapper_utils import area_to_string
 logger = logging.getLogger(__name__)
 
 
-def _save_data(save_directory, data_list, text_shape=None, mode='a'):
+def _save_data(save_directory, data_list, text_shape=None, mode='a', precision=2):
     """Handles text and netcdf4 file saving"""
     if mode == 'a' and not os.path.exists(save_directory):
         logger.warning('Data not saved to {0}: Save directory does not exist'.format(save_directory))
@@ -39,7 +39,7 @@ def _save_data(save_directory, data_list, text_shape=None, mode='a'):
             data = data.data
             if np.size(data) == 1:
                 data = np.ravel(data)
-            np.savetxt(text_path, data.reshape(text_shape), fmt='%.2f', delimiter=',')
+            np.savetxt(text_path, data.reshape(text_shape), fmt='%.{0}f'.format(precision), delimiter=',')
         # Area definition.
         else:
             data = data.attrs
@@ -217,7 +217,7 @@ def _not_none(args):
 
 def _create_area(lat_ts, lat_0, long_0, projection=None, area_extent=None, shape=None, center=None, pixel_size=None,
                  upper_left_extent=None, radius=None, projection_ellipsoid=None, units=None, displacement_data=None,
-                 no_save=True, save_directory=None):
+                 no_save=True, save_directory=None, precision=None):
     """Creates area from given information."""
     if projection is None:
         projection = 'stere'
@@ -297,13 +297,15 @@ def _create_area(lat_ts, lat_0, long_0, projection=None, area_extent=None, shape
                  'resolution_at_standard_parallel': np.ravel(pixel_size)[0], 'false_easting': 0.0,
                  'false_northing': 0.0, 'semi_major_axis': a, 'semi_minor_axis': b, 'inverse_flattening': i_f}
         logger.debug('Saving known area information')
-        _save_data(save_directory, [xarray.DataArray(None, name='polar_stereographic', attrs=attrs)])
+        _save_data(save_directory, [xarray.DataArray(None, name='polar_stereographic', attrs=attrs)],
+                   precision=precision)
     return {'projection': projection, 'lat-ts': lat_ts, 'lat-0': lat_0, 'long-0': long_0, 'equatorial-radius': a,
             'eccentricity': e, 'inverse-flattening': i_f, 'shape': shape, 'area-extent': area_extent,
             'pixel-size': pixel_size, 'center': center}, area_definition
 
 
-def _find_displacements(displacement_data=None, j=None, i=None, shape=None, no_save=True, save_directory=None):
+def _find_displacements(displacement_data=None, j=None, i=None, shape=None, no_save=True, save_directory=None,
+                        precision=None):
     """Retrieves pixel-displacements from a 32-bit float binary file or list."""
     if isinstance(displacement_data, str):
         try:
@@ -378,7 +380,7 @@ def _find_displacements(displacement_data=None, j=None, i=None, shape=None, no_s
             xarray.DataArray(_reshape(i_displacement, shape), name='i_displacement', dims=dims,
                              attrs={'standard_name': 'divergence_of_wind',
                                     'description': 'horizontal pixel displacement at each pixel',
-                                    'grid_mapping_name': 'polar_stereographic'})))
+                                    'grid_mapping_name': 'polar_stereographic'})), precision=precision)
     return shape, j_displacement, i_displacement
 
 
@@ -391,7 +393,7 @@ def _reshape(array, shape):
 
 def _compute_lat_long(lat_ts, lat_0, long_0, displacement_data=None, projection=None, j=None, i=None,
                       area_extent=None, shape=None, center=None, pixel_size=None, upper_left_extent=None, radius=None,
-                      units=None, projection_ellipsoid=None, no_save=True, save_directory=None):
+                      units=None, projection_ellipsoid=None, no_save=True, save_directory=None, precision=None):
     """Computes the latitude and longitude given an area and (j, i) values."""
     if not isinstance(lat_0, (int, float)) or not isinstance(long_0, (int, float)):
         raise ValueError(
@@ -402,7 +404,7 @@ def _compute_lat_long(lat_ts, lat_0, long_0, displacement_data=None, projection=
                                      projection=projection, j=j, i=i, area_extent=area_extent, shape=shape,
                                      center=center, pixel_size=pixel_size, upper_left_extent=upper_left_extent,
                                      radius=radius, units=units, projection_ellipsoid=projection_ellipsoid,
-                                     no_save=no_save, save_directory=save_directory)[:4]
+                                     no_save=no_save, save_directory=save_directory, precision=precision)[:4]
     if not isinstance(area_definition, AreaDefinition):
         raise ValueError('Not enough information provided to create an area for projection')
     logger.debug('All area data found')
@@ -442,18 +444,19 @@ def _compute_lat_long(lat_ts, lat_0, long_0, displacement_data=None, projection=
                                     xarray.DataArray(_reshape(old_long, shape), name='old_longitude', dims=dims,
                                                      attrs={'standard_name': 'longitude',
                                                             'grid_mapping_name': 'polar_stereographic',
-                                                            'units': 'degrees'})))
+                                                            'units': 'degrees'})), precision=precision)
     return shape, new_lat, new_long, old_lat, old_long
 
 
 def _compute_velocity(lat_ts, lat_0, long_0, delta_time, displacement_data=None, projection=None, j=None, i=None,
                       area_extent=None, shape=None, center=None, pixel_size=None, upper_left_extent=None, radius=None,
-                      units=None, projection_ellipsoid=None, earth_ellipsoid=None, no_save=True, save_directory=None):
+                      units=None, projection_ellipsoid=None, earth_ellipsoid=None, no_save=True, save_directory=None,
+                      precision=None):
     shape, new_lat, new_long, old_lat, old_long = _compute_lat_long(lat_ts, lat_0, long_0,
                                                                     displacement_data=displacement_data,
                                                                     projection=projection, j=j, i=i,
                                                                     area_extent=area_extent, shape=shape, center=center,
-                                                                    pixel_size=pixel_size,
+                                                                    pixel_size=pixel_size, precision=precision,
                                                                     upper_left_extent=upper_left_extent, radius=radius,
                                                                     units=units,
                                                                     projection_ellipsoid=projection_ellipsoid,
@@ -474,7 +477,8 @@ def _compute_velocity(lat_ts, lat_0, long_0, delta_time, displacement_data=None,
                                                      attrs={'standard_name': 'wind_to_direction',
                                                             'grid_mapping_name': 'polar_stereographic',
                                                             'units': 'degrees',
-                                                            'description': 'Forward bearing of rhumb line'})))
+                                                            'description': 'Forward bearing of rhumb line'})),
+                   precision=precision)
     # When wind vector bearing is 0 degrees it points North (mathematically 90 degrees) and moves clockwise.
     # speed is in meters/second.
     return shape, speed, angle, new_lat, new_long
@@ -482,7 +486,8 @@ def _compute_velocity(lat_ts, lat_0, long_0, delta_time, displacement_data=None,
 
 def _compute_vu(lat_ts, lat_0, long_0, delta_time, displacement_data=None, projection=None, j=None, i=None,
                 area_extent=None, shape=None, center=None, pixel_size=None, upper_left_extent=None, radius=None,
-                units=None, projection_ellipsoid=None, earth_ellipsoid=None, no_save=True, save_directory=None):
+                units=None, projection_ellipsoid=None, earth_ellipsoid=None, no_save=True, save_directory=None,
+                precision=None):
     shape, speed, angle, new_lat, new_long = _compute_velocity(lat_ts, lat_0, long_0, delta_time,
                                                                displacement_data=displacement_data,
                                                                projection=projection, j=j, i=i, area_extent=area_extent,
@@ -490,7 +495,7 @@ def _compute_vu(lat_ts, lat_0, long_0, delta_time, displacement_data=None, proje
                                                                upper_left_extent=upper_left_extent, radius=radius,
                                                                units=units, projection_ellipsoid=projection_ellipsoid,
                                                                earth_ellipsoid=earth_ellipsoid, no_save=no_save,
-                                                               save_directory=save_directory)
+                                                               save_directory=save_directory, precision=precision)
     logger.debug('Finding v and u components')
     # IMPORTANT, THIS IS CORRECT: Since angle is measured counter-cloclwise from north, then v = sin(pi - angle) and
     # u = cos(pi - angle). sin(pi - angle) = cos(angle) and cos(pi - angle) = sin(angle)!
@@ -508,14 +513,14 @@ def _compute_vu(lat_ts, lat_0, long_0, delta_time, displacement_data=None, proje
                                     xarray.DataArray(_reshape(u, shape), name='u', dims=dims,
                                                      attrs={'standard_name': 'eastward_wind',
                                                             'grid_mapping_name': 'polar_stereographic',
-                                                            'units': 'm/s'})))
+                                                            'units': 'm/s'})), precision=precision)
     return shape, v, u, speed, angle, new_lat, new_long
 
 
 def _find_displacements_and_area(lat_ts=None, lat_0=None, long_0=None, displacement_data=None, projection=None,
                                  j=None, i=None, area_extent=None, shape=None, center=None, pixel_size=None,
                                  upper_left_extent=None, radius=None, units=None, projection_ellipsoid=None,
-                                 no_save=True, save_directory=None):
+                                 no_save=True, save_directory=None, precision=None):
     """Dynamically finds displacements and area of projection"""
     if np.shape(shape) == 2 and (isinstance(shape[0], (float, int)) and int(shape[0]) != float(shape[0]) or isinstance(
         shape[1], (float, int)) and int(shape[1]) != float(shape[1])):
@@ -534,7 +539,7 @@ def _find_displacements_and_area(lat_ts=None, lat_0=None, long_0=None, displacem
             area_data, area_definition = _create_area(lat_ts, lat_0, long_0, projection=projection,
                                                       area_extent=area_extent, shape=shape, center=center,
                                                       pixel_size=pixel_size, upper_left_extent=upper_left_extent,
-                                                      radius=radius, units=units,
+                                                      radius=radius, units=units, precision=precision,
                                                       projection_ellipsoid=projection_ellipsoid,
                                                       displacement_data=displacement_data, no_save=no_save,
                                                       save_directory=save_directory)
@@ -544,10 +549,11 @@ def _find_displacements_and_area(lat_ts=None, lat_0=None, long_0=None, displacem
         except ValueError:
             logger.warning('Error in creating an area')
             _find_displacements(displacement_data, shape=shape, j=j, i=i, no_save=no_save,
-                                save_directory=save_directory)
+                                save_directory=save_directory, precision=precision)
             raise
     shape, j_displacement, i_displacement = _find_displacements(displacement_data, shape=shape, j=j, i=i,
-                                                                no_save=no_save, save_directory=save_directory)
+                                                                no_save=no_save, save_directory=save_directory,
+                                                                precision=precision)
     # Either tries to find area with shape found from file, or displays ValueError if excepted above.
     if has_area_args and None in (area_definition.height, area_definition.width):
         logger.debug('Incomplete area information provided')
@@ -555,7 +561,7 @@ def _find_displacements_and_area(lat_ts=None, lat_0=None, long_0=None, displacem
         area_data, area_definition = _create_area(lat_ts, lat_0, long_0, projection=projection, area_extent=area_extent,
                                                   shape=shape, center=center, pixel_size=pixel_size,
                                                   upper_left_extent=upper_left_extent, radius=radius, units=units,
-                                                  projection_ellipsoid=projection_ellipsoid,
+                                                  projection_ellipsoid=projection_ellipsoid, precision=precision,
                                                   displacement_data=displacement_data, no_save=no_save,
                                                   save_directory=save_directory)
     # If area is still not defined, try to use projection center as area center.
@@ -567,7 +573,7 @@ def _find_displacements_and_area(lat_ts=None, lat_0=None, long_0=None, displacem
                                                   upper_left_extent=upper_left_extent, radius=radius, units=units,
                                                   projection_ellipsoid=projection_ellipsoid,
                                                   displacement_data=displacement_data, no_save=no_save,
-                                                  save_directory=save_directory)
+                                                  save_directory=save_directory, precision=precision)
     # list, list, list, AreaDefinition, dict
     return shape, j_displacement, i_displacement, area_definition, area_data
 
@@ -1197,7 +1203,7 @@ def position_to_pixel(lat_ts, lat_0, long_0, lat, long, projection=None, area_ex
 def wind_info(lat_ts, lat_0, long_0, delta_time, displacement_data=None, projection=None, j=None, i=None,
               area_extent=None, shape=None, center=None, pixel_size=None, upper_left_extent=None, radius=None,
               units=None, projection_ellipsoid=None, earth_ellipsoid=None, no_save=False, save_directory=None,
-              timestamp=None):
+              timestamp=None, precision=None):
     """Computes the latitude, longitude, velocity, angle, v, and u of the wind given an area and pixel-displacement.
 
     Parameters
@@ -1292,7 +1298,7 @@ def wind_info(lat_ts, lat_0, long_0, delta_time, displacement_data=None, project
                                                        projection=projection, j=j, i=i, delta_time=delta_time,
                                                        area_extent=area_extent, shape=shape, center=center,
                                                        pixel_size=pixel_size, upper_left_extent=upper_left_extent,
-                                                       radius=radius, units=units,
+                                                       radius=radius, units=units, precision=precision,
                                                        projection_ellipsoid=projection_ellipsoid,
                                                        earth_ellipsoid=earth_ellipsoid, no_save=no_save,
                                                        save_directory=save_directory)
@@ -1318,12 +1324,12 @@ def wind_info(lat_ts, lat_0, long_0, delta_time, displacement_data=None, project
                                                      attrs={'standard_name': 'wind_speed',
                                                             'description': 'new_lat, new_long, speed, angle, v, u',
                                                             'grid_mapping_name': 'polar_stereographic'})],
-                   text_shape=text_shape)
+                   text_shape=text_shape, precision=precision)
     # Columns: lat, long, speed, direction, v, u
     return winds
 
 
-# TODO: ADD PRECISION TO TEXT FILES, ALLOW INPUT TO BE TEXT FILES, AND ADD VERSIONS/CHANGE-LOG.
+# TODO: ALLOW INPUT TO BE TEXT FILES.
 def wind_info_fll(delta_time, old_lat, old_long, new_lat, new_long, earth_ellipsoid=None):
     """Computes the latitude, longitude, velocity, angle, v, and u of the wind given two latitudes and longitudes.
 
@@ -1347,6 +1353,8 @@ def wind_info_fll(delta_time, old_lat, old_long, new_lat, new_long, earth_ellips
         (latitude, longitude, velocity, angle, v, and u at each pixel) : numpy.array or list
             [latitude, longitude, velocity, angle, v, u] at each pixel in row-major format
     """
+    if os.path.isdir(old_lat) and os.path.isdir(old_lat):
+        old_lat = np.genfromtxt(old_lat, delimiter=',')
     distance, angle = loxodrome_bck(old_lat, old_long, new_lat, new_long, earth_ellipsoid=earth_ellipsoid)[:2]
     speed = distance / (delta_time * 60)
     # IMPORTANT, THIS IS CORRECT: Since angle is measured counter-cloclwise from north, then v = sin(pi - angle) and

@@ -7,7 +7,7 @@ import unittest
 import numpy as np
 
 from pywinds.wind_functions import _create_area, _extrapolate_j_i, _pixel_to_pos, area, displacements, lat_long, \
-    velocity, vu, wind_info
+    velocity, vu, wind_info, loxodrome_bck, loxodrome_fwd
 
 
 class TestCase:
@@ -184,6 +184,10 @@ class TestPywinds(unittest.TestCase):
             self.assertEqual(old_y[case.j * case.shape[0] + case.i], old_y_ji)
             self.assertEqual(new_x[case.j * case.shape[0] + case.i], new_x_ji)
             self.assertEqual(new_y[case.j * case.shape[0] + case.i], new_y_ji)
+
+    # TODO: IMPLEMENT THIS AND OTHER TESTS FOR ALL FUNCTIONS
+    def test_loxodrome(self):
+        pass
 
 
 def suite():
