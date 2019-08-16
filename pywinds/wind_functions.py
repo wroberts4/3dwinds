@@ -152,6 +152,7 @@ def _change_units(initial_units, final_units):
     return 1
 
 
+# TODO: MAKE a NOT XARRAY WHEN PRINTING DEBUG.
 def _make_ellipsoid(ellipsoid, var_name, units=None):
     if ellipsoid is None:
         ellipsoid = Geod(ellps='WGS84')
@@ -1322,6 +1323,7 @@ def wind_info(lat_ts, lat_0, long_0, delta_time, displacement_data=None, project
     return winds
 
 
+# TODO: ADD PRECISION TO TEXT FILES, ALLOW INPUT TO BE TEXT FILES, AND ADD VERSIONS/CHANGE-LOG.
 def wind_info_fll(delta_time, old_lat, old_long, new_lat, new_long, earth_ellipsoid=None):
     """Computes the latitude, longitude, velocity, angle, v, and u of the wind given two latitudes and longitudes.
 
@@ -1352,11 +1354,11 @@ def wind_info_fll(delta_time, old_lat, old_long, new_lat, new_long, earth_ellips
     v = _cos(angle) * speed
     u = _sin(angle) * speed
     # Make each variable its own column.
-    winds = np.insert(np.expand_dims(np.ravel(np.array(new_lat, dtype=float)), axis=1), 1, new_long, axis=1)
-    winds = np.insert(winds, 2, speed, axis=1)
-    winds = np.insert(winds, 3, angle, axis=1)
-    winds = np.insert(winds, 4, v, axis=1)
-    winds = np.insert(winds, 5, u, axis=1)
+    winds = np.insert(np.expand_dims(np.ravel(np.array(new_lat, dtype=float)), axis=1), 1, np.ravel(new_long), axis=1)
+    winds = np.insert(winds, 2, np.ravel(speed), axis=1)
+    winds = np.insert(winds, 3, np.ravel(angle), axis=1)
+    winds = np.insert(winds, 4, np.ravel(v), axis=1)
+    winds = np.insert(winds, 5, np.ravel(u), axis=1)
     # Reshapes so that when one pixel is specified, each variable is its own row instead of its own column.
     if np.shape(winds)[0] == 1:
         winds = winds[0]
