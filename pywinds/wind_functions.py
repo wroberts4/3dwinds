@@ -953,7 +953,7 @@ def lat_long(lat_ts, lat_0, long_0, displacement_data=None, projection=None, j=N
     return np.array((_reshape(old_lat, shape), _reshape(old_long, shape)))
 
 
-def loxodrome_bck(old_lat, old_long, new_lat, new_long, earth_ellipsoid=None, units=None):
+def loxodrome_bck(old_lat, old_long, new_lat, new_long, earth_ellipsoid=None, units=None, precision=None):
     """Computes the distance, forward bearing and back bearing given a starting and ending position.
 
     Credit: https://search-proquest-com.ezproxy.library.wisc.edu/docview/2130848771?rfr_id=info%3Axri%2Fsid%3Aprimo
@@ -1006,7 +1006,7 @@ def loxodrome_bck(old_lat, old_long, new_lat, new_long, earth_ellipsoid=None, un
     return length, forward_bearing % 360, (forward_bearing - 180) % 360
 
 
-def loxodrome_fwd(old_lat, old_long, distance, forward_bearing, earth_ellipsoid=None, units=None):
+def loxodrome_fwd(old_lat, old_long, distance, forward_bearing, earth_ellipsoid=None, units=None, precision=None):
     """Computes the new lat, new long, and back bearing given a starting position, distance, and forward bearing.
 
     Credit: https://search-proquest-com.ezproxy.library.wisc.edu/docview/2130848771?rfr_id=info%3Axri%2Fsid%3Aprimo
@@ -1061,7 +1061,7 @@ def loxodrome_fwd(old_lat, old_long, distance, forward_bearing, earth_ellipsoid=
     return new_lat, new_long, (forward_bearing - 180) % 360
 
 
-def geodesic_bck(old_lat, old_long, new_lat, new_long, earth_ellipsoid=None, units=None):
+def geodesic_bck(old_lat, old_long, new_lat, new_long, earth_ellipsoid=None, units=None, precision=None):
     """Computes the shortest distance, initial bearing and back bearing given a starting and ending position.
 
     Parameters
@@ -1097,7 +1097,7 @@ def geodesic_bck(old_lat, old_long, new_lat, new_long, earth_ellipsoid=None, uni
     return distance, initial_bearing % 360, back_bearing % 360
 
 
-def geodesic_fwd(old_lat, old_long, distance, initial_bearing, earth_ellipsoid=None, units=None):
+def geodesic_fwd(old_lat, old_long, distance, initial_bearing, earth_ellipsoid=None, units=None, precision=None):
     """Computes the new lat, new long, and back bearing given a starting position, distance, and forward bearing.
 
     Parameters
@@ -1136,7 +1136,7 @@ def geodesic_fwd(old_lat, old_long, distance, initial_bearing, earth_ellipsoid=N
 
 def position_to_pixel(lat_ts, lat_0, long_0, lat, long, projection=None, area_extent=None, shape=None, center=None,
                       pixel_size=None, upper_left_extent=None, radius=None, projection_ellipsoid=None, units=None,
-                      displacement_data=None):
+                      displacement_data=None, precision=None):
     """Calculates the pixel given a position
 
     Parameters
@@ -1330,7 +1330,7 @@ def wind_info(lat_ts, lat_0, long_0, delta_time, displacement_data=None, project
 
 
 # TODO: ALLOW INPUT TO BE TEXT FILES.
-def wind_info_fll(delta_time, old_lat, old_long, new_lat, new_long, earth_ellipsoid=None):
+def wind_info_fll(delta_time, old_lat, old_long, new_lat, new_long, earth_ellipsoid=None, precision=None):
     """Computes the latitude, longitude, velocity, angle, v, and u of the wind given two latitudes and longitudes.
 
     Parameters
